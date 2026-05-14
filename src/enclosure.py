@@ -116,6 +116,7 @@ def _hex_prism_y(
     across_flats: float,
     depth: float,
     center: tuple[float, float, float],
+    rotation: float = 30.0,
 ) -> Part:
     """Hexagonal prism oriented on Y for a captive connector nut pocket."""
     with BuildPart() as hex_prism:
@@ -124,7 +125,7 @@ def _hex_prism_y(
                 radius=across_flats / 2,
                 side_count=6,
                 major_radius=False,
-                rotation=30,
+                rotation=rotation,
             )
         extrude(amount=depth / 2, both=True)
     return Location(center) * hex_prism.part
@@ -138,6 +139,7 @@ def _gx16_rear_cutout() -> Part:
     inner_face_y = half - sandwich_t
     hex_depth = panel_inner_y - inner_face_y + 0.2
     hex_center_y = inner_face_y + hex_depth / 2 - 0.1
+    hex_to_pr_angle = math.degrees(math.atan2(-p.gx16_z, -p.gx16_x))
     with BuildPart() as cutout:
         add(
             _oriented_cylinder(
@@ -160,6 +162,7 @@ def _gx16_rear_cutout() -> Part:
                 across_flats=p.gx16_nut_across_flats,
                 depth=hex_depth,
                 center=(p.gx16_x, hex_center_y, p.gx16_z),
+                rotation=hex_to_pr_angle - 30.0,
             )
         )
     return cutout.part
