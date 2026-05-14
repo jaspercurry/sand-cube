@@ -58,10 +58,19 @@ class Params:
     gx16_hole_d: float = 16.2
     gx16_flat_chord: float = 1.5
     gx16_flat_radius: float = 12.5
+    gx16_x: float = -78.0
+    gx16_z: float = -78.0
+    gx16_panel_land_t: float = 3.0
+    gx16_nut_across_flats: float = 20.6
     heyco_hole_d: float = 15.9
     heyco_flat_chord: float = 1.4
     fill_thread_major_d: float = 20.0
-    fill_thread_pitch: float = 2.0
+    fill_thread_pitch: float = 2.5
+    fill_thread_length: float = 12.0
+    fill_port_x: float = 70.0
+    fill_port_z: float = 87.5
+    fill_cap_seat_d: float = 26.0
+    fill_cap_seat_depth: float = 2.0
     fill_boss_od: float = 26.0
 
 

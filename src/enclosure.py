@@ -15,17 +15,22 @@ from build123d import (
     Align,
     Box,
     BuildPart,
+    BuildSketch,
     Cylinder,
     Location,
     Mesher,
     Part,
+    Plane,
     Pos,
+    RegularPolygon,
     Rot,
     Unit,
     add,
     export_step,
+    extrude,
     fillet,
 )
+from bd_warehouse.thread import IsoThread
 
 from params import p
 from src.features.baffle import black_hole_baffle
@@ -106,6 +111,143 @@ def _bolt_circle_bores(
     return bores.part
 
 
+def _hex_prism_y(
+    *,
+    across_flats: float,
+    depth: float,
+    center: tuple[float, float, float],
+) -> Part:
+    """Hexagonal prism oriented on Y for a captive connector nut pocket."""
+    with BuildPart() as hex_prism:
+        with BuildSketch(Plane.XY):
+            RegularPolygon(
+                radius=across_flats / 2,
+                side_count=6,
+                major_radius=False,
+                rotation=30,
+            )
+        extrude(amount=depth, both=True)
+    return Location(center) * Rot(90, 0, 0) * hex_prism.part
+
+
+def _gx16_rear_cutout() -> Part:
+    """GX16 bottom-right rear connector cutout with captive inner hex pocket."""
+    half = p.cube_outer / 2
+    sandwich_t = p.outer_skin_t + p.void_t + p.inner_skin_t
+    nut_pocket_depth = sandwich_t - p.gx16_panel_land_t
+    nut_center_y = half - p.gx16_panel_land_t - nut_pocket_depth / 2
+    with BuildPart() as cutout:
+        add(
+            _oriented_cylinder(
+                diameter=p.gx16_hole_d,
+                depth=sandwich_t + 2,
+                axis="y",
+                center=(p.gx16_x, half - sandwich_t / 2, p.gx16_z),
+            )
+        )
+        add(
+            _hex_prism_y(
+                across_flats=p.gx16_nut_across_flats,
+                depth=nut_pocket_depth,
+                center=(p.gx16_x, nut_center_y, p.gx16_z),
+            )
+        )
+    return cutout.part
+
+
+def _sand_fill_port_cutout(*, x: float, z: float) -> Part:
+    """Rear M20 coarse threaded fill port that breaks into the top sand void."""
+    half = p.cube_outer / 2
+    thread_center_y = half - p.fill_thread_length / 2
+    extension_depth = (
+        p.outer_skin_t + p.void_t + p.inner_skin_t - p.fill_thread_length + 2.0
+    )
+    extension_center_y = half - p.fill_thread_length - extension_depth / 2
+    thread = IsoThread(
+        major_diameter=p.fill_thread_major_d,
+        pitch=p.fill_thread_pitch,
+        length=p.fill_thread_length,
+        external=False,
+        end_finishes=("square", "fade"),
+        interference=0.35,
+        align=(Align.CENTER, Align.CENTER, Align.CENTER),
+    )
+    with BuildPart() as cutout:
+        add(
+            _oriented_cylinder(
+                diameter=p.fill_cap_seat_d,
+                depth=p.fill_cap_seat_depth,
+                axis="y",
+                center=(x, half - p.fill_cap_seat_depth / 2, z),
+            )
+        )
+        add(Location((x, thread_center_y, z)) * Rot(90, 0, 0) * thread)
+        add(
+            _oriented_cylinder(
+                diameter=p.fill_thread_major_d - 3.0,
+                depth=extension_depth,
+                axis="y",
+                center=(x, extension_center_y, z),
+            )
+        )
+    return cutout.part
+
+
+def _skin_bridge_posts() -> Part:
+    """Point-like bridges through the four sand-filled side/top/bottom voids."""
+    half = p.cube_outer / 2
+    void_center = half - p.outer_skin_t - p.void_t / 2
+    grid = (-60.0, 0.0, 60.0)
+    with BuildPart() as posts:
+        for y in grid:
+            for z in grid:
+                for side in (-1, 1):
+                    add(
+                        _oriented_cylinder(
+                            diameter=p.bracing_post_d,
+                            depth=p.void_t,
+                            axis="x",
+                            center=(side * void_center, y, z),
+                        )
+                    )
+        for x in grid:
+            for y in grid:
+                for side in (-1, 1):
+                    add(
+                        _oriented_cylinder(
+                            diameter=p.bracing_post_d,
+                            depth=p.void_t,
+                            axis="z",
+                            center=(x, y, side * void_center),
+                        )
+                    )
+    return posts.part
+
+
+def build_fill_plug() -> Part:
+    """Printable M20 x 2.5 sand-fill plug for the rear fill ports."""
+    thread = IsoThread(
+        major_diameter=p.fill_thread_major_d - 0.35,
+        pitch=p.fill_thread_pitch,
+        length=p.fill_thread_length - 1.0,
+        external=True,
+        end_finishes=("chamfer", "fade"),
+        interference=0.0,
+        align=(Align.CENTER, Align.CENTER, Align.MIN),
+    )
+    with BuildPart() as plug:
+        add(thread)
+        add(
+            Pos(0, 0, p.fill_thread_length - 1.0)
+            * Cylinder(
+                radius=p.fill_boss_od / 2,
+                height=5.0,
+                align=(Align.CENTER, Align.CENTER, Align.MIN),
+            )
+        )
+    return plug.part
+
+
 def build() -> Part:
     """Create the first complete CAD pass for the enclosure."""
     shell_span = p.cube_outer - 2 * p.outer_skin_t
@@ -132,6 +274,8 @@ def build() -> Part:
             cavity,
             p.void_t,
         )
+    enclosure = _primary_shape(enclosure)
+    enclosure += _skin_bridge_posts()
     enclosure = _primary_shape(enclosure)
 
     # The front and rear are solid end caps. The driver is inserted through the
@@ -187,6 +331,11 @@ def build() -> Part:
     enclosure = _primary_shape(enclosure)
     enclosure -= pr_insert_bores
     enclosure = _primary_shape(enclosure)
+    enclosure -= _gx16_rear_cutout()
+    enclosure = _primary_shape(enclosure)
+    for fill_x in (-p.fill_port_x, p.fill_port_x):
+        enclosure -= _sand_fill_port_cutout(x=fill_x, z=p.fill_port_z)
+        enclosure = _primary_shape(enclosure)
 
     if p.edge_fillet_r > 0:
         enclosure = fillet(_external_cube_edges(enclosure), radius=p.edge_fillet_r)
@@ -242,13 +391,16 @@ def export_3mf(part: Part, path: Path) -> None:
 
 def main() -> None:
     part = build()
+    plug = build_fill_plug()
     data = diagnostics(part)
     assert data["is_valid"], "Generated enclosure is not a valid part"
 
     out = Path("build")
     out.mkdir(exist_ok=True)
     export_step(part, out / "sand_cube.step", unit=Unit.MM)
+    export_step(plug, out / "sand_fill_plug.step", unit=Unit.MM)
     export_3mf(part, out / "sand_cube.3mf")
+    export_3mf(plug, out / "sand_fill_plug.3mf")
     (out / "diagnostics.json").write_text(json.dumps(data, indent=2))
     print(json.dumps(data, indent=2))
 
