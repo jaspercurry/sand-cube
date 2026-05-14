@@ -144,6 +144,12 @@ def build() -> Part:
         bore_open_y=front_mount_y,
         bore_direction_y=-1,
     )
+    pr_insert_bores = _bolt_circle_bores(
+        radius=p.pr_bolt_circle_r,
+        count=p.pr_screw_count,
+        bore_open_y=half - p.pr_recess_depth,
+        bore_direction_y=-1,
+    )
 
     # Driver front face is -Y; PR rear face is +Y. Cut after adding hidden
     # rear-mount structure so the visible recess carves the front surface clean.
@@ -164,6 +170,13 @@ def build() -> Part:
     )
     enclosure = _primary_shape(enclosure)
     enclosure -= _oriented_cylinder(
+        diameter=p.pr_recess_dia,
+        depth=p.pr_recess_depth,
+        axis="y",
+        center=(0, half - p.pr_recess_depth / 2, 0),
+    )
+    enclosure = _primary_shape(enclosure)
+    enclosure -= _oriented_cylinder(
         diameter=p.pr_service_cutout_dia,
         depth=through,
         axis="y",
@@ -171,6 +184,8 @@ def build() -> Part:
     )
     enclosure = _primary_shape(enclosure)
     enclosure -= driver_insert_bores
+    enclosure = _primary_shape(enclosure)
+    enclosure -= pr_insert_bores
     enclosure = _primary_shape(enclosure)
 
     if p.edge_fillet_r > 0:

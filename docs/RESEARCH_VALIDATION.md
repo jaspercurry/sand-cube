@@ -18,11 +18,11 @@ tool assumptions, and BOM costs need correction before committing geometry.
 
 ## Corrections Before CAD
 
-- The Dayton Epique E180HE-PR is the right family match, but Dayton's spec
-  sheet differs materially from the report's estimates. Use
-  `pr_cutout_dia = 151.5`, `pr_overall_dia = 181.0`,
-  `pr_bolt_circle_r = 70.0`, and `pr_depth = 54.0` unless a newer official
-  datasheet says otherwise.
+- The Dayton Epique E180HE-PR is the right family match, but the official
+  mechanical drawing is more useful than the abbreviated spec sheet for CAD.
+  Use `pr_cutout_dia = 151.5`, `pr_overall_dia = 181.5`,
+  `pr_recess_depth = 6.0`, `pr_bolt_circle_r = 84.75`, `pr_screw_count = 6`,
+  and `pr_depth = 54.0` unless a newer official drawing says otherwise.
 - Current Parts Express public pricing for the E180HE-PR appears much lower
   than the report's roughly $100 estimate, so the BOM should be recalculated.
 - The E180HE-PR's published Vd is 258.59 cm3. Dayton's own product page says

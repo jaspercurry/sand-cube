@@ -24,16 +24,18 @@ class Params:
     driver_screw_count: int = 4
 
     # Dayton Audio Epique E180HE-PR, Parts Express 295-114.
-    # Dayton spec sheet: OD 181 +/- 0.5, cutout 151.5 +/- 0.5,
-    # depth 54 +/- 0.5, 4 holes on a 140 mm bolt circle.
+    # Dayton mechanical drawing: flange OD 181.5, basket/cutout 151-151.5,
+    # 6 mm flange thickness, 6 holes on a 169.5 mm bolt circle.
     pr_cutout_dia: float = 151.5
     # Rear opening must pass the E150HE-44 during assembly, then be covered by
     # the externally mounted PR flange. Verify against the physical PR gasket.
     pr_service_cutout_dia: float = 156.0
-    pr_overall_dia: float = 181.0
-    pr_bolt_circle_r: float = 70.0
+    pr_overall_dia: float = 181.5
+    pr_recess_dia: float = 183.0
+    pr_recess_depth: float = 6.0
+    pr_bolt_circle_r: float = 84.75
     pr_depth: float = 54.0
-    pr_screw_count: int = 4
+    pr_screw_count: int = 6
 
     # Recessed front baffle.
     baffle_blend_r: float = 23.0
