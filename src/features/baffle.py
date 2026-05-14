@@ -30,7 +30,7 @@ def black_hole_baffle(
     r_inner = driver_cutout_dia / 2
     z_top = 0.0
     z_blend = blend_depth
-    z_floor = face_thickness + 0.5
+    z_floor = max(face_thickness, blend_depth) + 0.5
 
     with BuildPart() as recess:
         with BuildSketch(Plane.XZ) as sketch:
@@ -53,4 +53,3 @@ def black_hole_baffle(
         revolve(axis=Axis.Z)
 
     return recess.part
-

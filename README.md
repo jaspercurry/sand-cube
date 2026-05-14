@@ -44,6 +44,16 @@ UV_CACHE_DIR=.uv-cache UV_PYTHON_INSTALL_DIR=.uv-python XDG_CACHE_HOME=.cache \
   uv run python src/show_model.py
 ```
 
+## Render Local PNG Previews
+
+For cleaner renders than the fallback Matplotlib preview, install `f3d` and run:
+
+```bash
+bash scripts/render_f3d_previews.sh
+```
+
+The PNG files are written to `previews/`.
+
 ## Planned Stack
 
 - Python 3.12

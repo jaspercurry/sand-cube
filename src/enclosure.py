@@ -17,13 +17,9 @@ from build123d import (
     Box,
     BuildPart,
     Cylinder,
-    GridLocations,
     Location,
     Mesher,
-    Mode,
     Part,
-    Plane,
-    PolarLocations,
     Pos,
     Rot,
     Unit,
@@ -33,7 +29,7 @@ from build123d import (
 
 from params import p
 from src.features.baffle import black_hole_baffle
-from src.features.bracing import bonded_collar, reinforcement_ring
+from src.features.bracing import reinforcement_ring
 
 
 def _oriented_cylinder(
@@ -57,42 +53,53 @@ def _oriented_cylinder(
     return Location(center) * cyl
 
 
-def _face_posts(*, z_rotation: float, center: tuple[float, float, float]) -> Part:
-    full_h = p.outer_skin_t + p.void_t + p.inner_skin_t
-    with BuildPart() as posts:
-        with GridLocations(p.bracing_grid_pitch, p.bracing_grid_pitch, 3, 3):
-            Cylinder(
-                radius=p.bracing_post_d / 2,
-                height=full_h,
-                align=(Align.CENTER, Align.CENTER, Align.CENTER),
-            )
-    return Location(center) * Rot(0, 0, z_rotation) * posts.part
-
-
-def _bolt_circle_collars(
+def _bolt_circle_bosses_and_bores(
     *,
     radius: float,
     count: int,
-    center_y: float,
-    face_sign: int,
-) -> Part:
+    boss_center_y: float,
+    bore_open_y: float,
+    bore_direction_y: int,
+) -> tuple[Part, Part]:
+    """Create bolt-circle bosses plus blind M4 insert bores.
+
+    The bosses are solid until their matching bore tools are subtracted. This
+    lets us choose which side the insert is installed from, which matters for a
+    rear-mounted driver: its insert holes open from the cabinet interior, not
+    from the visible front face.
+    """
     full_h = p.outer_skin_t + p.void_t + p.inner_skin_t
-    with BuildPart() as collars:
+    bore_depth = p.insert_bore_depth + 0.4
+    bore_center_y = bore_open_y + bore_direction_y * bore_depth / 2
+
+    with BuildPart() as bosses:
         for index in range(count):
             angle = math.tau * index / count + (math.tau / 8 if count == 4 else 0)
             x = radius * math.cos(angle)
             z = radius * math.sin(angle)
             add(
-                Pos(x, center_y, z)
-                * Rot(90, 0, 0)
-                * bonded_collar(
-                    full_h=full_h,
-                    collar_od=p.boss_od,
-                    insert_bore_d=p.insert_bore_d,
-                    insert_bore_depth=p.insert_bore_depth,
+                _oriented_cylinder(
+                    diameter=p.boss_od,
+                    depth=full_h,
+                    axis="y",
+                    center=(x, boss_center_y, z),
                 )
             )
-    return collars.part
+
+    with BuildPart() as bores:
+        for index in range(count):
+            angle = math.tau * index / count + (math.tau / 8 if count == 4 else 0)
+            x = radius * math.cos(angle)
+            z = radius * math.sin(angle)
+            add(
+                _oriented_cylinder(
+                    diameter=p.insert_bore_d,
+                    depth=bore_depth,
+                    axis="y",
+                    center=(x, bore_center_y, z),
+                )
+            )
+    return bosses.part, bores.part
 
 
 def build() -> Part:
@@ -102,6 +109,9 @@ def build() -> Part:
     cavity = inner_outer - 2 * p.inner_skin_t
     half = p.cube_outer / 2
     inner_face_y = inner_outer / 2
+    front_inner_y = -inner_face_y
+    rear_inner_y = inner_face_y
+    sandwich_t = p.outer_skin_t + p.void_t + p.inner_skin_t
     through = p.cube_outer + 10
 
     outer_solid = Box(p.cube_outer, p.cube_outer, p.cube_outer)
@@ -111,9 +121,39 @@ def build() -> Part:
 
     enclosure = (outer_solid - sand_void) + (inner_solid - acoustic_cavity)
 
-    # Driver front face is -Y; PR rear face is +Y.
+    # Driver is rear-mounted: the reinforcement ring sits inside the acoustic
+    # cavity on the back side of the front baffle.
+    enclosure += Pos(0, front_inner_y + p.ring_t, 0) * Rot(90, 0, 0) * reinforcement_ring(
+        cutout_dia=p.driver_cutout_dia,
+        ring_width=p.ring_width,
+        ring_t=p.ring_t,
+    )
+    enclosure += Pos(0, rear_inner_y, 0) * Rot(90, 0, 0) * reinforcement_ring(
+        cutout_dia=p.pr_cutout_dia,
+        ring_width=p.ring_width,
+        ring_t=p.ring_t,
+    )
+
+    driver_bosses, driver_insert_bores = _bolt_circle_bosses_and_bores(
+        radius=p.driver_bolt_circle_r,
+        count=p.driver_screw_count,
+        boss_center_y=-half + sandwich_t / 2,
+        bore_open_y=front_inner_y,
+        bore_direction_y=-1,
+    )
+    pr_bosses, pr_insert_bores = _bolt_circle_bosses_and_bores(
+        radius=p.pr_bolt_circle_r,
+        count=p.pr_screw_count,
+        boss_center_y=half - sandwich_t / 2,
+        bore_open_y=half,
+        bore_direction_y=-1,
+    )
+    enclosure += driver_bosses + pr_bosses
+
+    # Driver front face is -Y; PR rear face is +Y. Cut after adding hidden
+    # rear-mount structure so the visible recess carves the front surface clean.
     enclosure -= Pos(0, -half - 0.2, 0) * Rot(90, 0, 0) * black_hole_baffle(
-        face_thickness=p.outer_skin_t,
+        face_thickness=sandwich_t,
         driver_cutout_dia=p.driver_cutout_dia,
         blend_radius=p.baffle_blend_r,
         blend_depth=p.baffle_blend_depth,
@@ -132,30 +172,7 @@ def build() -> Part:
         axis="y",
         center=(0, half, 0),
     )
-
-    enclosure += Pos(0, -inner_face_y - p.ring_t, 0) * Rot(90, 0, 0) * reinforcement_ring(
-        cutout_dia=p.driver_cutout_dia,
-        ring_width=p.ring_width,
-        ring_t=p.ring_t,
-    )
-    enclosure += Pos(0, inner_face_y, 0) * Rot(90, 0, 0) * reinforcement_ring(
-        cutout_dia=p.pr_cutout_dia,
-        ring_width=p.ring_width,
-        ring_t=p.ring_t,
-    )
-
-    enclosure += _bolt_circle_collars(
-        radius=p.driver_bolt_circle_r,
-        count=p.driver_screw_count,
-        center_y=-half + (p.outer_skin_t + p.void_t + p.inner_skin_t),
-        face_sign=-1,
-    )
-    enclosure += _bolt_circle_collars(
-        radius=p.pr_bolt_circle_r,
-        count=p.pr_screw_count,
-        center_y=half,
-        face_sign=1,
-    )
+    enclosure -= driver_insert_bores + pr_insert_bores
 
     return enclosure
 
