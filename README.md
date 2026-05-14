@@ -14,6 +14,20 @@ or a measured print.
 - Research validation notes live in `docs/RESEARCH_VALIDATION.md`.
 - Initial dimensions live in `params.py`.
 - Build123d/Codex working rules live in `AGENTS.md`.
+- Initial build123d enclosure generator lives in `src/enclosure.py`.
+
+## Build CAD
+
+```bash
+UV_CACHE_DIR=.uv-cache UV_PYTHON_INSTALL_DIR=.uv-python XDG_CACHE_HOME=.cache \
+  uv run python src/enclosure.py
+```
+
+Outputs are written to `build/`:
+
+- `sand_cube.step`
+- `sand_cube.3mf`
+- `diagnostics.json`
 
 ## Planned Stack
 
@@ -25,12 +39,10 @@ or a measured print.
 
 ## First Milestone
 
-Create a buildable `src/enclosure.py` skeleton that exports STEP/3MF-like CAD
-artifacts, then implement one feature at a time:
+Continue expanding the build123d model one feature at a time:
 
-1. Outer and inner dual-skin shell.
-2. Recessed front baffle profile.
-3. Driver and passive radiator cutouts.
-4. Bracing posts, corner gussets, and reinforcement rings.
-5. Connector, tweeter pass-through, and fill port geometry.
-
+1. Add full 3x3 per-face bracing posts.
+2. Add corner gussets.
+3. Add connector, tweeter pass-through, and fill port geometry.
+4. Add print coupons for the M20x2 fill plug and heat-set bosses.
+5. Add render/check automation.

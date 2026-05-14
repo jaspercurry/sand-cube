@@ -2,6 +2,10 @@ build/
 dist/
 *.egg-info/
 __pycache__/
+.pycache/
+.cache/
+.uv-cache/
+.uv-python/
 .pytest_cache/
 .ruff_cache/
 .mypy_cache/
@@ -13,4 +17,3 @@ __pycache__/
 *.brep
 *.png
 *.log
-
