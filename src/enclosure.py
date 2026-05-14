@@ -19,6 +19,7 @@ from build123d import (
     Cylinder,
     Location,
     Mesher,
+    Mode,
     Part,
     Plane,
     Pos,
@@ -47,6 +48,7 @@ def _oriented_cylinder(
         radius=diameter / 2,
         height=depth,
         align=(Align.CENTER, Align.CENTER, Align.CENTER),
+        mode=Mode.PRIVATE,
     )
     if axis == "x":
         cyl = Rot(0, 90, 0) * cyl
@@ -183,7 +185,7 @@ def _sand_fill_port_cutout(*, x: float, z: float) -> Part:
     """Rear coarse threaded fill port that breaks into the top sand void."""
     half = p.cube_outer / 2
     port_depth = p.outer_skin_t + p.void_t + p.inner_skin_t + 0.8
-    thread_center_y = half - p.fill_thread_length / 2
+    thread_center_y = half - p.fill_thread_length / 2 + 0.2
     port_center_y = half - port_depth / 2
     thread = IsoThread(
         major_diameter=p.fill_thread_major_d,
@@ -195,6 +197,14 @@ def _sand_fill_port_cutout(*, x: float, z: float) -> Part:
         align=(Align.CENTER, Align.CENTER, Align.CENTER),
     )
     with BuildPart() as cutout:
+        add(
+            _oriented_cylinder(
+                diameter=p.fill_entry_d,
+                depth=p.fill_entry_depth,
+                axis="y",
+                center=(x, half - p.fill_entry_depth / 2, z),
+            )
+        )
         add(
             _oriented_cylinder(
                 diameter=p.fill_thread_core_d,
