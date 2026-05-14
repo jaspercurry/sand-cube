@@ -64,8 +64,8 @@ class Params:
     gx16_panel_land_t: float = 3.0
     gx16_flange_recess_d: float = 19.0
     gx16_flange_recess_depth: float = 1.2
-    gx16_nut_across_flats: float = 20.6
-    gx16_island_xy: float = 34.0
+    gx16_nut_across_flats: float = 19.4
+    gx16_island_xy: float = 27.0
     heyco_hole_d: float = 15.9
     heyco_flat_chord: float = 1.4
     fill_thread_major_d: float = 12.0
@@ -74,9 +74,9 @@ class Params:
     fill_thread_length: float = 14.0
     fill_passage_d: float = 10.0
     fill_port_x: float = 72.0
-    fill_port_z: float = 92.0
+    fill_port_z: float = 90.5
     fill_void_z: float = 92.5
-    fill_entry_d: float = 15.0
+    fill_entry_d: float = 14.0
     fill_entry_depth: float = 1.0
     fill_boss_od: float = 15.0
 
