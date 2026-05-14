@@ -1,0 +1,16 @@
+build/
+dist/
+*.egg-info/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.venv/
+.DS_Store
+*.3mf
+*.step
+*.stl
+*.brep
+*.png
+*.log
+

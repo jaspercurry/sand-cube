@@ -1,0 +1,17 @@
+[project]
+name = "sand-cube"
+version = "0.1.0"
+description = "Code-CAD speaker enclosure for a sand-filled FDM cube."
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "MIT" }
+dependencies = [
+  "build123d",
+  "bd-warehouse",
+  "ocp-vscode",
+]
+
+[tool.ruff]
+line-length = 88
+target-version = "py312"
+
