@@ -135,9 +135,9 @@ def _gx16_rear_cutout() -> Part:
     half = p.cube_outer / 2
     sandwich_t = p.outer_skin_t + p.void_t + p.inner_skin_t
     panel_inner_y = half - p.gx16_flange_recess_depth - p.gx16_panel_land_t
-    nut_center_y = panel_inner_y - p.gx16_nut_pocket_depth / 2
-    nut_back_y = panel_inner_y - p.gx16_nut_pocket_depth
-    access_depth = max(0.0, nut_back_y - (half - sandwich_t))
+    inner_face_y = half - sandwich_t
+    hex_depth = panel_inner_y - inner_face_y + 0.2
+    hex_center_y = inner_face_y + hex_depth / 2 - 0.1
     with BuildPart() as cutout:
         add(
             _oriented_cylinder(
@@ -158,24 +158,22 @@ def _gx16_rear_cutout() -> Part:
         add(
             _hex_prism_y(
                 across_flats=p.gx16_nut_across_flats,
-                depth=p.gx16_nut_pocket_depth,
-                center=(p.gx16_x, nut_center_y, p.gx16_z),
+                depth=hex_depth,
+                center=(p.gx16_x, hex_center_y, p.gx16_z),
             )
         )
-        if access_depth > 0:
-            add(
-                _oriented_cylinder(
-                    diameter=p.gx16_nut_access_d,
-                    depth=access_depth + 0.2,
-                    axis="y",
-                    center=(
-                        p.gx16_x,
-                        half - sandwich_t + access_depth / 2 - 0.1,
-                        p.gx16_z,
-                    ),
-                )
-            )
     return cutout.part
+
+
+def _gx16_connector_island() -> Part:
+    """Local solid rear-cap island around the GX16 inner nut pocket."""
+    half = p.cube_outer / 2
+    sandwich_t = p.outer_skin_t + p.void_t + p.inner_skin_t
+    return Pos(p.gx16_x, half - sandwich_t / 2, p.gx16_z) * Box(
+        p.gx16_island_xy,
+        sandwich_t,
+        p.gx16_island_xy,
+    )
 
 
 def _sand_fill_port_cutout(*, x: float, z: float) -> Part:
@@ -307,6 +305,8 @@ def build() -> Part:
         )
     enclosure = _primary_shape(enclosure)
     enclosure += _skin_bridge_posts()
+    enclosure = _primary_shape(enclosure)
+    enclosure += _gx16_connector_island()
     enclosure = _primary_shape(enclosure)
 
     # The front and rear are solid end caps. The driver is inserted through the

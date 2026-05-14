@@ -63,13 +63,13 @@ tool assumptions, and BOM costs need correction before committing geometry.
   to trust for this project. It should be treated as optional until installed.
 - Decide whether the first CAD milestone exports STEP only, or also attempts
   3MF immediately after local API verification.
-- Test one printed M16 x 2.0 thread coupon before committing to a printed fill
+- Test one printed M14 x 2.0 thread coupon before committing to a printed fill
   plug for the full enclosure.
 - GX16-4 panel connectors use a nominal 16 mm mounting hole. The current CAD
   uses a shallow outside flange recess, leaves a 3 mm rear panel land, then
   opens a short captive hex pocket inside the rear cap so the nut can be held
   from the PR/service opening without cutting the hex through the exterior.
-- Use coarse printed fill-port threads. The current CAD uses M16 x 2.0 because
+- Use coarse printed fill-port threads. The current CAD uses M14 x 2.0 because
   it is large enough for PETG/FDM printed threads while staying proportionate
   to the 12 mm sand void.
 
