@@ -51,7 +51,8 @@ class Params:
     ring_width: float = 10.0
     ring_t: float = 5.0
     insert_bore_d: float = 5.6
-    insert_bore_depth: float = 6.0
+    driver_insert_bore_depth: float = 9.0
+    pr_insert_bore_depth: float = 5.0
     boss_od: float = 8.0
     driver_mount_collar_od: float = 162.0
 

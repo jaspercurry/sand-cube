@@ -91,11 +91,11 @@ def _bolt_circle_bores(
     *,
     radius: float,
     count: int,
+    bore_depth: float,
     bore_open_y: float,
     bore_direction_y: int,
 ) -> Part:
     """Create blind M4 heat-set insert bores on an X/Z bolt circle."""
-    bore_depth = p.insert_bore_depth + 0.4
     bore_center_y = bore_open_y + bore_direction_y * bore_depth / 2
     with BuildPart() as bores:
         for index in range(count):
@@ -320,12 +320,14 @@ def build() -> Part:
     driver_insert_bores = _bolt_circle_bores(
         radius=p.driver_bolt_circle_r,
         count=p.driver_screw_count,
+        bore_depth=p.driver_insert_bore_depth,
         bore_open_y=front_mount_y,
         bore_direction_y=-1,
     )
     pr_insert_bores = _bolt_circle_bores(
         radius=p.pr_bolt_circle_r,
         count=p.pr_screw_count,
+        bore_depth=p.pr_insert_bore_depth,
         bore_open_y=half - p.pr_recess_depth,
         bore_direction_y=-1,
     )
