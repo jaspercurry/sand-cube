@@ -91,6 +91,32 @@ def _angled_yz_cylinder(
     return Location(center) * Rot(angle_deg, 0, 0) * cyl
 
 
+def _yz_cylinder_between(
+    *,
+    diameter: float,
+    start: tuple[float, float, float],
+    end: tuple[float, float, float],
+) -> Part:
+    """Cylinder between two points that only vary in Y/Z."""
+    if not math.isclose(start[0], end[0], abs_tol=1e-6):
+        raise ValueError("YZ cylinder endpoints must share X")
+    dy = end[1] - start[1]
+    dz = end[2] - start[2]
+    depth = math.hypot(dy, dz)
+    angle_deg = math.degrees(math.atan2(-dy, dz))
+    center = (
+        start[0],
+        (start[1] + end[1]) / 2,
+        (start[2] + end[2]) / 2,
+    )
+    cyl = Cylinder(
+        radius=diameter / 2,
+        height=depth,
+        align=(Align.CENTER, Align.CENTER, Align.CENTER),
+    )
+    return Location(center) * Rot(angle_deg, 0, 0) * cyl
+
+
 def _primary_shape(shape: Part) -> Part:
     """Drop tiny OpenCascade boolean crumbs and keep the main enclosure body."""
     if hasattr(shape, "bounding_box"):
@@ -216,9 +242,9 @@ def _sand_fill_port_cutout(*, x: float, z: float) -> Part:
     thread_center_y = half - p.fill_thread_length / 2
     funnel_depth = 4.0
     funnel_center_y = half - p.fill_thread_length - funnel_depth / 2
-    chute_span = p.fill_void_z - z + p.fill_chute_d
-    chute_center_z = (z + p.fill_void_z) / 2
-    chute_center_y = half - p.outer_skin_t - p.void_t - p.inner_skin_t - 1.5
+    duct_start_y = half - p.fill_thread_length - funnel_depth + 0.2
+    duct_end_y = half - p.outer_skin_t - p.void_t - p.inner_skin_t - 1.0
+    duct_end_z = p.fill_void_z + 1.5
     thread = IsoThread(
         major_diameter=p.fill_thread_major_d,
         pitch=p.fill_thread_pitch,
@@ -255,11 +281,10 @@ def _sand_fill_port_cutout(*, x: float, z: float) -> Part:
             )
         )
         add(
-            _oriented_cylinder(
+            _yz_cylinder_between(
                 diameter=p.fill_chute_d,
-                depth=chute_span,
-                axis="z",
-                center=(x, chute_center_y, chute_center_z),
+                start=(x, duct_start_y, z),
+                end=(x, duct_end_y, duct_end_z),
             )
         )
     return cutout.part
