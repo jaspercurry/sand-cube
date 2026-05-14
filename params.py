@@ -36,10 +36,10 @@ class Params:
     pr_screw_count: int = 4
 
     # Recessed front baffle.
-    baffle_blend_r: float = 34.0
-    baffle_blend_depth: float = 11.0
-    baffle_tangent_in: float = 1.6
-    baffle_tangent_out: float = 0.8
+    baffle_blend_r: float = 23.0
+    baffle_blend_depth: float = 8.0
+    baffle_tangent_in: float = 1.1
+    baffle_tangent_out: float = 0.65
 
     # Bracing and inserts.
     bracing_grid_pitch: float = 60.0

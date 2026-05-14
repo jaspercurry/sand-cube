@@ -114,8 +114,8 @@ def build() -> Part:
     inner_outer = p.cube_outer - 2 * (p.outer_skin_t + p.void_t)
     cavity = inner_outer - 2 * p.inner_skin_t
     half = p.cube_outer / 2
-    inner_face_y = inner_outer / 2
-    front_inner_y = -inner_face_y
+    cavity_half = cavity / 2
+    front_mount_y = -cavity_half
     sandwich_t = p.outer_skin_t + p.void_t + p.inner_skin_t
     through = p.cube_outer + 10
 
@@ -129,7 +129,7 @@ def build() -> Part:
     # Driver is rear-mounted: this structural collar bridges the full front
     # sandwich. The driver is inserted through the rear PR/service opening and
     # bolts into heat-set inserts melted from the cavity side.
-    enclosure += Pos(0, front_inner_y, 0) * Rot(90, 0, 0) * reinforcement_ring(
+    enclosure += Pos(0, front_mount_y, 0) * Rot(90, 0, 0) * reinforcement_ring(
         cutout_dia=p.driver_cutout_dia,
         ring_width=(p.driver_mount_collar_od - p.driver_cutout_dia) / 2,
         ring_t=sandwich_t,
@@ -143,7 +143,7 @@ def build() -> Part:
     driver_insert_bores = _bolt_circle_bores(
         radius=p.driver_bolt_circle_r,
         count=p.driver_screw_count,
-        bore_open_y=front_inner_y,
+        bore_open_y=front_mount_y,
         bore_direction_y=-1,
     )
 
