@@ -12,6 +12,7 @@ class Params:
     outer_skin_t: float = 3.0
     void_t: float = 12.0
     inner_skin_t: float = 3.0
+    front_cap_t: float = 20.0
     rear_cap_t: float = 14.0
     edge_fillet_r: float = 3.0
 
@@ -42,7 +43,7 @@ class Params:
     baffle_blend_r: float = 23.0
     baffle_blend_depth: float = 18.0
     baffle_tangent_in: float = 0.3
-    baffle_tangent_out: float = 0.33
+    baffle_tangent_out: float = 0.55
 
     # Bracing and inserts.
     bracing_grid_pitch: float = 60.0

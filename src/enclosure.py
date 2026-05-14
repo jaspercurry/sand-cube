@@ -368,12 +368,12 @@ def build() -> Part:
     shell_span = p.cube_outer - 2 * p.outer_skin_t
     cavity = p.cube_outer - 2 * (p.outer_skin_t + p.void_t + p.inner_skin_t)
     half = p.cube_outer / 2
-    front_inner_y = -half + p.outer_skin_t + p.void_t + p.inner_skin_t
+    front_inner_y = -half + p.front_cap_t
     rear_inner_y = half - p.rear_cap_t
     cavity_y = rear_inner_y - front_inner_y
     cavity_center_y = (front_inner_y + rear_inner_y) / 2
     front_mount_y = front_inner_y
-    sandwich_t = p.outer_skin_t + p.void_t + p.inner_skin_t
+    sandwich_t = p.front_cap_t
     through = p.cube_outer + 10
 
     outer_solid = Box(p.cube_outer, p.cube_outer, p.cube_outer)
@@ -487,7 +487,7 @@ def diagnostics(part: Part) -> dict[str, object]:
     petg_density_g_per_mm3 = 1.27e-3
     mass_g = volume_mm3 * petg_density_g_per_mm3
     cavity_side = p.cube_outer - 2 * (p.outer_skin_t + p.void_t + p.inner_skin_t)
-    front_inner_y = -p.cube_outer / 2 + p.outer_skin_t + p.void_t + p.inner_skin_t
+    front_inner_y = -p.cube_outer / 2 + p.front_cap_t
     rear_inner_y = p.cube_outer / 2 - p.rear_cap_t
     cavity_y = rear_inner_y - front_inner_y
     cavity_l = cavity_side * cavity_y * cavity_side / 1_000_000
