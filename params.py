@@ -61,17 +61,23 @@ class Params:
     gx16_x: float = -78.0
     gx16_z: float = -78.0
     gx16_panel_land_t: float = 3.0
+    gx16_flange_recess_d: float = 21.0
+    gx16_flange_recess_depth: float = 1.2
     gx16_nut_across_flats: float = 20.6
+    gx16_nut_pocket_depth: float = 4.5
+    gx16_nut_access_d: float = 25.0
     heyco_hole_d: float = 15.9
     heyco_flat_chord: float = 1.4
-    fill_thread_major_d: float = 20.0
-    fill_thread_pitch: float = 2.5
-    fill_thread_length: float = 12.0
-    fill_port_x: float = 70.0
-    fill_port_z: float = 87.5
-    fill_cap_seat_d: float = 26.0
-    fill_cap_seat_depth: float = 2.0
-    fill_boss_od: float = 26.0
+    fill_thread_major_d: float = 16.0
+    fill_thread_pitch: float = 2.0
+    fill_thread_core_d: float = 13.8
+    fill_thread_length: float = 10.0
+    fill_passage_d: float = 12.0
+    fill_port_x: float = 72.0
+    fill_port_z: float = 88.0
+    fill_cap_seat_d: float = 20.0
+    fill_cap_seat_depth: float = 1.5
+    fill_boss_od: float = 21.0
 
 
 p = Params()

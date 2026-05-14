@@ -134,9 +134,19 @@ def _gx16_rear_cutout() -> Part:
     """GX16 bottom-right rear connector cutout with captive inner hex pocket."""
     half = p.cube_outer / 2
     sandwich_t = p.outer_skin_t + p.void_t + p.inner_skin_t
-    nut_pocket_depth = sandwich_t - p.gx16_panel_land_t
-    nut_center_y = half - p.gx16_panel_land_t - nut_pocket_depth / 2
+    panel_inner_y = half - p.gx16_flange_recess_depth - p.gx16_panel_land_t
+    nut_center_y = panel_inner_y - p.gx16_nut_pocket_depth / 2
+    nut_back_y = panel_inner_y - p.gx16_nut_pocket_depth
+    access_depth = max(0.0, nut_back_y - (half - sandwich_t))
     with BuildPart() as cutout:
+        add(
+            _oriented_cylinder(
+                diameter=p.gx16_flange_recess_d,
+                depth=p.gx16_flange_recess_depth,
+                axis="y",
+                center=(p.gx16_x, half - p.gx16_flange_recess_depth / 2, p.gx16_z),
+            )
+        )
         add(
             _oriented_cylinder(
                 diameter=p.gx16_hole_d,
@@ -148,15 +158,28 @@ def _gx16_rear_cutout() -> Part:
         add(
             _hex_prism_y(
                 across_flats=p.gx16_nut_across_flats,
-                depth=nut_pocket_depth,
+                depth=p.gx16_nut_pocket_depth,
                 center=(p.gx16_x, nut_center_y, p.gx16_z),
             )
         )
+        if access_depth > 0:
+            add(
+                _oriented_cylinder(
+                    diameter=p.gx16_nut_access_d,
+                    depth=access_depth + 0.2,
+                    axis="y",
+                    center=(
+                        p.gx16_x,
+                        half - sandwich_t + access_depth / 2 - 0.1,
+                        p.gx16_z,
+                    ),
+                )
+            )
     return cutout.part
 
 
 def _sand_fill_port_cutout(*, x: float, z: float) -> Part:
-    """Rear M20 coarse threaded fill port that breaks into the top sand void."""
+    """Rear coarse threaded fill port that breaks into the top sand void."""
     half = p.cube_outer / 2
     thread_center_y = half - p.fill_thread_length / 2
     extension_depth = (
@@ -181,10 +204,18 @@ def _sand_fill_port_cutout(*, x: float, z: float) -> Part:
                 center=(x, half - p.fill_cap_seat_depth / 2, z),
             )
         )
+        add(
+            _oriented_cylinder(
+                diameter=p.fill_thread_core_d,
+                depth=p.fill_thread_length + 0.4,
+                axis="y",
+                center=(x, thread_center_y, z),
+            )
+        )
         add(Location((x, thread_center_y, z)) * Rot(90, 0, 0) * thread)
         add(
             _oriented_cylinder(
-                diameter=p.fill_thread_major_d - 3.0,
+                diameter=p.fill_passage_d,
                 depth=extension_depth,
                 axis="y",
                 center=(x, extension_center_y, z),
@@ -225,7 +256,7 @@ def _skin_bridge_posts() -> Part:
 
 
 def build_fill_plug() -> Part:
-    """Printable M20 x 2.5 sand-fill plug for the rear fill ports."""
+    """Printable coarse-thread sand-fill plug for the rear fill ports."""
     thread = IsoThread(
         major_diameter=p.fill_thread_major_d - 0.35,
         pitch=p.fill_thread_pitch,
