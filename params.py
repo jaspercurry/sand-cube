@@ -37,9 +37,9 @@ class Params:
 
     # Recessed front baffle.
     baffle_blend_r: float = 23.0
-    baffle_blend_depth: float = 8.0
-    baffle_tangent_in: float = 1.1
-    baffle_tangent_out: float = 0.65
+    baffle_blend_depth: float = 18.0
+    baffle_tangent_in: float = 0.3
+    baffle_tangent_out: float = 0.33
 
     # Bracing and inserts.
     bracing_grid_pitch: float = 60.0
@@ -48,7 +48,7 @@ class Params:
     ring_width: float = 10.0
     ring_t: float = 5.0
     insert_bore_d: float = 5.6
-    insert_bore_depth: float = 9.0
+    insert_bore_depth: float = 6.0
     boss_od: float = 8.0
     driver_mount_collar_od: float = 162.0
 

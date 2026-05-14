@@ -4,13 +4,13 @@ from __future__ import annotations
 
 from build123d import (
     Axis,
+    Bezier,
     BuildLine,
     BuildPart,
     BuildSketch,
     Part,
     Plane,
     Polyline,
-    Spline,
     make_face,
     revolve,
 )
@@ -35,11 +35,11 @@ def black_hole_baffle(
     with BuildPart() as recess:
         with BuildSketch(Plane.XZ) as sketch:
             with BuildLine():
-                Spline(
+                Bezier(
                     (r_outer, z_top),
+                    (r_outer - blend_radius * tangent_in, z_top),
+                    (r_inner, z_blend * (1 - tangent_out)),
                     (r_inner, z_blend),
-                    tangents=((-1, 0), (0, 1)),
-                    tangent_scalars=(tangent_in, tangent_out),
                 )
                 Polyline(
                     (r_inner, z_blend),

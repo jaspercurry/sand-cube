@@ -13,7 +13,6 @@ if str(ROOT) not in sys.path:
 
 from build123d import (
     Align,
-    Axis,
     Box,
     BuildPart,
     Cylinder,
@@ -30,7 +29,6 @@ from build123d import (
 
 from params import p
 from src.features.baffle import black_hole_baffle
-from src.features.bracing import reinforcement_ring
 
 
 def _oriented_cylinder(
@@ -111,8 +109,7 @@ def _bolt_circle_bores(
 def build() -> Part:
     """Create the first complete CAD pass for the enclosure."""
     shell_span = p.cube_outer - 2 * p.outer_skin_t
-    inner_outer = p.cube_outer - 2 * (p.outer_skin_t + p.void_t)
-    cavity = inner_outer - 2 * p.inner_skin_t
+    cavity = p.cube_outer - 2 * (p.outer_skin_t + p.void_t + p.inner_skin_t)
     half = p.cube_outer / 2
     cavity_half = cavity / 2
     front_mount_y = -cavity_half
@@ -120,25 +117,26 @@ def build() -> Part:
     through = p.cube_outer + 10
 
     outer_solid = Box(p.cube_outer, p.cube_outer, p.cube_outer)
-    sand_void = Box(shell_span, shell_span, shell_span)
-    inner_solid = Box(inner_outer, inner_outer, inner_outer)
     acoustic_cavity = Box(cavity, cavity, cavity)
 
-    enclosure = (outer_solid - sand_void) + (inner_solid - acoustic_cavity)
+    enclosure = outer_solid - acoustic_cavity
+    for x in (-1, 1):
+        enclosure -= Pos(x * (half - p.outer_skin_t - p.void_t / 2), 0, 0) * Box(
+            p.void_t,
+            cavity,
+            shell_span,
+        )
+    for z in (-1, 1):
+        enclosure -= Pos(0, 0, z * (half - p.outer_skin_t - p.void_t / 2)) * Box(
+            shell_span,
+            cavity,
+            p.void_t,
+        )
+    enclosure = _primary_shape(enclosure)
 
-    # Driver is rear-mounted: this structural collar bridges the full front
-    # sandwich. The driver is inserted through the rear PR/service opening and
-    # bolts into heat-set inserts melted from the cavity side.
-    enclosure += Pos(0, front_mount_y, 0) * Rot(90, 0, 0) * reinforcement_ring(
-        cutout_dia=p.driver_cutout_dia,
-        ring_width=(p.driver_mount_collar_od - p.driver_cutout_dia) / 2,
-        ring_t=sandwich_t,
-    )
-    enclosure += Pos(0, half, 0) * Rot(90, 0, 0) * reinforcement_ring(
-        cutout_dia=p.pr_service_cutout_dia,
-        ring_width=p.ring_width,
-        ring_t=sandwich_t,
-    )
+    # The front and rear are solid end caps. The driver is inserted through the
+    # rear PR/service opening and fastens into shallow heat-set inserts opened
+    # from the cavity side of the solid front face.
 
     driver_insert_bores = _bolt_circle_bores(
         radius=p.driver_bolt_circle_r,
