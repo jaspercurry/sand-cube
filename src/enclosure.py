@@ -16,6 +16,7 @@ from build123d import (
     Box,
     BuildPart,
     BuildSketch,
+    Cone,
     Cylinder,
     Location,
     Mesher,
@@ -55,6 +56,23 @@ def _oriented_cylinder(
     elif axis != "z":
         raise ValueError(f"Unsupported axis: {axis}")
     return Location(center) * cyl
+
+
+def _oriented_cone(
+    *,
+    rear_diameter: float,
+    inner_diameter: float,
+    depth: float,
+    center: tuple[float, float, float],
+) -> Part:
+    """Tapered rear-to-inner cut oriented along Y."""
+    cone = Cone(
+        bottom_radius=inner_diameter / 2,
+        top_radius=rear_diameter / 2,
+        height=depth,
+        align=(Align.CENTER, Align.CENTER, Align.CENTER),
+    )
+    return Location(center) * Rot(90, 0, 0) * cone
 
 
 def _primary_shape(shape: Part) -> Part:
@@ -119,15 +137,15 @@ def _hex_prism_y(
 ) -> Part:
     """Hexagonal prism oriented on Y for a captive connector nut pocket."""
     with BuildPart() as hex_prism:
-        with BuildSketch(Plane.XY):
+        with BuildSketch(Plane.XZ):
             RegularPolygon(
                 radius=across_flats / 2,
                 side_count=6,
                 major_radius=False,
                 rotation=30,
             )
-        extrude(amount=depth, both=True)
-    return Location(center) * Rot(90, 0, 0) * hex_prism.part
+        extrude(amount=depth / 2, both=True)
+    return Location(center) * hex_prism.part
 
 
 def _gx16_rear_cutout() -> Part:
@@ -180,10 +198,19 @@ def _sand_fill_port_cutout(*, x: float, z: float) -> Part:
     """Rear coarse threaded fill port that breaks into the top sand void."""
     half = p.cube_outer / 2
     thread_center_y = half - p.fill_thread_length / 2
+    funnel_depth = 4.0
     extension_depth = (
-        p.outer_skin_t + p.void_t + p.inner_skin_t - p.fill_thread_length + 2.0
+        p.outer_skin_t
+        + p.void_t
+        + p.inner_skin_t
+        - p.fill_thread_length
+        - funnel_depth
+        + 2.0
     )
-    extension_center_y = half - p.fill_thread_length - extension_depth / 2
+    funnel_center_y = half - p.fill_thread_length - funnel_depth / 2
+    extension_center_y = (
+        half - p.fill_thread_length - funnel_depth - extension_depth / 2
+    )
     thread = IsoThread(
         major_diameter=p.fill_thread_major_d,
         pitch=p.fill_thread_pitch,
@@ -211,6 +238,14 @@ def _sand_fill_port_cutout(*, x: float, z: float) -> Part:
             )
         )
         add(Location((x, thread_center_y, z)) * Rot(90, 0, 0) * thread)
+        add(
+            _oriented_cone(
+                rear_diameter=p.fill_thread_core_d,
+                inner_diameter=p.fill_passage_d,
+                depth=funnel_depth,
+                center=(x, funnel_center_y, z),
+            )
+        )
         add(
             _oriented_cylinder(
                 diameter=p.fill_passage_d,
