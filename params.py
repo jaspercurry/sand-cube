@@ -83,14 +83,16 @@ class Params:
 
     # Hidden top reinforcement for future horn bracket and tweeter terminals.
     top_island_x: float = 0.0
-    top_island_y: float = 46.0
-    top_island_w: float = 85.0
-    top_island_d: float = 72.0
+    top_island_y: float = 50.75
+    top_island_w: float = 72.0
+    top_island_d: float = 101.5
     binding_post_spacing: float = 19.05
     binding_post_hole_d: float = 6.35
     binding_post_y: float = 72.0
     binding_post_recess_d: float = 13.0
     binding_post_recess_depth: float = 1.0
+    binding_post_washer_recess_d: float = 13.0
+    binding_post_washer_recess_depth: float = 1.5
     bracket_hole_spacing: float = 50.0
     bracket_hole_d: float = 5.3
     bracket_hole_y: float = 36.0

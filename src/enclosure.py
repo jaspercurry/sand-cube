@@ -220,6 +220,13 @@ def _skin_bridge_posts() -> Part:
     half = p.cube_outer / 2
     void_center = half - p.outer_skin_t - p.void_t / 2
     grid = (-60.0, 0.0, 60.0)
+
+    def in_top_island(x: float, y: float) -> bool:
+        return (
+            abs(x - p.top_island_x) <= p.top_island_w / 2
+            and abs(y - p.top_island_y) <= p.top_island_d / 2
+        )
+
     with BuildPart() as posts:
         for y in grid:
             for z in grid:
@@ -235,6 +242,8 @@ def _skin_bridge_posts() -> Part:
         for x in grid:
             for y in grid:
                 for side in (-1, 1):
+                    if side > 0 and in_top_island(x, y):
+                        continue
                     add(
                         _oriented_cylinder(
                             diameter=p.bracing_post_d,
@@ -261,6 +270,7 @@ def _top_binding_post_cutouts() -> Part:
     """Two BPA-38G binding post holes through the hidden top island."""
     half = p.cube_outer / 2
     top_stack_t = p.outer_skin_t + p.void_t + p.inner_skin_t
+    inner_top_z = half - top_stack_t
     with BuildPart() as cutouts:
         for x in (-p.binding_post_spacing / 2, p.binding_post_spacing / 2):
             add(
@@ -277,6 +287,18 @@ def _top_binding_post_cutouts() -> Part:
                     depth=top_stack_t + 2.0,
                     axis="z",
                     center=(x, p.binding_post_y, half - top_stack_t / 2),
+                )
+            )
+            add(
+                _oriented_cylinder(
+                    diameter=p.binding_post_washer_recess_d,
+                    depth=p.binding_post_washer_recess_depth,
+                    axis="z",
+                    center=(
+                        x,
+                        p.binding_post_y,
+                        inner_top_z + p.binding_post_washer_recess_depth / 2,
+                    ),
                 )
             )
     return cutouts.part
