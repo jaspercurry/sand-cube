@@ -75,6 +75,9 @@ class Params:
     fill_port_x: float = 72.0
     fill_port_z: float = 86.0
     fill_void_z: float = 92.5
+    fill_internal_boss_d: float = 24.0
+    fill_internal_boss_depth: float = 10.0
+    fill_chute_d: float = 14.0
     fill_cap_seat_d: float = 16.0
     fill_cap_seat_depth: float = 1.5
     fill_boss_od: float = 17.0

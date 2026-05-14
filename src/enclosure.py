@@ -215,13 +215,10 @@ def _sand_fill_port_cutout(*, x: float, z: float) -> Part:
     half = p.cube_outer / 2
     thread_center_y = half - p.fill_thread_length / 2
     funnel_depth = 4.0
-    extension_depth = 8.0
     funnel_center_y = half - p.fill_thread_length - funnel_depth / 2
-    extension_center_y = half - p.fill_thread_length - funnel_depth - extension_depth / 2
-    extension_center_z = (z + p.fill_void_z) / 2
-    extension_angle = math.degrees(
-        math.atan2(p.fill_void_z - z, extension_depth)
-    )
+    chute_span = p.fill_void_z - z + p.fill_chute_d
+    chute_center_z = (z + p.fill_void_z) / 2
+    chute_center_y = half - p.outer_skin_t - p.void_t - p.inner_skin_t - 1.5
     thread = IsoThread(
         major_diameter=p.fill_thread_major_d,
         pitch=p.fill_thread_pitch,
@@ -258,14 +255,37 @@ def _sand_fill_port_cutout(*, x: float, z: float) -> Part:
             )
         )
         add(
-            _angled_yz_cylinder(
-                diameter=p.fill_passage_d,
-                depth=extension_depth,
-                angle_deg=90 + extension_angle,
-                center=(x, extension_center_y, extension_center_z),
+            _oriented_cylinder(
+                diameter=p.fill_chute_d,
+                depth=chute_span,
+                axis="z",
+                center=(x, chute_center_y, chute_center_z),
             )
         )
     return cutout.part
+
+
+def _sand_fill_internal_bosses() -> Part:
+    """Rounded cavity-side material that seals the fill chute from the cavity."""
+    half = p.cube_outer / 2
+    boss_center_y = (
+        half
+        - p.outer_skin_t
+        - p.void_t
+        - p.inner_skin_t
+        - p.fill_internal_boss_depth / 2
+    )
+    with BuildPart() as bosses:
+        for fill_x in (-p.fill_port_x, p.fill_port_x):
+            add(
+                _oriented_cylinder(
+                    diameter=p.fill_internal_boss_d,
+                    depth=p.fill_internal_boss_depth,
+                    axis="y",
+                    center=(fill_x, boss_center_y, p.fill_port_z),
+                )
+            )
+    return bosses.part
 
 
 def _skin_bridge_posts() -> Part:
@@ -353,6 +373,8 @@ def build() -> Part:
     enclosure += _skin_bridge_posts()
     enclosure = _primary_shape(enclosure)
     enclosure += _gx16_connector_island()
+    enclosure = _primary_shape(enclosure)
+    enclosure += _sand_fill_internal_bosses()
     enclosure = _primary_shape(enclosure)
 
     # The front and rear are solid end caps. The driver is inserted through the
