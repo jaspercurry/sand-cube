@@ -12,7 +12,7 @@ class Params:
     outer_skin_t: float = 3.0
     void_t: float = 12.0
     inner_skin_t: float = 3.0
-    edge_chamfer: float = 2.0
+    edge_fillet_r: float = 3.0
 
     # Dayton Audio Epique E150HE-44, Parts Express 295-102.
     driver_cutout_dia: float = 122.0

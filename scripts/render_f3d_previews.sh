@@ -40,6 +40,5 @@ f3d "${COMMON[@]}" \
 f3d "${COMMON[@]}" \
   --output previews/sand_cube_f3d_iso.png \
   --resolution 1800,1400 \
-  --camera-direction=-1,-1,0.55 \
+  --camera-direction=-1,1,0.55 \
   --camera-zoom-factor=0.82
-

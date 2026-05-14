@@ -25,6 +25,7 @@ from build123d import (
     Unit,
     add,
     export_step,
+    fillet,
 )
 
 from params import p
@@ -58,6 +59,27 @@ def _primary_shape(shape: Part) -> Part:
     if hasattr(shape, "bounding_box"):
         return shape
     return max(shape, key=lambda item: item.volume)
+
+
+def _external_cube_edges(part: Part) -> list:
+    """Find the 12 long outside cube edges and avoid circular feature edges."""
+    half = p.cube_outer / 2
+    edges = []
+    for edge in part.edges():
+        bb = edge.bounding_box()
+        sizes = (bb.size.X, bb.size.Y, bb.size.Z)
+        centers = (
+            (bb.min.X + bb.max.X) / 2,
+            (bb.min.Y + bb.max.Y) / 2,
+            (bb.min.Z + bb.max.Z) / 2,
+        )
+        pinned_axes = sum(
+            abs(abs(center) - half) < 0.01 and size < 0.01
+            for center, size in zip(centers, sizes)
+        )
+        if pinned_axes >= 2 and max(sizes) > p.cube_outer * 0.65:
+            edges.append(edge)
+    return edges
 
 
 def _bolt_circle_bores(
@@ -152,6 +174,10 @@ def build() -> Part:
     enclosure = _primary_shape(enclosure)
     enclosure -= driver_insert_bores
     enclosure = _primary_shape(enclosure)
+
+    if p.edge_fillet_r > 0:
+        enclosure = fillet(_external_cube_edges(enclosure), radius=p.edge_fillet_r)
+        enclosure = _primary_shape(enclosure)
 
     return enclosure
 
