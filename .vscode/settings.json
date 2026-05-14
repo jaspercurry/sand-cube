@@ -1,0 +1,26 @@
+{
+  "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
+  "OcpCadViewer.advanced.quickstartCommands": {
+    "build123d": [
+      "UV_CACHE_DIR=.uv-cache UV_PYTHON_INSTALL_DIR=.uv-python uv add -p {python} ocp_vscode=={ocp_vscode_version} build123d"
+    ]
+  },
+  "OcpCadViewer.advanced.installCommands": {
+    "build123d": [
+      "UV_CACHE_DIR=.uv-cache UV_PYTHON_INSTALL_DIR=.uv-python uv add -p {python} --upgrade build123d"
+    ],
+    "ocp_vscode": [
+      "UV_CACHE_DIR=.uv-cache UV_PYTHON_INSTALL_DIR=.uv-python uv add -p {python} --upgrade ocp_vscode=={ocp_vscode_version}"
+    ],
+    "ocp_tessellate": [
+      "UV_CACHE_DIR=.uv-cache UV_PYTHON_INSTALL_DIR=.uv-python uv add -p {python} --upgrade ocp_tessellate"
+    ],
+    "ipykernel": [
+      "UV_CACHE_DIR=.uv-cache UV_PYTHON_INSTALL_DIR=.uv-python uv add -p {python} --upgrade ipykernel"
+    ],
+    "jupyter_console": [
+      "UV_CACHE_DIR=.uv-cache UV_PYTHON_INSTALL_DIR=.uv-python uv add -p {python} --upgrade jupyter_console"
+    ]
+  }
+}
+

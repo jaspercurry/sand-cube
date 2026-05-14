@@ -29,6 +29,21 @@ Outputs are written to `build/`:
 - `sand_cube.3mf`
 - `diagnostics.json`
 
+## View In OCP CAD Viewer
+
+Install the recommended VS Code extension:
+
+```bash
+code --install-extension bernhard-42.ocp-cad-viewer
+```
+
+Then start the OCP CAD Viewer from the VS Code/Cursor sidebar and run:
+
+```bash
+UV_CACHE_DIR=.uv-cache UV_PYTHON_INSTALL_DIR=.uv-python XDG_CACHE_HOME=.cache \
+  uv run python src/show_model.py
+```
+
 ## Planned Stack
 
 - Python 3.12
