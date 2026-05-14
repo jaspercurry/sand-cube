@@ -16,7 +16,6 @@ from build123d import (
     Box,
     BuildPart,
     BuildSketch,
-    Cone,
     Cylinder,
     Location,
     Mesher,
@@ -56,65 +55,6 @@ def _oriented_cylinder(
     elif axis != "z":
         raise ValueError(f"Unsupported axis: {axis}")
     return Location(center) * cyl
-
-
-def _oriented_cone(
-    *,
-    rear_diameter: float,
-    inner_diameter: float,
-    depth: float,
-    center: tuple[float, float, float],
-) -> Part:
-    """Tapered rear-to-inner cut oriented along Y."""
-    cone = Cone(
-        bottom_radius=inner_diameter / 2,
-        top_radius=rear_diameter / 2,
-        height=depth,
-        align=(Align.CENTER, Align.CENTER, Align.CENTER),
-    )
-    return Location(center) * Rot(90, 0, 0) * cone
-
-
-def _angled_yz_cylinder(
-    *,
-    diameter: float,
-    depth: float,
-    angle_deg: float,
-    center: tuple[float, float, float],
-) -> Part:
-    """Cylinder mostly along Y, angled toward +Z inside the rear wall."""
-    cyl = Cylinder(
-        radius=diameter / 2,
-        height=depth,
-        align=(Align.CENTER, Align.CENTER, Align.CENTER),
-    )
-    return Location(center) * Rot(angle_deg, 0, 0) * cyl
-
-
-def _yz_cylinder_between(
-    *,
-    diameter: float,
-    start: tuple[float, float, float],
-    end: tuple[float, float, float],
-) -> Part:
-    """Cylinder between two points that only vary in Y/Z."""
-    if not math.isclose(start[0], end[0], abs_tol=1e-6):
-        raise ValueError("YZ cylinder endpoints must share X")
-    dy = end[1] - start[1]
-    dz = end[2] - start[2]
-    depth = math.hypot(dy, dz)
-    angle_deg = math.degrees(math.atan2(-dy, dz))
-    center = (
-        start[0],
-        (start[1] + end[1]) / 2,
-        (start[2] + end[2]) / 2,
-    )
-    cyl = Cylinder(
-        radius=diameter / 2,
-        height=depth,
-        align=(Align.CENTER, Align.CENTER, Align.CENTER),
-    )
-    return Location(center) * Rot(angle_deg, 0, 0) * cyl
 
 
 def _primary_shape(shape: Part) -> Part:
@@ -239,12 +179,9 @@ def _gx16_connector_island() -> Part:
 def _sand_fill_port_cutout(*, x: float, z: float) -> Part:
     """Rear coarse threaded fill port that breaks into the top sand void."""
     half = p.cube_outer / 2
+    port_depth = p.outer_skin_t + p.void_t + p.inner_skin_t + 0.8
     thread_center_y = half - p.fill_thread_length / 2
-    funnel_depth = 4.0
-    funnel_center_y = half - p.fill_thread_length - funnel_depth / 2
-    duct_start_y = half - p.fill_thread_length - funnel_depth + 0.2
-    duct_end_y = half - p.outer_skin_t - p.void_t - p.inner_skin_t - 1.0
-    duct_end_z = p.fill_void_z + 1.5
+    port_center_y = half - port_depth / 2
     thread = IsoThread(
         major_diameter=p.fill_thread_major_d,
         pitch=p.fill_thread_pitch,
@@ -257,60 +194,14 @@ def _sand_fill_port_cutout(*, x: float, z: float) -> Part:
     with BuildPart() as cutout:
         add(
             _oriented_cylinder(
-                diameter=p.fill_cap_seat_d,
-                depth=p.fill_cap_seat_depth,
-                axis="y",
-                center=(x, half - p.fill_cap_seat_depth / 2, z),
-            )
-        )
-        add(
-            _oriented_cylinder(
                 diameter=p.fill_thread_core_d,
-                depth=p.fill_thread_length + 0.4,
+                depth=port_depth,
                 axis="y",
-                center=(x, thread_center_y, z),
+                center=(x, port_center_y, z),
             )
         )
         add(Location((x, thread_center_y, z)) * Rot(90, 0, 0) * thread)
-        add(
-            _oriented_cone(
-                rear_diameter=p.fill_thread_core_d,
-                inner_diameter=p.fill_passage_d,
-                depth=funnel_depth,
-                center=(x, funnel_center_y, z),
-            )
-        )
-        add(
-            _yz_cylinder_between(
-                diameter=p.fill_chute_d,
-                start=(x, duct_start_y, z),
-                end=(x, duct_end_y, duct_end_z),
-            )
-        )
     return cutout.part
-
-
-def _sand_fill_internal_bosses() -> Part:
-    """Rounded cavity-side material that seals the fill chute from the cavity."""
-    half = p.cube_outer / 2
-    boss_center_y = (
-        half
-        - p.outer_skin_t
-        - p.void_t
-        - p.inner_skin_t
-        - p.fill_internal_boss_depth / 2
-    )
-    with BuildPart() as bosses:
-        for fill_x in (-p.fill_port_x, p.fill_port_x):
-            add(
-                _oriented_cylinder(
-                    diameter=p.fill_internal_boss_d,
-                    depth=p.fill_internal_boss_depth,
-                    axis="y",
-                    center=(fill_x, boss_center_y, p.fill_port_z),
-                )
-            )
-    return bosses.part
 
 
 def _skin_bridge_posts() -> Part:
@@ -398,8 +289,6 @@ def build() -> Part:
     enclosure += _skin_bridge_posts()
     enclosure = _primary_shape(enclosure)
     enclosure += _gx16_connector_island()
-    enclosure = _primary_shape(enclosure)
-    enclosure += _sand_fill_internal_bosses()
     enclosure = _primary_shape(enclosure)
 
     # The front and rear are solid end caps. The driver is inserted through the
