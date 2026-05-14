@@ -75,6 +75,22 @@ def _oriented_cone(
     return Location(center) * Rot(90, 0, 0) * cone
 
 
+def _angled_yz_cylinder(
+    *,
+    diameter: float,
+    depth: float,
+    angle_deg: float,
+    center: tuple[float, float, float],
+) -> Part:
+    """Cylinder mostly along Y, angled toward +Z inside the rear wall."""
+    cyl = Cylinder(
+        radius=diameter / 2,
+        height=depth,
+        align=(Align.CENTER, Align.CENTER, Align.CENTER),
+    )
+    return Location(center) * Rot(angle_deg, 0, 0) * cyl
+
+
 def _primary_shape(shape: Part) -> Part:
     """Drop tiny OpenCascade boolean crumbs and keep the main enclosure body."""
     if hasattr(shape, "bounding_box"):
@@ -199,17 +215,12 @@ def _sand_fill_port_cutout(*, x: float, z: float) -> Part:
     half = p.cube_outer / 2
     thread_center_y = half - p.fill_thread_length / 2
     funnel_depth = 4.0
-    extension_depth = (
-        p.outer_skin_t
-        + p.void_t
-        + p.inner_skin_t
-        - p.fill_thread_length
-        - funnel_depth
-        + 2.0
-    )
+    extension_depth = 8.0
     funnel_center_y = half - p.fill_thread_length - funnel_depth / 2
-    extension_center_y = (
-        half - p.fill_thread_length - funnel_depth - extension_depth / 2
+    extension_center_y = half - p.fill_thread_length - funnel_depth - extension_depth / 2
+    extension_center_z = (z + p.fill_void_z) / 2
+    extension_angle = math.degrees(
+        math.atan2(p.fill_void_z - z, extension_depth)
     )
     thread = IsoThread(
         major_diameter=p.fill_thread_major_d,
@@ -247,11 +258,11 @@ def _sand_fill_port_cutout(*, x: float, z: float) -> Part:
             )
         )
         add(
-            _oriented_cylinder(
+            _angled_yz_cylinder(
                 diameter=p.fill_passage_d,
                 depth=extension_depth,
-                axis="y",
-                center=(x, extension_center_y, z),
+                angle_deg=90 + extension_angle,
+                center=(x, extension_center_y, extension_center_z),
             )
         )
     return cutout.part
