@@ -53,39 +53,23 @@ def _oriented_cylinder(
     return Location(center) * cyl
 
 
-def _bolt_circle_bosses_and_bores(
+def _primary_shape(shape: Part) -> Part:
+    """Drop tiny OpenCascade boolean crumbs and keep the main enclosure body."""
+    if hasattr(shape, "bounding_box"):
+        return shape
+    return max(shape, key=lambda item: item.volume)
+
+
+def _bolt_circle_bores(
     *,
     radius: float,
     count: int,
-    boss_center_y: float,
     bore_open_y: float,
     bore_direction_y: int,
-) -> tuple[Part, Part]:
-    """Create bolt-circle bosses plus blind M4 insert bores.
-
-    The bosses are solid until their matching bore tools are subtracted. This
-    lets us choose which side the insert is installed from, which matters for a
-    rear-mounted driver: its insert holes open from the cabinet interior, not
-    from the visible front face.
-    """
-    full_h = p.outer_skin_t + p.void_t + p.inner_skin_t
+) -> Part:
+    """Create blind M4 heat-set insert bores on an X/Z bolt circle."""
     bore_depth = p.insert_bore_depth + 0.4
     bore_center_y = bore_open_y + bore_direction_y * bore_depth / 2
-
-    with BuildPart() as bosses:
-        for index in range(count):
-            angle = math.tau * index / count + (math.tau / 8 if count == 4 else 0)
-            x = radius * math.cos(angle)
-            z = radius * math.sin(angle)
-            add(
-                _oriented_cylinder(
-                    diameter=p.boss_od,
-                    depth=full_h,
-                    axis="y",
-                    center=(x, boss_center_y, z),
-                )
-            )
-
     with BuildPart() as bores:
         for index in range(count):
             angle = math.tau * index / count + (math.tau / 8 if count == 4 else 0)
@@ -99,7 +83,7 @@ def _bolt_circle_bosses_and_bores(
                     center=(x, bore_center_y, z),
                 )
             )
-    return bosses.part, bores.part
+    return bores.part
 
 
 def build() -> Part:
@@ -110,7 +94,6 @@ def build() -> Part:
     half = p.cube_outer / 2
     inner_face_y = inner_outer / 2
     front_inner_y = -inner_face_y
-    rear_inner_y = inner_face_y
     sandwich_t = p.outer_skin_t + p.void_t + p.inner_skin_t
     through = p.cube_outer + 10
 
@@ -121,38 +104,30 @@ def build() -> Part:
 
     enclosure = (outer_solid - sand_void) + (inner_solid - acoustic_cavity)
 
-    # Driver is rear-mounted: the reinforcement ring sits inside the acoustic
-    # cavity on the back side of the front baffle.
-    enclosure += Pos(0, front_inner_y + p.ring_t, 0) * Rot(90, 0, 0) * reinforcement_ring(
+    # Driver is rear-mounted: this structural collar bridges the full front
+    # sandwich. The driver is inserted through the rear PR/service opening and
+    # bolts into heat-set inserts melted from the cavity side.
+    enclosure += Pos(0, front_inner_y, 0) * Rot(90, 0, 0) * reinforcement_ring(
         cutout_dia=p.driver_cutout_dia,
-        ring_width=p.ring_width,
-        ring_t=p.ring_t,
+        ring_width=(p.driver_mount_collar_od - p.driver_cutout_dia) / 2,
+        ring_t=sandwich_t,
     )
-    enclosure += Pos(0, rear_inner_y, 0) * Rot(90, 0, 0) * reinforcement_ring(
-        cutout_dia=p.pr_cutout_dia,
+    enclosure += Pos(0, half, 0) * Rot(90, 0, 0) * reinforcement_ring(
+        cutout_dia=p.pr_service_cutout_dia,
         ring_width=p.ring_width,
-        ring_t=p.ring_t,
+        ring_t=sandwich_t,
     )
 
-    driver_bosses, driver_insert_bores = _bolt_circle_bosses_and_bores(
+    driver_insert_bores = _bolt_circle_bores(
         radius=p.driver_bolt_circle_r,
         count=p.driver_screw_count,
-        boss_center_y=-half + sandwich_t / 2,
         bore_open_y=front_inner_y,
         bore_direction_y=-1,
     )
-    pr_bosses, pr_insert_bores = _bolt_circle_bosses_and_bores(
-        radius=p.pr_bolt_circle_r,
-        count=p.pr_screw_count,
-        boss_center_y=half - sandwich_t / 2,
-        bore_open_y=half,
-        bore_direction_y=-1,
-    )
-    enclosure += driver_bosses + pr_bosses
 
     # Driver front face is -Y; PR rear face is +Y. Cut after adding hidden
     # rear-mount structure so the visible recess carves the front surface clean.
-    enclosure -= Pos(0, -half - 0.2, 0) * Rot(90, 0, 0) * black_hole_baffle(
+    enclosure -= Pos(0, -half, 0) * Rot(-90, 0, 0) * black_hole_baffle(
         face_thickness=sandwich_t,
         driver_cutout_dia=p.driver_cutout_dia,
         blend_radius=p.baffle_blend_r,
@@ -160,19 +135,23 @@ def build() -> Part:
         tangent_in=p.baffle_tangent_in,
         tangent_out=p.baffle_tangent_out,
     )
+    enclosure = _primary_shape(enclosure)
     enclosure -= _oriented_cylinder(
         diameter=p.driver_cutout_dia,
         depth=through,
         axis="y",
         center=(0, -half, 0),
     )
+    enclosure = _primary_shape(enclosure)
     enclosure -= _oriented_cylinder(
-        diameter=p.pr_cutout_dia,
+        diameter=p.pr_service_cutout_dia,
         depth=through,
         axis="y",
         center=(0, half, 0),
     )
-    enclosure -= driver_insert_bores + pr_insert_bores
+    enclosure = _primary_shape(enclosure)
+    enclosure -= driver_insert_bores
+    enclosure = _primary_shape(enclosure)
 
     return enclosure
 

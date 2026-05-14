@@ -27,16 +27,19 @@ class Params:
     # Dayton spec sheet: OD 181 +/- 0.5, cutout 151.5 +/- 0.5,
     # depth 54 +/- 0.5, 4 holes on a 140 mm bolt circle.
     pr_cutout_dia: float = 151.5
+    # Rear opening must pass the E150HE-44 during assembly, then be covered by
+    # the externally mounted PR flange. Verify against the physical PR gasket.
+    pr_service_cutout_dia: float = 156.0
     pr_overall_dia: float = 181.0
     pr_bolt_circle_r: float = 70.0
     pr_depth: float = 54.0
     pr_screw_count: int = 4
 
     # Recessed front baffle.
-    baffle_blend_r: float = 14.0
-    baffle_blend_depth: float = 9.0
+    baffle_blend_r: float = 34.0
+    baffle_blend_depth: float = 11.0
     baffle_tangent_in: float = 1.6
-    baffle_tangent_out: float = 1.0
+    baffle_tangent_out: float = 0.8
 
     # Bracing and inserts.
     bracing_grid_pitch: float = 60.0
@@ -47,6 +50,7 @@ class Params:
     insert_bore_d: float = 5.6
     insert_bore_depth: float = 9.0
     boss_od: float = 8.0
+    driver_mount_collar_od: float = 162.0
 
     # Connectors and fill port.
     gx16_hole_d: float = 16.2

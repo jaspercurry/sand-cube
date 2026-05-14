@@ -54,6 +54,11 @@ tool assumptions, and BOM costs need correction before committing geometry.
   cavity is roughly 4.66 L before driver, PR, bracing, and rings. Dayton's
   product page lists a 0.15 ft3 sealed recommendation for the E150HE-44, about
   4.25 L, so the design is in the neighborhood but not spacious.
+- Verify rear assembly clearance with physical parts. The E150HE-44 is
+  rear-mounted and must pass through the rear PR opening before the PR is
+  installed. The current CAD uses a 156 mm rear service aperture under the
+  externally mounted PR flange because the sourced 151.5 mm PR cutout is too
+  tight for a 152 mm driver OD once tolerances are included.
 - Confirm whether build123d-mcp is installable and currently maintained enough
   to trust for this project. It should be treated as optional until installed.
 - Decide whether the first CAD milestone exports STEP only, or also attempts
