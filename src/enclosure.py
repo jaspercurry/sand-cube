@@ -136,9 +136,8 @@ def _hex_prism_y(
 def _gx16_rear_cutout() -> Part:
     """GX16 bottom-right rear connector cutout with captive inner hex pocket."""
     half = p.cube_outer / 2
-    sandwich_t = p.outer_skin_t + p.void_t + p.inner_skin_t
     panel_inner_y = half - p.gx16_flange_recess_depth - p.gx16_panel_land_t
-    inner_face_y = half - sandwich_t
+    inner_face_y = half - p.rear_cap_t
     hex_depth = panel_inner_y - inner_face_y + 0.2
     hex_center_y = inner_face_y + hex_depth / 2 - 0.1
     hex_to_pr_angle = math.degrees(math.atan2(-p.gx16_z, -p.gx16_x))
@@ -154,9 +153,9 @@ def _gx16_rear_cutout() -> Part:
         add(
             _oriented_cylinder(
                 diameter=p.gx16_hole_d,
-                depth=sandwich_t + 2,
+                depth=p.rear_cap_t + 2,
                 axis="y",
-                center=(p.gx16_x, half - sandwich_t / 2, p.gx16_z),
+                center=(p.gx16_x, half - p.rear_cap_t / 2, p.gx16_z),
             )
         )
         add(
@@ -173,10 +172,9 @@ def _gx16_rear_cutout() -> Part:
 def _gx16_connector_island() -> Part:
     """Local solid rear-cap island around the GX16 inner nut pocket."""
     half = p.cube_outer / 2
-    sandwich_t = p.outer_skin_t + p.void_t + p.inner_skin_t
-    return Pos(p.gx16_x, half - sandwich_t / 2, p.gx16_z) * Box(
+    return Pos(p.gx16_x, half - p.rear_cap_t / 2, p.gx16_z) * Box(
         p.gx16_island_xy,
-        sandwich_t,
+        p.rear_cap_t,
         p.gx16_island_xy,
     )
 
@@ -184,7 +182,7 @@ def _gx16_connector_island() -> Part:
 def _sand_fill_port_cutout(*, x: float, z: float) -> Part:
     """Rear coarse threaded fill port that breaks into the top sand void."""
     half = p.cube_outer / 2
-    port_depth = p.outer_skin_t + p.void_t + p.inner_skin_t + 0.8
+    port_depth = p.rear_cap_t + 0.8
     thread_center_y = half - p.fill_thread_length / 2 + 0.2
     port_center_y = half - port_depth / 2
     thread = IsoThread(
@@ -277,25 +275,36 @@ def build() -> Part:
     shell_span = p.cube_outer - 2 * p.outer_skin_t
     cavity = p.cube_outer - 2 * (p.outer_skin_t + p.void_t + p.inner_skin_t)
     half = p.cube_outer / 2
-    cavity_half = cavity / 2
-    front_mount_y = -cavity_half
+    front_inner_y = -half + p.outer_skin_t + p.void_t + p.inner_skin_t
+    rear_inner_y = half - p.rear_cap_t
+    cavity_y = rear_inner_y - front_inner_y
+    cavity_center_y = (front_inner_y + rear_inner_y) / 2
+    front_mount_y = front_inner_y
     sandwich_t = p.outer_skin_t + p.void_t + p.inner_skin_t
     through = p.cube_outer + 10
 
     outer_solid = Box(p.cube_outer, p.cube_outer, p.cube_outer)
-    acoustic_cavity = Box(cavity, cavity, cavity)
+    acoustic_cavity = Pos(0, cavity_center_y, 0) * Box(cavity, cavity_y, cavity)
 
     enclosure = outer_solid - acoustic_cavity
     for x in (-1, 1):
-        enclosure -= Pos(x * (half - p.outer_skin_t - p.void_t / 2), 0, 0) * Box(
+        enclosure -= Pos(
+            x * (half - p.outer_skin_t - p.void_t / 2),
+            cavity_center_y,
+            0,
+        ) * Box(
             p.void_t,
-            cavity,
+            cavity_y,
             shell_span,
         )
     for z in (-1, 1):
-        enclosure -= Pos(0, 0, z * (half - p.outer_skin_t - p.void_t / 2)) * Box(
+        enclosure -= Pos(
+            0,
+            cavity_center_y,
+            z * (half - p.outer_skin_t - p.void_t / 2),
+        ) * Box(
             shell_span,
-            cavity,
+            cavity_y,
             p.void_t,
         )
     enclosure = _primary_shape(enclosure)
@@ -377,7 +386,10 @@ def diagnostics(part: Part) -> dict[str, object]:
     petg_density_g_per_mm3 = 1.27e-3
     mass_g = volume_mm3 * petg_density_g_per_mm3
     cavity_side = p.cube_outer - 2 * (p.outer_skin_t + p.void_t + p.inner_skin_t)
-    cavity_l = cavity_side**3 / 1_000_000
+    front_inner_y = -p.cube_outer / 2 + p.outer_skin_t + p.void_t + p.inner_skin_t
+    rear_inner_y = p.cube_outer / 2 - p.rear_cap_t
+    cavity_y = rear_inner_y - front_inner_y
+    cavity_l = cavity_side * cavity_y * cavity_side / 1_000_000
 
     return {
         "bounding_box_mm": [

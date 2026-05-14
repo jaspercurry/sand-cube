@@ -12,6 +12,7 @@ class Params:
     outer_skin_t: float = 3.0
     void_t: float = 12.0
     inner_skin_t: float = 3.0
+    rear_cap_t: float = 14.0
     edge_fillet_r: float = 3.0
 
     # Dayton Audio Epique E150HE-44, Parts Express 295-102.
@@ -70,7 +71,7 @@ class Params:
     fill_thread_major_d: float = 12.0
     fill_thread_pitch: float = 2.0
     fill_thread_core_d: float = 10.0
-    fill_thread_length: float = 10.0
+    fill_thread_length: float = 14.0
     fill_passage_d: float = 10.0
     fill_port_x: float = 72.0
     fill_port_z: float = 92.0
