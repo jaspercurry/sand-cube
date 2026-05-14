@@ -246,6 +246,77 @@ def _skin_bridge_posts() -> Part:
     return posts.part
 
 
+def _top_reinforcement_island() -> Part:
+    """Hidden solid top island for horn bracket bolts and tweeter terminals."""
+    half = p.cube_outer / 2
+    top_stack_t = p.outer_skin_t + p.void_t + p.inner_skin_t
+    return Pos(p.top_island_x, p.top_island_y, half - top_stack_t / 2) * Box(
+        p.top_island_w,
+        p.top_island_d,
+        top_stack_t,
+    )
+
+
+def _top_binding_post_cutouts() -> Part:
+    """Two BPA-38G binding post holes through the hidden top island."""
+    half = p.cube_outer / 2
+    top_stack_t = p.outer_skin_t + p.void_t + p.inner_skin_t
+    with BuildPart() as cutouts:
+        for x in (-p.binding_post_spacing / 2, p.binding_post_spacing / 2):
+            add(
+                _oriented_cylinder(
+                    diameter=p.binding_post_recess_d,
+                    depth=p.binding_post_recess_depth,
+                    axis="z",
+                    center=(x, p.binding_post_y, half - p.binding_post_recess_depth / 2),
+                )
+            )
+            add(
+                _oriented_cylinder(
+                    diameter=p.binding_post_hole_d,
+                    depth=top_stack_t + 2.0,
+                    axis="z",
+                    center=(x, p.binding_post_y, half - top_stack_t / 2),
+                )
+            )
+    return cutouts.part
+
+
+def _top_bracket_cutouts() -> Part:
+    """50 x 50 mm M5 bracket holes with internal washer counterbores."""
+    half = p.cube_outer / 2
+    top_stack_t = p.outer_skin_t + p.void_t + p.inner_skin_t
+    inner_top_z = half - top_stack_t
+    spacing = p.bracket_hole_spacing / 2
+    with BuildPart() as cutouts:
+        for x in (-spacing, spacing):
+            for y in (
+                p.bracket_hole_y - spacing,
+                p.bracket_hole_y + spacing,
+            ):
+                add(
+                    _oriented_cylinder(
+                        diameter=p.bracket_hole_d,
+                        depth=top_stack_t + 2.0,
+                        axis="z",
+                        center=(x, y, half - top_stack_t / 2),
+                    )
+                )
+                add(
+                    _oriented_cylinder(
+                        diameter=p.bracket_washer_recess_d,
+                        depth=p.bracket_washer_recess_depth,
+                        axis="z",
+                        center=(
+                            x,
+                            y,
+                            inner_top_z + p.bracket_washer_recess_depth / 2,
+                        ),
+                    )
+                )
+    return cutouts.part
+
+
 def build_fill_plug() -> Part:
     """Printable coarse-thread sand-fill plug for the rear fill ports."""
     thread = IsoThread(
@@ -312,6 +383,8 @@ def build() -> Part:
     enclosure = _primary_shape(enclosure)
     enclosure += _gx16_connector_island()
     enclosure = _primary_shape(enclosure)
+    enclosure += _top_reinforcement_island()
+    enclosure = _primary_shape(enclosure)
 
     # The front and rear are solid end caps. The driver is inserted through the
     # rear PR/service opening and fastens into shallow heat-set inserts opened
@@ -373,6 +446,10 @@ def build() -> Part:
     for fill_x in (-p.fill_port_x, p.fill_port_x):
         enclosure -= _sand_fill_port_cutout(x=fill_x, z=p.fill_port_z)
         enclosure = _primary_shape(enclosure)
+    enclosure -= _top_binding_post_cutouts()
+    enclosure = _primary_shape(enclosure)
+    enclosure -= _top_bracket_cutouts()
+    enclosure = _primary_shape(enclosure)
 
     if p.edge_fillet_r > 0:
         enclosure = fillet(_external_cube_edges(enclosure), radius=p.edge_fillet_r)
