@@ -246,9 +246,19 @@ def _revolved_meridian_body(
     profile: list[tuple[float, float]],
     *,
     wall_t: float,
+    throat_overlap: float = 0.0,
 ) -> Solid:
     """Create the horn wall by revolving one closed meridian section."""
     outer = [(radius + wall_t, z) for radius, z in profile]
+
+    def line_edge(
+        start: tuple[float, float],
+        end: tuple[float, float],
+    ):
+        return BRepBuilderAPI_MakeEdge(
+            gp_Pnt(start[0], 0, start[1]),
+            gp_Pnt(end[0], 0, end[1]),
+        ).Edge()
 
     def spline_edge(points: list[tuple[float, float]]):
         point_array = TColgp_Array1OfPnt(1, len(points))
@@ -258,20 +268,18 @@ def _revolved_meridian_body(
         return BRepBuilderAPI_MakeEdge(curve).Edge()
 
     wire_maker = BRepBuilderAPI_MakeWire()
+    if throat_overlap > 0:
+        throat_inner = (profile[0][0], profile[0][1] - throat_overlap)
+        throat_outer = (outer[0][0], outer[0][1] - throat_overlap)
+        wire_maker.Add(line_edge(throat_inner, profile[0]))
     wire_maker.Add(spline_edge(profile))
-    wire_maker.Add(
-        BRepBuilderAPI_MakeEdge(
-            gp_Pnt(profile[-1][0], 0, profile[-1][1]),
-            gp_Pnt(outer[-1][0], 0, outer[-1][1]),
-        ).Edge()
-    )
+    wire_maker.Add(line_edge(profile[-1], outer[-1]))
     wire_maker.Add(spline_edge(list(reversed(outer))))
-    wire_maker.Add(
-        BRepBuilderAPI_MakeEdge(
-            gp_Pnt(outer[0][0], 0, outer[0][1]),
-            gp_Pnt(profile[0][0], 0, profile[0][1]),
-        ).Edge()
-    )
+    if throat_overlap > 0:
+        wire_maker.Add(line_edge(outer[0], throat_outer))
+        wire_maker.Add(line_edge(throat_outer, throat_inner))
+    else:
+        wire_maker.Add(line_edge(outer[0], profile[0]))
     if not wire_maker.IsDone():
         raise ValueError("Unable to make horn meridian wire")
 
@@ -321,7 +329,15 @@ def build_jmlc_horn(
     )
     length = max(z for _radius, z in inner)
     mouth_z = inner[-1][1]
-    horn_body = _revolved_meridian_body(inner, wall_t=wall_t)
+    # Give the throat wall real overlap into the flange instead of a
+    # face-to-face contact at z=0. That keeps STEP importers from assigning the
+    # throat annulus to the flange face in odd ways.
+    throat_overlap = min(1.0, flange_t * 0.2)
+    horn_body = _revolved_meridian_body(
+        inner,
+        wall_t=wall_t,
+        throat_overlap=throat_overlap,
+    )
 
     flange = Cylinder(
         radius=flange_d / 2,
