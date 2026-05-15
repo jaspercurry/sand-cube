@@ -103,10 +103,10 @@ class Params:
     # B&C DE250-8 Le Cleac'h / JMLC axisymmetric horn.
     horn_throat_d: float = 25.4
     horn_mouth_outer_d: float = 203.0
-    horn_length: float = 140.0
     horn_wall_t: float = 3.2
     horn_wavefront_t: float = 0.8
     horn_throat_angle_deg: float = 8.0
+    horn_exit_angle_deg: float = 140.0
     horn_profile_step: float = 0.5
     horn_lip_r: float = 1.6
     horn_flange_d: float = 96.0

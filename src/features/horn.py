@@ -6,22 +6,22 @@ import math
 
 from build123d import (
     Align,
-    Axis,
-    BuildLine,
-    BuildPart,
-    BuildSketch,
     Cylinder,
     Location,
     Mode,
     Part,
-    Plane,
-    Polyline,
-    Spline,
+    Solid,
     Torus,
-    add,
-    make_face,
-    revolve,
 )
+from OCP.BRepBuilderAPI import (
+    BRepBuilderAPI_MakeEdge,
+    BRepBuilderAPI_MakeFace,
+    BRepBuilderAPI_MakeWire,
+)
+from OCP.BRepPrimAPI import BRepPrimAPI_MakeRevol
+from OCP.GeomAPI import GeomAPI_PointsToBSpline
+from OCP.gp import gp_Ax1, gp_Dir, gp_Pnt
+from OCP.TColgp import TColgp_Array1OfPnt
 
 
 def _cylinder_z(
@@ -37,6 +37,12 @@ def _cylinder_z(
         mode=Mode.PRIVATE,
     )
     return Location(center) * cyl
+
+
+def _primary_shape(shape):
+    if hasattr(shape, "bounding_box"):
+        return shape
+    return max(shape, key=lambda item: item.volume)
 
 
 def _target_area(
@@ -62,7 +68,7 @@ def _jmlc_points_for_cutoff(
     throat_angle_deg: float,
     step: float,
     sound_speed_mm_s: float = 344_000.0,
-) -> list[tuple[float, float]]:
+) -> tuple[list[tuple[float, float]], float]:
     """Derive Le Cleac'h wall points with the JMLC recurrence.
 
     Returned points are ``(radius, axial_z)`` samples in millimeters. The
@@ -126,29 +132,31 @@ def _jmlc_points_for_cutoff(
         raise ValueError("JMLC recurrence did not reach the requested mouth")
 
     # Interpolate the last step to hit the mouth radius exactly.
+    terminal_phi = phi[-1]
     if yp[-1] > mouth_inner_r:
         t = (mouth_inner_r - yp[-2]) / (yp[-1] - yp[-2])
         xp[-1] = xp[-2] + t * (xp[-1] - xp[-2])
         yp[-1] = mouth_inner_r
+        terminal_phi = phi[-2] + t * (phi[-1] - phi[-2])
 
     z0 = xp[0]
-    return [(r, z - z0) for r, z in zip(yp, xp)]
+    return [(r, z - z0) for r, z in zip(yp, xp)], math.degrees(terminal_phi)
 
 
-def jmlc_cutoff_hz_for_dimensions(
+def jmlc_cutoff_hz_for_exit_angle(
     *,
     throat_d: float,
     mouth_inner_r: float,
-    length: float,
+    exit_angle_deg: float,
     wavefront_t: float,
     throat_angle_deg: float,
     step: float,
 ) -> float:
-    """Solve the cutoff that yields the requested axial length."""
-    low, high = 450.0, 900.0
+    """Solve the cutoff that yields the requested wall angle at the mouth."""
+    low, high = 450.0, 950.0
 
-    def length_at(cutoff_hz: float) -> float:
-        points = _jmlc_points_for_cutoff(
+    def angle_at(cutoff_hz: float) -> float:
+        _points, terminal_angle = _jmlc_points_for_cutoff(
             throat_d=throat_d,
             mouth_inner_r=mouth_inner_r,
             cutoff_hz=cutoff_hz,
@@ -156,19 +164,19 @@ def jmlc_cutoff_hz_for_dimensions(
             throat_angle_deg=throat_angle_deg,
             step=step,
         )
-        return points[-1][1]
+        return terminal_angle
 
-    low_len = length_at(low)
-    high_len = length_at(high)
-    if low_len < length or high_len > length:
+    low_angle = angle_at(low)
+    high_angle = angle_at(high)
+    if low_angle > exit_angle_deg or high_angle < exit_angle_deg:
         raise ValueError(
-            "Unable to bracket JMLC cutoff for the requested horn dimensions"
+            "Unable to bracket JMLC cutoff for the requested exit angle"
         )
 
     for _ in range(32):
         mid = (low + high) / 2
-        mid_len = length_at(mid)
-        if mid_len > length:
+        mid_angle = angle_at(mid)
+        if mid_angle < exit_angle_deg:
             low = mid
         else:
             high = mid
@@ -179,21 +187,21 @@ def jmlc_profile_points(
     *,
     throat_d: float,
     mouth_inner_r: float,
-    length: float,
+    exit_angle_deg: float,
     wavefront_t: float,
     throat_angle_deg: float,
     step: float,
 ) -> tuple[list[tuple[float, float]], float]:
     """Return mathematically derived JMLC points and the solved cutoff."""
-    cutoff_hz = jmlc_cutoff_hz_for_dimensions(
+    cutoff_hz = jmlc_cutoff_hz_for_exit_angle(
         throat_d=throat_d,
         mouth_inner_r=mouth_inner_r,
-        length=length,
+        exit_angle_deg=exit_angle_deg,
         wavefront_t=wavefront_t,
         throat_angle_deg=throat_angle_deg,
         step=step,
     )
-    points = _jmlc_points_for_cutoff(
+    points, _terminal_angle = _jmlc_points_for_cutoff(
         throat_d=throat_d,
         mouth_inner_r=mouth_inner_r,
         cutoff_hz=cutoff_hz,
@@ -208,8 +216,8 @@ def jmlc_profile_metadata(
     *,
     throat_d: float,
     mouth_outer_d: float,
-    length: float,
     wall_t: float,
+    exit_angle_deg: float,
     wavefront_t: float,
     throat_angle_deg: float,
     step: float,
@@ -219,7 +227,7 @@ def jmlc_profile_metadata(
     points, cutoff_hz = jmlc_profile_points(
         throat_d=throat_d,
         mouth_inner_r=mouth_inner_r,
-        length=length,
+        exit_angle_deg=exit_angle_deg,
         wavefront_t=wavefront_t,
         throat_angle_deg=throat_angle_deg,
         step=step,
@@ -229,16 +237,67 @@ def jmlc_profile_metadata(
         "solved_cutoff_hz": round(cutoff_hz, 1),
         "mouth_inner_d_mm": round(2 * mouth_inner_r, 3),
         "axial_length_mm": round(points[-1][1], 3),
+        "exit_angle_deg": round(exit_angle_deg, 3),
         "sample_count": len(points),
     }
+
+
+def _revolved_meridian_body(
+    profile: list[tuple[float, float]],
+    *,
+    wall_t: float,
+) -> Solid:
+    """Create the horn wall by revolving one closed meridian section."""
+    outer = [(radius + wall_t, z) for radius, z in profile]
+
+    def spline_edge(points: list[tuple[float, float]]):
+        point_array = TColgp_Array1OfPnt(1, len(points))
+        for index, (radius, z) in enumerate(points, 1):
+            point_array.SetValue(index, gp_Pnt(radius, 0, z))
+        curve = GeomAPI_PointsToBSpline(point_array).Curve()
+        return BRepBuilderAPI_MakeEdge(curve).Edge()
+
+    wire_maker = BRepBuilderAPI_MakeWire()
+    wire_maker.Add(spline_edge(profile))
+    wire_maker.Add(
+        BRepBuilderAPI_MakeEdge(
+            gp_Pnt(profile[-1][0], 0, profile[-1][1]),
+            gp_Pnt(outer[-1][0], 0, outer[-1][1]),
+        ).Edge()
+    )
+    wire_maker.Add(spline_edge(list(reversed(outer))))
+    wire_maker.Add(
+        BRepBuilderAPI_MakeEdge(
+            gp_Pnt(outer[0][0], 0, outer[0][1]),
+            gp_Pnt(profile[0][0], 0, profile[0][1]),
+        ).Edge()
+    )
+    if not wire_maker.IsDone():
+        raise ValueError("Unable to make horn meridian wire")
+
+    face_maker = BRepBuilderAPI_MakeFace(wire_maker.Wire())
+    if not face_maker.IsDone():
+        raise ValueError("Unable to make horn meridian face")
+    revolved = BRepPrimAPI_MakeRevol(
+        face_maker.Face(),
+        gp_Ax1(gp_Pnt(0, 0, 0), gp_Dir(0, 0, 1)),
+        math.tau,
+        True,
+    )
+    if not revolved.IsDone():
+        raise ValueError("Unable to revolve horn meridian face")
+    body = Solid.cast(revolved.Shape())
+    if body is None or not body.is_valid:
+        raise ValueError("Revolved horn body is not a valid solid")
+    return body
 
 
 def build_jmlc_horn(
     *,
     throat_d: float,
     mouth_outer_d: float,
-    length: float,
     wall_t: float,
+    exit_angle_deg: float,
     wavefront_t: float,
     throat_angle_deg: float,
     step: float,
@@ -255,22 +314,14 @@ def build_jmlc_horn(
     inner, _cutoff_hz = jmlc_profile_points(
         throat_d=throat_d,
         mouth_inner_r=mouth_inner_r,
-        length=length,
+        exit_angle_deg=exit_angle_deg,
         wavefront_t=wavefront_t,
         throat_angle_deg=throat_angle_deg,
         step=step,
     )
-    outer = [(r + wall_t, z) for r, z in inner]
-
-    with BuildPart() as horn_body:
-        with BuildSketch(Plane.XZ):
-            with BuildLine():
-                Spline(*inner)
-                Polyline(inner[-1], outer[-1])
-                Spline(*reversed(outer))
-                Polyline(outer[0], inner[0])
-            make_face()
-        revolve(axis=Axis.Z)
+    length = max(z for _radius, z in inner)
+    mouth_z = inner[-1][1]
+    horn_body = _revolved_meridian_body(inner, wall_t=wall_t)
 
     flange = Cylinder(
         radius=flange_d / 2,
@@ -279,20 +330,21 @@ def build_jmlc_horn(
         mode=Mode.PRIVATE,
     )
     flange = Location((0, 0, -flange_t / 2)) * flange
-    lip = Torus(
-        major_radius=mouth_outer_r - lip_r,
-        minor_radius=lip_r,
-        align=(Align.CENTER, Align.CENTER, Align.CENTER),
-        mode=Mode.PRIVATE,
-    )
-    lip = Location((0, 0, length)) * lip
-
-    horn = horn_body.part + flange + lip
+    horn = horn_body + flange
+    if exit_angle_deg <= 90:
+        lip = Torus(
+            major_radius=mouth_outer_r - lip_r,
+            minor_radius=lip_r,
+            align=(Align.CENTER, Align.CENTER, Align.CENTER),
+            mode=Mode.PRIVATE,
+        )
+        horn += Location((0, 0, mouth_z)) * lip
     horn -= _cylinder_z(
         diameter=throat_d + 0.2,
         depth=length + flange_t + 4.0,
         center=(0, 0, (length - flange_t) / 2),
     )
+    horn = _primary_shape(horn)
 
     for index in range(3):
         angle = math.tau * index / 3 + math.pi / 2
@@ -306,6 +358,7 @@ def build_jmlc_horn(
                 -flange_t / 2,
             ),
         )
+        horn = _primary_shape(horn)
 
     for angle in (0.0, math.pi):
         radius = bolt_2_bcd / 2
@@ -318,6 +371,7 @@ def build_jmlc_horn(
                 -flange_t / 2,
             ),
         )
+        horn = _primary_shape(horn)
 
     return horn
 

@@ -373,8 +373,8 @@ def build_horn() -> Part:
     return build_jmlc_horn(
         throat_d=p.horn_throat_d,
         mouth_outer_d=p.horn_mouth_outer_d,
-        length=p.horn_length,
         wall_t=p.horn_wall_t,
+        exit_angle_deg=p.horn_exit_angle_deg,
         wavefront_t=p.horn_wavefront_t,
         throat_angle_deg=p.horn_throat_angle_deg,
         step=p.horn_profile_step,
@@ -563,8 +563,8 @@ def main() -> None:
         jmlc_profile_metadata(
             throat_d=p.horn_throat_d,
             mouth_outer_d=p.horn_mouth_outer_d,
-            length=p.horn_length,
             wall_t=p.horn_wall_t,
+            exit_angle_deg=p.horn_exit_angle_deg,
             wavefront_t=p.horn_wavefront_t,
             throat_angle_deg=p.horn_throat_angle_deg,
             step=p.horn_profile_step,
