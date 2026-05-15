@@ -100,5 +100,18 @@ class Params:
     bracket_washer_recess_d: float = 12.0
     bracket_washer_recess_depth: float = 1.5
 
+    # B&C DE250-8 JMLC-inspired horn.
+    horn_throat_d: float = 25.4
+    horn_mouth_outer_d: float = 203.0
+    horn_length: float = 140.0
+    horn_wall_t: float = 3.2
+    horn_profile_power: float = 1.85
+    horn_lip_r: float = 1.6
+    horn_flange_d: float = 96.0
+    horn_flange_t: float = 8.0
+    horn_bolt_clearance_d: float = 6.6
+    horn_bolt_3_bcd: float = 57.0
+    horn_bolt_2_bcd: float = 76.0
+
 
 p = Params()

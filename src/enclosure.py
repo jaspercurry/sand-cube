@@ -35,6 +35,7 @@ from bd_warehouse.thread import IsoThread
 
 from params import p
 from src.features.baffle import black_hole_baffle
+from src.features.horn import build_jmlc_horn, horn_dimensions
 
 
 def _oriented_cylinder(
@@ -363,6 +364,23 @@ def build_fill_plug() -> Part:
     return plug.part
 
 
+def build_horn() -> Part:
+    """Build the separate B&C DE250 JMLC-inspired horn."""
+    return build_jmlc_horn(
+        throat_d=p.horn_throat_d,
+        mouth_outer_d=p.horn_mouth_outer_d,
+        length=p.horn_length,
+        wall_t=p.horn_wall_t,
+        profile_power=p.horn_profile_power,
+        lip_r=p.horn_lip_r,
+        flange_d=p.horn_flange_d,
+        flange_t=p.horn_flange_t,
+        bolt_clearance_d=p.horn_bolt_clearance_d,
+        bolt_3_bcd=p.horn_bolt_3_bcd,
+        bolt_2_bcd=p.horn_bolt_2_bcd,
+    )
+
+
 def build() -> Part:
     """Create the first complete CAD pass for the enclosure."""
     shell_span = p.cube_outer - 2 * p.outer_skin_t
@@ -531,17 +549,23 @@ def export_3mf(part: Part, path: Path) -> None:
 def main() -> None:
     part = build()
     plug = build_fill_plug()
+    horn = build_horn()
     data = diagnostics(part)
     assert data["is_valid"], "Generated enclosure is not a valid part"
+    horn_data = horn_dimensions(horn)
+    assert horn_data["is_valid"], "Generated horn is not a valid part"
 
     out = Path("build")
     out.mkdir(exist_ok=True)
     export_step(part, out / "sand_cube.step", unit=Unit.MM)
     export_step(plug, out / "sand_fill_plug.step", unit=Unit.MM)
+    export_step(horn, out / "jmlc_horn.step", unit=Unit.MM)
     export_3mf(part, out / "sand_cube.3mf")
     export_3mf(plug, out / "sand_fill_plug.3mf")
+    export_3mf(horn, out / "jmlc_horn.3mf")
     (out / "diagnostics.json").write_text(json.dumps(data, indent=2))
-    print(json.dumps(data, indent=2))
+    (out / "horn_diagnostics.json").write_text(json.dumps(horn_data, indent=2))
+    print(json.dumps({"enclosure": data, "horn": horn_data}, indent=2))
 
 
 if __name__ == "__main__":
