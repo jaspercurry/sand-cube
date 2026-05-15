@@ -56,14 +56,16 @@ What fixed this project:
 4. Cut the adapter/flange with the same JMLC acoustic void instead of a straight
    cylinder, so the profile starts at the compression-driver face.
 5. Export the hybrid horn with a NURBS horn wall and native adapter/flange
-   geometry.
+   geometry. For Onshape, export the horn STEP with `write_pcurves=False`.
 
 The important part is that `OFFSET_SURFACE` does not appear in
 `build/jmlc_horn.step`. When the explicit-wall horn was exported fully native,
 Onshape reopened the transparent wall issue. When the complete part was
 blanket-converted to all NURBS/B-spline faces, Onshape failed to open the file.
 The hybrid export keeps the rolled horn wall as NURBS but leaves analytic
-cylinders/planes on the adapter where possible.
+cylinders/planes on the adapter where possible. Disabling p-curves reduces
+duplicate parametric edge data in the STEP file while preserving the same 3D
+edge geometry.
 
 ## Quick STEP Checks
 

@@ -576,7 +576,7 @@ def main() -> None:
     out.mkdir(exist_ok=True)
     export_step(part, out / "sand_cube.step", unit=Unit.MM)
     export_step(plug, out / "sand_fill_plug.step", unit=Unit.MM)
-    export_step(horn, out / "jmlc_horn.step", unit=Unit.MM)
+    export_step(horn, out / "jmlc_horn.step", unit=Unit.MM, write_pcurves=False)
     export_3mf(part, out / "sand_cube.3mf")
     export_3mf(plug, out / "sand_fill_plug.3mf")
     export_3mf(horn, out / "jmlc_horn.3mf")
