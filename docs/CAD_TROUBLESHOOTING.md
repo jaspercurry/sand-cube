@@ -49,8 +49,11 @@ Most likely causes:
 What fixed this project:
 
 1. Build the horn acoustic surface from the exact JMLC profile.
-2. Use `Solid.thicken(...)` for true nominal wall thickness.
-3. Convert the final horn solid to explicit NURBS/B-spline faces with
+2. Build the horn wall from an explicit closed meridian face: exact inner JMLC
+   curve, simple radial outer wall curve, throat/mouth closing edges.
+3. Cut the adapter/flange with the same JMLC acoustic void instead of a straight
+   cylinder, so the profile starts at the compression-driver face.
+4. Convert the final horn solid to explicit NURBS/B-spline faces with
    `BRepBuilderAPI_NurbsConvert` before STEP export.
 
 That last step removed `OFFSET_SURFACE` from `build/jmlc_horn.step`. After the
@@ -124,14 +127,15 @@ obvious broken geometry before uploading.
 ## Horn Modeling Rules Learned
 
 - Keep the inner horn acoustic profile exact. It is the thing the sound touches.
-- Avoid manually making the outer wall as `radius + wall_t` on a rolled-back
-  profile. It creates shelves and confusing topology near the mouth.
-- Prefer thickening the revolved acoustic surface when nominal wall thickness is
-  the design intent.
-- Convert final thickened horn solids to NURBS before STEP export if Onshape is
-  the downstream reviewer.
-- Use conservative mouth fillets after thickening. Large fillets on rolled-back
-  lips are easy to overconstrain.
+- Avoid relying on `Solid.thicken(...)` for rolled-back horn geometry unless
+  you have verified the offset direction and STEP import. It can produce
+  confusing side-selection behavior in Onshape.
+- Use an explicit inner/outer meridian face when the acoustic curve must remain
+  exact through the adapter.
+- Convert final horn solids to NURBS before STEP export if Onshape is the
+  downstream reviewer.
+- Use conservative mouth fillets after the main wall is built. Large fillets on
+  rolled-back lips are easy to overconstrain.
 
 ## Enclosure Modeling Rules Learned
 
@@ -143,4 +147,3 @@ obvious broken geometry before uploading.
 - Connector islands and fill-port tunnels should be solid plastic where they
   pierce the sand void, so sand cannot leak into the speaker volume.
 - Keep generated CAD artifacts in `build/`; commit source and docs, not exports.
-

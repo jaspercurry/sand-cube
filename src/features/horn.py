@@ -7,7 +7,6 @@ import math
 from build123d import (
     Align,
     Cylinder,
-    Face,
     Location,
     Mode,
     Part,
@@ -16,6 +15,8 @@ from build123d import (
 )
 from OCP.BRepBuilderAPI import (
     BRepBuilderAPI_MakeEdge,
+    BRepBuilderAPI_MakeFace,
+    BRepBuilderAPI_MakeWire,
     BRepBuilderAPI_NurbsConvert,
 )
 from OCP.BRepPrimAPI import BRepPrimAPI_MakeRevol
@@ -253,6 +254,65 @@ def _to_nurbs_solid(part: Part | Solid) -> Solid:
     return solid
 
 
+def _spline_edge(points: list[tuple[float, float]]):
+    point_array = TColgp_Array1OfPnt(1, len(points))
+    for index, (radius, z) in enumerate(points, 1):
+        point_array.SetValue(index, gp_Pnt(radius, 0, z))
+    curve = GeomAPI_PointsToBSpline(point_array).Curve()
+    return BRepBuilderAPI_MakeEdge(curve).Edge()
+
+
+def _line_edge(
+    start: tuple[float, float],
+    end: tuple[float, float],
+):
+    return BRepBuilderAPI_MakeEdge(
+        gp_Pnt(start[0], 0, start[1]),
+        gp_Pnt(end[0], 0, end[1]),
+    ).Edge()
+
+
+def _revolved_acoustic_void(
+    profile: list[tuple[float, float]],
+    *,
+    radial_clearance: float = 0.0,
+    throat_extend: float = 1.0,
+) -> Solid:
+    """Create the air volume that must be removed from the horn solid."""
+    void_profile = [
+        (radius + radial_clearance, z)
+        for radius, z in profile
+    ]
+    throat_z = void_profile[0][1] - throat_extend
+    mouth_z = void_profile[-1][1]
+
+    wire_maker = BRepBuilderAPI_MakeWire()
+    wire_maker.Add(_line_edge((0, throat_z), (void_profile[0][0], throat_z)))
+    wire_maker.Add(_line_edge((void_profile[0][0], throat_z), void_profile[0]))
+    wire_maker.Add(_spline_edge(void_profile))
+    wire_maker.Add(_line_edge(void_profile[-1], (0, mouth_z)))
+    wire_maker.Add(_line_edge((0, mouth_z), (0, throat_z)))
+    if not wire_maker.IsDone():
+        raise ValueError("Unable to make horn acoustic void wire")
+
+    face_maker = BRepBuilderAPI_MakeFace(wire_maker.Wire())
+    if not face_maker.IsDone():
+        raise ValueError("Unable to make horn acoustic void face")
+
+    revolved = BRepPrimAPI_MakeRevol(
+        face_maker.Face(),
+        gp_Ax1(gp_Pnt(0, 0, 0), gp_Dir(0, 0, 1)),
+        math.tau,
+        True,
+    )
+    if not revolved.IsDone():
+        raise ValueError("Unable to revolve horn acoustic void")
+    void = Solid.cast(revolved.Shape())
+    if void is None or not void.is_valid:
+        raise ValueError("Horn acoustic void is not a valid solid")
+    return void
+
+
 def _revolved_meridian_body(
     profile: list[tuple[float, float]],
     *,
@@ -260,7 +320,12 @@ def _revolved_meridian_body(
     throat_overlap: float = 0.0,
     mouth_round_r: float = 0.0,
 ) -> Solid:
-    """Create the horn wall by thickening the revolved acoustic surface."""
+    """Create the horn wall from explicit inner and outer meridian curves.
+
+    The inner curve is the acoustic JMLC profile. The outer curve is a simple
+    radial wall-thickness offset, which avoids STEP-hostile offset surfaces and
+    keeps the sound-facing surface mathematically exact.
+    """
     surface_profile = profile
     if throat_overlap > 0:
         surface_profile = [
@@ -268,28 +333,34 @@ def _revolved_meridian_body(
             *profile,
         ]
 
-    def spline_edge(points: list[tuple[float, float]]):
-        point_array = TColgp_Array1OfPnt(1, len(points))
-        for index, (radius, z) in enumerate(points, 1):
-            point_array.SetValue(index, gp_Pnt(radius, 0, z))
-        curve = GeomAPI_PointsToBSpline(point_array).Curve()
-        return BRepBuilderAPI_MakeEdge(curve).Edge()
+    outer_profile = [
+        (radius + wall_t, z)
+        for radius, z in surface_profile
+    ]
 
-    acoustic_revolve = BRepPrimAPI_MakeRevol(
-        spline_edge(surface_profile),
+    wire_maker = BRepBuilderAPI_MakeWire()
+    wire_maker.Add(_spline_edge(surface_profile))
+    wire_maker.Add(_line_edge(surface_profile[-1], outer_profile[-1]))
+    wire_maker.Add(_spline_edge(list(reversed(outer_profile))))
+    wire_maker.Add(_line_edge(outer_profile[0], surface_profile[0]))
+    if not wire_maker.IsDone():
+        raise ValueError("Unable to make horn meridian wall wire")
+
+    face_maker = BRepBuilderAPI_MakeFace(wire_maker.Wire())
+    if not face_maker.IsDone():
+        raise ValueError("Unable to make horn meridian wall face")
+
+    wall_revolve = BRepPrimAPI_MakeRevol(
+        face_maker.Face(),
         gp_Ax1(gp_Pnt(0, 0, 0), gp_Dir(0, 0, 1)),
         math.tau,
         True,
     )
-    if not acoustic_revolve.IsDone():
-        raise ValueError("Unable to revolve horn acoustic surface")
-    acoustic_face = Face.cast(acoustic_revolve.Shape())
-    if acoustic_face is None or not acoustic_face.is_valid:
-        raise ValueError("Revolved horn acoustic surface is not valid")
-
-    body = Solid.thicken(acoustic_face, -wall_t)
+    if not wall_revolve.IsDone():
+        raise ValueError("Unable to revolve horn meridian wall")
+    body = Solid.cast(wall_revolve.Shape())
     if body is None or not body.is_valid:
-        raise ValueError("Thickened horn body is not a valid solid")
+        raise ValueError("Revolved horn wall is not a valid solid")
 
     if mouth_round_r > 0:
         fillet_r = min(mouth_round_r, wall_t * 0.375)
@@ -335,7 +406,7 @@ def build_jmlc_horn(
     """Build a printable 1 in Le Cleac'h horn with DE250 bolt patterns."""
     mouth_outer_r = mouth_outer_d / 2
     mouth_inner_r = mouth_outer_r - wall_t
-    inner, _cutoff_hz = jmlc_profile_points(
+    profile, _cutoff_hz = jmlc_profile_points(
         throat_d=throat_d,
         mouth_inner_r=mouth_inner_r,
         exit_angle_deg=exit_angle_deg,
@@ -343,16 +414,12 @@ def build_jmlc_horn(
         throat_angle_deg=throat_angle_deg,
         step=step,
     )
-    length = max(z for _radius, z in inner)
+    inner = [(radius, z - flange_t) for radius, z in profile]
     mouth_z = inner[-1][1]
-    # Give the throat wall real overlap into the flange instead of a
-    # face-to-face contact at z=0. That keeps STEP importers from assigning the
-    # throat annulus to the flange face in odd ways.
-    throat_overlap = min(1.0, flange_t * 0.2)
     horn_body = _revolved_meridian_body(
         inner,
         wall_t=wall_t,
-        throat_overlap=throat_overlap,
+        throat_overlap=0.0,
         mouth_round_r=lip_r,
     )
 
@@ -372,7 +439,18 @@ def build_jmlc_horn(
         mode=Mode.PRIVATE,
     )
     throat_collar = Location((0, 0, (-flange_t + collar_h) / 2)) * throat_collar
-    horn = _primary_shape((horn_body + throat_collar + flange).clean().fix())
+    adapter = _primary_shape((throat_collar + flange).clean().fix())
+    adapter = _primary_shape(
+        adapter
+        - _revolved_acoustic_void(
+            inner,
+            radial_clearance=0.1,
+            throat_extend=1.0,
+        )
+    )
+    adapter = _primary_shape(adapter.clean().fix())
+
+    horn = _primary_shape((horn_body + adapter).clean().fix())
     if exit_angle_deg <= 90:
         lip = Torus(
             major_radius=mouth_outer_r - lip_r,
@@ -381,14 +459,6 @@ def build_jmlc_horn(
             mode=Mode.PRIVATE,
         )
         horn += Location((0, 0, mouth_z)) * lip
-    horn = _primary_shape(
-        horn
-        - _cylinder_z(
-            diameter=throat_d + 0.2,
-            depth=length + flange_t + 4.0,
-            center=(0, 0, (length - flange_t) / 2),
-        )
-    )
     horn = _primary_shape(horn.clean().fix())
 
     for index in range(3):
