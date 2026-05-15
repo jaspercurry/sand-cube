@@ -7,6 +7,7 @@ import math
 from build123d import (
     Align,
     Cylinder,
+    Face,
     Location,
     Mode,
     Part,
@@ -15,11 +16,9 @@ from build123d import (
 )
 from OCP.BRepBuilderAPI import (
     BRepBuilderAPI_MakeEdge,
-    BRepBuilderAPI_MakeFace,
-    BRepBuilderAPI_MakeWire,
+    BRepBuilderAPI_NurbsConvert,
 )
 from OCP.BRepPrimAPI import BRepPrimAPI_MakeRevol
-from OCP.GC import GC_MakeArcOfCircle
 from OCP.GeomAPI import GeomAPI_PointsToBSpline
 from OCP.gp import gp_Ax1, gp_Dir, gp_Pnt
 from OCP.TColgp import TColgp_Array1OfPnt
@@ -243,6 +242,17 @@ def jmlc_profile_metadata(
     }
 
 
+def _to_nurbs_solid(part: Part | Solid) -> Solid:
+    """Convert STEP-hostile offset surfaces to explicit B-spline geometry."""
+    converter = BRepBuilderAPI_NurbsConvert(part.wrapped, True)
+    if not converter.IsDone():
+        raise ValueError("Unable to convert horn to NURBS geometry")
+    solid = Solid.cast(converter.Shape())
+    if solid is None or not solid.is_valid:
+        raise ValueError("NURBS-converted horn is not a valid solid")
+    return solid
+
+
 def _revolved_meridian_body(
     profile: list[tuple[float, float]],
     *,
@@ -250,29 +260,13 @@ def _revolved_meridian_body(
     throat_overlap: float = 0.0,
     mouth_round_r: float = 0.0,
 ) -> Solid:
-    """Create the horn wall by revolving one closed meridian section."""
-    outer = [(radius + wall_t, z) for radius, z in profile]
-
-    def line_edge(
-        start: tuple[float, float],
-        end: tuple[float, float],
-    ):
-        return BRepBuilderAPI_MakeEdge(
-            gp_Pnt(start[0], 0, start[1]),
-            gp_Pnt(end[0], 0, end[1]),
-        ).Edge()
-
-    def arc_edge(
-        start: tuple[float, float],
-        mid: tuple[float, float],
-        end: tuple[float, float],
-    ):
-        arc = GC_MakeArcOfCircle(
-            gp_Pnt(start[0], 0, start[1]),
-            gp_Pnt(mid[0], 0, mid[1]),
-            gp_Pnt(end[0], 0, end[1]),
-        ).Value()
-        return BRepBuilderAPI_MakeEdge(arc).Edge()
+    """Create the horn wall by thickening the revolved acoustic surface."""
+    surface_profile = profile
+    if throat_overlap > 0:
+        surface_profile = [
+            (profile[0][0], profile[0][1] - throat_overlap),
+            *profile,
+        ]
 
     def spline_edge(points: list[tuple[float, float]]):
         point_array = TColgp_Array1OfPnt(1, len(points))
@@ -281,44 +275,44 @@ def _revolved_meridian_body(
         curve = GeomAPI_PointsToBSpline(point_array).Curve()
         return BRepBuilderAPI_MakeEdge(curve).Edge()
 
-    wire_maker = BRepBuilderAPI_MakeWire()
-    if throat_overlap > 0:
-        throat_inner = (profile[0][0], profile[0][1] - throat_overlap)
-        throat_outer = (outer[0][0], outer[0][1] - throat_overlap)
-        wire_maker.Add(line_edge(throat_inner, profile[0]))
-    wire_maker.Add(spline_edge(profile))
-    if mouth_round_r > 0:
-        cap_r = min(mouth_round_r, wall_t / 2)
-        cap_mid = (
-            (profile[-1][0] + outer[-1][0]) / 2,
-            profile[-1][1] - cap_r,
-        )
-        wire_maker.Add(arc_edge(profile[-1], cap_mid, outer[-1]))
-    else:
-        wire_maker.Add(line_edge(profile[-1], outer[-1]))
-    wire_maker.Add(spline_edge(list(reversed(outer))))
-    if throat_overlap > 0:
-        wire_maker.Add(line_edge(outer[0], throat_outer))
-        wire_maker.Add(line_edge(throat_outer, throat_inner))
-    else:
-        wire_maker.Add(line_edge(outer[0], profile[0]))
-    if not wire_maker.IsDone():
-        raise ValueError("Unable to make horn meridian wire")
-
-    face_maker = BRepBuilderAPI_MakeFace(wire_maker.Wire())
-    if not face_maker.IsDone():
-        raise ValueError("Unable to make horn meridian face")
-    revolved = BRepPrimAPI_MakeRevol(
-        face_maker.Face(),
+    acoustic_revolve = BRepPrimAPI_MakeRevol(
+        spline_edge(surface_profile),
         gp_Ax1(gp_Pnt(0, 0, 0), gp_Dir(0, 0, 1)),
         math.tau,
         True,
     )
-    if not revolved.IsDone():
-        raise ValueError("Unable to revolve horn meridian face")
-    body = Solid.cast(revolved.Shape())
+    if not acoustic_revolve.IsDone():
+        raise ValueError("Unable to revolve horn acoustic surface")
+    acoustic_face = Face.cast(acoustic_revolve.Shape())
+    if acoustic_face is None or not acoustic_face.is_valid:
+        raise ValueError("Revolved horn acoustic surface is not valid")
+
+    body = Solid.thicken(acoustic_face, -wall_t)
     if body is None or not body.is_valid:
-        raise ValueError("Revolved horn body is not a valid solid")
+        raise ValueError("Thickened horn body is not a valid solid")
+
+    if mouth_round_r > 0:
+        fillet_r = min(mouth_round_r, wall_t * 0.375)
+        mouth_z = profile[-1][1]
+        mouth_radius = profile[-1][0]
+        mouth_edges = [
+            edge
+            for edge in body.edges()
+            if edge.length > math.tau * mouth_radius * 0.75
+            and edge.bounding_box().max.Z > mouth_z - 0.25
+        ]
+        for candidate_r in (fillet_r, fillet_r * 0.75, fillet_r * 0.5):
+            if not mouth_edges:
+                break
+            try:
+                body = body.fillet(candidate_r, mouth_edges)
+                break
+            except ValueError:
+                continue
+        body = body.clean().fix()
+        if body is None or not body.is_valid:
+            raise ValueError("Filleted horn mouth is not a valid solid")
+
     return body
 
 
@@ -378,41 +372,50 @@ def build_jmlc_horn(
             mode=Mode.PRIVATE,
         )
         horn += Location((0, 0, mouth_z)) * lip
-    horn -= _cylinder_z(
-        diameter=throat_d + 0.2,
-        depth=length + flange_t + 4.0,
-        center=(0, 0, (length - flange_t) / 2),
+    horn = _primary_shape(
+        horn
+        - _cylinder_z(
+            diameter=throat_d + 0.2,
+            depth=length + flange_t + 4.0,
+            center=(0, 0, (length - flange_t) / 2),
+        )
     )
     horn = _primary_shape(horn.clean().fix())
 
     for index in range(3):
         angle = math.tau * index / 3 + math.pi / 2
         radius = bolt_3_bcd / 2
-        horn -= _cylinder_z(
-            diameter=bolt_clearance_d,
-            depth=flange_t + 2.0,
-            center=(
-                radius * math.cos(angle),
-                radius * math.sin(angle),
-                -flange_t / 2,
-            ),
+        horn = _primary_shape(
+            horn
+            - _cylinder_z(
+                diameter=bolt_clearance_d,
+                depth=flange_t + 2.0,
+                center=(
+                    radius * math.cos(angle),
+                    radius * math.sin(angle),
+                    -flange_t / 2,
+                ),
+            )
         )
         horn = _primary_shape(horn.clean().fix())
 
     for angle in (0.0, math.pi):
         radius = bolt_2_bcd / 2
-        horn -= _cylinder_z(
-            diameter=bolt_clearance_d,
-            depth=flange_t + 2.0,
-            center=(
-                radius * math.cos(angle),
-                radius * math.sin(angle),
-                -flange_t / 2,
-            ),
+        horn = _primary_shape(
+            horn
+            - _cylinder_z(
+                diameter=bolt_clearance_d,
+                depth=flange_t + 2.0,
+                center=(
+                    radius * math.cos(angle),
+                    radius * math.sin(angle),
+                    -flange_t / 2,
+                ),
+            )
         )
         horn = _primary_shape(horn.clean().fix())
 
-    return horn
+    return _to_nurbs_solid(horn)
 
 
 def horn_dimensions(part: Part) -> dict[str, object]:
