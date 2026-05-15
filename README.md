@@ -12,6 +12,7 @@ or a measured print.
 
 - Local git repo initialized on `main`.
 - Research validation notes live in `docs/RESEARCH_VALIDATION.md`.
+- CAD import/debugging notes live in `docs/CAD_TROUBLESHOOTING.md`.
 - Initial dimensions live in `params.py`.
 - Build123d/Codex working rules live in `AGENTS.md`.
 - Initial build123d enclosure generator lives in `src/enclosure.py`.

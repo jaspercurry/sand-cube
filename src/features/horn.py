@@ -363,7 +363,16 @@ def build_jmlc_horn(
         mode=Mode.PRIVATE,
     )
     flange = Location((0, 0, -flange_t / 2)) * flange
-    horn = _primary_shape((horn_body + flange).clean().fix())
+    collar_h = flange_t + max(4.0, wall_t * 1.5)
+    collar_outer_r = throat_d / 2 + wall_t + 6.0
+    throat_collar = Cylinder(
+        radius=collar_outer_r,
+        height=collar_h,
+        align=(Align.CENTER, Align.CENTER, Align.CENTER),
+        mode=Mode.PRIVATE,
+    )
+    throat_collar = Location((0, 0, (-flange_t + collar_h) / 2)) * throat_collar
+    horn = _primary_shape((horn_body + throat_collar + flange).clean().fix())
     if exit_angle_deg <= 90:
         lip = Torus(
             major_radius=mouth_outer_r - lip_r,
