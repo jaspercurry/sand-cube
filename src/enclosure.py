@@ -35,7 +35,11 @@ from bd_warehouse.thread import IsoThread
 
 from params import p
 from src.features.baffle import black_hole_baffle
-from src.features.horn import build_jmlc_horn, horn_dimensions
+from src.features.horn import (
+    build_jmlc_horn,
+    horn_dimensions,
+    jmlc_profile_metadata,
+)
 
 
 def _oriented_cylinder(
@@ -365,13 +369,15 @@ def build_fill_plug() -> Part:
 
 
 def build_horn() -> Part:
-    """Build the separate B&C DE250 JMLC-inspired horn."""
+    """Build the separate B&C DE250 Le Cleac'h horn."""
     return build_jmlc_horn(
         throat_d=p.horn_throat_d,
         mouth_outer_d=p.horn_mouth_outer_d,
         length=p.horn_length,
         wall_t=p.horn_wall_t,
-        profile_power=p.horn_profile_power,
+        wavefront_t=p.horn_wavefront_t,
+        throat_angle_deg=p.horn_throat_angle_deg,
+        step=p.horn_profile_step,
         lip_r=p.horn_lip_r,
         flange_d=p.horn_flange_d,
         flange_t=p.horn_flange_t,
@@ -553,6 +559,17 @@ def main() -> None:
     data = diagnostics(part)
     assert data["is_valid"], "Generated enclosure is not a valid part"
     horn_data = horn_dimensions(horn)
+    horn_data.update(
+        jmlc_profile_metadata(
+            throat_d=p.horn_throat_d,
+            mouth_outer_d=p.horn_mouth_outer_d,
+            length=p.horn_length,
+            wall_t=p.horn_wall_t,
+            wavefront_t=p.horn_wavefront_t,
+            throat_angle_deg=p.horn_throat_angle_deg,
+            step=p.horn_profile_step,
+        )
+    )
     assert horn_data["is_valid"], "Generated horn is not a valid part"
 
     out = Path("build")
