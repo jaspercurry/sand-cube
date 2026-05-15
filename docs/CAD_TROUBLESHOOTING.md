@@ -53,12 +53,14 @@ What fixed this project:
    curve, simple radial outer wall curve, throat/mouth closing edges.
 3. Cut the adapter/flange with the same JMLC acoustic void instead of a straight
    cylinder, so the profile starts at the compression-driver face.
-4. Convert the final horn solid to explicit NURBS/B-spline faces with
-   `BRepBuilderAPI_NurbsConvert` before STEP export.
+4. Export the explicit-wall horn as native STEP geometry. With no
+   `Solid.thicken(...)` stage, the STEP no longer needs a blanket NURBS
+   conversion.
 
-That last step removed `OFFSET_SURFACE` from `build/jmlc_horn.step`. After the
-conversion, the STEP audit showed only `BSplineSurface` faces and Onshape
-rendered the horn correctly.
+The important part is that `OFFSET_SURFACE` does not appear in
+`build/jmlc_horn.step`. When the explicit-wall horn was also converted to all
+NURBS/B-spline faces, Onshape failed to open the file. The safer export keeps
+analytic cylinders/planes/surfaces-of-revolution where possible.
 
 ## Quick STEP Checks
 
@@ -89,7 +91,8 @@ Healthy signs:
 - `boundary_edge_count: 0`
 - `non_manifold_edge_count: 0`
 - `counts.solids: 1`
-- Horn `face_type_histogram` has `BSplineSurface` only
+- Horn `face_type_histogram` has no `OffsetSurface`; a mix of `Cylinder`,
+  `Plane`, `SurfaceOfRevolution`, and `BSplineSurface` is expected.
 
 Warnings:
 
@@ -132,8 +135,9 @@ obvious broken geometry before uploading.
   confusing side-selection behavior in Onshape.
 - Use an explicit inner/outer meridian face when the acoustic curve must remain
   exact through the adapter.
-- Convert final horn solids to NURBS before STEP export if Onshape is the
-  downstream reviewer.
+- Do not blanket-convert the explicit-wall horn to NURBS unless a downstream
+  importer specifically needs it. Onshape opened the earlier NURBS workaround
+  for `Solid.thicken(...)`, but rejected the all-NURBS explicit-wall version.
 - Use conservative mouth fillets after the main wall is built. Large fillets on
   rolled-back lips are easy to overconstrain.
 

@@ -17,7 +17,6 @@ from OCP.BRepBuilderAPI import (
     BRepBuilderAPI_MakeEdge,
     BRepBuilderAPI_MakeFace,
     BRepBuilderAPI_MakeWire,
-    BRepBuilderAPI_NurbsConvert,
 )
 from OCP.BRepPrimAPI import BRepPrimAPI_MakeRevol
 from OCP.GeomAPI import GeomAPI_PointsToBSpline
@@ -241,17 +240,6 @@ def jmlc_profile_metadata(
         "exit_angle_deg": round(exit_angle_deg, 3),
         "sample_count": len(points),
     }
-
-
-def _to_nurbs_solid(part: Part | Solid) -> Solid:
-    """Convert STEP-hostile offset surfaces to explicit B-spline geometry."""
-    converter = BRepBuilderAPI_NurbsConvert(part.wrapped, True)
-    if not converter.IsDone():
-        raise ValueError("Unable to convert horn to NURBS geometry")
-    solid = Solid.cast(converter.Shape())
-    if solid is None or not solid.is_valid:
-        raise ValueError("NURBS-converted horn is not a valid solid")
-    return solid
 
 
 def _spline_edge(points: list[tuple[float, float]]):
@@ -494,7 +482,7 @@ def build_jmlc_horn(
         )
         horn = _primary_shape(horn.clean().fix())
 
-    return _to_nurbs_solid(horn)
+    return horn
 
 
 def horn_dimensions(part: Part) -> dict[str, object]:
