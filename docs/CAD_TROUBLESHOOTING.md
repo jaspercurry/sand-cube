@@ -51,16 +51,19 @@ What fixed this project:
 1. Build the horn acoustic surface from the exact JMLC profile.
 2. Build the horn wall from an explicit closed meridian face: exact inner JMLC
    curve, simple radial outer wall curve, throat/mouth closing edges.
-3. Cut the adapter/flange with the same JMLC acoustic void instead of a straight
+3. Convert only that rolled horn wall to NURBS/B-spline geometry. Do not
+   blanket-convert the complete horn.
+4. Cut the adapter/flange with the same JMLC acoustic void instead of a straight
    cylinder, so the profile starts at the compression-driver face.
-4. Export the explicit-wall horn as native STEP geometry. With no
-   `Solid.thicken(...)` stage, the STEP no longer needs a blanket NURBS
-   conversion.
+5. Export the hybrid horn with a NURBS horn wall and native adapter/flange
+   geometry.
 
 The important part is that `OFFSET_SURFACE` does not appear in
-`build/jmlc_horn.step`. When the explicit-wall horn was also converted to all
-NURBS/B-spline faces, Onshape failed to open the file. The safer export keeps
-analytic cylinders/planes/surfaces-of-revolution where possible.
+`build/jmlc_horn.step`. When the explicit-wall horn was exported fully native,
+Onshape reopened the transparent wall issue. When the complete part was
+blanket-converted to all NURBS/B-spline faces, Onshape failed to open the file.
+The hybrid export keeps the rolled horn wall as NURBS but leaves analytic
+cylinders/planes on the adapter where possible.
 
 ## Quick STEP Checks
 
@@ -92,7 +95,7 @@ Healthy signs:
 - `non_manifold_edge_count: 0`
 - `counts.solids: 1`
 - Horn `face_type_histogram` has no `OffsetSurface`; a mix of `Cylinder`,
-  `Plane`, `SurfaceOfRevolution`, and `BSplineSurface` is expected.
+  `Plane`, and `BSplineSurface` is expected for the hybrid export.
 
 Warnings:
 
@@ -135,9 +138,12 @@ obvious broken geometry before uploading.
   confusing side-selection behavior in Onshape.
 - Use an explicit inner/outer meridian face when the acoustic curve must remain
   exact through the adapter.
-- Do not blanket-convert the explicit-wall horn to NURBS unless a downstream
-  importer specifically needs it. Onshape opened the earlier NURBS workaround
-  for `Solid.thicken(...)`, but rejected the all-NURBS explicit-wall version.
+- Convert the rolled horn wall to NURBS before merging it with the adapter.
+  This fixes the transparent-wall issue without making the adapter harder for
+  Onshape to import.
+- Do not blanket-convert the complete horn to NURBS unless a downstream
+  importer specifically needs it. Onshape rejected the all-NURBS explicit-wall
+  version.
 - Use conservative mouth fillets after the main wall is built. Large fillets on
   rolled-back lips are easy to overconstrain.
 

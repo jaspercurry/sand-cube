@@ -17,11 +17,15 @@ from OCP.BRepBuilderAPI import (
     BRepBuilderAPI_MakeEdge,
     BRepBuilderAPI_MakeFace,
     BRepBuilderAPI_MakeWire,
+    BRepBuilderAPI_NurbsConvert,
 )
 from OCP.BRepPrimAPI import BRepPrimAPI_MakeRevol
 from OCP.GeomAPI import GeomAPI_PointsToBSpline
 from OCP.gp import gp_Ax1, gp_Dir, gp_Pnt
 from OCP.TColgp import TColgp_Array1OfPnt
+from OCP.TopAbs import TopAbs_SOLID
+from OCP.TopExp import TopExp_Explorer
+from OCP.TopoDS import TopoDS
 
 
 def _cylinder_z(
@@ -260,6 +264,29 @@ def _line_edge(
     ).Edge()
 
 
+def _to_nurbs_solid(part: Part | Solid) -> Solid:
+    """Convert one solid to NURBS, extracting it from OCCT's compound result."""
+    converter = BRepBuilderAPI_NurbsConvert(part.wrapped, True)
+    if not converter.IsDone():
+        raise ValueError("Unable to convert horn wall to NURBS geometry")
+
+    explorer = TopExp_Explorer(converter.Shape(), TopAbs_SOLID)
+    solids: list[Solid] = []
+    while explorer.More():
+        solid = Solid.cast(TopoDS.Solid_s(explorer.Current()))
+        if solid is not None:
+            solids.append(solid)
+        explorer.Next()
+
+    if not solids:
+        raise ValueError("NURBS conversion did not produce a solid")
+
+    solid = max(solids, key=lambda item: item.volume)
+    if not solid.is_valid:
+        raise ValueError("NURBS-converted horn wall is not a valid solid")
+    return solid
+
+
 def _revolved_acoustic_void(
     profile: list[tuple[float, float]],
     *,
@@ -410,6 +437,7 @@ def build_jmlc_horn(
         throat_overlap=0.0,
         mouth_round_r=lip_r,
     )
+    horn_body = _to_nurbs_solid(horn_body)
 
     flange = Cylinder(
         radius=flange_d / 2,
