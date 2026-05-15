@@ -19,6 +19,7 @@ from OCP.BRepBuilderAPI import (
     BRepBuilderAPI_MakeWire,
 )
 from OCP.BRepPrimAPI import BRepPrimAPI_MakeRevol
+from OCP.GC import GC_MakeArcOfCircle
 from OCP.GeomAPI import GeomAPI_PointsToBSpline
 from OCP.gp import gp_Ax1, gp_Dir, gp_Pnt
 from OCP.TColgp import TColgp_Array1OfPnt
@@ -247,6 +248,7 @@ def _revolved_meridian_body(
     *,
     wall_t: float,
     throat_overlap: float = 0.0,
+    mouth_round_r: float = 0.0,
 ) -> Solid:
     """Create the horn wall by revolving one closed meridian section."""
     outer = [(radius + wall_t, z) for radius, z in profile]
@@ -259,6 +261,18 @@ def _revolved_meridian_body(
             gp_Pnt(start[0], 0, start[1]),
             gp_Pnt(end[0], 0, end[1]),
         ).Edge()
+
+    def arc_edge(
+        start: tuple[float, float],
+        mid: tuple[float, float],
+        end: tuple[float, float],
+    ):
+        arc = GC_MakeArcOfCircle(
+            gp_Pnt(start[0], 0, start[1]),
+            gp_Pnt(mid[0], 0, mid[1]),
+            gp_Pnt(end[0], 0, end[1]),
+        ).Value()
+        return BRepBuilderAPI_MakeEdge(arc).Edge()
 
     def spline_edge(points: list[tuple[float, float]]):
         point_array = TColgp_Array1OfPnt(1, len(points))
@@ -273,7 +287,15 @@ def _revolved_meridian_body(
         throat_outer = (outer[0][0], outer[0][1] - throat_overlap)
         wire_maker.Add(line_edge(throat_inner, profile[0]))
     wire_maker.Add(spline_edge(profile))
-    wire_maker.Add(line_edge(profile[-1], outer[-1]))
+    if mouth_round_r > 0:
+        cap_r = min(mouth_round_r, wall_t / 2)
+        cap_mid = (
+            (profile[-1][0] + outer[-1][0]) / 2,
+            profile[-1][1] - cap_r,
+        )
+        wire_maker.Add(arc_edge(profile[-1], cap_mid, outer[-1]))
+    else:
+        wire_maker.Add(line_edge(profile[-1], outer[-1]))
     wire_maker.Add(spline_edge(list(reversed(outer))))
     if throat_overlap > 0:
         wire_maker.Add(line_edge(outer[0], throat_outer))
@@ -337,6 +359,7 @@ def build_jmlc_horn(
         inner,
         wall_t=wall_t,
         throat_overlap=throat_overlap,
+        mouth_round_r=lip_r,
     )
 
     flange = Cylinder(
@@ -346,7 +369,7 @@ def build_jmlc_horn(
         mode=Mode.PRIVATE,
     )
     flange = Location((0, 0, -flange_t / 2)) * flange
-    horn = horn_body + flange
+    horn = _primary_shape((horn_body + flange).clean().fix())
     if exit_angle_deg <= 90:
         lip = Torus(
             major_radius=mouth_outer_r - lip_r,
@@ -360,7 +383,7 @@ def build_jmlc_horn(
         depth=length + flange_t + 4.0,
         center=(0, 0, (length - flange_t) / 2),
     )
-    horn = _primary_shape(horn)
+    horn = _primary_shape(horn.clean().fix())
 
     for index in range(3):
         angle = math.tau * index / 3 + math.pi / 2
@@ -374,7 +397,7 @@ def build_jmlc_horn(
                 -flange_t / 2,
             ),
         )
-        horn = _primary_shape(horn)
+        horn = _primary_shape(horn.clean().fix())
 
     for angle in (0.0, math.pi):
         radius = bolt_2_bcd / 2
@@ -387,7 +410,7 @@ def build_jmlc_horn(
                 -flange_t / 2,
             ),
         )
-        horn = _primary_shape(horn)
+        horn = _primary_shape(horn.clean().fix())
 
     return horn
 
