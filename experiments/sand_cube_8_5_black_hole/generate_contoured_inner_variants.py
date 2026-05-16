@@ -69,6 +69,9 @@ RECESS_DEPTH = 1.0 * 25.4
 FRONT_FACE_EDGE_CLEARANCE = 1.5
 BAFFLE_OUTER_D = CUBE_OUTER - 2 * (EDGE_FILLET_R + FRONT_FACE_EDGE_CLEARANCE)
 SEAT_LAND_OD = 158.0
+DRIVER_FACE_OPENING_DIA = 130.5
+DRIVER_MOUNT_FACE_RAW_Y = 110.5
+WOOFER_ASSEMBLY_CLEARANCE = 0.0
 FILL_PORT_Z = CUBE_OUTER / 2 - base_p.outer_skin_t - base_p.void_t / 2
 GX16_X = -75.0
 GX16_Z = -75.0
@@ -423,9 +426,15 @@ def _front_inner_wall_seam_edges(part: Part, params, variant: Variant) -> list:
 def _confirmed_woofer(params):
     half = params.cube_outer / 2
     front_mount_y = -half + params.front_cap_t
-    raw_mount_face_y = 118.5
     return (
-        Location((0, (front_mount_y + HARDWARE_CLEARANCE) - (-raw_mount_face_y), 0))
+        Location(
+            (
+                0,
+                (front_mount_y + WOOFER_ASSEMBLY_CLEARANCE)
+                - (-DRIVER_MOUNT_FACE_RAW_Y),
+                0,
+            )
+        )
         * (
             Rot(0, 45, 0)
             * Rot(180, 0, 0)
@@ -538,6 +547,7 @@ def build_variant(variant: Variant) -> tuple[Part, dict[str, object]]:
         cube_outer=CUBE_OUTER,
         edge_fillet_r=EDGE_FILLET_R,
         front_cap_t=RECESS_DEPTH,
+        driver_cutout_dia=DRIVER_FACE_OPENING_DIA,
         fill_port_z=FILL_PORT_Z,
         gx16_x=GX16_X,
         gx16_z=GX16_Z,
@@ -764,6 +774,13 @@ def build_variant(variant: Variant) -> tuple[Part, dict[str, object]]:
             "clearance_in_front_of_insert_tip_mm": round(insert_front_clearance, 3),
             "pierce_risk": insert_front_clearance < 1.5,
         },
+        "driver_step_fit": {
+            "source": "objects/E150HE-44.step",
+            "flat_mount_face_raw_y_mm": DRIVER_MOUNT_FACE_RAW_Y,
+            "assembly_clearance_mm": WOOFER_ASSEMBLY_CLEARANCE,
+            "matched_flange_inner_dia_mm": DRIVER_FACE_OPENING_DIA,
+            "step_outer_frame_dia_mm": 152.5,
+        },
         "bridge_post_grid": {
             "xz_positions_mm": [round(v, 3) for v in _grid3_for_span(cavity_side)],
             "y_positions_mm": [round(v, 3) for v in _grid3_for_span(cavity_y)],
@@ -830,6 +847,7 @@ def main() -> None:
             cube_outer=CUBE_OUTER,
             edge_fillet_r=EDGE_FILLET_R,
             front_cap_t=RECESS_DEPTH,
+            driver_cutout_dia=DRIVER_FACE_OPENING_DIA,
             fill_port_z=FILL_PORT_Z,
             gx16_x=GX16_X,
             gx16_z=GX16_Z,
