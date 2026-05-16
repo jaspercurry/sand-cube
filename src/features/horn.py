@@ -7,6 +7,7 @@ import math
 from build123d import (
     Align,
     Cylinder,
+    Face,
     Location,
     Mode,
     Part,
@@ -335,11 +336,11 @@ def _revolved_meridian_body(
     throat_overlap: float = 0.0,
     mouth_round_r: float = 0.0,
 ) -> Solid:
-    """Create the horn wall from explicit inner and outer meridian curves.
+    """Create the horn wall by thickening the revolved acoustic surface.
 
-    The inner curve is the acoustic JMLC profile. The outer curve is a simple
-    radial wall-thickness offset, which avoids STEP-hostile offset surfaces and
-    keeps the sound-facing surface mathematically exact.
+    This intentionally uses the earlier Onshape-friendly topology: revolve the
+    exact sound-facing JMLC curve, thicken that face, then convert the resulting
+    wall to NURBS before merging it with the native adapter.
     """
     surface_profile = profile
     if throat_overlap > 0:
@@ -348,34 +349,21 @@ def _revolved_meridian_body(
             *profile,
         ]
 
-    outer_profile = [
-        (radius + wall_t, z)
-        for radius, z in surface_profile
-    ]
-
-    wire_maker = BRepBuilderAPI_MakeWire()
-    wire_maker.Add(_spline_edge(surface_profile))
-    wire_maker.Add(_line_edge(surface_profile[-1], outer_profile[-1]))
-    wire_maker.Add(_spline_edge(list(reversed(outer_profile))))
-    wire_maker.Add(_line_edge(outer_profile[0], surface_profile[0]))
-    if not wire_maker.IsDone():
-        raise ValueError("Unable to make horn meridian wall wire")
-
-    face_maker = BRepBuilderAPI_MakeFace(wire_maker.Wire())
-    if not face_maker.IsDone():
-        raise ValueError("Unable to make horn meridian wall face")
-
-    wall_revolve = BRepPrimAPI_MakeRevol(
-        face_maker.Face(),
+    acoustic_revolve = BRepPrimAPI_MakeRevol(
+        _spline_edge(surface_profile),
         gp_Ax1(gp_Pnt(0, 0, 0), gp_Dir(0, 0, 1)),
         math.tau,
         True,
     )
-    if not wall_revolve.IsDone():
-        raise ValueError("Unable to revolve horn meridian wall")
-    body = Solid.cast(wall_revolve.Shape())
+    if not acoustic_revolve.IsDone():
+        raise ValueError("Unable to revolve horn acoustic surface")
+    acoustic_face = Face.cast(acoustic_revolve.Shape())
+    if acoustic_face is None or not acoustic_face.is_valid:
+        raise ValueError("Revolved horn acoustic surface is not valid")
+
+    body = Solid.thicken(acoustic_face, -wall_t)
     if body is None or not body.is_valid:
-        raise ValueError("Revolved horn wall is not a valid solid")
+        raise ValueError("Thickened horn body is not a valid solid")
 
     if mouth_round_r > 0:
         fillet_r = min(mouth_round_r, wall_t * 0.375)
@@ -460,13 +448,19 @@ def build_jmlc_horn(
         adapter
         - _revolved_acoustic_void(
             inner,
-            radial_clearance=0.1,
+            # A positive clearance leaves a microscopic gap between the
+            # adapter and thickened horn wall, so OpenCascade returns two
+            # solids and the smaller adapter can be dropped downstream.
+            # Exact tangency preserves the JMLC acoustic path and fuses as one
+            # solid with this wall topology.
+            radial_clearance=0.0,
             throat_extend=1.0,
         )
     )
     adapter = _primary_shape(adapter.clean().fix())
 
-    horn = _primary_shape((horn_body + adapter).clean().fix())
+    horn = _primary_shape(horn_body.fuse(adapter))
+    horn = _primary_shape(horn.clean().fix())
     if exit_angle_deg <= 90:
         lip = Torus(
             major_radius=mouth_outer_r - lip_r,

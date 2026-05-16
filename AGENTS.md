@@ -15,6 +15,20 @@ auditable feature commits and diagnostics after every geometry change.
 5. Keep bracing inside the sand void point-like: cylindrical posts and corner
    gussets only. Do not add closed ribs that can trap sand or air.
 
+## Horn / Onshape Import Gotchas
+
+1. The B&C DE250 JMLC horn wall imports cleanly in Onshape when it is built as
+   an exact revolved acoustic surface, thickened into a wall, then converted to
+   NURBS before STEP export.
+2. Do not use the explicit inner/outer meridian-wall construction for the
+   rolled-back horn unless it is revalidated in Onshape. It can pass local
+   OpenCascade validity checks while rendering as a transparent one-sided skin.
+3. The adapter/flange acoustic cut must use the same JMLC profile and meet the
+   horn wall exactly. A positive radial clearance can leave the adapter as a
+   separate smaller solid; `_primary_shape()` may then silently discard it.
+4. Healthy horn STEP export signs: one solid, no boundary edges, no
+   non-manifold edges, no self-interference, and no `OFFSET_SURFACE` entities.
+
 ## Geometry Contract
 
 - Nominal outer cube: 203 mm.
@@ -30,4 +44,3 @@ auditable feature commits and diagnostics after every geometry change.
 3. Keep generated CAD in `build/`, which is ignored.
 4. Run the geometry script after each feature and inspect diagnostics before
    moving on.
-
