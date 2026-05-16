@@ -13,6 +13,7 @@ __pycache__/
 .DS_Store
 *.3mf
 *.step
+!objects/*.step
 *.stl
 *.brep
 *.png
