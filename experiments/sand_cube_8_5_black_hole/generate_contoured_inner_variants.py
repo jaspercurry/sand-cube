@@ -72,6 +72,7 @@ DRIVER_FACE_OPENING_DIA = 130.5
 DRIVER_MOUNT_FACE_RAW_Y = 110.5
 DRIVER_INSERT_STEP = ROOT / "objects" / "M4x6mm_threaded_brass_insert.step"
 DRIVER_INSERT_LENGTH = 6.0
+HEAT_SET_INSERT_BORE_DIA = 4.8
 DRIVER_INSERT_BORE_DEPTH = 6.5
 PR_INSERT_BORE_DEPTH = 6.5
 FRONT_CURVE_DRIVER_CONTROL_DEPTH_FACTOR = 0.30
@@ -666,6 +667,7 @@ def build_variant(variant: Variant) -> tuple[Part, dict[str, object]]:
         edge_fillet_r=EDGE_FILLET_R,
         front_cap_t=DRIVER_SEAT_DEPTH,
         driver_cutout_dia=DRIVER_FACE_OPENING_DIA,
+        insert_bore_d=HEAT_SET_INSERT_BORE_DIA,
         driver_insert_bore_depth=DRIVER_INSERT_BORE_DEPTH,
         pr_insert_bore_depth=PR_INSERT_BORE_DEPTH,
         fill_port_z=FILL_PORT_Z,
@@ -1030,6 +1032,7 @@ def main() -> None:
             edge_fillet_r=EDGE_FILLET_R,
             front_cap_t=DRIVER_SEAT_DEPTH,
             driver_cutout_dia=DRIVER_FACE_OPENING_DIA,
+            insert_bore_d=HEAT_SET_INSERT_BORE_DIA,
             driver_insert_bore_depth=DRIVER_INSERT_BORE_DEPTH,
             pr_insert_bore_depth=PR_INSERT_BORE_DEPTH,
             fill_port_z=FILL_PORT_Z,
