@@ -392,6 +392,34 @@ def _internal_seam_edges(part: Part, params) -> list:
     return edges
 
 
+def _front_inner_wall_seam_edges(part: Part, params, variant: Variant) -> list:
+    """Select the front contoured wall seams against the inner side walls."""
+    half = params.cube_outer / 2
+    cavity_side = params.cube_outer - 2 * (
+        params.outer_skin_t + params.void_t + params.inner_skin_t
+    )
+    cavity_half = cavity_side / 2
+    front_wall_y = -half + variant.wall_t
+    edges = []
+    for edge in part.edges():
+        bb = edge.bounding_box()
+        sizes = (bb.size.X, bb.size.Y, bb.size.Z)
+        centers = (
+            (bb.min.X + bb.max.X) / 2,
+            (bb.min.Y + bb.max.Y) / 2,
+            (bb.min.Z + bb.max.Z) / 2,
+        )
+        if edge.length < 20.0 or edge.length > 120.0:
+            continue
+        if bb.min.Y < front_wall_y - 0.5 or bb.max.Y > front_wall_y + 3.5:
+            continue
+        near_x_wall = abs(abs(centers[0]) - cavity_half) < 0.35 and sizes[0] < 0.05
+        near_z_wall = abs(abs(centers[2]) - cavity_half) < 0.35 and sizes[2] < 0.05
+        if near_x_wall or near_z_wall:
+            edges.append(edge)
+    return edges
+
+
 def _confirmed_woofer(params):
     half = params.cube_outer / 2
     front_mount_y = -half + params.front_cap_t
@@ -649,6 +677,19 @@ def build_variant(variant: Variant) -> tuple[Part, dict[str, object]]:
     enclosure = fillet(internal_seam_edges, radius=INTERNAL_SEAM_FILLET_R)
     enclosure = _primary_shape(enclosure)
 
+    front_inner_wall_seam_edges = _front_inner_wall_seam_edges(
+        enclosure,
+        params,
+        variant,
+    )
+    if len(front_inner_wall_seam_edges) < 8:
+        raise ValueError(
+            "Expected at least 8 front inner wall seam edges, "
+            f"found {len(front_inner_wall_seam_edges)}"
+        )
+    enclosure = fillet(front_inner_wall_seam_edges, radius=INTERNAL_SEAM_FILLET_R)
+    enclosure = _primary_shape(enclosure)
+
     bolt_front_depth = _front_depth_at_radius(
         radius=params.driver_bolt_circle_r,
         r_outer=BAFFLE_OUTER_D / 2,
@@ -748,6 +789,10 @@ def build_variant(variant: Variant) -> tuple[Part, dict[str, object]]:
         "internal_seam_fillet": {
             "radius_mm": INTERNAL_SEAM_FILLET_R,
             "edge_count": len(internal_seam_edges),
+        },
+        "front_inner_wall_seam_fillet": {
+            "radius_mm": INTERNAL_SEAM_FILLET_R,
+            "edge_count": len(front_inner_wall_seam_edges),
         },
         "bounding_box_mm": [
             round(bb.size.X, 3),
