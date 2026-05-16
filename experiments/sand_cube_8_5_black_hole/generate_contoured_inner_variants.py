@@ -70,8 +70,10 @@ BAFFLE_OUTER_D = CUBE_OUTER - 2 * (EDGE_FILLET_R + FRONT_FACE_EDGE_CLEARANCE)
 SEAT_LAND_OD = 158.0
 DRIVER_FACE_OPENING_DIA = 130.5
 DRIVER_MOUNT_FACE_RAW_Y = 110.5
-DRIVER_INSERT_BORE_DEPTH = 6.0
-FRONT_CURVE_DRIVER_CONTROL_DEPTH_FACTOR = 0.35
+DRIVER_INSERT_STEP = ROOT / "objects" / "M4x6mm_threaded_brass_insert.step"
+DRIVER_INSERT_LENGTH = 6.0
+DRIVER_INSERT_BORE_DEPTH = 6.5
+FRONT_CURVE_DRIVER_CONTROL_DEPTH_FACTOR = 0.30
 WOOFER_ASSEMBLY_CLEARANCE = 0.0
 FILL_PORT_Z = CUBE_OUTER / 2 - base_p.outer_skin_t - base_p.void_t / 2
 GX16_X = -75.0
@@ -499,6 +501,34 @@ def _confirmed_woofer(params):
     )
 
 
+def _driver_insert_positions(params) -> list[tuple[float, float]]:
+    positions = []
+    for index in range(params.driver_screw_count):
+        angle = math.tau * index / params.driver_screw_count + math.tau / 8
+        positions.append(
+            (
+                params.driver_bolt_circle_r * math.cos(angle),
+                params.driver_bolt_circle_r * math.sin(angle),
+            )
+        )
+    return positions
+
+
+def _confirmed_driver_inserts(params) -> Compound:
+    half = params.cube_outer / 2
+    front_mount_y = -half + params.front_cap_t
+    insert = import_step(DRIVER_INSERT_STEP)
+    inserts = []
+    for x, z in _driver_insert_positions(params):
+        inserts.extend(
+            (
+                Location((x, front_mount_y, z))
+                * (Rot(90, 0, 0) * insert)
+            ).solids()
+        )
+    return Compound(inserts)
+
+
 def _confirmed_passive_radiator(params):
     half = params.cube_outer / 2
     raw_outer_flange_y = 115.7
@@ -575,12 +605,14 @@ def _placed_gx16(params):
 
 def _hardware_assembly(enclosure: Part, params) -> tuple[Compound, dict[str, object]]:
     woofer = _confirmed_woofer(params)
+    driver_inserts = _confirmed_driver_inserts(params)
     passive_radiator = _confirmed_passive_radiator(params)
     gx16, gx16_data = _placed_gx16(params)
     assembly = Compound(
         children=[
             enclosure,
             *woofer.solids(),
+            *driver_inserts.solids(),
             *passive_radiator.solids(),
             *gx16.solids(),
         ]
@@ -590,6 +622,7 @@ def _hardware_assembly(enclosure: Part, params) -> tuple[Compound, dict[str, obj
         "solid_counts": {
             "enclosure": len(enclosure.solids()),
             "woofer": len(woofer.solids()),
+            "driver_inserts": len(driver_inserts.solids()),
             "passive_radiator": len(passive_radiator.solids()),
             "gx16": len(gx16.solids()),
             "assembly": len(assembly.solids()),
@@ -765,7 +798,8 @@ def build_variant(variant: Variant) -> tuple[Part, dict[str, object]]:
         - insert_bore_r
         - 0.4,
     }
-    insert_tip_depth = DRIVER_SEAT_DEPTH - params.driver_insert_bore_depth
+    bore_tip_depth = DRIVER_SEAT_DEPTH - params.driver_insert_bore_depth
+    insert_tip_depth = DRIVER_SEAT_DEPTH - DRIVER_INSERT_LENGTH
     insert_clearance_points = {}
     for name, radius in insert_clearance_radii.items():
         front_depth = _front_depth_at_radius(
@@ -777,9 +811,12 @@ def build_variant(variant: Variant) -> tuple[Part, dict[str, object]]:
         insert_clearance_points[name] = {
             "radius_mm": round(radius, 3),
             "front_surface_depth_mm": round(front_depth, 3),
-            "cover_mm": round(insert_tip_depth - front_depth, 3),
+            "bore_tip_cover_mm": round(bore_tip_depth - front_depth, 3),
+            "insert_tip_cover_mm": round(insert_tip_depth - front_depth, 3),
         }
-    insert_front_clearance = insert_clearance_points["inner_bore_edge"]["cover_mm"]
+    insert_front_clearance = insert_clearance_points["inner_bore_edge"][
+        "bore_tip_cover_mm"
+    ]
 
     bb = enclosure.bounding_box()
     nominal_cavity_l = cavity_side * cavity_y * cavity_side / 1_000_000
@@ -845,9 +882,16 @@ def build_variant(variant: Variant) -> tuple[Part, dict[str, object]]:
             "bolt_circle_r_mm": params.driver_bolt_circle_r,
             "bore_dia_mm": params.insert_bore_d,
             "bore_depth_mm": params.driver_insert_bore_depth,
+            "insert_step": str(DRIVER_INSERT_STEP.relative_to(ROOT)),
+            "insert_model_length_mm": DRIVER_INSERT_LENGTH,
+            "melt_relief_depth_mm": round(
+                params.driver_insert_bore_depth - DRIVER_INSERT_LENGTH,
+                3,
+            ),
+            "bore_tip_depth_from_front_mm": round(bore_tip_depth, 3),
             "insert_tip_depth_from_front_mm": round(insert_tip_depth, 3),
             "clearance_points": insert_clearance_points,
-            "worst_nominal_cover_mm": insert_front_clearance,
+            "worst_nominal_bore_tip_cover_mm": insert_front_clearance,
             "pierce_risk": insert_front_clearance < 1.5,
         },
         "driver_step_fit": {
