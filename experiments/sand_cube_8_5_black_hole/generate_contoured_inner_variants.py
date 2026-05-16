@@ -45,9 +45,6 @@ from generate_curve_to_seat_variants import (  # noqa: E402
     CUBE_OUTER,
     EDGE_FILLET_R,
     _bezier_point,
-    _curve_controls,
-    _curve_to_seat_tool,
-    _front_depth_at_radius,
     _front_tool_global,
 )
 from generate_variants import (  # noqa: E402
@@ -66,18 +63,22 @@ from params import p as base_p  # noqa: E402
 
 OUT = ROOT / "build" / "sand_cube_8_5_black_hole" / "contoured_inner"
 RECESS_DEPTH = 1.0 * 25.4
+DRIVER_SEAT_EXTRA_DEPTH = 1.0
+DRIVER_SEAT_DEPTH = RECESS_DEPTH + DRIVER_SEAT_EXTRA_DEPTH
 FRONT_FACE_EDGE_CLEARANCE = 1.5
 BAFFLE_OUTER_D = CUBE_OUTER - 2 * (EDGE_FILLET_R + FRONT_FACE_EDGE_CLEARANCE)
 SEAT_LAND_OD = 158.0
 DRIVER_FACE_OPENING_DIA = 130.5
 DRIVER_MOUNT_FACE_RAW_Y = 110.5
+DRIVER_INSERT_BORE_DEPTH = 6.0
+FRONT_CURVE_DRIVER_CONTROL_DEPTH_FACTOR = 0.35
 WOOFER_ASSEMBLY_CLEARANCE = 0.0
 FILL_PORT_Z = CUBE_OUTER / 2 - base_p.outer_skin_t - base_p.void_t / 2
 GX16_X = -75.0
 GX16_Z = -75.0
 GX16_HEX_ROTATION = 15.0
 GX16_STEP_ROTATION = GX16_HEX_ROTATION + 30.0
-DRIVER_SEAT_EDGE_FILLET_R = 0.8
+DRIVER_SEAT_EDGE_FILLET_R = 0.4
 INTERNAL_SEAM_FILLET_R = 1.5
 SAND_VOID_EDGE_FILLET_R = 1.0
 BRIDGE_POST_ROOT_FILLET_R = 1.5
@@ -90,10 +91,19 @@ class Variant:
     wall_t: float
 
 
-@dataclass(frozen=True)
-class CurveVariant:
-    name: str
-    recess_depth: float
+def _front_curve_controls(
+    *,
+    r_outer: float,
+    r_inner: float,
+    depth: float,
+) -> tuple[tuple[float, float], ...]:
+    radial_span = r_outer - r_inner
+    return (
+        (r_outer, 0.0),
+        (r_outer - radial_span * base_p.baffle_tangent_in, 0.0),
+        (r_inner, depth * FRONT_CURVE_DRIVER_CONTROL_DEPTH_FACTOR),
+        (r_inner, depth),
+    )
 
 
 def _lerp(
@@ -128,7 +138,7 @@ def _curve_t_at_radius(
     r_inner: float,
     depth: float,
 ) -> float:
-    controls = _curve_controls(r_outer=r_outer, r_inner=r_inner, depth=depth)
+    controls = _front_curve_controls(r_outer=r_outer, r_inner=r_inner, depth=depth)
     low = 0.0
     high = 1.0
     for _ in range(64):
@@ -149,7 +159,7 @@ def _inner_curve_controls(
     depth: float,
     wall_t: float,
 ) -> tuple[tuple[float, float], ...]:
-    front_controls = _curve_controls(
+    front_controls = _front_curve_controls(
         r_outer=r_outer,
         r_inner=r_inner,
         depth=depth,
@@ -164,6 +174,52 @@ def _inner_curve_controls(
     return tuple((radius, z + wall_t) for radius, z in trimmed)
 
 
+def _front_depth_at_radius(
+    *,
+    radius: float,
+    r_outer: float,
+    r_inner: float,
+    depth: float,
+) -> float:
+    controls = _front_curve_controls(r_outer=r_outer, r_inner=r_inner, depth=depth)
+    low = 0.0
+    high = 1.0
+    for _ in range(64):
+        mid = (low + high) / 2
+        r_mid, _depth_mid = _bezier_point(controls, mid)
+        if r_mid > radius:
+            low = mid
+        else:
+            high = mid
+    return _bezier_point(controls, (low + high) / 2)[1]
+
+
+def _curve_to_micro_seat_tool(params) -> Part:
+    r_outer = BAFFLE_OUTER_D / 2
+    r_inner = params.driver_cutout_dia / 2
+    controls = _front_curve_controls(
+        r_outer=r_outer,
+        r_inner=r_inner,
+        depth=RECESS_DEPTH,
+    )
+    with BuildPart() as tool:
+        with BuildSketch(Plane.XZ) as sketch:
+            with BuildLine():
+                Bezier(*controls)
+                Polyline(
+                    (r_inner, RECESS_DEPTH),
+                    (r_inner, DRIVER_SEAT_DEPTH),
+                    (0.0, DRIVER_SEAT_DEPTH),
+                    (0.0, -2.0),
+                    (r_outer, -2.0),
+                    (r_outer, 0.0),
+                )
+            make_face()
+        assert sketch.sketch.area > 0, "Curve-to-micro-seat sketch must be positive"
+        revolve(axis=Axis.Z)
+    return tool.part
+
+
 def _inner_relief_tool(params, variant: Variant) -> Part:
     """Remove front-cap material outside the driver seat land.
 
@@ -175,7 +231,7 @@ def _inner_relief_tool(params, variant: Variant) -> Part:
     r_seat = SEAT_LAND_OD / 2
     r_outer = BAFFLE_OUTER_D / 2
     outside_r = math.sqrt(2) * params.cube_outer / 2 + 8.0
-    seat_depth = RECESS_DEPTH
+    seat_depth = DRIVER_SEAT_DEPTH
 
     inner_controls = _inner_curve_controls(
         r_outer=r_outer,
@@ -289,7 +345,7 @@ def _top_binding_post_holes(params) -> Part:
 
 
 def _driver_seat_lip_edges(part: Part, params) -> list:
-    target_y = -params.cube_outer / 2 + RECESS_DEPTH
+    target_y = -params.cube_outer / 2 + DRIVER_SEAT_DEPTH
     target_dia = params.driver_cutout_dia
     edges = []
     for edge in part.edges():
@@ -546,8 +602,9 @@ def build_variant(variant: Variant) -> tuple[Part, dict[str, object]]:
         base_p,
         cube_outer=CUBE_OUTER,
         edge_fillet_r=EDGE_FILLET_R,
-        front_cap_t=RECESS_DEPTH,
+        front_cap_t=DRIVER_SEAT_DEPTH,
         driver_cutout_dia=DRIVER_FACE_OPENING_DIA,
+        driver_insert_bore_depth=DRIVER_INSERT_BORE_DEPTH,
         fill_port_z=FILL_PORT_Z,
         gx16_x=GX16_X,
         gx16_z=GX16_Z,
@@ -615,14 +672,13 @@ def build_variant(variant: Variant) -> tuple[Part, dict[str, object]]:
     enclosure += _top_reinforcement_island(params)
     enclosure = _primary_shape(enclosure)
 
-    curve_variant = CurveVariant(variant.name, RECESS_DEPTH)
-    enclosure -= _front_tool_global(_curve_to_seat_tool(params, curve_variant), params)
+    enclosure -= _front_tool_global(_curve_to_micro_seat_tool(params), params)
     enclosure = _primary_shape(enclosure)
 
     relief = _front_tool_global(_inner_relief_tool(params, variant), params)
-    relief_clip = Pos(0, -half + RECESS_DEPTH / 2, 0) * Box(
+    relief_clip = Pos(0, -half + DRIVER_SEAT_DEPTH / 2, 0) * Box(
         cavity_side,
-        RECESS_DEPTH + 0.5,
+        DRIVER_SEAT_DEPTH + 0.5,
         cavity_side,
     )
     enclosure -= relief & relief_clip
@@ -700,14 +756,30 @@ def build_variant(variant: Variant) -> tuple[Part, dict[str, object]]:
     enclosure = fillet(front_inner_wall_seam_edges, radius=INTERNAL_SEAM_FILLET_R)
     enclosure = _primary_shape(enclosure)
 
-    bolt_front_depth = _front_depth_at_radius(
-        radius=params.driver_bolt_circle_r,
-        r_outer=BAFFLE_OUTER_D / 2,
-        r_inner=params.driver_cutout_dia / 2,
-        depth=RECESS_DEPTH,
-    )
-    insert_tip_depth = RECESS_DEPTH - params.driver_insert_bore_depth
-    insert_front_clearance = insert_tip_depth - bolt_front_depth
+    insert_bore_r = params.insert_bore_d / 2
+    insert_clearance_radii = {
+        "outer_bore_edge": params.driver_bolt_circle_r + insert_bore_r,
+        "centerline": params.driver_bolt_circle_r,
+        "inner_bore_edge": params.driver_bolt_circle_r - insert_bore_r,
+        "inner_bore_edge_minus_0_4_tolerance": params.driver_bolt_circle_r
+        - insert_bore_r
+        - 0.4,
+    }
+    insert_tip_depth = DRIVER_SEAT_DEPTH - params.driver_insert_bore_depth
+    insert_clearance_points = {}
+    for name, radius in insert_clearance_radii.items():
+        front_depth = _front_depth_at_radius(
+            radius=radius,
+            r_outer=BAFFLE_OUTER_D / 2,
+            r_inner=params.driver_cutout_dia / 2,
+            depth=RECESS_DEPTH,
+        )
+        insert_clearance_points[name] = {
+            "radius_mm": round(radius, 3),
+            "front_surface_depth_mm": round(front_depth, 3),
+            "cover_mm": round(insert_tip_depth - front_depth, 3),
+        }
+    insert_front_clearance = insert_clearance_points["inner_bore_edge"]["cover_mm"]
 
     bb = enclosure.bounding_box()
     nominal_cavity_l = cavity_side * cavity_y * cavity_side / 1_000_000
@@ -720,6 +792,9 @@ def build_variant(variant: Variant) -> tuple[Part, dict[str, object]]:
         "edge_fillet_r_mm": params.edge_fillet_r,
         "front_recess_depth_mm": RECESS_DEPTH,
         "front_recess_depth_in": RECESS_DEPTH / 25.4,
+        "driver_seat_extra_depth_mm": DRIVER_SEAT_EXTRA_DEPTH,
+        "driver_seat_depth_mm": DRIVER_SEAT_DEPTH,
+        "front_curve_driver_control_depth_factor": FRONT_CURVE_DRIVER_CONTROL_DEPTH_FACTOR,
         "target_wall_t_mm": variant.wall_t,
         "baffle_outer_d_mm": BAFFLE_OUTER_D,
         "front_face_edge_clearance_mm": FRONT_FACE_EDGE_CLEARANCE,
@@ -768,10 +843,11 @@ def build_variant(variant: Variant) -> tuple[Part, dict[str, object]]:
         },
         "driver_insert": {
             "bolt_circle_r_mm": params.driver_bolt_circle_r,
+            "bore_dia_mm": params.insert_bore_d,
             "bore_depth_mm": params.driver_insert_bore_depth,
-            "front_surface_depth_at_bolt_mm": round(bolt_front_depth, 3),
-            "wall_at_bolt_mm": round(RECESS_DEPTH - bolt_front_depth, 3),
-            "clearance_in_front_of_insert_tip_mm": round(insert_front_clearance, 3),
+            "insert_tip_depth_from_front_mm": round(insert_tip_depth, 3),
+            "clearance_points": insert_clearance_points,
+            "worst_nominal_cover_mm": insert_front_clearance,
             "pierce_risk": insert_front_clearance < 1.5,
         },
         "driver_step_fit": {
@@ -846,8 +922,9 @@ def main() -> None:
             base_p,
             cube_outer=CUBE_OUTER,
             edge_fillet_r=EDGE_FILLET_R,
-            front_cap_t=RECESS_DEPTH,
+            front_cap_t=DRIVER_SEAT_DEPTH,
             driver_cutout_dia=DRIVER_FACE_OPENING_DIA,
+            driver_insert_bore_depth=DRIVER_INSERT_BORE_DEPTH,
             fill_port_z=FILL_PORT_Z,
             gx16_x=GX16_X,
             gx16_z=GX16_Z,
