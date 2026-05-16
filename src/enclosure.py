@@ -16,6 +16,7 @@ from build123d import (
     Box,
     BuildPart,
     BuildSketch,
+    Compound,
     Cylinder,
     Location,
     Mesher,
@@ -310,37 +311,34 @@ def _top_binding_post_cutouts() -> Part:
 
 
 def _top_bracket_cutouts() -> Part:
-    """50 x 50 mm M5 bracket holes with internal washer counterbores."""
+    """Front M5 bracket holes; binding posts provide the rear clamp points."""
     half = p.cube_outer / 2
     top_stack_t = p.outer_skin_t + p.void_t + p.inner_skin_t
     inner_top_z = half - top_stack_t
     spacing = p.bracket_hole_spacing / 2
     with BuildPart() as cutouts:
         for x in (-spacing, spacing):
-            for y in (
-                p.bracket_hole_y - spacing,
-                p.bracket_hole_y + spacing,
-            ):
-                add(
-                    _oriented_cylinder(
-                        diameter=p.bracket_hole_d,
-                        depth=top_stack_t + 2.0,
-                        axis="z",
-                        center=(x, y, half - top_stack_t / 2),
-                    )
+            y = p.bracket_hole_y - spacing
+            add(
+                _oriented_cylinder(
+                    diameter=p.bracket_hole_d,
+                    depth=top_stack_t + 2.0,
+                    axis="z",
+                    center=(x, y, half - top_stack_t / 2),
                 )
-                add(
-                    _oriented_cylinder(
-                        diameter=p.bracket_washer_recess_d,
-                        depth=p.bracket_washer_recess_depth,
-                        axis="z",
-                        center=(
-                            x,
-                            y,
-                            inner_top_z + p.bracket_washer_recess_depth / 2,
-                        ),
-                    )
+            )
+            add(
+                _oriented_cylinder(
+                    diameter=p.bracket_washer_recess_d,
+                    depth=p.bracket_washer_recess_depth,
+                    axis="z",
+                    center=(
+                        x,
+                        y,
+                        inner_top_z + p.bracket_washer_recess_depth / 2,
+                    ),
                 )
+            )
     return cutouts.part
 
 
@@ -384,7 +382,38 @@ def build_horn() -> Part:
         bolt_clearance_d=p.horn_bolt_clearance_d,
         bolt_3_bcd=p.horn_bolt_3_bcd,
         bolt_2_bcd=p.horn_bolt_2_bcd,
+        rear_spigot_l=p.horn_bracket_t,
+        rear_spigot_od=p.horn_spigot_od,
     )
+
+
+def place_horn_above_enclosure(
+    enclosure: Part,
+    horn: Part,
+    *,
+    clearance: float = 10.0,
+) -> Part:
+    """Orient and place the horn above the front/driver side of the cube."""
+    horn = Rot(90, 0, 0) * horn
+    enclosure_bb = enclosure.bounding_box()
+    horn_bb = horn.bounding_box()
+    horn_center_x = (horn_bb.min.X + horn_bb.max.X) / 2
+    return (
+        Location(
+            (
+                -horn_center_x,
+                enclosure_bb.min.Y - horn_bb.min.Y,
+                enclosure_bb.max.Z + clearance - horn_bb.min.Z,
+            )
+        )
+        * horn
+    )
+
+
+def build_enclosure_horn_assembly(enclosure: Part, horn: Part) -> Compound:
+    """Build a two-solid STEP assembly preview of the enclosure and horn."""
+    placed_horn = place_horn_above_enclosure(enclosure, horn)
+    return Compound(children=[enclosure, placed_horn])
 
 
 def build() -> Part:
@@ -556,6 +585,7 @@ def main() -> None:
     part = build()
     plug = build_fill_plug()
     horn = build_horn()
+    assembly = build_enclosure_horn_assembly(part, horn)
     data = diagnostics(part)
     assert data["is_valid"], "Generated enclosure is not a valid part"
     horn_data = horn_dimensions(horn)
@@ -577,6 +607,12 @@ def main() -> None:
     export_step(part, out / "sand_cube.step", unit=Unit.MM)
     export_step(plug, out / "sand_fill_plug.step", unit=Unit.MM)
     export_step(horn, out / "jmlc_horn.step", unit=Unit.MM, write_pcurves=False)
+    export_step(
+        assembly,
+        out / "sand_cube_with_horn.step",
+        unit=Unit.MM,
+        write_pcurves=False,
+    )
     export_3mf(part, out / "sand_cube.3mf")
     export_3mf(plug, out / "sand_fill_plug.3mf")
     export_3mf(horn, out / "jmlc_horn.3mf")

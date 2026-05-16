@@ -87,7 +87,7 @@ class Params:
     top_island_y: float = 50.75
     top_island_w: float = 72.0
     top_island_d: float = 101.5
-    binding_post_spacing: float = 19.05
+    binding_post_spacing: float = 50.0
     binding_post_hole_d: float = 6.35
     binding_post_y: float = 72.0
     binding_post_recess_d: float = 13.0
@@ -102,7 +102,8 @@ class Params:
 
     # B&C DE250-8 Le Cleac'h / JMLC axisymmetric horn.
     horn_throat_d: float = 25.4
-    horn_mouth_outer_d: float = 203.0
+    # Calibrated profile target: exported physical mouth bbox is ~215.9 mm.
+    horn_mouth_outer_d: float = 218.37
     horn_wall_t: float = 3.2
     horn_wavefront_t: float = 0.8
     horn_throat_angle_deg: float = 8.0
@@ -114,6 +115,9 @@ class Params:
     horn_bolt_clearance_d: float = 6.6
     horn_bolt_3_bcd: float = 57.0
     horn_bolt_2_bcd: float = 76.0
+    horn_bracket_t: float = 4.0
+    horn_spigot_od: float = 38.0
+    horn_bracket_throat_clearance_d: float = 42.0
 
 
 p = Params()

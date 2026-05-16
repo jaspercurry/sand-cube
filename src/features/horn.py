@@ -158,9 +158,7 @@ def jmlc_cutoff_hz_for_exit_angle(
     step: float,
 ) -> float:
     """Solve the cutoff that yields the requested wall angle at the mouth."""
-    low, high = 450.0, 950.0
-
-    def angle_at(cutoff_hz: float) -> float:
+    def angle_at(cutoff_hz: float) -> float | None:
         _points, terminal_angle = _jmlc_points_for_cutoff(
             throat_d=throat_d,
             mouth_inner_r=mouth_inner_r,
@@ -171,16 +169,46 @@ def jmlc_cutoff_hz_for_exit_angle(
         )
         return terminal_angle
 
-    low_angle = angle_at(low)
-    high_angle = angle_at(high)
-    if low_angle > exit_angle_deg or high_angle < exit_angle_deg:
+    low = high = None
+    low_angle = high_angle = None
+    last_valid: tuple[float, float] | None = None
+    for candidate in [250.0 + 5.0 * index for index in range(251)]:
+        try:
+            candidate_angle = angle_at(candidate)
+        except ValueError:
+            continue
+        if candidate_angle is None:
+            continue
+        if candidate_angle < exit_angle_deg:
+            last_valid = (candidate, candidate_angle)
+            continue
+        if last_valid is not None:
+            low, low_angle = last_valid
+            high, high_angle = candidate, candidate_angle
+            break
+
+    if (
+        low is None
+        or high is None
+        or low_angle is None
+        or high_angle is None
+        or low_angle > exit_angle_deg
+        or high_angle < exit_angle_deg
+    ):
         raise ValueError(
             "Unable to bracket JMLC cutoff for the requested exit angle"
         )
 
     for _ in range(32):
         mid = (low + high) / 2
-        mid_angle = angle_at(mid)
+        try:
+            mid_angle = angle_at(mid)
+        except ValueError:
+            high = mid
+            continue
+        if mid_angle is None:
+            high = mid
+            continue
         if mid_angle < exit_angle_deg:
             low = mid
         else:
@@ -405,6 +433,8 @@ def build_jmlc_horn(
     bolt_clearance_d: float,
     bolt_3_bcd: float,
     bolt_2_bcd: float,
+    rear_spigot_l: float = 0.0,
+    rear_spigot_od: float | None = None,
 ) -> Part:
     """Build a printable 1 in Le Cleac'h horn with DE250 bolt patterns."""
     mouth_outer_r = mouth_outer_d / 2
@@ -417,7 +447,7 @@ def build_jmlc_horn(
         throat_angle_deg=throat_angle_deg,
         step=step,
     )
-    inner = [(radius, z - flange_t) for radius, z in profile]
+    inner = [(radius, z - flange_t - rear_spigot_l) for radius, z in profile]
     mouth_z = inner[-1][1]
     horn_body = _revolved_meridian_body(
         inner,
@@ -444,6 +474,16 @@ def build_jmlc_horn(
     )
     throat_collar = Location((0, 0, (-flange_t + collar_h) / 2)) * throat_collar
     adapter = _primary_shape((throat_collar + flange).clean().fix())
+    if rear_spigot_l > 0:
+        spigot_od = rear_spigot_od or (throat_d + 2 * wall_t)
+        spigot = Cylinder(
+            radius=spigot_od / 2,
+            height=rear_spigot_l,
+            align=(Align.CENTER, Align.CENTER, Align.CENTER),
+            mode=Mode.PRIVATE,
+        )
+        spigot = Location((0, 0, -flange_t - rear_spigot_l / 2)) * spigot
+        adapter = _primary_shape((adapter + spigot).clean().fix())
     adapter = _primary_shape(
         adapter
         - _revolved_acoustic_void(

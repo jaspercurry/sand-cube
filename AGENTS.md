@@ -29,6 +29,22 @@ auditable feature commits and diagnostics after every geometry change.
 4. Healthy horn STEP export signs: one solid, no boundary edges, no
    non-manifold edges, no self-interference, and no `OFFSET_SURFACE` entities.
 
+## Horn Bracket Gotchas
+
+1. The folded horn bracket is a 4 mm sheet-metal part. Keep the base, bend, and
+   upright at the same material thickness. Do not model the bend as a sharp
+   inside corner.
+2. In `src/features/bracket.py`, verify the `Plane.XZ` upright extrusion by
+   checking the final bounding box. During debugging, positive extrusion placed
+   the upright one material thickness forward in `-Y`, leaving a 4 mm gap
+   between the metal bracket and compression-driver face.
+3. The clamp stack must close exactly: bracket front face, bracket rear face,
+   horn spigot rear face, and compression-driver mounting face should be checked
+   numerically after every bracket or horn adapter change.
+4. The bracket throat clearance hole is intentionally oversized so the 4 mm
+   metal sheet is outside the acoustic path. The printed horn spigot passes
+   through that oversized hole and meets the compression-driver face directly.
+
 ## Geometry Contract
 
 - Nominal outer cube: 203 mm.

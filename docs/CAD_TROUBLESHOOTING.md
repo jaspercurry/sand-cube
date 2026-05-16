@@ -154,6 +154,82 @@ obvious broken geometry before uploading.
 - Use conservative mouth fillets after the main wall is built. Large fillets on
   rolled-back lips are easy to overconstrain.
 
+## Horn Bracket Rules Learned
+
+The horn bracket is a bent sheet-metal part, not a machined plastic-looking
+solid. Treat it as one constant-thickness strip:
+
+- Keep the whole bracket at the same material thickness. The current prototype
+  assumption is 4 mm aluminum.
+- Model the 90-degree bend as a finite-radius bend with a short straight
+  continuation into the upright. If the upright starts exactly at the bend
+  tangent, STEP viewers can show a visible shelf or hard jump.
+- Do not allow the upright to float forward of the clamp stack. In one failed
+  revision, `BuildSketch(Plane.XZ)` + `extrude(amount=material_t)` placed the
+  upright plate from `-3.552` to `0.448` mm in Y while the horn spigot and
+  compression-driver face were at `4.448` mm. That created a visible 4 mm gap
+  between the bracket and compression driver.
+- After bracket edits, check the actual face planes numerically. The healthy
+  state for the current geometry is:
+  - bracket front face: `0.448 mm`
+  - bracket rear face: `4.448 mm`
+  - horn printed spigot rear face / compression-driver mounting face:
+    `4.448 mm`
+- The bracket throat hole should be oversized. The metal bracket must not add a
+  4 mm cylindrical section to the acoustic path. The printed horn spigot passes
+  through the bracket and seats directly against the compression-driver face.
+- The DE250 mounting holes must be real through-cuts through the vertical metal
+  plate, not cosmetic circles. If circles appear but the holes do not pierce,
+  first check the plate's Y placement against the cutout-cylinder centers.
+
+Useful clamp-stack diagnostic:
+
+```bash
+UV_CACHE_DIR=.uv-cache uv run python - <<'PY'
+from pathlib import Path
+from build123d import Rot
+from params import p
+from src.enclosure import build, build_horn, place_horn_above_enclosure
+from src.features.bracket import build_horn_bracket
+
+enclosure = build()
+horn = Rot(0, 0, -60) * build_horn()
+placed_horn = place_horn_above_enclosure(enclosure, horn, clearance=10.0)
+horn_bb = placed_horn.bounding_box()
+enclosure_bb = enclosure.bounding_box()
+target_y = horn_bb.max.Y
+bracket_front_y = target_y - p.horn_bracket_t
+bracket = build_horn_bracket(
+    enclosure_top_z=enclosure_bb.max.Z,
+    horn_rear_y=bracket_front_y,
+    horn_center_z=(horn_bb.min.Z + horn_bb.max.Z) / 2,
+    material_t=p.horn_bracket_t,
+    top_bolt_spacing=p.bracket_hole_spacing,
+    top_bolt_y=p.bracket_hole_y,
+    binding_post_spacing=p.binding_post_spacing,
+    binding_post_y=p.binding_post_y,
+    acoustic_hole_d=p.horn_bracket_throat_clearance_d,
+    horn_bolt_d=p.horn_bolt_clearance_d,
+    horn_bolt_3_bcd=p.horn_bolt_3_bcd,
+    horn_bolt_2_bcd=p.horn_bolt_2_bcd,
+)
+
+print("spigot/driver face Y:", round(target_y, 3))
+print("expected bracket front/rear Y:",
+      round(bracket_front_y, 3),
+      round(bracket_front_y + p.horn_bracket_t, 3))
+
+for face in bracket.faces():
+    try:
+        normal = face.normal_at()
+        bb = face.bounding_box()
+    except Exception:
+        continue
+    if abs(normal.Y) > 0.98 and bb.max.Z > enclosure_bb.max.Z + 30:
+        print("upright face Y:", round(bb.min.Y, 3), round(bb.max.Y, 3))
+PY
+```
+
 ## Enclosure Modeling Rules Learned
 
 - The woofer is rear-mounted from inside the cabinet through the passive
