@@ -73,6 +73,7 @@ DRIVER_MOUNT_FACE_RAW_Y = 110.5
 DRIVER_INSERT_STEP = ROOT / "objects" / "M4x6mm_threaded_brass_insert.step"
 DRIVER_INSERT_LENGTH = 6.0
 DRIVER_INSERT_BORE_DEPTH = 6.5
+PR_INSERT_BORE_DEPTH = 6.5
 FRONT_CURVE_DRIVER_CONTROL_DEPTH_FACTOR = 0.30
 WOOFER_ASSEMBLY_CLEARANCE = 0.0
 FILL_PORT_Z = CUBE_OUTER / 2 - base_p.outer_skin_t - base_p.void_t / 2
@@ -501,14 +502,18 @@ def _confirmed_woofer(params):
     )
 
 
-def _driver_insert_positions(params) -> list[tuple[float, float]]:
+def _bolt_circle_positions(
+    *,
+    radius: float,
+    count: int,
+) -> list[tuple[float, float]]:
     positions = []
-    for index in range(params.driver_screw_count):
-        angle = math.tau * index / params.driver_screw_count + math.tau / 8
+    for index in range(count):
+        angle = math.tau * index / count + (math.tau / 8 if count == 4 else 0)
         positions.append(
             (
-                params.driver_bolt_circle_r * math.cos(angle),
-                params.driver_bolt_circle_r * math.sin(angle),
+                radius * math.cos(angle),
+                radius * math.sin(angle),
             )
         )
     return positions
@@ -519,10 +524,31 @@ def _confirmed_driver_inserts(params) -> Compound:
     front_mount_y = -half + params.front_cap_t
     insert = import_step(DRIVER_INSERT_STEP)
     inserts = []
-    for x, z in _driver_insert_positions(params):
+    for x, z in _bolt_circle_positions(
+        radius=params.driver_bolt_circle_r,
+        count=params.driver_screw_count,
+    ):
         inserts.extend(
             (
                 Location((x, front_mount_y, z))
+                * (Rot(90, 0, 0) * insert)
+            ).solids()
+        )
+    return Compound(inserts)
+
+
+def _confirmed_pr_inserts(params) -> Compound:
+    half = params.cube_outer / 2
+    pr_mount_y = half - params.pr_recess_depth
+    insert = import_step(DRIVER_INSERT_STEP)
+    inserts = []
+    for x, z in _bolt_circle_positions(
+        radius=params.pr_bolt_circle_r,
+        count=params.pr_screw_count,
+    ):
+        inserts.extend(
+            (
+                Location((x, pr_mount_y, z))
                 * (Rot(90, 0, 0) * insert)
             ).solids()
         )
@@ -606,6 +632,7 @@ def _placed_gx16(params):
 def _hardware_assembly(enclosure: Part, params) -> tuple[Compound, dict[str, object]]:
     woofer = _confirmed_woofer(params)
     driver_inserts = _confirmed_driver_inserts(params)
+    pr_inserts = _confirmed_pr_inserts(params)
     passive_radiator = _confirmed_passive_radiator(params)
     gx16, gx16_data = _placed_gx16(params)
     assembly = Compound(
@@ -613,6 +640,7 @@ def _hardware_assembly(enclosure: Part, params) -> tuple[Compound, dict[str, obj
             enclosure,
             *woofer.solids(),
             *driver_inserts.solids(),
+            *pr_inserts.solids(),
             *passive_radiator.solids(),
             *gx16.solids(),
         ]
@@ -623,6 +651,7 @@ def _hardware_assembly(enclosure: Part, params) -> tuple[Compound, dict[str, obj
             "enclosure": len(enclosure.solids()),
             "woofer": len(woofer.solids()),
             "driver_inserts": len(driver_inserts.solids()),
+            "pr_inserts": len(pr_inserts.solids()),
             "passive_radiator": len(passive_radiator.solids()),
             "gx16": len(gx16.solids()),
             "assembly": len(assembly.solids()),
@@ -638,6 +667,7 @@ def build_variant(variant: Variant) -> tuple[Part, dict[str, object]]:
         front_cap_t=DRIVER_SEAT_DEPTH,
         driver_cutout_dia=DRIVER_FACE_OPENING_DIA,
         driver_insert_bore_depth=DRIVER_INSERT_BORE_DEPTH,
+        pr_insert_bore_depth=PR_INSERT_BORE_DEPTH,
         fill_port_z=FILL_PORT_Z,
         gx16_x=GX16_X,
         gx16_z=GX16_Z,
@@ -822,6 +852,10 @@ def build_variant(variant: Variant) -> tuple[Part, dict[str, object]]:
     nominal_cavity_l = cavity_side * cavity_y * cavity_side / 1_000_000
     hex_half_extent = _hex_half_extent(GX16_HEX_ROTATION)
     inner_cavity_half = cavity_side / 2
+    pr_mount_y = half - params.pr_recess_depth
+    pr_bore_tip_y = pr_mount_y - params.pr_insert_bore_depth
+    pr_insert_tip_y = pr_mount_y - DRIVER_INSERT_LENGTH
+    pr_inner_face_y = half - params.rear_cap_t
     diagnostics = {
         "name": variant.name,
         "cube_outer_mm": params.cube_outer,
@@ -893,6 +927,34 @@ def build_variant(variant: Variant) -> tuple[Part, dict[str, object]]:
             "clearance_points": insert_clearance_points,
             "worst_nominal_bore_tip_cover_mm": insert_front_clearance,
             "pierce_risk": insert_front_clearance < 1.5,
+        },
+        "pr_insert": {
+            "bolt_circle_r_mm": params.pr_bolt_circle_r,
+            "count": params.pr_screw_count,
+            "bore_dia_mm": params.insert_bore_d,
+            "bore_depth_mm": params.pr_insert_bore_depth,
+            "insert_step": str(DRIVER_INSERT_STEP.relative_to(ROOT)),
+            "insert_model_length_mm": DRIVER_INSERT_LENGTH,
+            "melt_relief_depth_mm": round(
+                params.pr_insert_bore_depth - DRIVER_INSERT_LENGTH,
+                3,
+            ),
+            "mount_y_mm": round(pr_mount_y, 3),
+            "bore_tip_y_mm": round(pr_bore_tip_y, 3),
+            "insert_tip_y_mm": round(pr_insert_tip_y, 3),
+            "rear_inner_face_y_mm": round(pr_inner_face_y, 3),
+            "bore_tip_cover_to_cavity_mm": round(pr_bore_tip_y - pr_inner_face_y, 3),
+            "insert_tip_cover_to_cavity_mm": round(
+                pr_insert_tip_y - pr_inner_face_y,
+                3,
+            ),
+            "service_cutout_radial_clearance_mm": round(
+                params.pr_bolt_circle_r
+                - params.insert_bore_d / 2
+                - params.pr_service_cutout_dia / 2,
+                3,
+            ),
+            "pierce_risk": (pr_bore_tip_y - pr_inner_face_y) < 1.5,
         },
         "driver_step_fit": {
             "source": "objects/E150HE-44.step",
@@ -969,6 +1031,7 @@ def main() -> None:
             front_cap_t=DRIVER_SEAT_DEPTH,
             driver_cutout_dia=DRIVER_FACE_OPENING_DIA,
             driver_insert_bore_depth=DRIVER_INSERT_BORE_DEPTH,
+            pr_insert_bore_depth=PR_INSERT_BORE_DEPTH,
             fill_port_z=FILL_PORT_Z,
             gx16_x=GX16_X,
             gx16_z=GX16_Z,
