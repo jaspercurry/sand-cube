@@ -1,8 +1,8 @@
-"""Legacy 203 mm Sand Cube enclosure generator.
+"""Archived 203 mm Sand Cube enclosure generator.
 
-The active 8.5 in enclosure is exposed through ``src.final_enclosure``. This
-module remains for compatibility with older scripts and is also preserved in
-``archive/old_enclosure.py`` for reproducibility.
+This file is intentionally preserved from the pre-8.5-inch-enclosure design so
+the last useful old enclosure can still be regenerated. Current production
+exports should use ``src.final_enclosure`` and the final assembly scripts.
 """
 
 from __future__ import annotations

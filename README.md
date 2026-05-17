@@ -10,25 +10,52 @@ or a measured print.
 
 ## Current State
 
-- Local git repo initialized on `main`.
 - Research validation notes live in `docs/RESEARCH_VALIDATION.md`.
 - CAD import/debugging notes live in `docs/CAD_TROUBLESHOOTING.md`.
-- Initial dimensions live in `params.py`.
+- Shared dimensions live in `params.py`.
 - Build123d/Codex working rules live in `AGENTS.md`.
-- Initial build123d enclosure generator lives in `src/enclosure.py`.
+- Current 8.5 in enclosure API lives in `src/final_enclosure.py`.
+- Current JMLC horn API lives in `src/final_horn.py`.
+- Reusable horn and bracket geometry lives under `src/features/`.
+- Archived 203 mm enclosure code lives in `archive/old_enclosure.py`.
 
-## Build CAD
+## Build Current Enclosure
 
 ```bash
-UV_CACHE_DIR=.uv-cache UV_PYTHON_INSTALL_DIR=.uv-python XDG_CACHE_HOME=.cache \
-  uv run python src/enclosure.py
+uv run python scripts/generate_final_enclosure.py
 ```
 
-Outputs are written to `build/`:
+Outputs are written to `build/sand_cube_8_5_black_hole/contoured_inner/`:
 
-- `sand_cube.step`
-- `sand_cube.3mf`
-- `diagnostics.json`
+- `sand_cube_8_5_black_hole_final_enclosure.step`
+- `sand_cube_8_5_black_hole_final_enclosure_with_heat_set_inserts.step`
+- `sand_cube_8_5_black_hole_final_enclosure_with_inserts_pr_gx16.step`
+- `sand_cube_8_5_black_hole_final_complete_assembly.step`
+
+## Build Full System
+
+```bash
+uv run python scripts/generate_final_system_assembly.py
+```
+
+Outputs are written to `build/final_system/`:
+
+- `final_jmlc_horn_placed.step`
+- `final_horn_bracket_4mm_folded.step`
+- `final_binding_post_tpu_grommet.step`
+- `final_horn_bracket_de250_stack.step`
+- `final_sand_cube_horn_system.step`
+- `final_system_notes.json`
+
+## Build Archived 203 mm Enclosure
+
+```bash
+uv run python scripts/generate_archive_old_enclosure.py
+```
+
+Outputs are written to `build/archive/old_enclosure/`. This path is for
+comparison and reproducibility; new assembly work should use the 8.5 in final
+enclosure scripts above.
 
 ## View In OCP CAD Viewer
 
@@ -65,10 +92,9 @@ The PNG files are written to `previews/`.
 
 ## First Milestone
 
-Continue expanding the build123d model one feature at a time:
+Continue consolidating the final geometry out of experiments:
 
-1. Add full 3x3 per-face bracing posts.
-2. Add corner gussets.
-3. Add connector, tweeter pass-through, and fill port geometry.
-4. Add print coupons for the M20x2 fill plug and heat-set bosses.
-5. Add render/check automation.
+1. Move the 8.5 in enclosure implementation behind smaller feature modules.
+2. Keep `experiments/` for visual/profile studies only.
+3. Keep current production exports in `scripts/generate_final_*.py`.
+4. Add any future hardware placement helpers under `src/`.

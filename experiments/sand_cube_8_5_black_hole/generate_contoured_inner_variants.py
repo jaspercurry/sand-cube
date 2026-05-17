@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import copy
 import json
 import math
 import sys
@@ -82,6 +83,8 @@ GX16_X = -75.0
 GX16_Z = -75.0
 GX16_HEX_ROTATION = 15.0
 GX16_STEP_ROTATION = GX16_HEX_ROTATION + 30.0
+GX16_NUT_DISPLAY_T = 3.2
+BINDING_POST_GROMMET_CLEARANCE_D = 8.7
 DRIVER_SEAT_EDGE_FILLET_R = 0.4
 INTERNAL_SEAM_FILLET_R = 1.5
 SAND_VOID_EDGE_FILLET_R = 1.0
@@ -93,6 +96,9 @@ HARDWARE_CLEARANCE = 0.05
 class Variant:
     name: str
     wall_t: float
+
+
+FINAL_VARIANT = Variant("final_wall_10", 10.0)
 
 
 def _front_curve_controls(
@@ -576,6 +582,11 @@ def _gx16_nut_index(gx16):
     return candidates[0]
 
 
+def _is_valid_shape(shape) -> bool:
+    is_valid = getattr(shape, "is_valid")
+    return is_valid() if callable(is_valid) else bool(is_valid)
+
+
 def _placed_gx16(params):
     half = params.cube_outer / 2
     flange_ring_y = -2.0
@@ -585,21 +596,31 @@ def _placed_gx16(params):
     hex_center_y = inner_face_y + hex_depth / 2 - 0.1
     raw = import_step(ROOT / "objects" / "GX16.stp")
     nut_index = _gx16_nut_index(raw)
-    nut = raw.solids()[nut_index]
     body_solids = [
         solid for index, solid in enumerate(raw.solids()) if index != nut_index
     ]
+    body_solids = [solid for solid in body_solids if _is_valid_shape(solid)]
+    if not body_solids:
+        raise ValueError("GX16 body import did not contain any valid solids")
+    nut = raw.solids()[nut_index]
     nut_bb = nut.bounding_box()
     raw_nut_center_y = (nut_bb.min.Y + nut_bb.max.Y) / 2
-    nut_y = hex_center_y - raw_nut_center_y
     body_y = (half - params.gx16_flange_recess_depth) - flange_ring_y
     placed_body = (
         Location((params.gx16_x, body_y, params.gx16_z))
         * (Rot(0, GX16_STEP_ROTATION, 0) * Compound(body_solids))
     )
-    placed_nut = (
-        Location((params.gx16_x, nut_y, params.gx16_z))
-        * (Rot(0, GX16_STEP_ROTATION, 0) * nut)
+    placed_nut = _hex_prism_y(
+        across_flats=params.gx16_nut_across_flats,
+        depth=GX16_NUT_DISPLAY_T,
+        center=(params.gx16_x, hex_center_y, params.gx16_z),
+        rotation=GX16_HEX_ROTATION,
+    )
+    placed_nut -= _oriented_cylinder(
+        diameter=params.gx16_hole_d,
+        depth=GX16_NUT_DISPLAY_T + 0.4,
+        axis="y",
+        center=(params.gx16_x, hex_center_y, params.gx16_z),
     )
     placed = Compound(children=[*placed_body.solids(), placed_nut])
     placed_bb = placed.bounding_box()
@@ -608,7 +629,7 @@ def _placed_gx16(params):
         "raw_nut_center_y_mm": round(raw_nut_center_y, 3),
         "body_flange_ring_raw_y_mm": flange_ring_y,
         "body_y_offset_mm": round(body_y, 3),
-        "nut_y_offset_mm": round(nut_y, 3),
+        "nut_display_thickness_mm": GX16_NUT_DISPLAY_T,
         "pocket_rotation_deg": GX16_HEX_ROTATION,
         "step_rotation_deg": GX16_STEP_ROTATION,
         "rear_face_y_mm": round(half, 3),
@@ -660,8 +681,8 @@ def _hardware_assembly(enclosure: Part, params) -> tuple[Compound, dict[str, obj
     }
 
 
-def build_variant(variant: Variant) -> tuple[Part, dict[str, object]]:
-    params = replace(
+def _final_params():
+    return replace(
         base_p,
         cube_outer=CUBE_OUTER,
         edge_fillet_r=EDGE_FILLET_R,
@@ -671,9 +692,64 @@ def build_variant(variant: Variant) -> tuple[Part, dict[str, object]]:
         driver_insert_bore_depth=DRIVER_INSERT_BORE_DEPTH,
         pr_insert_bore_depth=PR_INSERT_BORE_DEPTH,
         fill_port_z=FILL_PORT_Z,
+        binding_post_hole_d=BINDING_POST_GROMMET_CLEARANCE_D,
         gx16_x=GX16_X,
         gx16_z=GX16_Z,
     )
+
+
+def _final_export_set(enclosure: Part, params) -> tuple[dict[str, Compound | Part], dict[str, object]]:
+    enclosure_solid = _primary_shape(enclosure).solids()[0]
+    enclosure_body = lambda: copy.copy(enclosure_solid)
+    driver_inserts = _confirmed_driver_inserts(params)
+    pr_inserts = _confirmed_pr_inserts(params)
+    inserts = [*driver_inserts.solids(), *pr_inserts.solids()]
+    passive_radiator = _confirmed_passive_radiator(params)
+    gx16, gx16_data = _placed_gx16(params)
+    woofer = _confirmed_woofer(params)
+
+    enclosure_with_inserts = Compound(children=[enclosure_body(), *inserts])
+    enclosure_with_pr_gx16 = Compound(
+        children=[
+            enclosure_body(),
+            *inserts,
+            *passive_radiator.solids(),
+            *gx16.solids(),
+        ]
+    )
+    complete_assembly = Compound(
+        children=[
+            enclosure_body(),
+            *inserts,
+            *passive_radiator.solids(),
+            *gx16.solids(),
+            *woofer.solids(),
+        ]
+    )
+
+    return {
+        "sand_cube_8_5_black_hole_final_enclosure.step": enclosure,
+        "sand_cube_8_5_black_hole_final_enclosure_with_heat_set_inserts.step": enclosure_with_inserts,
+        "sand_cube_8_5_black_hole_final_enclosure_with_inserts_pr_gx16.step": enclosure_with_pr_gx16,
+        "sand_cube_8_5_black_hole_final_complete_assembly.step": complete_assembly,
+    }, {
+        "gx16": gx16_data,
+        "solid_counts": {
+            "enclosure": len(enclosure.solids()),
+            "driver_inserts": len(driver_inserts.solids()),
+            "pr_inserts": len(pr_inserts.solids()),
+            "passive_radiator": len(passive_radiator.solids()),
+            "gx16": len(gx16.solids()),
+            "woofer": len(woofer.solids()),
+            "enclosure_with_inserts": len(enclosure_with_inserts.solids()),
+            "enclosure_with_inserts_pr_gx16": len(enclosure_with_pr_gx16.solids()),
+            "complete_assembly": len(complete_assembly.solids()),
+        },
+    }
+
+
+def build_variant(variant: Variant) -> tuple[Part, dict[str, object]]:
+    params = _final_params()
 
     half = params.cube_outer / 2
     shell_span = params.cube_outer - 2 * params.outer_skin_t
@@ -971,6 +1047,7 @@ def build_variant(variant: Variant) -> tuple[Part, dict[str, object]]:
         },
         "top_plate": {
             "binding_posts_act_as_rear_clamp_points": True,
+            "binding_post_hole_d_mm": params.binding_post_hole_d,
             "top_recesses_removed": True,
             "front_bracket_holes": [
                 [-params.bracket_hole_spacing / 2, params.bracket_hole_y - params.bracket_hole_spacing / 2],
@@ -1009,52 +1086,41 @@ def build_variant(variant: Variant) -> tuple[Part, dict[str, object]]:
     return enclosure, diagnostics
 
 
+def build_final_enclosure() -> tuple[Part, object, dict[str, object]]:
+    """Build the validated 8.5 in black-hole enclosure and diagnostics.
+
+    This is the public entry point used by final assembly/export scripts. The
+    older variant scripts in this folder are still useful historical design
+    studies, but downstream code should call this function for the current
+    production candidate.
+    """
+    part, data = build_variant(FINAL_VARIANT)
+    if not data["is_valid"]:
+        raise ValueError(f"{FINAL_VARIANT.name} generated an invalid body")
+    params = _final_params()
+    return part, params, data
+
+
+def build_final_export_shapes() -> tuple[dict[str, Compound | Part], dict[str, object]]:
+    """Return the four validated enclosure/hardware STEP export shapes."""
+    part, params, data = build_final_enclosure()
+    final_exports, hardware_data = _final_export_set(part, params)
+    data["final_exports"] = hardware_data
+    return final_exports, data
+
+
+def export_final_enclosure_set(out: Path = OUT) -> dict[str, object]:
+    """Write the final enclosure STEP set and diagnostics JSON."""
+    out.mkdir(parents=True, exist_ok=True)
+    final_exports, data = build_final_export_shapes()
+    for filename, shape in final_exports.items():
+        export_step(shape, out / filename, unit=Unit.MM)
+    (out / "diagnostics.json").write_text(json.dumps([data], indent=2))
+    return data
+
+
 def main() -> None:
-    OUT.mkdir(parents=True, exist_ok=True)
-    variants = [
-        Variant("final_wall_10", 10.0),
-    ]
-    diagnostics: list[dict[str, object]] = []
-    comparison_parts: list[Part] = []
-    spacing = CUBE_OUTER + 70.0
-    offset0 = -spacing * (len(variants) - 1) / 2
-
-    for index, variant in enumerate(variants):
-        part, data = build_variant(variant)
-        if not data["is_valid"]:
-            raise ValueError(f"{variant.name} generated an invalid body")
-        export_step(part, OUT / f"{variant.name}.step", unit=Unit.MM)
-        export_step(part, OUT / "sand_cube_8_5_black_hole_final.step", unit=Unit.MM)
-        export_step(part, OUT / "sand_cube_8_5_black_hole_enclosure.step", unit=Unit.MM)
-        params = replace(
-            base_p,
-            cube_outer=CUBE_OUTER,
-            edge_fillet_r=EDGE_FILLET_R,
-            front_cap_t=DRIVER_SEAT_DEPTH,
-            driver_cutout_dia=DRIVER_FACE_OPENING_DIA,
-            insert_bore_d=HEAT_SET_INSERT_BORE_DIA,
-            driver_insert_bore_depth=DRIVER_INSERT_BORE_DEPTH,
-            pr_insert_bore_depth=PR_INSERT_BORE_DEPTH,
-            fill_port_z=FILL_PORT_Z,
-            gx16_x=GX16_X,
-            gx16_z=GX16_Z,
-        )
-        assembly, hardware_data = _hardware_assembly(part, params)
-        export_step(
-            assembly,
-            OUT / "sand_cube_8_5_black_hole_hardware_assembly.step",
-            unit=Unit.MM,
-        )
-        data["hardware_assembly"] = hardware_data
-        diagnostics.append(data)
-        comparison_parts.append(Location((offset0 + index * spacing, 0, 0)) * part)
-
-    export_step(
-        Compound(comparison_parts),
-        OUT / "contoured_inner_comparison.step",
-        unit=Unit.MM,
-    )
-    (OUT / "diagnostics.json").write_text(json.dumps(diagnostics, indent=2))
+    diagnostics = [export_final_enclosure_set(OUT)]
     print(json.dumps(diagnostics, indent=2))
 
 

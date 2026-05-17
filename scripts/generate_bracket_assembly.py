@@ -1,4 +1,10 @@
-"""Generate the horn bracket and installed assembly previews."""
+"""Generate legacy 203 mm horn bracket assembly previews.
+
+The current full-system export uses ``scripts/generate_final_system_assembly.py``
+so it can start from the validated 8.5 in enclosure with inserts, PR, GX16, and
+woofer hardware. This script is retained as a historical bracket preview for
+the archived 203 mm enclosure.
+"""
 
 from __future__ import annotations
 
