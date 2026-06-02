@@ -57,7 +57,15 @@ Outputs are written to `build/archive/old_enclosure/`. This path is for
 comparison and reproducibility; new assembly work should use the 8.5 in final
 enclosure scripts above.
 
-## View In OCP CAD Viewer
+## View Locally
+
+The repo has two local viewing workflows:
+
+- **OCP CAD Viewer** for live build123d geometry and quick STEP inspection.
+- **Open STEP Viewer** or another desktop STEP viewer for exact exported STEP
+  review with measurements and section planes before uploading to Onshape.
+
+### OCP CAD Viewer
 
 Install the recommended VS Code extension:
 
@@ -65,12 +73,49 @@ Install the recommended VS Code extension:
 code --install-extension bernhard-42.ocp-cad-viewer
 ```
 
-Then start the OCP CAD Viewer from the VS Code/Cursor sidebar and run:
+Then start the OCP CAD Viewer from the VS Code/Cursor sidebar. With the viewer
+running, show the current final enclosure:
 
 ```bash
-UV_CACHE_DIR=.uv-cache UV_PYTHON_INSTALL_DIR=.uv-python XDG_CACHE_HOME=.cache \
-  uv run python src/show_model.py
+bash scripts/view_model.sh
 ```
+
+Useful targets:
+
+```bash
+# List available live-geometry and exported-STEP targets
+bash scripts/view_model.sh --list
+
+# Show all final enclosure export bodies in one viewer scene
+bash scripts/view_model.sh --target final-enclosure-exports
+
+# Show the standalone JMLC horn
+bash scripts/view_model.sh --target final-horn
+
+# Import and show the most recently generated STEP under build/
+bash scripts/view_model.sh --latest-step --tab clip
+
+# Import a specific STEP file back through OpenCASCADE
+bash scripts/view_model.sh build/final_system/final_sand_cube_horn_system.step
+```
+
+Inside OCP CAD Viewer, use the **Measure** tools for distances/properties and
+the **Clip** tab for section-plane inspection. The script starts in properties
+mode by default; pass `--tool distance` to start in distance measurement mode.
+
+### Exported STEP Review
+
+For fast local review of the exact STEP files, install
+[Open STEP Viewer](https://openstepviewer.com/) or another desktop STEP viewer
+such as FreeCAD/CAD Assistant. The most useful project files to inspect are:
+
+- `build/sand_cube_8_5_black_hole/contoured_inner/`
+  `sand_cube_8_5_black_hole_final_complete_assembly.step`
+- `build/final_system/final_sand_cube_horn_system.step`
+- `build/final_system/final_horn_bracket_de250_stack.step`
+
+Use the desktop viewer for measurements, section planes, and quick import sanity
+checks; keep Onshape as the final check for risky horn/adapter topology.
 
 ## Render Local PNG Previews
 
