@@ -47,6 +47,22 @@ Outputs are written to `build/final_system/`:
 - `final_sand_cube_horn_system.step`
 - `final_system_notes.json`
 
+## Build Compact 6 In Speaker
+
+```bash
+uv run python scripts/generate_compact_6in.py
+```
+
+Outputs are written to `build/compact_6in/`:
+
+- `compact_6in_one_piece_enclosure.step`
+- `compact_6in_f110m_jmlc_horn.step`
+- `compact_6in_f110m_fit_envelope.step`
+- `compact_6in_f110m_jmlc_horn_placed.step`
+- `compact_6in_horn_f110m_fit_stack.step`
+- `compact_6in_system_preview.step`
+- `diagnostics.json`
+
 ## Build Archived 203 mm Enclosure
 
 ```bash

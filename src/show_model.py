@@ -72,6 +72,12 @@ GEOMETRY_TARGETS: dict[str, ViewerTarget] = {
 
 
 STEP_TARGETS: dict[str, Path] = {
+    "compact-enclosure-step": ROOT
+    / "build/compact_6in/compact_6in_one_piece_enclosure.step",
+    "compact-horn-step": ROOT / "build/compact_6in/compact_6in_f110m_jmlc_horn.step",
+    "compact-horn-fit-step": ROOT
+    / "build/compact_6in/compact_6in_horn_f110m_fit_stack.step",
+    "compact-system-step": ROOT / "build/compact_6in/compact_6in_system_preview.step",
     "final-enclosure-step": ROOT
     / "build/sand_cube_8_5_black_hole/contoured_inner"
     / "sand_cube_8_5_black_hole_final_enclosure.step",
