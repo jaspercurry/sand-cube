@@ -102,8 +102,8 @@ class Params:
 
     # B&C DE250-8 Le Cleac'h / JMLC axisymmetric horn.
     horn_throat_d: float = 25.4
-    # Calibrated profile target: exported physical mouth bbox is ~215.9 mm.
-    horn_mouth_outer_d: float = 218.37
+    # Calibrated profile target: exported physical mouth bbox is ~220.0 mm.
+    horn_mouth_outer_d: float = 222.463
     horn_wall_t: float = 3.2
     horn_wavefront_t: float = 0.8
     horn_throat_angle_deg: float = 8.0
