@@ -51,6 +51,69 @@ def _legacy_enclosure() -> ShapeList:
     return [("legacy_203mm_sand_cube", build_legacy_enclosure())]
 
 
+def _horn_support_experiment() -> ShapeList:
+    from build123d import import_stl
+    from scripts.generate_horn_support_experiment import OUT, VERSION
+
+    stl_stems = [
+        ("horn_pla", "experimental_jmlc_horn_print_assist"),
+        ("accordion_wall_pla", "experimental_jmlc_horn_accordion_support_wall_pla"),
+        ("inner_flare_cradle_pla", "experimental_jmlc_horn_inner_flare_cradle_pla"),
+        ("outer_landing_pla", "experimental_jmlc_horn_outer_landing_cradle_pla"),
+        (
+            "inner_flare_support_interface",
+            "experimental_jmlc_horn_inner_flare_bambu_support_interface",
+        ),
+        (
+            "outer_landing_support_interface",
+            "experimental_jmlc_horn_outer_landing_bambu_support_interface",
+        ),
+        (
+            "rear_flange_support_pla",
+            "experimental_jmlc_horn_rear_flange_support_ring_pla",
+        ),
+        (
+            "rear_flange_support_interface",
+            "experimental_jmlc_horn_rear_flange_interface_skin",
+        ),
+    ]
+    shapes: ShapeList = []
+    for name, stem in stl_stems:
+        path = OUT / f"{stem}_{VERSION}_bed_oriented.stl"
+        if not path.exists():
+            raise FileNotFoundError(
+                f"Missing generated horn support experiment STL: {path}"
+            )
+        shapes.append((name, import_stl(path)))
+    return shapes
+
+
+def _horn_mouth_down_experiment() -> ShapeList:
+    from build123d import import_stl
+    from scripts.generate_horn_mouth_down_experiment import OUT, VERSION
+
+    stl_stems = [
+        ("horn_pla_mouth_down", "experimental_jmlc_horn_mouth_down_horn"),
+        (
+            "female_cradle_pla",
+            "experimental_jmlc_horn_mouth_down_female_cradle_pla",
+        ),
+        (
+            "support_barrier_interface",
+            "experimental_jmlc_horn_mouth_down_barrier_interface",
+        ),
+    ]
+    shapes: ShapeList = []
+    for name, stem in stl_stems:
+        path = OUT / f"{stem}_{VERSION}_bed_oriented.stl"
+        if not path.exists():
+            raise FileNotFoundError(
+                f"Missing generated mouth-down horn experiment STL: {path}"
+            )
+        shapes.append((name, import_stl(path)))
+    return shapes
+
+
 GEOMETRY_TARGETS: dict[str, ViewerTarget] = {
     "final-enclosure": ViewerTarget(
         "Build and show the current final 8.5 in enclosure.",
@@ -67,6 +130,14 @@ GEOMETRY_TARGETS: dict[str, ViewerTarget] = {
     "legacy-enclosure": ViewerTarget(
         "Build and show the archived 203 mm enclosure.",
         _legacy_enclosure,
+    ),
+    "horn-support-experiment": ViewerTarget(
+        "Import and show the current generated JMLC horn support experiment.",
+        _horn_support_experiment,
+    ),
+    "horn-mouth-down-experiment": ViewerTarget(
+        "Import and show the current generated mouth-down JMLC horn cradle experiment.",
+        _horn_mouth_down_experiment,
     ),
 }
 
