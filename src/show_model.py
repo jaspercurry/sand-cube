@@ -51,6 +51,39 @@ def _legacy_enclosure() -> ShapeList:
     return [("legacy_203mm_sand_cube", build_legacy_enclosure())]
 
 
+def _electronics_open_lid() -> ShapeList:
+    """Show the focused electronics enclosure with the lid as a separate body."""
+    from build123d import Location
+
+    from src.features.electronics import (
+        DEFAULT_CONFIG,
+        active_layout_variants,
+        build_component_placeholders,
+        build_thin_plate_printed_parts,
+    )
+
+    variant = active_layout_variants()[0]
+    base, lid, _printed, _notes = build_thin_plate_printed_parts(
+        variant,
+        DEFAULT_CONFIG,
+    )
+    placeholders, _placement_notes = build_component_placeholders(
+        variant,
+        DEFAULT_CONFIG,
+    )
+    placeholder_names = [
+        f"{placement.spec}_clearance"
+        for placement in variant.placements
+        if placement.spec in {"amp", "pi_hat", "buck", "mic"}
+    ]
+    shapes: ShapeList = [
+        ("electronics_base_with_standoffs", base),
+        ("electronics_lid_lifted_for_inspection", Location((0, 0, 24.0)) * lid),
+    ]
+    shapes.extend(zip(placeholder_names, placeholders, strict=True))
+    return shapes
+
+
 def _horn_support_experiment() -> ShapeList:
     from build123d import import_stl
     from scripts.generate_horn_support_experiment import OUT, VERSION
@@ -114,7 +147,44 @@ def _horn_mouth_down_experiment() -> ShapeList:
     return shapes
 
 
+def _electronics_open_lid() -> ShapeList:
+    """Show the focused electronics enclosure with the lid as a separate body."""
+    from build123d import Location
+
+    from src.features.electronics import (
+        DEFAULT_CONFIG,
+        active_layout_variants,
+        build_component_placeholders,
+        build_thin_plate_printed_parts,
+    )
+
+    variant = active_layout_variants()[0]
+    base, lid, _printed, _notes = build_thin_plate_printed_parts(
+        variant,
+        DEFAULT_CONFIG,
+    )
+    placeholders, _placement_notes = build_component_placeholders(
+        variant,
+        DEFAULT_CONFIG,
+    )
+    placeholder_names = [
+        f"{placement.spec}_clearance"
+        for placement in variant.placements
+        if placement.spec in {"amp", "pi_hat", "buck", "mic"}
+    ]
+    shapes: ShapeList = [
+        ("electronics_base_with_standoffs", base),
+        ("electronics_lid_lifted_for_inspection", Location((0, 0, 24.0)) * lid),
+    ]
+    shapes.extend(zip(placeholder_names, placeholders, strict=True))
+    return shapes
+
+
 GEOMETRY_TARGETS: dict[str, ViewerTarget] = {
+    "electronics-open-lid": ViewerTarget(
+        "Show the focused electronics enclosure with the lid lifted as its own body.",
+        _electronics_open_lid,
+    ),
     "final-enclosure": ViewerTarget(
         "Build and show the current final 8.5 in enclosure.",
         _final_enclosure,
