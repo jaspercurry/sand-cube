@@ -12,6 +12,7 @@ or a measured print.
 
 - Research validation notes live in `docs/RESEARCH_VALIDATION.md`.
 - CAD import/debugging notes live in `docs/CAD_TROUBLESHOOTING.md`.
+- Compact 6 in speaker notes live in `docs/COMPACT_6IN_SPEAKER.md`.
 - Shared dimensions live in `params.py`.
 - Build123d/Codex working rules live in `AGENTS.md`.
 - Current 8.5 in enclosure API lives in `src/final_enclosure.py`.
