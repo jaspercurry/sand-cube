@@ -1,4 +1,4 @@
-"""Export the current 8.5 in Sand Cube enclosure STEP set."""
+"""Export the current Sand Cube enclosure STEP set."""
 
 from __future__ import annotations
 

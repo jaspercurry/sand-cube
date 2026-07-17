@@ -52,6 +52,7 @@ def _viewer_template_config() -> dict[str, Any]:
     config["axes0"] = True
     config["black_edges"] = True
     config["tree_width"] = 280
+    config["treeWidth"] = 280
     config["collapse"] = "1"
     return config
 
@@ -124,32 +125,36 @@ def _render_viewer(payload: dict[str, Any], out_dir: Path) -> None:
 
     env = Environment(loader=FileSystemLoader(package_dir / "templates"))
     template = env.get_template("viewer.html")
-    html = template.render(
-        standalone_scripts="",
-        standalone_imports='import { MODEL } from "/model-data.js";',
-        standalone_comms="""
-            const vscode = {
-                postMessage: (msg) => {
-                    if (msg.command !== "status") {
-                        console.debug("viewer message", msg);
+
+    def render_html(asset_prefix: str) -> str:
+        return template.render(
+            standalone_scripts="",
+            standalone_imports=(
+                f'import {{ MODEL }} from "{asset_prefix}model-data.js";'
+            ),
+            standalone_comms="""
+                const vscode = {
+                    postMessage: (msg) => {
+                        if (msg.command !== "status") {
+                            console.debug("viewer message", msg);
+                        }
                     }
-                }
-            };
-            const standaloneViewer = () => {
-                viewer = showViewer(MODEL.data, MODEL.config);
-                window.viewer = viewer;
-            };
-            window.showViewer = standaloneViewer;
-        """,
-        standalone_init='onload="showViewer()"',
-        styleSrc="/static/css/three-cad-viewer.css",
-        scriptSrc="/static/js/three-cad-viewer.esm.js",
-        **_viewer_template_config(),
-    )
-    (out_dir / "index.html").write_text(html)
+                };
+                const standaloneViewer = () => {
+                    viewer = showViewer(MODEL.data, MODEL.config);
+                    window.viewer = viewer;
+                };
+                window.showViewer = standaloneViewer;
+            """,
+            standalone_init='onload="showViewer()"',
+            styleSrc=f"{asset_prefix}static/css/three-cad-viewer.css",
+            scriptSrc=f"{asset_prefix}static/js/three-cad-viewer.esm.js",
+            **_viewer_template_config(),
+        )
+    (out_dir / "index.html").write_text(render_html("./"))
     viewer_dir = out_dir / "viewer"
     viewer_dir.mkdir(exist_ok=True)
-    (viewer_dir / "index.html").write_text(html)
+    (viewer_dir / "index.html").write_text(render_html("../"))
 
 
 def _parse_args() -> argparse.Namespace:
