@@ -113,21 +113,24 @@ BAFFLE_LAND_THICKNESS_MM = 1.4
 
 # Two broad discrete hooks avoid binding across the full 190 mm width.  The
 # male hooks stay on the bucket, so neither hook projects below the baffle's
-# print-bed plane.
+# print-bed plane.  The complete hinge is recessed below a protected top-skin
+# band so neither the male hook nor its swept receiver can telegraph through
+# the closed exterior.
 HOOK_X_MM = 43.0
 HOOK_WIDTH_MM = 22.0
 HOOK_SIDE_CLEARANCE_MM = 0.30
 HOOK_SHANK_FRONT_Y = -84.8
 HOOK_SHANK_REAR_Y = SHOULDER_Y + 1.25
-HOOK_SHANK_BOTTOM_Z = 91.20
-HOOK_SHANK_TOP_Z = 94.20
+HOOK_SHANK_BOTTOM_Z = 87.30
+HOOK_SHANK_TOP_Z = 90.30
 HOOK_TOE_FRONT_Y = HOOK_SHANK_FRONT_Y
 HOOK_TOE_REAR_Y = -82.50
-HOOK_TOE_BOTTOM_Z = 89.50
-HOOK_TOE_TOP_Z = 93.40
+HOOK_TOE_BOTTOM_Z = 85.60
+HOOK_TOE_TOP_Z = 89.50
 HOOK_PIVOT_Y = -84.0
 HOOK_PIVOT_Z = 94.0
 HOOK_OPEN_ANGLE_DEG = -15.0
+HOOK_PROTECTED_TOP_BAND_MIN_Z_MM = 93.40
 
 # The screws enter from the underside on an angle.  Tightening therefore pulls
 # the baffle both upward into the hooks and rearward into the gasket.  The
@@ -735,6 +738,7 @@ def _build_joint(full_base: Solid) -> dict[str, Any]:
         _baffle_gasket_land(),
         feature="baffle with flat gasket land",
     )
+    baffle_before_hook_receivers = copy.copy(baffle)
     for x in (-HOOK_X_MM, HOOK_X_MM):
         for sweep_index, receiver_cutter in enumerate(
             _hook_receiver_cutters(x),
@@ -747,6 +751,44 @@ def _build_joint(full_base: Solid) -> dict[str, Any]:
                     f"baffle top-receiver sweep {sweep_index} at x={x:g}"
                 ),
             )
+
+    baffle_bbox = baffle_before_hook_receivers.bounding_box()
+    guard_top_z = baffle_bbox.max.Z + 1.0
+    protected_top_band = Pos(
+        (baffle_bbox.min.X + baffle_bbox.max.X) / 2.0,
+        (baffle_bbox.min.Y + baffle_bbox.max.Y) / 2.0,
+        (HOOK_PROTECTED_TOP_BAND_MIN_Z_MM + guard_top_z) / 2.0,
+    ) * Box(
+        baffle_bbox.size.X + 2.0,
+        baffle_bbox.size.Y + 2.0,
+        guard_top_z - HOOK_PROTECTED_TOP_BAND_MIN_Z_MM,
+        align=(Align.CENTER, Align.CENTER, Align.CENTER),
+    )
+    protected_top_volume_before = _shape_volume(
+        baffle_before_hook_receivers.intersect(protected_top_band)
+    )
+    protected_top_volume_after = _shape_volume(
+        baffle.intersect(protected_top_band)
+    )
+    protected_top_material_loss = max(
+        0.0,
+        protected_top_volume_before - protected_top_volume_after,
+    )
+    hook_max_z = max(
+        _bucket_hook(x).bounding_box().max.Z
+        for x in (-HOOK_X_MM, HOOK_X_MM)
+    )
+    if protected_top_material_loss > 0.01:
+        raise ValueError(
+            "A top-hook receiver breaches the protected exterior band: "
+            f"{protected_top_material_loss:.6f} mm3"
+        )
+    if hook_max_z >= HOOK_PROTECTED_TOP_BAND_MIN_Z_MM:
+        raise ValueError(
+            "A bucket hook enters the protected exterior band: "
+            f"hook_max_z={hook_max_z:.6f} mm"
+        )
+
     for x in (-FASTENER_X_MM, FASTENER_X_MM):
         baffle = _fuse_one(
             baffle,
@@ -843,6 +885,13 @@ def _build_joint(full_base: Solid) -> dict[str, Any]:
         "minimum_print_rise_mm": minimum_print_rise,
         "worst_overhang_from_print_axis_deg": worst_overhang,
         "shoulder_ramp_from_print_axis_deg": support_ramp_angle,
+        "hook_protected_top_band_min_z_mm": (
+            HOOK_PROTECTED_TOP_BAND_MIN_Z_MM
+        ),
+        "hook_max_z_mm": hook_max_z,
+        "hook_receiver_protected_top_material_loss_mm3": (
+            protected_top_material_loss
+        ),
     }
 
 

@@ -11,8 +11,9 @@ The closure uses:
 - a 0.8 mm rounded bucket opening backed by a broad internal shoulder;
 - a continuous rounded-square land for 5 mm wide, 2 mm thick foam tape;
 - a 1.15 mm modeled closed gasket gap (42.5% nominal compression);
-- two discrete, support-free upper hooks on the bucket;
-- swept receiver pockets in the baffle for a 15 degree closing motion;
+- two discrete, support-free upper hooks recessed below the closed exterior;
+- swept receiver pockets in the baffle for a 15 degree closing motion, with
+  the complete swept volume kept below a protected top-skin band;
 - two angled M4 screws entering from the underside;
 - short M5-class heat-set sleeve pockets in the bucket as hollow screw guides;
 - M4 heat-set insert pockets in the baffle.
