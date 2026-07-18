@@ -15,8 +15,13 @@ The closure uses:
 - swept receiver pockets in the baffle for a 15 degree closing motion, with
   the complete swept volume kept below a protected top-skin band;
 - two angled M4 screws entering from the underside;
+- inward-shifted baffle insert pockets with a materially wider print-bed
+  perimeter ligament while retaining the same underside access;
 - short M5-class heat-set sleeve pockets in the bucket as hollow screw guides;
-- M4 heat-set insert pockets in the baffle.
+- M4 heat-set insert pockets in the baffle;
+- a locally tapered transverse U-frame that grows from the rear-bed print
+  direction at support-free angles, while the already-supported longitudinal
+  rails retain their full rectangular section.
 
 The insert pocket dimensions are a prototype contract, not a claim that every
 commercial heat-set insert shares the same outside diameter.  Print a fit

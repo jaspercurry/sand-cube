@@ -62,6 +62,7 @@ parent = prior.parent
 base = prior.base
 shell_source = prior.shell_source
 cad = prior.cad
+ORIGINAL_RESTORED_INTERNAL_BRACES = base._restored_internal_braces
 OUT = (
     ROOT
     / "build"
@@ -137,7 +138,7 @@ HOOK_PROTECTED_TOP_BAND_MIN_Z_MM = 93.40
 # bucket pocket is sized for a short M5-class heat-set sleeve with an M4 screw
 # passing through it; exact purchased hardware still requires a fit coupon.
 FASTENER_X_MM = 52.0
-FASTENER_SURFACE_Y = -70.5
+FASTENER_SURFACE_Y = -67.0
 FASTENER_SURFACE_Z = -95.0
 FASTENER_DIRECTION_Y = -9.0
 FASTENER_DIRECTION_Z = 8.0
@@ -156,6 +157,13 @@ BAFFLE_INSERT_WALL_MM = 2.2
 BAFFLE_BOSS_EMBED_START_MM = 4.7
 
 PIVOT_SWEEP_ANGLES_DEG = (0.0, -2.0, -5.0, -8.0, -11.0, -15.0)
+
+# The rear-face-down bucket already supports its longitudinal rails on the
+# solid rear floor.  Only the transverse U-frame begins in free space.  Grow
+# that frame from zero mid-side cavity projection to its established 10 mm
+# depth over a ruled loft contained inside the original validated envelope.
+TRANSVERSE_BRACE_RAMP_LENGTH_MM = 10.0
+_PRINTABLE_BRACE_DIAGNOSTICS: dict[str, Any] = {}
 
 
 def _is_valid(shape: Any) -> bool:
@@ -315,8 +323,9 @@ def _lofted_rounded_rectangle(
     sections: tuple[tuple[float, float, float], ...],
     *,
     feature: str,
+    ruled: bool = False,
 ) -> Solid:
-    builder = BRepOffsetAPI_ThruSections(True, False, 1e-7)
+    builder = BRepOffsetAPI_ThruSections(True, ruled, 1e-7)
     builder.CheckCompatibility(True)
     for size, radius, y in sections:
         builder.AddWire(_rounded_rectangle_wire(size, radius, y).wrapped)
@@ -327,6 +336,170 @@ def _lofted_rounded_rectangle(
     if solid is None:
         raise ValueError(f"Unable to cast {feature}")
     return _single_solid(solid.clean().fix(), feature=feature)
+
+
+def _printable_transverse_window_brace() -> Solid:
+    """Rear-to-front tapered U-frame for support-free bucket printing."""
+    variant = base.RESTORED_FEATURE_VARIANT
+    cavity_size = base.D.width - 2.0 * base.D.wall_stack_t
+    outer_size = cavity_size + 2.0 * variant.window_brace_skin_embed
+    full_inner_size = cavity_size - 2.0 * variant.window_brace_height
+    front_y = (
+        variant.window_brace_center_y - variant.window_brace_width / 2.0
+    )
+    rear_y = front_y + TRANSVERSE_BRACE_RAMP_LENGTH_MM
+    rear_inner_radius = variant.window_brace_corner_r
+
+    outer = Pos(0.0, (front_y + rear_y) / 2.0, 0.0) * Box(
+        outer_size,
+        rear_y - front_y,
+        outer_size,
+        align=(Align.CENTER, Align.CENTER, Align.CENTER),
+    )
+    inner = _lofted_rounded_rectangle(
+        (
+            (
+                full_inner_size,
+                variant.window_brace_corner_r,
+                front_y - 0.1,
+            ),
+            (
+                cavity_size,
+                rear_inner_radius,
+                rear_y + 0.1,
+            ),
+        ),
+        feature="support-free transverse-brace inner ramp",
+        ruled=True,
+    )
+    tapered_frame = _single_solid(
+        outer.cut(inner).clean().fix(),
+        feature="pyramidal transverse window brace",
+    )
+
+    floor_top_z = -base.D.height / 2.0 + base.D.wall_stack_t
+    rail_inner_z = (
+        base.D.width / 2.0
+        - base.D.wall_stack_t
+        - variant.window_brace_height
+    )
+    cutter_top_z = -rail_inner_z + 0.05
+    floor_rail_cutter = Pos(
+        0.0,
+        (front_y + rear_y) / 2.0,
+        (floor_top_z - 20.0 + cutter_top_z) / 2.0,
+    ) * Box(
+        base.D.width + 20.0,
+        rear_y - front_y + 4.0,
+        cutter_top_z - (floor_top_z - 20.0),
+        align=(Align.CENTER, Align.CENTER, Align.CENTER),
+    )
+    printable = _single_solid(
+        tapered_frame.cut(floor_rail_cutter).clean().fix(),
+        feature="floor-free pyramidal transverse window brace",
+    )
+
+    rear_diagonal = (
+        cavity_size / 2.0
+        - rear_inner_radius
+        + rear_inner_radius / math.sqrt(2.0)
+    )
+    front_diagonal = (
+        full_inner_size / 2.0
+        - variant.window_brace_corner_r
+        + variant.window_brace_corner_r / math.sqrt(2.0)
+    )
+    corner_run = rear_diagonal - front_diagonal
+    original = base._floor_free_window_brace()
+    _PRINTABLE_BRACE_DIAGNOSTICS.clear()
+    _PRINTABLE_BRACE_DIAGNOSTICS.update(
+        {
+            "construction": (
+                "ruled rounded-square U-frame growing from zero mid-side "
+                "cavity projection at the rear to the established full depth"
+            ),
+            "print_direction_original_axis": "rear to front (-Y)",
+            "ramp_length_mm": TRANSVERSE_BRACE_RAMP_LENGTH_MM,
+            "full_rib_depth_mm": variant.window_brace_height,
+            "mid_side_overhang_from_print_axis_deg": math.degrees(
+                math.atan2(
+                    variant.window_brace_height,
+                    TRANSVERSE_BRACE_RAMP_LENGTH_MM,
+                )
+            ),
+            "rounded_corner_overhang_from_print_axis_deg": math.degrees(
+                math.atan2(
+                    corner_run,
+                    TRANSVERSE_BRACE_RAMP_LENGTH_MM,
+                )
+            ),
+            "rear_corner_supported_root_mm": (
+                (
+                    cavity_size / 2.0
+                    - max(
+                        0.0,
+                        base.D.edge_fillet_r - base.D.wall_stack_t,
+                    )
+                    + max(
+                        0.0,
+                        base.D.edge_fillet_r - base.D.wall_stack_t,
+                    )
+                    / math.sqrt(2.0)
+                )
+                - rear_diagonal
+            ),
+            "original_rectangular_u_frame_volume_mm3": _shape_volume(
+                original
+            ),
+            "tapered_u_frame_volume_mm3": printable.volume,
+            "longitudinal_rails_changed": False,
+        }
+    )
+    return printable
+
+
+def _printable_restored_internal_braces(port_clearance: Any) -> Compound:
+    """Baseline network with only the unsupported transverse frame tapered."""
+    original = ORIGINAL_RESTORED_INTERNAL_BRACES(port_clearance)
+    tapered_frame = _printable_transverse_window_brace()
+    variant = base.RESTORED_FEATURE_VARIANT
+    front_y = (
+        variant.window_brace_center_y - variant.window_brace_width / 2.0
+    )
+    rear_y = front_y + TRANSVERSE_BRACE_RAMP_LENGTH_MM
+    retained: list[Solid] = []
+    replaced_piece_count = 0
+    for solid in original.solids():
+        bbox = solid.bounding_box()
+        is_transverse_piece = (
+            bbox.min.Y >= front_y - 0.01
+            and bbox.max.Y <= rear_y + 0.01
+            and bbox.size.Y <= TRANSVERSE_BRACE_RAMP_LENGTH_MM + 0.01
+            and max(bbox.size.X, bbox.size.Z) > 100.0
+        )
+        if not is_transverse_piece:
+            retained.append(copy.copy(solid))
+            continue
+        tapered_pieces = [
+            piece.clean().fix()
+            for piece in (solid & tapered_frame).solids()
+            if piece.volume > 1e-6
+        ]
+        if not tapered_pieces:
+            raise ValueError(
+                "The printable taper removed a transverse brace piece"
+            )
+        retained.extend(tapered_pieces)
+        replaced_piece_count += 1
+    if replaced_piece_count == 0:
+        raise ValueError("Unable to identify the transverse brace in the network")
+    _PRINTABLE_BRACE_DIAGNOSTICS["replaced_port_cleared_piece_count"] = (
+        replaced_piece_count
+    )
+    _PRINTABLE_BRACE_DIAGNOSTICS[
+        "original_port_clearance_faces_preserved"
+    ] = True
+    return Compound(children=retained)
 
 
 def _gasket_shoulder() -> Solid:
@@ -542,6 +715,32 @@ def _fastener_points(x: float) -> dict[str, Vector]:
         "boss_end": bed
         + direction
         * (BAFFLE_INSERT_DEPTH_MM + BAFFLE_INSERT_WALL_MM),
+    }
+
+
+def _fastener_bed_clearances() -> dict[str, float | list[float]]:
+    """Sample the insert pocket's material margin on the baffle bed face."""
+    bed = _fastener_points(FASTENER_X_MM)["bed"]
+    bed_targets: list[tuple[float, float]] = []
+    for x, _y, z in shell_source.parent._minimum_energy_control_rings()[-1]:
+        radius = math.hypot(x, z)
+        scale = (radius - PERIMETER_INSET_MM) / radius
+        bed_targets.append((x * scale, z * scale))
+    center_to_perimeter = min(
+        math.hypot(bed.X - x, bed.Z - z)
+        for x, z in bed_targets
+    )
+    pocket_radius = BAFFLE_INSERT_POCKET_D_MM / 2.0
+    gasket_track_clearance = (
+        abs(bed.Z) - pocket_radius - GASKET_OUTER_SIZE_MM / 2.0
+    )
+    return {
+        "baffle_bed_intercept_xyz_mm": [bed.X, bed.Y, bed.Z],
+        "sampled_center_to_perimeter_mm": center_to_perimeter,
+        "sampled_perimeter_ligament_mm": (
+            center_to_perimeter - pocket_radius
+        ),
+        "clearance_to_gasket_track_mm": gasket_track_clearance,
     }
 
 
@@ -1165,6 +1364,16 @@ def _generate_viewers() -> None:
         ("hooked_gasketed_baffle_exploded.step", "exploded_viewer", False),
         ("hooked_gasketed_baffle_open.step", "open_viewer", False),
         ("retention_hardware_reference.step", "hardware_viewer", False),
+        (
+            "hooked_gasketed_bucket_print_orientation.step",
+            "bucket_print_viewer",
+            False,
+        ),
+        (
+            "hooked_gasketed_baffle_print_orientation.step",
+            "baffle_print_viewer",
+            False,
+        ),
     )
     for source_filename, viewer_name, cutaway in viewer_specs:
         viewer_dir = OUT / viewer_name
@@ -1200,7 +1409,11 @@ def generate() -> dict[str, Any]:
     parent._DETAIL_CUT_AUDITS.clear()
     parent._full_detail_base = prior._solid_rear_detail_base
 
-    diagnostics = parent.generate()
+    base._restored_internal_braces = _printable_restored_internal_braces
+    try:
+        diagnostics = parent.generate()
+    finally:
+        base._restored_internal_braces = ORIGINAL_RESTORED_INTERNAL_BRACES
     full_base = _single_solid(
         import_step(OUT / "sand_cube_190x210_single_oval_port_base.step"),
         feature="round-tripped solid-rear full-detail enclosure",
@@ -1339,6 +1552,7 @@ def generate() -> dict[str, Any]:
     fastener_angle_from_bottom_normal_deg = math.degrees(
         math.acos(_fastener_direction().Z)
     )
+    fastener_bed_clearances = _fastener_bed_clearances()
     diagnostics["name"] = NAME
     diagnostics["status"] = (
         "complete hooked, gasketed, two-underside-screw printable closure "
@@ -1430,8 +1644,11 @@ def generate() -> dict[str, Any]:
             ),
             "baffle_insert_pocket_diameter_mm": BAFFLE_INSERT_POCKET_D_MM,
             "baffle_insert_depth_mm": BAFFLE_INSERT_DEPTH_MM,
+            "underside_entry_y_mm": FASTENER_SURFACE_Y,
+            **fastener_bed_clearances,
             "hardware_fit_coupon_required": True,
         },
+        "printable_transverse_brace": dict(_PRINTABLE_BRACE_DIAGNOSTICS),
         "preserved_front": {
             "outer_fairing_face_area_mm2": joint[
                 "fairing_face_area_mm2"
@@ -1473,6 +1690,7 @@ def generate() -> dict[str, Any]:
             "solid_rear_wall": True,
             "separate_front_baffle": True,
             "full_inherited_bracing_and_service_features": True,
+            "transverse_window_brace_printability_modified_locally": True,
         }
     )
     diagnostics["manufacturing_effect"] = {
