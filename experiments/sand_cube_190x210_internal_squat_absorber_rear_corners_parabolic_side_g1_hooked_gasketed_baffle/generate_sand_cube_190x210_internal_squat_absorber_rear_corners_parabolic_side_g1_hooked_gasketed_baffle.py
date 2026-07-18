@@ -75,7 +75,10 @@ NAME = "sand_cube_190x210_parabolic_g1_hooked_gasketed_baffle"
 BAFFLE_BED_Y = shell_source.CAVITY_FRONT_Y
 PERIMETER_INSET_MM = 4.0
 HIDDEN_FIT_CLEARANCE_MM = 0.35
-SHADOW_LINE_DEPTH_MM = 0.35
+# Preserve the parent shell's exact tangent seam.  The fit allowance grows
+# only behind that edge, so the gasketed joint does not expose an axial band
+# between the baffle and bucket.
+SHADOW_LINE_DEPTH_MM = 0.0
 BUCKET_EDGE_FILLET_R_MM = 0.80
 ENVELOPE_FRONT_OVERTRAVEL_MM = 2.0
 EXPLODED_BAFFLE_OFFSET_MM = 42.0
@@ -138,7 +141,7 @@ HOOK_PROTECTED_TOP_BAND_MIN_Z_MM = 93.40
 # bucket pocket is sized for a short M5-class heat-set sleeve with an M4 screw
 # passing through it; exact purchased hardware still requires a fit coupon.
 FASTENER_X_MM = 52.0
-FASTENER_SURFACE_Y = -67.0
+FASTENER_SURFACE_Y = -51.0
 FASTENER_SURFACE_Z = -95.0
 FASTENER_DIRECTION_Y = -9.0
 FASTENER_DIRECTION_Z = 8.0
@@ -154,7 +157,7 @@ BAFFLE_INSERT_OD_MM = 5.4
 BAFFLE_INSERT_ID_MM = 3.4
 BAFFLE_INSERT_DEPTH_MM = 6.5
 BAFFLE_INSERT_WALL_MM = 2.2
-BAFFLE_BOSS_EMBED_START_MM = 4.7
+BAFFLE_BOSS_REAR_OVERTRAVEL_MM = 10.0
 
 PIVOT_SWEEP_ANGLES_DEG = (0.0, -2.0, -5.0, -8.0, -11.0, -15.0)
 
@@ -719,44 +722,100 @@ def _fastener_points(x: float) -> dict[str, Vector]:
 
 
 def _fastener_bed_clearances() -> dict[str, float | list[float]]:
-    """Sample the insert pocket's material margin on the baffle bed face."""
+    """Analytic clearances for the complete oblique baffle insert entry."""
     bed = _fastener_points(FASTENER_X_MM)["bed"]
-    bed_targets: list[tuple[float, float]] = []
-    for x, _y, z in shell_source.parent._minimum_energy_control_rings()[-1]:
-        radius = math.hypot(x, z)
-        scale = (radius - PERIMETER_INSET_MM) / radius
-        bed_targets.append((x * scale, z * scale))
-    center_to_perimeter = min(
-        math.hypot(bed.X - x, bed.Z - z)
-        for x, z in bed_targets
+    direction = _fastener_direction()
+    pocket_bed_semi_z = (
+        BAFFLE_INSERT_POCKET_D_MM / 2.0 / abs(direction.Y)
     )
-    pocket_radius = BAFFLE_INSERT_POCKET_D_MM / 2.0
-    gasket_track_clearance = (
-        abs(bed.Z) - pocket_radius - GASKET_OUTER_SIZE_MM / 2.0
+    boss_diameter = (
+        BAFFLE_INSERT_POCKET_D_MM + 2.0 * BAFFLE_INSERT_WALL_MM
     )
+    boss_bed_semi_z = boss_diameter / 2.0 / abs(direction.Y)
+    gasket_inner_half_size = GASKET_INNER_SIZE_MM / 2.0
     return {
         "baffle_bed_intercept_xyz_mm": [bed.X, bed.Y, bed.Z],
-        "sampled_center_to_perimeter_mm": center_to_perimeter,
-        "sampled_perimeter_ligament_mm": (
-            center_to_perimeter - pocket_radius
+        "insert_location_relative_to_gasket": "inside sealed loop",
+        "pocket_bed_ellipse_semi_x_mm": (
+            BAFFLE_INSERT_POCKET_D_MM / 2.0
         ),
-        "clearance_to_gasket_track_mm": gasket_track_clearance,
+        "pocket_bed_ellipse_semi_z_mm": pocket_bed_semi_z,
+        "boss_bed_ellipse_semi_x_mm": boss_diameter / 2.0,
+        "boss_bed_ellipse_semi_z_mm": boss_bed_semi_z,
+        "pocket_clearance_to_gasket_inner_edge_mm": (
+            gasket_inner_half_size
+            - (abs(bed.Z) + pocket_bed_semi_z)
+        ),
+        "boss_root_overlap_past_gasket_inner_edge_mm": (
+            abs(bed.Z) + boss_bed_semi_z - gasket_inner_half_size
+        ),
     }
 
 
 def _baffle_insert_boss(x: float) -> Solid:
     points = _fastener_points(x)
-    # Start the added cylindrical reinforcement well inside the existing
-    # baffle.  Its oblique circular end face would otherwise cross the bed
-    # plane even though its axis starts on-plane, preventing the baffle from
-    # lying flat for printing.
-    return _cylinder_between(
-        points["bed"]
-        + _fastener_direction() * BAFFLE_BOSS_EMBED_START_MM,
+    direction = _fastener_direction()
+    raw_boss = _cylinder_between(
+        points["bed"] - direction * BAFFLE_BOSS_REAR_OVERTRAVEL_MM,
         points["boss_end"],
         diameter=(
             BAFFLE_INSERT_POCKET_D_MM + 2.0 * BAFFLE_INSERT_WALL_MM
         ),
+    )
+    # Extend the oblique boss through the bed plane and clip it flush.  This
+    # gives the insert a complete elliptical root without placing any boss
+    # material below the baffle's flat print surface.
+    clip_rear_y = BAFFLE_BED_Y - 80.0
+    baffle_side_halfspace = Pos(
+        0.0,
+        (clip_rear_y + BAFFLE_BED_Y) / 2.0,
+        0.0,
+    ) * Box(
+        400.0,
+        BAFFLE_BED_Y - clip_rear_y,
+        400.0,
+        align=(Align.CENTER, Align.CENTER, Align.CENTER),
+    )
+    return _single_solid(
+        raw_boss.intersect(baffle_side_halfspace).clean().fix(),
+        feature="flush-clipped baffle insert boss",
+    )
+
+
+def _baffle_insert_entry_wall(x: float) -> Solid:
+    """One-millimeter audit sleeve just inside the baffle print face."""
+    points = _fastener_points(x)
+    direction = _fastener_direction()
+    outer = _cylinder_between(
+        points["bed"] + direction * 0.25,
+        points["bed"] + direction * 1.25,
+        diameter=(
+            BAFFLE_INSERT_POCKET_D_MM + 2.0 * BAFFLE_INSERT_WALL_MM
+            - 0.2
+        ),
+    )
+    inner = _cylinder_between(
+        points["bed"] + direction * 0.15,
+        points["bed"] + direction * 1.35,
+        diameter=BAFFLE_INSERT_POCKET_D_MM + 0.2,
+    )
+    clip_rear_y = BAFFLE_BED_Y - 20.0
+    baffle_side_halfspace = Pos(
+        0.0,
+        (clip_rear_y + BAFFLE_BED_Y) / 2.0,
+        0.0,
+    ) * Box(
+        400.0,
+        BAFFLE_BED_Y - clip_rear_y,
+        400.0,
+        align=(Align.CENTER, Align.CENTER, Align.CENTER),
+    )
+    return _single_solid(
+        outer.cut(inner)
+        .intersect(baffle_side_halfspace)
+        .clean()
+        .fix(),
+        feature="baffle insert entry wall audit sleeve",
     )
 
 
@@ -988,12 +1047,21 @@ def _build_joint(full_base: Solid) -> dict[str, Any]:
             f"hook_max_z={hook_max_z:.6f} mm"
         )
 
+    entry_wall_missing_mm3: dict[str, float] = {}
     for x in (-FASTENER_X_MM, FASTENER_X_MM):
         baffle = _fuse_one(
             baffle,
             _baffle_insert_boss(x),
             feature=f"baffle with underside insert boss at x={x:g}",
         )
+        entry_wall = _baffle_insert_entry_wall(x)
+        missing_wall = _shape_volume(entry_wall.cut(baffle))
+        entry_wall_missing_mm3[f"x={x:g}"] = missing_wall
+        if missing_wall > 0.01:
+            raise ValueError(
+                "The baffle insert entry lacks a complete reinforcing wall: "
+                f"x={x:g}, missing={missing_wall:.6f} mm3"
+            )
         baffle = _cut_one(
             baffle,
             _baffle_insert_pocket(x),
@@ -1076,6 +1144,7 @@ def _build_joint(full_base: Solid) -> dict[str, Any]:
         "bucket_baffle_overlap_mm3": bucket_baffle_overlap,
         "gasket_bucket_overlap_mm3": gasket_bucket_overlap,
         "gasket_baffle_overlap_mm3": gasket_baffle_overlap,
+        "baffle_insert_entry_wall_missing_mm3": entry_wall_missing_mm3,
         "fairing_face_area_mm2": fairing_faces[0].area,
         "fairing_area_difference_mm2": (
             fairing_faces[0].area - target_fairing_area
@@ -1578,6 +1647,8 @@ def generate() -> dict[str, Any]:
         "visible_seam": {
             "location": "exact G1 fairing-to-flat-wall tangent boundary",
             "intentional_shadow_line_depth_mm": SHADOW_LINE_DEPTH_MM,
+            "gasket_exposed_at_exterior_seam": False,
+            "parent_exact_tangent_seam_restored": True,
             "hidden_fit_clearance_at_bed_mm": HIDDEN_FIT_CLEARANCE_MM,
             "bucket_edge_fillet": joint["edge_round"],
             "bucket_to_baffle_interference_mm3": joint[
@@ -1645,6 +1716,9 @@ def generate() -> dict[str, Any]:
             "baffle_insert_pocket_diameter_mm": BAFFLE_INSERT_POCKET_D_MM,
             "baffle_insert_depth_mm": BAFFLE_INSERT_DEPTH_MM,
             "underside_entry_y_mm": FASTENER_SURFACE_Y,
+            "complete_entry_wall_missing_mm3": joint[
+                "baffle_insert_entry_wall_missing_mm3"
+            ],
             **fastener_bed_clearances,
             "hardware_fit_coupon_required": True,
         },
