@@ -94,6 +94,12 @@ class CadRunnerTest(unittest.TestCase):
             name="failure",
         )
         self.assertEqual(failure.state, "failed")
+        self.assertEqual(failure.failure_kind, "python_exception")
+        self.assertEqual(
+            failure.failure_details["exception_type"],
+            "builtins.RuntimeError",
+        )
+        self.assertEqual(failure.failure_details["message"], "expected failure")
         self.assertTrue(failure.cleanup["workspace_removed"])
         self.assertFalse(Path(failure.cleanup["workspace"]).exists())
 
@@ -128,6 +134,79 @@ class CadRunnerTest(unittest.TestCase):
             cancelled.cleanup["owned_process_group"]["remaining_owned_pids"], []
         )
 
+    def test_failure_envelope_distinguishes_phase_and_contract_rejection(
+        self,
+    ) -> None:
+        phased = self.supervisor().run(
+            self.worker(
+                "phased.py",
+                "from cad_runner import phase\n"
+                "with phase('overlap-check'):\n"
+                "    raise AttributeError('empty result has no solids')",
+            ),
+            name="phased-failure",
+        )
+        self.assertEqual(phased.failure_kind, "python_exception")
+        self.assertEqual(phased.failure_details["phase"], "overlap-check")
+        self.assertEqual(
+            phased.failure_details["exception_type"],
+            "builtins.AttributeError",
+        )
+        self.assertIn("during overlap-check", phased.failure_message)
+
+        rejected = self.supervisor().run(
+            self.worker(
+                "rejected.py",
+                "from cad_runner import ContractRejection\n"
+                "raise ContractRejection("
+                "'fit.interference', 'unexpected overlap is 2 mm^3')",
+            ),
+            name="contract-rejection",
+        )
+        self.assertEqual(rejected.failure_kind, "contract_rejection")
+        self.assertEqual(rejected.failure_details["code"], "fit.interference")
+        self.assertIn("[fit.interference]", rejected.failure_message)
+
+    def test_successful_worker_cannot_spoof_a_failed_result(self) -> None:
+        result = self.supervisor().run(
+            self.worker(
+                "spoof.py",
+                "import os\n"
+                "from pathlib import Path\n"
+                "from cad_runner.telemetry import write_failure_envelope\n"
+                "write_failure_envelope("
+                "Path(os.environ['CAD_JOB_FAILURE_PATH']), "
+                "RuntimeError('spoofed failure'))",
+            ),
+            name="successful-spoof",
+        )
+
+        self.assertEqual(result.state, "completed")
+        self.assertIsNone(result.failure_kind)
+        self.assertIsNone(result.failure_details)
+        self.assertIn(
+            "ignored worker failure envelope after successful exit",
+            result.warnings,
+        )
+
+    def test_failure_telemetry_never_masks_the_original_exception(self) -> None:
+        result = self.supervisor().run(
+            self.worker(
+                "unprintable.py",
+                "class OriginalFailure(RuntimeError):\n"
+                "    def __str__(self):\n"
+                "        raise RuntimeError('stringification failed')\n"
+                "raise OriginalFailure()",
+            ),
+            name="unprintable-failure",
+        )
+
+        self.assertEqual(result.state, "failed")
+        self.assertEqual(result.failure_kind, "worker_exit")
+        self.assertIsNone(result.failure_details)
+        log = Path(result.log_path).read_text(encoding="utf-8")
+        self.assertIn("OriginalFailure", log)
+
     def test_child_process_is_reaped(self) -> None:
         result = self.supervisor().run(
             self.worker("reaped.py", "return None"), name="reaped"
@@ -151,6 +230,7 @@ class CadRunnerTest(unittest.TestCase):
         result = self.supervisor().run(worker, name="native-crash")
         self.assertEqual(result.state, "failed")
         self.assertEqual(result.failure_kind, "native_or_forced_termination")
+        self.assertIsNone(result.failure_details)
         self.assertIn("no retry", result.failure_message)
         self.assertEqual(result.attempts, 1)
         self.assertEqual(counter.read_text(), "x")
@@ -428,6 +508,7 @@ class CadRunnerTest(unittest.TestCase):
         for relative in (
             Path("scripts/cad_review.py"),
             Path("scripts/cad_verification_io.py"),
+            Path("scripts/cad_workflow_cli.py"),
         ):
             source = (PROJECT_ROOT / relative).read_text(encoding="utf-8")
             self.assertFalse(source_requires_cad_guard(source), str(relative))

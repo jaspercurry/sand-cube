@@ -13,6 +13,10 @@ from typing import Any, Mapping
 
 TERMINAL_STATES = frozenset({"cancelled", "completed", "failed"})
 PERCENTILES = (50, 90, 95, 99)
+FAILED_TIME_TIGHTEN_THRESHOLD = 0.30
+TERMINAL_FAILURE_WARN_THRESHOLD = 0.15
+REPEATED_FAILURE_STREAK = 2
+HEALTH_WINDOW_SIZE = 12
 
 
 @dataclass(frozen=True)
@@ -27,6 +31,10 @@ class JobRecord:
     peak_rss_bytes: int | None
     timestamp: str | None
     timestamp_value: datetime | None
+    failure_kind: str | None
+    failure_message: str | None
+    failure_details: Mapping[str, Any] | None
+    command: tuple[str, ...]
 
 
 @dataclass(frozen=True)
@@ -54,6 +62,38 @@ class JobRecordSet:
 
 
 @dataclass(frozen=True)
+class JobHealth:
+    """Actionable native-free signals derived from historical job records."""
+
+    terminal_outcomes: int
+    terminal_success_rate: float | None
+    measured_outcome_seconds: float
+    failed_time_fraction: float | None
+    recent_outcomes: int
+    recent_success_rate: float | None
+    recent_failed_time_fraction: float | None
+    repeated_failures: tuple[Mapping[str, Any], ...]
+    assessment: str
+    recommendation: str
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "terminal_outcomes": self.terminal_outcomes,
+            "terminal_success_rate": self.terminal_success_rate,
+            "measured_outcome_seconds": self.measured_outcome_seconds,
+            "failed_time_fraction": self.failed_time_fraction,
+            "recent_outcomes": self.recent_outcomes,
+            "recent_success_rate": self.recent_success_rate,
+            "recent_failed_time_fraction": self.recent_failed_time_fraction,
+            "repeated_failures": [
+                dict(item) for item in self.repeated_failures
+            ],
+            "assessment": self.assessment,
+            "recommendation": self.recommendation,
+        }
+
+
+@dataclass(frozen=True)
 class JobStatistics:
     """Serializable aggregate statistics for a directory of job records."""
 
@@ -70,6 +110,7 @@ class JobStatistics:
     slow_targets: tuple[Mapping[str, Any], ...]
     issue_counts: Mapping[str, int]
     issues: tuple[RecordIssue, ...]
+    health: JobHealth
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -90,6 +131,7 @@ class JobStatistics:
                 "counts": dict(self.issue_counts),
                 "issues": [issue.to_dict() for issue in self.issues],
             },
+            "health": self.health.to_dict(),
         }
 
 
@@ -129,6 +171,24 @@ def _record_timestamp(payload: Mapping[str, Any]) -> tuple[str | None, datetime 
     return None, None
 
 
+def _command(payload: Mapping[str, Any]) -> tuple[str, ...]:
+    value = payload.get("command")
+    if value is None:
+        return ()
+    if not isinstance(value, list) or not all(isinstance(item, str) for item in value):
+        raise ValueError("command must be an array of strings")
+    return tuple(value)
+
+
+def _failure_details(payload: Mapping[str, Any]) -> Mapping[str, Any] | None:
+    value = payload.get("failure_details")
+    if value is None:
+        return None
+    if not isinstance(value, Mapping):
+        raise ValueError("failure_details must be an object")
+    return dict(value)
+
+
 def _parse_record(path: Path) -> tuple[JobRecord | None, list[RecordIssue]]:
     issues: list[RecordIssue] = []
     try:
@@ -159,6 +219,8 @@ def _parse_record(path: Path) -> tuple[JobRecord | None, list[RecordIssue]]:
             payload, "peak_rss_bytes", integer=True
         )
         timestamp, timestamp_value = _record_timestamp(payload)
+        command = _command(payload)
+        failure_details = _failure_details(payload)
     except (TypeError, ValueError) as error:
         return None, [RecordIssue(path, "malformed", str(error))]
 
@@ -181,6 +243,10 @@ def _parse_record(path: Path) -> tuple[JobRecord | None, list[RecordIssue]]:
             peak_rss_bytes=int(peak_rss) if peak_rss is not None else None,
             timestamp=timestamp,
             timestamp_value=timestamp_value,
+            failure_kind=_nonempty_string(payload, "failure_kind"),
+            failure_message=_nonempty_string(payload, "failure_message"),
+            failure_details=failure_details,
+            command=command,
         ),
         issues,
     )
@@ -222,7 +288,173 @@ def _target(record: JobRecord) -> dict[str, Any]:
         "elapsed_seconds": record.elapsed_seconds,
         "peak_rss_bytes": record.peak_rss_bytes,
         "timestamp": record.timestamp,
+        "failure_kind": record.failure_kind,
+        "failure_message": record.failure_message,
+        "failure_details": (
+            dict(record.failure_details) if record.failure_details else None
+        ),
+        "command": list(record.command),
     }
+
+
+def _trailing_failure_streaks(
+    records: tuple[JobRecord, ...],
+) -> tuple[Mapping[str, Any], ...]:
+    by_target: defaultdict[
+        tuple[str, tuple[str, ...]], list[JobRecord]
+    ] = defaultdict(list)
+    for record in records:
+        if record.state in TERMINAL_STATES:
+            by_target[(record.name, record.command)].append(record)
+
+    repeated: list[dict[str, Any]] = []
+    for (name, command), named_records in by_target.items():
+        ordered = sorted(
+            named_records,
+            key=lambda record: (
+                record.timestamp_value or datetime.min.replace(tzinfo=UTC),
+                record.job_id,
+            ),
+        )
+        failures: list[JobRecord] = []
+        for record in reversed(ordered):
+            if record.state != "failed":
+                break
+            failures.append(record)
+        if len(failures) < REPEATED_FAILURE_STREAK:
+            continue
+        repeated.append(
+            {
+                "name": name,
+                "command": list(command),
+                "streak": len(failures),
+                "failed_seconds": sum(
+                    record.elapsed_seconds or 0.0 for record in failures
+                ),
+                "latest_job_id": failures[0].job_id,
+                "latest_failure_kind": failures[0].failure_kind,
+                "latest_failure_message": failures[0].failure_message,
+                "latest_failure_details": (
+                    dict(failures[0].failure_details)
+                    if failures[0].failure_details
+                    else None
+                ),
+            }
+        )
+    return tuple(
+        sorted(
+            repeated,
+            key=lambda item: (-int(item["streak"]), str(item["name"])),
+        )
+    )
+
+
+def _ordered_terminal_outcomes(
+    records: tuple[JobRecord, ...],
+) -> tuple[JobRecord, ...]:
+    outcomes = tuple(
+        record for record in records if record.state in {"completed", "failed"}
+    )
+    return tuple(
+        sorted(
+            outcomes,
+            key=lambda record: (
+                record.timestamp_value or datetime.min.replace(tzinfo=UTC),
+                record.job_id,
+            ),
+        )
+    )
+
+
+def _outcome_rates(
+    records: tuple[JobRecord, ...],
+) -> tuple[int, float | None, float, float | None]:
+    completed = sum(record.state == "completed" for record in records)
+    failed = sum(record.state == "failed" for record in records)
+    outcomes = completed + failed
+    success_rate = completed / outcomes if outcomes else None
+    completed_seconds = sum(
+        record.elapsed_seconds or 0.0
+        for record in records
+        if record.state == "completed"
+    )
+    failed_seconds = sum(
+        record.elapsed_seconds or 0.0
+        for record in records
+        if record.state == "failed"
+    )
+    measured_seconds = completed_seconds + failed_seconds
+    failed_time_fraction = (
+        failed_seconds / measured_seconds if measured_seconds else None
+    )
+    return outcomes, success_rate, measured_seconds, failed_time_fraction
+
+
+def _job_health(
+    records: tuple[JobRecord, ...],
+) -> JobHealth:
+    ordered = _ordered_terminal_outcomes(records)
+    recent = ordered[-HEALTH_WINDOW_SIZE:]
+    (
+        terminal_outcomes,
+        success_rate,
+        measured_seconds,
+        failed_time_fraction,
+    ) = _outcome_rates(ordered)
+    (
+        recent_outcomes,
+        recent_success_rate,
+        _recent_seconds,
+        recent_failed_time_fraction,
+    ) = _outcome_rates(recent)
+    repeated = _trailing_failure_streaks(recent)
+
+    if terminal_outcomes == 0:
+        assessment = "insufficient-data"
+        recommendation = "No completed or failed jobs are available yet."
+    elif repeated:
+        names = ", ".join(str(item["name"]) for item in repeated)
+        assessment = "stop-and-diagnose"
+        recommendation = (
+            "Stop before another heavy retry of the same target and command; "
+            f"diagnose the repeated failures for {names}."
+        )
+    elif (
+        recent_failed_time_fraction is not None
+        and recent_failed_time_fraction >= FAILED_TIME_TIGHTEN_THRESHOLD
+    ):
+        assessment = "tighten-feedback-loop"
+        recommendation = (
+            "Move the cheapest discriminating check ahead of heavy CAD; "
+            f"{recent_failed_time_fraction:.1%} of the latest "
+            f"{recent_outcomes} outcomes' measured time ended failed."
+        )
+    elif recent_success_rate is not None and (
+        1.0 - recent_success_rate >= TERMINAL_FAILURE_WARN_THRESHOLD
+    ):
+        assessment = "tighten-feedback-loop"
+        recommendation = (
+            "Add a cheaper preflight or visual smoke check for the failing "
+            "target before the next full fit or release run."
+        )
+    else:
+        assessment = "healthy"
+        recommendation = (
+            "The recent outcome mix does not currently indicate avoidable "
+            "heavy retry cost."
+        )
+    return JobHealth(
+        terminal_outcomes=terminal_outcomes,
+        terminal_success_rate=success_rate,
+        measured_outcome_seconds=measured_seconds,
+        failed_time_fraction=failed_time_fraction,
+        recent_outcomes=recent_outcomes,
+        recent_success_rate=recent_success_rate,
+        recent_failed_time_fraction=recent_failed_time_fraction,
+        repeated_failures=repeated,
+        assessment=assessment,
+        recommendation=recommendation,
+    )
 
 
 def summarize_job_records(
@@ -292,6 +524,7 @@ def summarize_job_records(
             for kind in ("malformed", "incomplete")
         },
         issues=record_set.issues,
+        health=_job_health(records),
     )
 
 
@@ -310,8 +543,13 @@ def _format_seconds(value: float | None) -> str:
 def _format_target(target: Mapping[str, Any]) -> str:
     elapsed = _format_seconds(target.get("elapsed_seconds"))
     timestamp = target.get("timestamp") or "time unknown"
+    failure = (
+        f" failure={target['failure_kind']}"
+        if target.get("failure_kind")
+        else ""
+    )
     return (
-        f"  {target['name']} [{target['state']}] {elapsed} "
+        f"  {target['name']} [{target['state']}] {elapsed}{failure} "
         f"{timestamp} ({target['job_id']})"
     )
 
@@ -341,6 +579,35 @@ def render_job_statistics(statistics: JobStatistics) -> str:
         f"Time consumed: completed {_format_seconds(completed)} | "
         f"failed {_format_seconds(failed)}",
         f"Peak RSS: {peak}",
+        "Feedback-loop health: "
+        f"{statistics.health.assessment} | "
+        "terminal success "
+        + (
+            "n/a"
+            if statistics.health.terminal_success_rate is None
+            else f"{statistics.health.terminal_success_rate:.1%}"
+        )
+        + " | failed-time share "
+        + (
+            "n/a"
+            if statistics.health.failed_time_fraction is None
+            else f"{statistics.health.failed_time_fraction:.1%}"
+        ),
+        "Recent health window: "
+        f"{statistics.health.recent_outcomes}/{HEALTH_WINDOW_SIZE} outcomes | "
+        "success "
+        + (
+            "n/a"
+            if statistics.health.recent_success_rate is None
+            else f"{statistics.health.recent_success_rate:.1%}"
+        )
+        + " | failed-time share "
+        + (
+            "n/a"
+            if statistics.health.recent_failed_time_fraction is None
+            else f"{statistics.health.recent_failed_time_fraction:.1%}"
+        ),
+        f"Recommendation: {statistics.health.recommendation}",
         "Data quality: "
         f"malformed={statistics.issue_counts.get('malformed', 0)}, "
         f"incomplete={statistics.issue_counts.get('incomplete', 0)}",

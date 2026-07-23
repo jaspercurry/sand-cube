@@ -2,5 +2,11 @@
 
 from .entrypoint import ensure_coordinated
 from .outputs import job_output_path
+from .telemetry import ContractRejection, phase
 
-__all__ = ["ensure_coordinated", "job_output_path"]
+__all__ = [
+    "ContractRejection",
+    "ensure_coordinated",
+    "job_output_path",
+    "phase",
+]

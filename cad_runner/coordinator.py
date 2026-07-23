@@ -29,6 +29,7 @@ import psutil
 
 from .entrypoint import CAD_WORKER_ENV
 from .outputs import REPO_ROOT_ENV, STAGE_ROOT_ENV
+from .telemetry import FAILURE_PATH_ENV, load_failure_envelope
 
 
 GIB = 1024**3
@@ -134,6 +135,7 @@ class JobResult:
     exit_status: str
     failure_kind: str | None
     failure_message: str | None
+    failure_details: dict[str, Any] | None
     warnings: list[str]
     final_outputs: list[dict[str, Any]]
     cleanup: dict[str, Any]
@@ -402,6 +404,7 @@ class JobSupervisor:
         stage_root = workspace / "stage"
         log_temporary = workspace / "worker.log"
         durable_log = self.state_root / f"{job_id}.log"
+        failure_envelope_path = workspace / "failure.json"
         workspace.mkdir(parents=True, exist_ok=False)
         stage_root.mkdir(parents=True, exist_ok=False)
 
@@ -440,6 +443,7 @@ class JobSupervisor:
         final_outputs: list[dict[str, Any]] = []
         failure_kind: str | None = None
         failure_message: str | None = None
+        failure_details: dict[str, Any] | None = None
         requested_stop: str | None = None
         exit_code: int | None = None
         exit_status = "not_started"
@@ -483,6 +487,7 @@ class JobSupervisor:
                     "CAD_JOB_ID": job_id,
                     REPO_ROOT_ENV: str(self.repo_root),
                     STAGE_ROOT_ENV: str(stage_root),
+                    FAILURE_PATH_ENV: str(failure_envelope_path),
                     "PYTHONUNBUFFERED": "1",
                 }
             )
@@ -583,11 +588,21 @@ class JobSupervisor:
                         )
                 exit_code = process.returncode
 
+            try:
+                failure_details = load_failure_envelope(failure_envelope_path)
+            except ValueError as error:
+                warnings.append(str(error))
+
             if failure_kind == "cancelled":
                 exit_status = "cancelled"
             elif failure_kind:
                 exit_status = "failed"
             elif exit_code == 0:
+                if failure_details is not None:
+                    warnings.append(
+                        "ignored worker failure envelope after successful exit"
+                    )
+                    failure_details = None
                 final_outputs = self._publish_outputs(stage_root)
                 exit_status = "completed"
             elif exit_code is not None and exit_code < 0:
@@ -602,10 +617,21 @@ class JobSupervisor:
                 )
                 exit_status = "failed"
             else:
-                failure_kind = "worker_exit"
-                failure_message = (
-                    f"CAD worker exited with status {exit_code}; no retry was attempted"
-                )
+                if failure_details is not None:
+                    failure_kind = str(failure_details["kind"])
+                    detail = str(failure_details["exception_type"])
+                    if failure_details.get("phase"):
+                        detail += f" during {failure_details['phase']}"
+                    if failure_details.get("code") is not None:
+                        detail += f" [{failure_details['code']}]"
+                    message = str(failure_details.get("message") or "").strip()
+                    failure_message = detail + (f": {message}" if message else "")
+                else:
+                    failure_kind = "worker_exit"
+                    failure_message = (
+                        f"CAD worker exited with status {exit_code}; "
+                        "no retry was attempted"
+                    )
                 exit_status = "failed"
         except JobCancelled as exc:
             failure_kind = "cancelled"
@@ -692,6 +718,7 @@ class JobSupervisor:
             exit_status=exit_status,
             failure_kind=failure_kind,
             failure_message=failure_message,
+            failure_details=failure_details,
             warnings=warnings,
             final_outputs=final_outputs,
             cleanup={

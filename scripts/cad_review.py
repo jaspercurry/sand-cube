@@ -563,6 +563,14 @@ def parser() -> argparse.ArgumentParser:
     stats.add_argument("--json", action="store_true")
     stats.set_defaults(handler=command_stats)
 
+    try:
+        from scripts.cad_workflow_cli import add_workflow_subparser
+    except ModuleNotFoundError as error:
+        if error.name != "scripts.cad_workflow_cli":
+            raise
+    else:
+        add_workflow_subparser(subparsers)
+
     verify = subparsers.add_parser(
         "verify",
         help="validate native-free design contracts and review packets",
@@ -599,7 +607,11 @@ def parser() -> argparse.ArgumentParser:
 
 def main(argv: list[str] | None = None) -> int:
     args = parser().parse_args(argv)
-    config = None if args.command == "verify" else load_project_config()
+    config = (
+        None
+        if args.command in {"verify", "workflow"}
+        else load_project_config()
+    )
     return int(args.handler(args, config))
 
 

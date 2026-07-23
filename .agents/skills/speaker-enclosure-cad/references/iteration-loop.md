@@ -16,16 +16,41 @@ The contract must name:
 - the visual question and the camera, section, or isolation that will answer it;
 - a promotion check comparing the accepted candidate with production output.
 
+For a multi-step or expensive geometry task, create
+`workbench/designs/<iteration>/state.json` with `cad_review workflow init`.
+The state file stores only the current revision, hash-bound brief/contract and
+source references, completed evidence gates, current question, and next action.
+It must not duplicate geometry facts, acceptance criteria, or model ownership.
+
+After compaction or handoff, run `cad_review workflow show STATE.json` and
+continue from that resume card. Do not reread or reinject the entire long brief
+unless the state is stale, the contract must change, or the compact card leaves
+a material ambiguity.
+
 ## Candidate loop
 
-1. Change one parameter or feature.
-2. Build once and reuse the candidate across checks and cameras.
-3. Run deterministic checks before making visual claims.
-4. Publish the exact STEP with a current topology sidecar.
-5. Inspect the smallest useful render set and provide the Viewer link.
-6. Record the artifact path, hash, evidence, user feedback, and resulting
-   change in `feedback.md`.
-7. Continue from the current candidate while scratch state remains healthy.
+1. Change one parameter or feature and start a new ledger revision. This clears
+   evidence for the previous source hash.
+2. Run native-free source, import, contract, and parameter preflight.
+3. Build the smallest useful candidate once.
+4. Run the cheap `fast` profile checks against that candidate, record their
+   evidence, and reuse the same candidate across later checks and cameras.
+5. Inspect the smallest useful direct render as a visual smoke test. Record
+   acceptance before requesting the `fit` gate.
+6. Run `cad_review workflow gate STATE.json --profile fit`. Run fit only when
+   the gate allows it and the question needs mating, clearance, interference,
+   or section evidence.
+7. Publish the exact STEP with a current topology sidecar and complete release
+   evidence only after fit passes.
+8. Record artifact paths, hashes, evidence, user feedback, and resulting
+   changes in `feedback.md`, then advance the ledger one gate.
+9. Continue from the current candidate while scratch state remains healthy.
+
+Never skip directly from a candidate to fit or release. If a native job fails
+twice for the same target, or `cad_review stats` reports
+`stop-and-diagnose`, stop retrying and isolate the failure with the cheapest
+fixture or diagnostic that can distinguish geometry rejection, checker error,
+preview failure, export failure, and runner failure.
 
 For a diagnostic-only request, stop after establishing the cause and evidence;
 do not implement a geometry fix without authorization. For an implementation

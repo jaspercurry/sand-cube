@@ -20,10 +20,15 @@ NATIVE_PREFIXES = (
     "ocp_vscode",
     "vtk",
 )
-NATIVE_FREE_SCRIPT_MODULES = {"scripts.cad_review", "scripts.cad_verification_io"}
+NATIVE_FREE_SCRIPT_MODULES = {
+    "scripts.cad_review",
+    "scripts.cad_verification_io",
+    "scripts.cad_workflow_cli",
+}
 AUDITED_NATIVE_FREE_PATHS = {
     Path("scripts/cad_review.py"),
     Path("scripts/cad_verification_io.py"),
+    Path("scripts/cad_workflow_cli.py"),
 }
 GUARD = """
 
