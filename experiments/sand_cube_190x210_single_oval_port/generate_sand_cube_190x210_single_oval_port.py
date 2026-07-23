@@ -31,7 +31,6 @@ _ensure_cad_coordinated(__name__, __file__, _CAD_SAFETY_ROOT)
 import copy
 import json
 import math
-import subprocess
 import sys
 from dataclasses import asdict, dataclass, replace
 from pathlib import Path
@@ -3264,21 +3263,6 @@ def generate() -> dict[str, Any]:
                 f"source={source_solid_count}, imported={len(imported_solids)}, "
                 f"valid={valid_solids}"
             )
-    for source, viewer_name in (
-        ("sand_cube_190x210_single_oval_port_hardware_check.step", "viewer"),
-        ("sand_cube_190x210_single_oval_port_cutaway.step", "cutaway_viewer"),
-    ):
-        subprocess.run(
-            [
-                sys.executable,
-                str(ROOT / "scripts" / "generate_static_ocp_viewer.py"),
-                str(OUT / source),
-                "--out",
-                str(OUT / viewer_name),
-            ],
-            check=True,
-        )
-
     cavity_floor = -D.height / 2.0 + D.wall_stack_t
     in_box_airway = _primary_shape(airway & _outer_envelope())
     in_box_port_outer = _primary_shape(port_outer & _outer_envelope())
@@ -3687,8 +3671,6 @@ def generate() -> dict[str, Any]:
         "files": {
             **{name: str(OUT / name) for name in exports},
             "diagnostics": str(OUT / "diagnostics.json"),
-            "exterior_viewer": str(OUT / "viewer" / "viewer" / "index.html"),
-            "cutaway_viewer": str(OUT / "cutaway_viewer" / "viewer" / "index.html"),
         },
     }
     (OUT / "diagnostics.json").write_text(json.dumps(diagnostics, indent=2))

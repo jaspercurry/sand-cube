@@ -1,0 +1,171 @@
+{
+  "authority": [
+    {
+      "path": "workbench/designs/cad_feedback_loop_rollout/brief.md",
+      "role": "brief",
+      "sha256": "96b411113326ddf39b82cb5bc4acca9f60d2523e55629f4879d01accf0b59cab",
+      "size_bytes": 8170
+    },
+    {
+      "path": "workbench/designs/cad_feedback_loop_rollout/contract.md",
+      "role": "contract",
+      "sha256": "33cc4c19f999c887c42ed9cc206267134b12074e6559fb368d2c7a869ef024ac",
+      "size_bytes": 3925
+    }
+  ],
+  "evidence": [
+    {
+      "files": [
+        {
+          "path": "build/sand_cube_190x210_single_oval_port/verification/candidate.json",
+          "role": "fast_passed_evidence",
+          "sha256": "72006e27357843d811a8885ac2dc0e4d05b1807a17ba944e6d38eb8117b3e613",
+          "size_bytes": 4856
+        },
+        {
+          "path": "build/sand_cube_190x210_single_oval_port/verification/fast-evidence.json",
+          "role": "fast_passed_evidence",
+          "sha256": "f4fb86b4ee795b3be5452c49e1b3a1e73163974a5409ceed497101b49ce5a837",
+          "size_bytes": 8992
+        }
+      ],
+      "recorded_at": "2026-07-23T21:50:07.890412Z",
+      "stage": "fast_passed",
+      "summary": "Revision 4 binds the unchanged nine-STEP candidate and passes fast checks"
+    },
+    {
+      "files": [
+        {
+          "path": "build/sand_cube_190x210_single_oval_port/viewer/review-provenance.json",
+          "role": "visual_accepted_evidence",
+          "sha256": "e7ada642a119c9d52a8f1ae027bd5f6a2b639107ede03b2434662aee1bf1bc2d",
+          "size_bytes": 2397
+        },
+        {
+          "path": "build/sand_cube_190x210_single_oval_port/review/snapshot-provenance.json",
+          "role": "visual_accepted_evidence",
+          "sha256": "bf0b282ac1ae894d27b3fb1b0eb1fa3ff3b4a2190c82e387c88fad3bd4c56727",
+          "size_bytes": 1297
+        },
+        {
+          "path": "build/sand_cube_190x210_single_oval_port/review/hardware-isometric_20260723T213549Z.png",
+          "role": "visual_accepted_evidence",
+          "sha256": "b7ffa9e9decccf14d9404569efc0022533491a79bbf0f89d78a1c928951a7a81",
+          "size_bytes": 370634
+        },
+        {
+          "path": "build/sand_cube_190x210_single_oval_port/review/visual-acceptance.json",
+          "role": "visual_accepted_evidence",
+          "sha256": "49aff7407e62e527d2a8a0faff3350c2e9b5c24b1c57f245e6bac581c71d7a60",
+          "size_bytes": 1371
+        }
+      ],
+      "recorded_at": "2026-07-23T21:50:23.006008Z",
+      "stage": "visual_accepted",
+      "summary": "Exact candidate static review, Snapshot, and acceptance lineage revalidated for revision 4"
+    },
+    {
+      "files": [
+        {
+          "path": "build/sand_cube_190x210_single_oval_port/verification/fit-cold-evidence.json",
+          "role": "fit_passed_evidence",
+          "sha256": "dd6b0261ca98ce26a78719e20b55d89667a372bd5be09e1f0269edf05302a08d",
+          "size_bytes": 15911
+        },
+        {
+          "path": "build/sand_cube_190x210_single_oval_port/verification/fit-warm-evidence.json",
+          "role": "fit_passed_evidence",
+          "sha256": "39f85ca3f5665ffce7b1016b378b22d1bcff39ce10893962011a35a0e1674cf3",
+          "size_bytes": 15886
+        },
+        {
+          "path": "build/sand_cube_190x210_single_oval_port/verification/fit-invalidated-evidence.json",
+          "role": "fit_passed_evidence",
+          "sha256": "752556821c5bd923a5aef5607a525752b6ceee2a1d350dbfcffa3badc497e32a",
+          "size_bytes": 15911
+        }
+      ],
+      "recorded_at": "2026-07-23T21:54:07.477606Z",
+      "stage": "fit_passed",
+      "summary": "Revision 4 fit topology/contact checks passed with verified warm hit and controlled source invalidation"
+    },
+    {
+      "files": [
+        {
+          "path": "build/sand_cube_190x210_single_oval_port/verification/release-evidence.json",
+          "role": "release_passed_evidence",
+          "sha256": "b9a7e8811fe3cc815fdf147909c5931afc87b56805f1a0e2833b962947de941f",
+          "size_bytes": 21363
+        },
+        {
+          "path": "build/sand_cube_190x210_single_oval_port/verification/baseline-comparison.json",
+          "role": "release_passed_evidence",
+          "sha256": "7eacda426824f487e8f5d0b7aaf7620eaf39dbc43e62a6bbcaf8f5b37f8b5f3c",
+          "size_bytes": 4419
+        },
+        {
+          "path": "build/sand_cube_190x210_single_oval_port/verification/review-failure-isolation.json",
+          "role": "release_passed_evidence",
+          "sha256": "f2380ce3b7fde79a3005cb84307367f663cc49980c803948b8e6d99b76d79e61",
+          "size_bytes": 998
+        }
+      ],
+      "recorded_at": "2026-07-23T21:56:57.807813Z",
+      "stage": "release_passed",
+      "summary": "Revision 4 forced uncached release passed with exact visual lineage, timestamp-only STEP drift, and isolated review failure"
+    }
+  ],
+  "iteration_id": "cad-feedback-loop-rollout",
+  "model_id": "exp-190x210-single-oval-port",
+  "next_action": "Run full verification, commit implementation, and request mandatory independent diff review",
+  "objective": "Separate production STEP export from review generation and exercise staged hash-bound verification/cache rollout without geometry changes",
+  "open_question": "Does independent architecture review find any unresolved rollout or release-safety defect?",
+  "revision": 4,
+  "schema_version": 1,
+  "sources": [
+    {
+      "path": "experiments/sand_cube_190x210_single_oval_port/generate_sand_cube_190x210_single_oval_port.py",
+      "role": "source",
+      "sha256": "d6ae948b71f11f15dfbaa627c9d20aaa9a535ea3f828d3ecd3669497babcf4fd",
+      "size_bytes": 142841
+    },
+    {
+      "path": "experiments/sand_cube_190x210_single_oval_port/verification.py",
+      "role": "source",
+      "sha256": "a58c4b127db2c666cb5e960da56e0bbb4326682bda830d0fb63ee0ca3bf44f02",
+      "size_bytes": 13646
+    },
+    {
+      "path": "experiments/sand_cube_190x210_single_oval_port/verify_sand_cube_190x210_single_oval_port.py",
+      "role": "source",
+      "sha256": "1ccee3bb68a0dc84511546e6369aad312dbe678e1a77de4cfbacbc0cb75feda0",
+      "size_bytes": 16691
+    },
+    {
+      "path": "experiments/sand_cube_190x210_single_oval_port/review_sand_cube_190x210_single_oval_port.py",
+      "role": "source",
+      "sha256": "a511ddf06b45826ba87a414fb4c425cee46967d8e41a989879c8b22008f509a8",
+      "size_bytes": 6350
+    },
+    {
+      "path": "scripts/text_to_cad_artifacts.py",
+      "role": "source",
+      "sha256": "ea8c5df6adebda0d671a9a248d18ade897c1148116eaed1c3bcd8929d34dd6cc",
+      "size_bytes": 18821
+    },
+    {
+      "path": "scripts/generate_static_ocp_viewer.py",
+      "role": "source",
+      "sha256": "48f9aa69d0d55f218f6935e962e7c1142c6b315cbf208de8064e710d330634f2",
+      "size_bytes": 6939
+    },
+    {
+      "path": "scripts/check_cad_entrypoints.py",
+      "role": "source",
+      "sha256": "743b7f089475a5d01a87afe27753de99d2d0f8ba2fd0aa29e2125583bd9709f9",
+      "size_bytes": 9777
+    }
+  ],
+  "stage": "release_passed",
+  "updated_at": "2026-07-23T21:56:57.807813Z"
+}

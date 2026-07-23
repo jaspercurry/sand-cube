@@ -20,6 +20,7 @@ NATIVE_PREFIXES = (
     "ocp_vscode",
     "vtk",
 )
+NATIVE_PACKAGE_PREFIXES = ("cad_geometry_checks.native",)
 NATIVE_FREE_SCRIPT_MODULES = {
     "scripts.cad_review",
     "scripts.cad_verification_io",
@@ -99,6 +100,11 @@ def _module_requires_cad(module: str) -> bool:
     if module.startswith("scripts."):
         return True
     if module.startswith("generate_"):
+        return True
+    if any(
+        module == prefix or module.startswith(f"{prefix}.")
+        for prefix in NATIVE_PACKAGE_PREFIXES
+    ):
         return True
     return any(
         module == prefix or module.startswith(f"{prefix}.")
@@ -181,6 +187,67 @@ def entrypoint_source_violations(relative: Path, text: str) -> list[str]:
         problems.append(f"{relative}: guard appears after native CAD import")
     if "preexec_fn" in text or "os.fork(" in text:
         problems.append(f"{relative}: unsafe fork-triggering process code")
+    return problems
+
+
+def production_review_violations(relative: Path, text: str) -> list[str]:
+    """Reject review generation and subprocesses from a production generate path."""
+
+    tree = ast.parse(text)
+    generate = next(
+        (
+            node
+            for node in tree.body
+            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+            and node.name == "generate"
+        ),
+        None,
+    )
+    if generate is None:
+        return [f"{relative}: missing production generate() function"]
+    problems: list[str] = []
+    forbidden_names = {
+        "generate_review",
+        "model_payload",
+        "render_viewer",
+        "snapshot",
+    }
+    for node in ast.walk(generate):
+        if not isinstance(node, ast.Call):
+            continue
+        name = ""
+        if isinstance(node.func, ast.Name):
+            name = node.func.id
+        elif isinstance(node.func, ast.Attribute):
+            parts = []
+            value: ast.expr = node.func
+            while isinstance(value, ast.Attribute):
+                parts.append(value.attr)
+                value = value.value
+            if isinstance(value, ast.Name):
+                parts.append(value.id)
+            name = ".".join(reversed(parts))
+        if name == "subprocess.run" or name == "subprocess.Popen":
+            problems.append(
+                f"{relative}: production generate() launches subprocess {name}"
+            )
+        if name.rsplit(".", 1)[-1] in forbidden_names:
+            problems.append(
+                f"{relative}: production generate() invokes review function {name}"
+            )
+    for node in ast.walk(generate):
+        if (
+            isinstance(node, ast.Constant)
+            and isinstance(node.value, str)
+            and any(
+                marker in node.value.lower()
+                for marker in ("viewer", "snapshot", "sidecar", "preview")
+            )
+        ):
+            problems.append(
+                f"{relative}: production generate() contains review target "
+                f"{node.value!r}"
+            )
     return problems
 
 

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+from dataclasses import dataclass
 import hashlib
 import importlib.metadata
 import json
@@ -62,6 +63,17 @@ NATIVE_DEPENDENCY_PINS = {
     "build123d": str(_PROJECT_CONFIG["dependencies"]["build123d"]),
     "cadquery-ocp-novtk": str(_PROJECT_CONFIG["dependencies"]["cadquery_ocp_novtk"]),
 }
+
+
+@dataclass(frozen=True)
+class VerifiedSidecar:
+    step_path: str
+    step_sha256: str
+    sidecar_path: str
+    sidecar_sha256: str
+    sidecar_size_bytes: int
+    kind: str
+    cache_key: str
 
 
 def _sha256_file(path: Path) -> str:
@@ -226,6 +238,55 @@ def _require_current_source(
             "STEP artifact changed during sidecar processing: "
             f"expected {expected.sha256}, found {current.sha256}"
         )
+
+
+def verify_cached_sidecar(
+    repo_root: Path,
+    step_path: Path,
+    sidecar_path: Path,
+    kind: str,
+) -> VerifiedSidecar:
+    """Require one current sidecar to match its verified cache entry and STEP."""
+
+    repo_root = repo_root.resolve(strict=True)
+    source = fingerprint_file(repo_root, step_path)
+    spec = _sidecar_cache_spec(source, kind)
+    cached = StageCache(repo_root).lookup(spec)
+    if not cached.hit:
+        raise RuntimeError(
+            "sidecar has no current verified cache entry: "
+            f"{cached.diagnostic()}"
+        )
+    resolved_sidecar = sidecar_path.expanduser()
+    if not resolved_sidecar.is_absolute():
+        resolved_sidecar = repo_root / resolved_sidecar
+    resolved_sidecar = resolved_sidecar.resolve(strict=True)
+    try:
+        relative_sidecar = resolved_sidecar.relative_to(repo_root).as_posix()
+    except ValueError as error:
+        raise RuntimeError(
+            f"sidecar escapes repository root: {resolved_sidecar}"
+        ) from error
+    _validate_sidecar(resolved_sidecar, source, kind)
+    digest = _sha256_file(resolved_sidecar)
+    size = resolved_sidecar.stat().st_size
+    artifact = cached.artifact("sidecar")
+    if digest != artifact.sha256 or size != artifact.size_bytes:
+        raise RuntimeError(
+            "sidecar file does not match its verified cache artifact: "
+            f"expected {artifact.sha256}/{artifact.size_bytes}, found "
+            f"{digest}/{size}"
+        )
+    _require_current_source(repo_root, repo_root / source.path, source)
+    return VerifiedSidecar(
+        step_path=source.path,
+        step_sha256=source.sha256,
+        sidecar_path=relative_sidecar,
+        sidecar_sha256=digest,
+        sidecar_size_bytes=size,
+        kind=kind,
+        cache_key=spec.key,
+    )
 
 
 def _sidecar(
