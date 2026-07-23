@@ -7,8 +7,6 @@ from datetime import datetime, timezone
 import json
 from pathlib import Path, PurePosixPath
 import platform
-import re
-import struct
 import sys
 import tomllib
 from typing import Any
@@ -42,6 +40,7 @@ from cad_verification import (  # noqa: E402
     review_packet_to_json,
     validate_review_packet,
 )
+from cad_runner.glb import glb_step_hash  # noqa: E402
 from scripts.cad_verification_io import FileArtifactProbe  # noqa: E402
 from workbench.designs.joint_coupon.parameters import load_parameters  # noqa: E402
 from workbench.designs.joint_coupon.verification import (  # noqa: E402
@@ -66,10 +65,6 @@ SECTION_ARTIFACT = "artifact.joint-coupon-snapshot-section"
 VIEWER_EVIDENCE = "viewer.joint-coupon-assembly"
 OVERVIEW_EVIDENCE = "snapshot.joint-coupon-isometric"
 SECTION_EVIDENCE = "snapshot.joint-coupon-section"
-MAX_GLB_BYTES = 64 * 1024 * 1024
-GLB_JSON_CHUNK = 0x4E4F534A
-GLB_BIN_CHUNK = 0x004E4942
-SHA256_PATTERN = re.compile(r"^[0-9a-f]{64}$")
 
 
 def _parser() -> argparse.ArgumentParser:
@@ -208,146 +203,6 @@ def _job_metrics(
         orphan_processes=len(remaining),
         outputs=tuple(outputs),
     )
-
-
-def _contains_step_hash(value: Any) -> bool:
-    """Reject lookalike hashes outside the canonical metadata field."""
-
-    if isinstance(value, dict):
-        return "stepHash" in value or any(
-            _contains_step_hash(item) for item in value.values()
-        )
-    if isinstance(value, list):
-        return any(_contains_step_hash(item) for item in value)
-    return False
-
-
-def _unique_json_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
-    """Build one JSON object while rejecting duplicate member names."""
-
-    result: dict[str, Any] = {}
-    for key, value in pairs:
-        if key in result:
-            raise ValueError(f"duplicate JSON object key: {key}")
-        result[key] = value
-    return result
-
-
-def _glb_step_hash(path: Path) -> str:
-    """Read the one canonical STEP hash from a bounded Text-to-CAD GLB."""
-
-    size = path.stat().st_size
-    if size > MAX_GLB_BYTES:
-        raise ValueError(f"sidecar exceeds the {MAX_GLB_BYTES}-byte safety cap: {path}")
-    payload = path.read_bytes()
-    if len(payload) < 12 or payload[:4] != b"glTF":
-        raise ValueError(f"sidecar is not a GLB file: {path}")
-    version, declared_size = struct.unpack_from("<II", payload, 4)
-    if version != 2 or declared_size != len(payload) or declared_size % 4:
-        raise ValueError(f"sidecar has an invalid GLB header: {path}")
-
-    chunks: list[tuple[int, bytes]] = []
-    offset = 12
-    while offset < len(payload):
-        if offset + 8 > len(payload):
-            raise ValueError(f"sidecar has a truncated GLB chunk header: {path}")
-        chunk_size, chunk_type = struct.unpack_from("<II", payload, offset)
-        offset += 8
-        if chunk_size % 4:
-            raise ValueError(f"sidecar has an unaligned GLB chunk: {path}")
-        end = offset + chunk_size
-        if end > len(payload):
-            raise ValueError(f"sidecar has a truncated GLB chunk: {path}")
-        chunks.append((chunk_type, payload[offset:end]))
-        offset = end
-    if (
-        len(chunks) != 2
-        or chunks[0][0] != GLB_JSON_CHUNK
-        or chunks[1][0] != GLB_BIN_CHUNK
-    ):
-        raise ValueError(
-            f"sidecar must contain one JSON chunk followed by one BIN chunk: {path}"
-        )
-
-    try:
-        document = json.loads(
-            chunks[0][1].rstrip(b" \t\r\n\0").decode("utf-8"),
-            object_pairs_hook=_unique_json_object,
-        )
-    except (UnicodeDecodeError, json.JSONDecodeError) as error:
-        raise ValueError(f"sidecar JSON chunk is malformed: {path}") from error
-    if not isinstance(document, dict):
-        raise ValueError(f"sidecar JSON chunk must be an object: {path}")
-    extension = document.get("extensions", {}).get("STEP_topology")
-    if not isinstance(extension, dict):
-        raise ValueError(f"sidecar lacks the STEP_topology extension: {path}")
-    index_view = extension.get("indexView")
-    if (
-        extension.get("schemaVersion") != 2
-        or extension.get("encoding") != "utf-8"
-        or not isinstance(index_view, int)
-    ):
-        raise ValueError(f"sidecar STEP_topology extension is not canonical: {path}")
-    views = document.get("bufferViews")
-    buffers = document.get("buffers")
-    if (
-        not isinstance(views, list)
-        or not 0 <= index_view < len(views)
-        or not isinstance(buffers, list)
-        or len(buffers) != 1
-        or not isinstance(buffers[0], dict)
-    ):
-        raise ValueError(f"sidecar index buffer metadata is malformed: {path}")
-    view = views[index_view]
-    if not isinstance(view, dict) or view.get("buffer") != 0:
-        raise ValueError(f"sidecar indexView does not reference buffer 0: {path}")
-    byte_offset = view.get("byteOffset", 0)
-    byte_length = view.get("byteLength")
-    declared_buffer_length = buffers[0].get("byteLength")
-    binary = chunks[1][1]
-    if (
-        not isinstance(byte_offset, int)
-        or not isinstance(byte_length, int)
-        or not isinstance(declared_buffer_length, int)
-        or byte_offset < 0
-        or byte_length <= 0
-        or declared_buffer_length > len(binary)
-        or len(binary) - declared_buffer_length > 3
-        or byte_offset + byte_length > declared_buffer_length
-    ):
-        raise ValueError(f"sidecar indexView bounds are invalid: {path}")
-    try:
-        metadata = json.loads(
-            binary[byte_offset : byte_offset + byte_length].decode("utf-8"),
-            object_pairs_hook=_unique_json_object,
-        )
-    except (UnicodeDecodeError, json.JSONDecodeError) as error:
-        raise ValueError(f"sidecar index metadata is malformed: {path}") from error
-    if (
-        not isinstance(metadata, dict)
-        or metadata.get("schemaVersion") != 2
-        or metadata.get("profile") != "index"
-        or metadata.get("sourceKind") != "step"
-    ):
-        raise ValueError(f"sidecar index metadata schema is not canonical: {path}")
-    step_hash = metadata.get("stepHash")
-    nested_values = (item for key, item in metadata.items() if key != "stepHash")
-    if (
-        not isinstance(step_hash, str)
-        or not SHA256_PATTERN.fullmatch(step_hash)
-        or any(_contains_step_hash(item) for item in nested_values)
-    ):
-        raise ValueError(
-            "sidecar must contain exactly one lowercase stepHash at the canonical "
-            f"index metadata location: {path}"
-        )
-    return step_hash
-
-
-def _glb_step_hashes(path: Path) -> set[str]:
-    """Compatibility helper returning the one structurally validated hash."""
-
-    return {_glb_step_hash(path)}
 
 
 def _artifact(
@@ -685,7 +540,7 @@ def main(argv: list[str] | None = None) -> None:
         )
         by_id = {artifact.artifact_id: artifact for artifact in artifacts}
         assembly_hash = by_id[ASSEMBLY_ARTIFACT].sha256
-        if _glb_step_hash(args.sidecar) != assembly_hash:
+        if glb_step_hash(args.sidecar) != assembly_hash:
             raise ValueError("sidecar does not embed the current assembly STEP SHA-256")
         _validate_snapshot_provenance(
             snapshot,
