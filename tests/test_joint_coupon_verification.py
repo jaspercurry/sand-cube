@@ -149,12 +149,12 @@ def _metadata(step_hash: str | None = "a" * 64) -> dict:
 
 
 def _read_glb(payload: bytes) -> set[str]:
-    from workbench.designs.joint_coupon.packet import _glb_step_hashes
+    from cad_runner.glb import glb_step_hash
 
     with tempfile.TemporaryDirectory() as directory:
         path = Path(directory) / "sidecar.glb"
         path.write_bytes(payload)
-        return _glb_step_hashes(path)
+        return {glb_step_hash(path)}
 
 
 def test_sidecar_binding_reader_follows_the_real_index_view_schema() -> None:
@@ -176,6 +176,23 @@ def test_sidecar_reader_rejects_nested_only_hash() -> None:
 
     with pytest.raises(ValueError, match="canonical index metadata location"):
         _read_glb(_canonical_glb(nested_only))
+
+
+def test_sidecar_reader_rejects_hash_outside_index_metadata() -> None:
+    with pytest.raises(ValueError, match="outside the canonical"):
+        _read_glb(
+            _canonical_glb(
+                _metadata(),
+                document_update={"extras": {"stepHash": "b" * 64}},
+            )
+        )
+
+
+def test_sidecar_reader_rejects_disagreeing_entry_kinds() -> None:
+    metadata = {**_metadata(), "entryKind": "part"}
+
+    with pytest.raises(ValueError, match="entryKind values do not agree"):
+        _read_glb(_canonical_glb(metadata))
 
 
 def test_sidecar_reader_rejects_raw_duplicate_step_hash_keys() -> None:
@@ -215,18 +232,30 @@ def test_sidecar_reader_rejects_truncation_and_malformed_chunks() -> None:
             _read_glb(payload)
 
 
+def test_sidecar_reader_rejects_extra_chunks_without_accumulating_them() -> None:
+    valid = _canonical_glb(_metadata())
+    document_length = struct.unpack_from("<I", valid, 12)[0]
+    insert_at = 20 + document_length
+    extra_chunks = struct.pack("<II", 0, 0x4E4F534A) * 20_000
+    payload = bytearray(valid[:insert_at] + extra_chunks + valid[insert_at:])
+    struct.pack_into("<I", payload, 8, len(payload))
+
+    with pytest.raises(ValueError, match="BIN chunk has the wrong type"):
+        _read_glb(bytes(payload))
+
+
 def test_sidecar_reader_applies_a_pre_read_size_cap() -> None:
-    from workbench.designs.joint_coupon.packet import _glb_step_hashes
+    from cad_runner.glb import glb_step_hash
 
     with tempfile.TemporaryDirectory() as directory:
         path = Path(directory) / "oversized.glb"
         path.write_bytes(_canonical_glb(_metadata()))
         with patch(
-            "workbench.designs.joint_coupon.packet.MAX_GLB_BYTES",
+            "cad_runner.glb.MAX_GLB_BYTES",
             path.stat().st_size - 1,
         ):
             with pytest.raises(ValueError, match="safety cap"):
-                _glb_step_hashes(path)
+                glb_step_hash(path)
 
 
 def test_expected_volumes_use_each_plate_thickness_for_its_holes() -> None:

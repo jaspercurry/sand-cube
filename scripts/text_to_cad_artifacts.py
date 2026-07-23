@@ -4,9 +4,11 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import importlib.metadata
 import json
 import os
 from pathlib import Path
+import platform
 import shutil
 import subprocess
 import sys
@@ -26,6 +28,16 @@ from cad_runner.outputs import STAGE_ROOT_ENV, job_output_path  # noqa: E402
 
 _ensure_cad_coordinated(__name__, __file__, _CAD_SAFETY_ROOT)
 
+from cad_runner.cache import (  # noqa: E402
+    DeclaredOutput,
+    FileFingerprint,
+    StageCache,
+    StageCacheSpec,
+    ToolIdentity,
+    fingerprint_file,
+)
+from cad_runner.glb import glb_step_identity  # noqa: E402
+
 
 ROOT = _CAD_SAFETY_ROOT
 with (ROOT / ".cad-project/project.toml").open("rb") as _config_stream:
@@ -33,6 +45,23 @@ with (ROOT / ".cad-project/project.toml").open("rb") as _config_stream:
 TEXT_TO_CAD_VERSION = str(_PROJECT_CONFIG["viewer"]["version"])
 TEXT_TO_CAD_COMMIT = str(_PROJECT_CONFIG["viewer"]["commit"])
 DEFAULT_TOOL_ROOT = ROOT / str(_PROJECT_CONFIG["viewer"]["tool_root"])
+SIDECAR_CACHE_STAGE = "text-to-cad-sidecar"
+SIDECAR_PRODUCER_VERSION = "1"
+SIDECAR_PRODUCER_SCHEMA_VERSION = 1
+SIDECAR_OUTPUT = DeclaredOutput("sidecar", "artifacts/topology.glb")
+SIDECAR_SETTINGS = {
+    "generator": "cadpy.step_artifact",
+    "topology_profile": "index",
+    "meshing": {
+        "configuration": "text-to-cad-defaults",
+        "identity": "pinned-tool-commit",
+    },
+    "command_schema_version": 1,
+}
+NATIVE_DEPENDENCY_PINS = {
+    "build123d": str(_PROJECT_CONFIG["dependencies"]["build123d"]),
+    "cadquery-ocp-novtk": str(_PROJECT_CONFIG["dependencies"]["cadquery_ocp_novtk"]),
+}
 
 
 def _sha256_file(path: Path) -> str:
@@ -69,26 +98,192 @@ def _require_runtime() -> Path:
             f"Expected Text-to-CAD commit {TEXT_TO_CAD_COMMIT}; "
             f"found {actual_commit or 'unknown'}"
         )
+    dirty = subprocess.run(
+        [
+            "git",
+            "-C",
+            str(tool_root),
+            "status",
+            "--porcelain=v1",
+            "--untracked-files=no",
+            "--",
+            "packages/cadpy",
+            "plugins/cad",
+        ],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    if dirty.returncode != 0:
+        raise RuntimeError(
+            f"Could not verify Text-to-CAD generator sources under {tool_root}"
+        )
+    if dirty.stdout.strip():
+        raise RuntimeError(
+            "Pinned Text-to-CAD generator sources have tracked modifications: "
+            f"{dirty.stdout.strip()}"
+        )
+    mismatches = []
+    for distribution, expected in NATIVE_DEPENDENCY_PINS.items():
+        actual = _installed_version(distribution)
+        if actual != expected:
+            mismatches.append(f"{distribution}: expected {expected}, found {actual}")
+    if mismatches:
+        raise RuntimeError(
+            "Text-to-CAD native dependency mismatch: " + "; ".join(mismatches)
+        )
     return tool_root
 
 
-def _sidecar(args: argparse.Namespace) -> int:
+def _installed_version(distribution: str) -> str:
+    try:
+        return importlib.metadata.version(distribution)
+    except importlib.metadata.PackageNotFoundError:
+        return "missing"
+
+
+def _sidecar_tools() -> tuple[ToolIdentity, ...]:
+    return (
+        ToolIdentity(
+            name="python",
+            version=platform.python_version(),
+            identity=sys.implementation.cache_tag or platform.python_implementation(),
+        ),
+        *(
+            ToolIdentity(
+                name=distribution,
+                version=_installed_version(distribution),
+                identity=f"project-pin:{expected}",
+            )
+            for distribution, expected in NATIVE_DEPENDENCY_PINS.items()
+        ),
+        ToolIdentity(
+            name="text-to-cad",
+            version=TEXT_TO_CAD_VERSION,
+            identity=TEXT_TO_CAD_COMMIT,
+        ),
+    )
+
+
+def _sidecar_cache_spec(
+    step: FileFingerprint,
+    kind: str,
+    *,
+    settings: object = SIDECAR_SETTINGS,
+) -> StageCacheSpec:
+    return StageCacheSpec(
+        stage=SIDECAR_CACHE_STAGE,
+        producer="text-to-cad-sidecar",
+        producer_version=SIDECAR_PRODUCER_VERSION,
+        producer_schema_version=SIDECAR_PRODUCER_SCHEMA_VERSION,
+        sources=(step,),
+        parameters={
+            "step_sha256": step.sha256,
+            "sidecar_kind": kind,
+        },
+        tools=_sidecar_tools(),
+        settings=settings,
+        outputs=(SIDECAR_OUTPUT,),
+    )
+
+
+def _load_sidecar_generator():
     tool_root = _require_runtime()
     cadpy_src = tool_root / "packages/cadpy/src"
     if not cadpy_src.is_dir():
         raise RuntimeError(f"Pinned cadpy source is missing: {cadpy_src}")
     sys.path.insert(0, str(cadpy_src))
-
     from cadpy.step_artifact import main as step_artifact_main
 
-    step_path = args.step.expanduser().resolve()
-    if not step_path.is_file():
-        raise FileNotFoundError(f"STEP artifact does not exist: {step_path}")
+    return step_artifact_main
+
+
+def _validate_sidecar(
+    path: Path,
+    source: FileFingerprint,
+    kind: str,
+) -> None:
+    identity = glb_step_identity(path)
+    if identity.step_hash != source.sha256:
+        raise ValueError(
+            "embedded_step_hash_mismatch: "
+            f"expected {source.sha256}, found {identity.step_hash}"
+        )
+    if identity.entry_kind != kind:
+        raise ValueError(
+            f"entry_kind_mismatch: expected {kind}, found {identity.entry_kind}"
+        )
+
+
+def _require_current_source(
+    repo_root: Path,
+    step_path: Path,
+    expected: FileFingerprint,
+) -> None:
+    current = fingerprint_file(repo_root, step_path)
+    if current != expected:
+        raise RuntimeError(
+            "STEP artifact changed during sidecar processing: "
+            f"expected {expected.sha256}, found {current.sha256}"
+        )
+
+
+def _sidecar(
+    args: argparse.Namespace,
+    *,
+    repo_root: Path = ROOT,
+    generator=None,
+) -> int:
+    repo_root = repo_root.resolve(strict=True)
+    requested_step = args.step.expanduser()
+    try:
+        source = fingerprint_file(repo_root, requested_step)
+    except FileNotFoundError:
+        raise FileNotFoundError(
+            f"STEP artifact does not exist: {requested_step}"
+        ) from None
+    step_path = repo_root / source.path
+    spec = _sidecar_cache_spec(source, args.kind)
+    cache = StageCache(repo_root)
+    final_sidecar = step_path.with_name(f".{step_path.name}.glb")
+    staged_sidecar = job_output_path(final_sidecar)
+
+    miss_reason = "force_regeneration" if args.force else ""
+    replace_cache = bool(args.force)
+    if not args.force:
+        restored = cache.restore(spec, {"sidecar": staged_sidecar})
+        if restored.hit:
+            try:
+                _validate_sidecar(staged_sidecar, source, args.kind)
+            except ValueError as error:
+                miss_reason = f"sidecar_validation_failed: {error}"
+            else:
+                _require_current_source(repo_root, step_path, source)
+                artifact = restored.artifact("sidecar")
+                print(
+                    "cache hit "
+                    f"stage={spec.stage} key={spec.key} "
+                    f"sidecar_sha256={artifact.sha256}"
+                )
+                return 0
+            cache.invalidate(spec)
+            replace_cache = True
+        else:
+            miss_reason = f"{restored.reason}: {restored.detail}"
+    print(f"cache miss stage={spec.stage} key={spec.key} reason={miss_reason}")
+
+    step_artifact_main = generator or _load_sidecar_generator()
     stage_root = Path(os.environ[STAGE_ROOT_ENV]).resolve()
     scratch = stage_root.parent / "scratch" / "sidecar"
     scratch.mkdir(parents=True, exist_ok=True)
     scratch_step = scratch / step_path.name
     shutil.copy2(step_path, scratch_step)
+    scratch_hash = _sha256_file(scratch_step)
+    if scratch_hash != source.sha256:
+        raise RuntimeError(
+            "STEP artifact changed while preparing sidecar generation: "
+            f"expected {source.sha256}, copied {scratch_hash}"
+        )
     command = [
         "--repo-root",
         str(scratch),
@@ -108,10 +303,33 @@ def _sidecar(args: argparse.Namespace) -> int:
         raise RuntimeError(
             f"Text-to-CAD did not produce the expected sidecar: {generated}"
         )
-    final_sidecar = step_path.with_name(f".{step_path.name}.glb")
-    staged_sidecar = job_output_path(final_sidecar)
-    staged_sidecar.parent.mkdir(parents=True, exist_ok=True)
-    shutil.copy2(generated, staged_sidecar)
+    try:
+        _validate_sidecar(generated, source, args.kind)
+    except ValueError as error:
+        raise RuntimeError(
+            f"Text-to-CAD produced an invalid sidecar: {error}"
+        ) from error
+
+    published = cache.publish(
+        spec,
+        {"sidecar": generated},
+        replace=replace_cache,
+    )
+    restored = cache.restore(spec, {"sidecar": staged_sidecar})
+    if not restored.hit:
+        raise RuntimeError(
+            f"new sidecar cache entry could not be restored: {restored.diagnostic()}"
+        )
+    try:
+        _validate_sidecar(staged_sidecar, source, args.kind)
+    except ValueError as error:
+        raise RuntimeError(f"restored sidecar failed validation: {error}") from error
+    _require_current_source(repo_root, step_path, source)
+    artifact = published.artifact("sidecar")
+    print(
+        "cache published "
+        f"stage={spec.stage} key={spec.key} sidecar_sha256={artifact.sha256}"
+    )
     return 0
 
 
