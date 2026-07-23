@@ -47,3 +47,6 @@
 - 2026-07-23: Revision 5 final checks passed 170 tests and 19 subtests, model
   catalog validation, 57 CAD entrypoint checks, Ruff, pinned-environment
   doctor, and workflow-state hash validation.
+- 2026-07-23: The same independent reviewer inspected the exact amended diff at
+  `7afb9168eef12100560e5e2b3e3465daa6026025`, reran 82 focused tests and all
+  policy checks, and reported no actionable findings.
