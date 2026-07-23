@@ -1,20 +1,15 @@
-"""Variant A: removable front baffle with a simplified single-land seam.
+"""Variant A: removable front baffle with a hybrid nested/flat seam.
 
-This leaf inherits the lightweight coherent closure (``previous``) and REPLACES
-its front-joint hooks with a fresh, simpler seam:
+The authoritative lightweight coherent closure remains the foundation.  Its
+sculpted nested split core and corner-sealing system remain untouched.  The
+left, right, and top seal path is retained exactly; only the bottom seal path
+is straightened, where the planar bulkhead and matching baffle land form the
+flat print base.
 
-* one tunable gasket-compression knob (``GASKET_CLOSED_GAP_MM``);
-* a minimal bucket gasket-shoulder land and a matching baffle land (the plain
-  ~6 mm inner lip), the two front sand-fill passages and their hollow blisters,
-  and the wall-stack sand cap -- everything else recessed behind the shoulder
-  is deleted;
-* (Stage 2) a continuous top tongue-and-groove hinge that captures the bead
-  against lift-out and lets the baffle pivot in; and
-* (Stage 3) two counterbored bottom screws into brass heat-set inserts.
-
-Nothing on the exterior parabolic-G1 skin changes.  The closure's own hooks are
-monkeypatched with the save -> patch -> try/finally -> restore pattern copied
-from ``previous.generate``; no shared ancestor generator is edited in place.
+Retention is staged separately: first validate and show the restored seam,
+then integrate the continuous top tongue-and-groove hinge, then place the two
+bottom captive-nut screws.  The gasket compression remains controlled by the
+single ``GASKET_CLOSED_GAP_MM`` constant.
 """
 
 from __future__ import annotations
@@ -73,7 +68,6 @@ from build123d import (
     Compound,
     Cylinder,
     Edge,
-    Face,
     Plane,
     Pos,
     Rot,
@@ -109,6 +103,11 @@ parent = previous.parent
 centered = previous.centered
 
 
+# Capture the authoritative implementations before this leaf patches hooks.
+_AUTHORITATIVE_COMMON_JOINT = previous._lightweight_common_joint
+_AUTHORITATIVE_PERIMETER_WIRE = single._perimeter_wire
+
+
 OUT = (
     ROOT
     / "build"
@@ -140,9 +139,10 @@ MINIMUM_GASKET_SUPPORT_RATIO = previous.MINIMUM_GASKET_SUPPORT_RATIO
 FAIRING_AREA_TOLERANCE_MM2 = previous.FAIRING_AREA_TOLERANCE_MM2
 
 # --- staged feature flags (final artifact: both True) -----------------------
-# Stage 1 brings up the simplified seal alone; Stage 2/3 add retention.
-BUILD_TOP_HINGE = True
-BUILD_BOTTOM_SCREWS = True
+# Stage 1 restores and proves the hybrid seam alone.  Retention stays disabled
+# until the user has inspected the actual seam sections.
+BUILD_TOP_HINGE = False
+BUILD_BOTTOM_SCREWS = False
 
 # --- Stage 2 top tongue-and-groove hinge geometry ---------------------------
 # All internal, below the inner top face at +88 and below the gasket band's
@@ -194,24 +194,40 @@ def _fuse_one(shape: Solid, addition: Any, *, feature: str) -> Solid:
     return previous._fuse_one(shape, addition, feature=feature)
 
 
-# ---------------------------------------------------------------------------
-# straightened SERVICE_BYPASS perimeter (the old dip fed deleted fasteners)
-# ---------------------------------------------------------------------------
-def _straight_perimeter_wire(*, offset_mm: float, y_mm: float) -> Wire:
-    """single._perimeter_wire with the top/bottom center dip removed."""
+def _hybrid_perimeter_wire(*, offset_mm: float, y_mm: float) -> Wire:
+    """Authoritative perimeter on L/R/T with a straight bottom run only."""
     h = single.PATH_HALF_SIZE_MM + offset_mm
     upper_radius = single.UPPER_CORNER_RADIUS_MM + offset_mm
     upper_center = single.UPPER_CORNER_CENTER_MM
     bc = single.PATH_BOTTOM_CORNER_TANGENCY_MM
     bottom_radius = single.PATH_HALF_SIZE_MM - bc + offset_mm
+    bypass_half = single.SCREW_BYPASS_HALF_WIDTH_MM
+    bypass_depth = single.SCREW_BYPASS_DEPTH_MM
     diag = 1.0 / math.sqrt(2.0)
 
     def p(x: float, z: float) -> Vector:
         return Vector(x, y_mm, z)
 
     edges = [
-        # straight top run (was: line + dip bezier + line)
-        Edge.make_line(p(-upper_center, h), p(upper_center, h)),
+        # Preserve the authoritative sculpted top service-bypass path.
+        Edge.make_line(p(-upper_center, h), p(-bypass_half, h)),
+        Edge.make_bezier(
+            p(-bypass_half, h),
+            p(-10.0, h),
+            p(-8.0, h),
+            p(-4.0, h - bypass_depth),
+            p(-2.0, h - bypass_depth),
+            p(0.0, h - bypass_depth),
+        ),
+        Edge.make_bezier(
+            p(0.0, h - bypass_depth),
+            p(2.0, h - bypass_depth),
+            p(4.0, h - bypass_depth),
+            p(8.0, h),
+            p(10.0, h),
+            p(bypass_half, h),
+        ),
+        Edge.make_line(p(bypass_half, h), p(upper_center, h)),
         Edge.make_three_point_arc(
             p(upper_center, h),
             p(
@@ -226,7 +242,8 @@ def _straight_perimeter_wire(*, offset_mm: float, y_mm: float) -> Wire:
             p(bc + bottom_radius * diag, -bc - bottom_radius * diag),
             p(bc, -h),
         ),
-        # straight bottom run
+        # The only perimeter-path change: remove the obsolete bottom-center
+        # fastener dip so both mating lands have a flat, continuous run.
         Edge.make_line(p(bc, -h), p(-bc, -h)),
         Edge.make_three_point_arc(
             p(-bc, -h),
@@ -245,39 +262,12 @@ def _straight_perimeter_wire(*, offset_mm: float, y_mm: float) -> Wire:
     ]
     wires = Wire.combine(edges)
     if len(wires) != 1 or not wires[0].is_closed:
-        raise ValueError("Straightened single-land perimeter did not close")
+        raise ValueError("Hybrid L/R/T nested + flat-bottom perimeter did not close")
     return wires[0]
 
 
 # ---------------------------------------------------------------------------
-# minimal baffle stiffening rib (keep ONE; edge-only clamp can bow the face)
-# ---------------------------------------------------------------------------
-def _minimal_baffle_rib(nominal_envelope: Solid) -> Solid:
-    """One collar->land tapered bridge, clipped inside the baffle plug.
-
-    Builds a single bridge directly (the closure's helper builds four); rooting
-    to the driver collar and the gasket land keeps the clamped face from bowing.
-    """
-    y0 = source.BAFFLE_BED_Y - BAFFLE_STRUCTURE_THICKNESS_MM
-    y1 = source.BAFFLE_BED_Y
-    points = (
-        (-previous.BRIDGE_INNER_HALF_WIDTH_MM, previous.BRIDGE_INNER_RADIUS_MM),
-        (previous.BRIDGE_INNER_HALF_WIDTH_MM, previous.BRIDGE_INNER_RADIUS_MM),
-        (previous.BRIDGE_OUTER_HALF_WIDTH_MM, previous.BRIDGE_OUTER_RADIUS_MM),
-        (-previous.BRIDGE_OUTER_HALF_WIDTH_MM, previous.BRIDGE_OUTER_RADIUS_MM),
-    )
-    blank = previous._xz_prism(
-        points, y0, y1, feature="minimal baffle bridge blank"
-    )
-    return _single_solid(
-        blank.intersect(nominal_envelope).clean().fix(),
-        feature="minimal baffle stiffening rib",
-    )
-
-
-# ---------------------------------------------------------------------------
-# fill-passage-blockage audit (the surviving half of the closure's front-
-# closure audit -- the full-annulus closed-skin probe is intentionally gone)
+# Future hinge/fastener lead-in helper.
 # ---------------------------------------------------------------------------
 def _top_lead_in_split_envelope(clearance_mm: float) -> Solid:
     """Straight-walled split with only a top lead-in (no captured plug).
@@ -307,367 +297,67 @@ def _top_lead_in_split_envelope(clearance_mm: float) -> Solid:
     )
 
 
-def _audit_fill_passages(bucket: Solid, passages: Compound) -> float:
-    fill_passage_blockage = _shape_volume(passages.intersect(bucket))
-    if fill_passage_blockage > 0.01:
-        raise ValueError(
-            "A simplified-seam sand-fill bore is obstructed by "
-            f"{fill_passage_blockage:.6f} mm3"
-        )
-    return fill_passage_blockage
+def _build_authoritative_joint(
+    full_base: Solid,
+    *,
+    hybrid_bottom: bool,
+) -> dict[str, Any]:
+    """Build once from the untouched nested split and selected seal path."""
+    original_perimeter = single._perimeter_wire
+    try:
+        if hybrid_bottom:
+            single._perimeter_wire = _hybrid_perimeter_wire
+        common = _AUTHORITATIVE_COMMON_JOINT(full_base)
+    finally:
+        single._perimeter_wire = original_perimeter
+    return common
 
 
-# ---------------------------------------------------------------------------
-# THE JOINT HOOK -- replaces previous._lightweight_common_joint
-# ---------------------------------------------------------------------------
+def _authoritative_reference_joint(full_base: Solid) -> dict[str, Any]:
+    return _build_authoritative_joint(full_base, hybrid_bottom=False)
+
+
 def _simple_tongue_groove_joint(full_base: Solid) -> dict[str, Any]:
-    # --- split -------------------------------------------------------------
-    # Stage 1 keeps the inherited nested split (straight push-on); Stage 2
-    # swaps in a shallow top-only lead-in so the baffle can pivot in.
-    if BUILD_TOP_HINGE:
-        nominal = _top_lead_in_split_envelope(0.0)
-        clearance = _top_lead_in_split_envelope(closure.SOCKET_NORMAL_CLEARANCE_MM)
-    else:
-        nominal = closure._nested_split_envelope(clearance_mm=0.0)
-        clearance = closure._nested_split_envelope(
-            clearance_mm=closure.SOCKET_NORMAL_CLEARANCE_MM
-        )
-    baffle = _single_solid(
-        full_base.intersect(nominal).clean().fix(),
-        feature="simple-seam removable baffle plug",
-    )
-    bucket = _single_solid(
-        full_base.cut(clearance).clean().fix(),
-        feature="simple-seam rear bucket",
-    )
-    reference_bucket = copy.copy(bucket)
-    reference_baffle = copy.copy(baffle)
-    _progress("joint: split done")
+    common = _build_authoritative_joint(full_base, hybrid_bottom=True)
 
-    # --- carve the inherited closure material behind the seal path ---------
-    bucket = _cut_one(
-        bucket,
-        simplified._broad_interface_reset(
-            source.BAFFLE_BED_Y - BAFFLE_STRUCTURE_THICKNESS_MM - 0.15,
-            source.SHOULDER_Y + 0.20,
-        ),
-        feature="bucket with inherited closure material removed",
-    )
-    _progress("joint: broad_interface_reset cut done")
-
-    # --- seal-path reference bands (parabolic-perimeter representation) -----
-    gasket = single._single_face_band(
-        GASKET_WIDTH_MM,
-        source.BAFFLE_BED_Y,
-        source.SHOULDER_Y,
-        feature="coherent gasket reference",
-    )
-    _progress("joint: gasket band done")
-    baffle_land = single._single_face_band(
-        SEAL_LAND_WIDTH_MM,
-        source.BAFFLE_BED_Y - BAFFLE_STRUCTURE_THICKNESS_MM,
-        source.BAFFLE_BED_Y,
-        feature="continuous baffle gasket land (~6mm inner lip)",
-    )
-    _progress("joint: baffle_land band done")
-    # (C.4) the gasket face growing out of the bucket's vertical front wall
-    bucket_shoulder_land = single._single_face_band(
-        GASKET_WIDTH_MM,
-        source.SHOULDER_Y,
-        source.SHOULDER_Y + BUCKET_SHOULDER_THICKNESS_MM,
-        feature="bucket gasket shoulder land",
-    )
-    _progress("joint: bucket_shoulder_land band done")
-    wall_cap = previous._wall_stack_cap()
-    _progress("joint: wall cap done")
-
-    # --- two front sand-fill passages + hollow blisters --------------------
-    fill_passages: list[Solid] = []
-    fill_supports: list[Solid] = []
-    fill_audit: dict[str, Any] = {}
-    centerline = single._perimeter_wire(offset_mm=0.0, y_mm=source.SHOULDER_Y)
-    for x_sign, label in ((-1.0, "left"), (1.0, "right")):
-        fill = simplified._front_fill_feature(x_sign)
-        passage = fill["passage"]
-        support = fill["support"]
-        mouth = Vector(
-            x_sign * simplified.FRONT_FILL_ABS_XZ_MM,
-            source.SHOULDER_Y,
-            simplified.FRONT_FILL_ABS_XZ_MM,
-        )
-        path_distance = min(
-            edge.distance_to(mouth) for edge in centerline.edges()
-        )
-        support_clearance = (
-            path_distance
-            - base.P.fill_entry_d / 2.0
-            - simplified.FRONT_FILL_SUPPORT_WALL_MM
-            - SEAL_LAND_WIDTH_MM / 2.0
-        )
-        if support_clearance < single.FILL_TO_LAND_CLEARANCE_MM - 0.01:
-            raise ValueError(
-                f"The {label} fill support has only "
-                f"{support_clearance:.3f} mm gasket-land clearance"
-            )
-        if float(fill["passage_to_void_mm3"]) <= 0.01:
-            raise ValueError(f"The {label} fill passage misses the sand void")
-        fill_passages.append(passage)
-        fill_supports.append(support)
-        fill_audit[label] = {
-            "mouth_center_mm": [mouth.X, mouth.Y, mouth.Z],
-            "entry_diameter_mm": base.P.fill_entry_d,
-            "support_wall_mm": simplified.FRONT_FILL_SUPPORT_WALL_MM,
-            "support_to_seal_land_clearance_mm": support_clearance,
-            "passage_to_live_sand_void_mm3": fill["passage_to_void_mm3"],
-            "print_slope_from_axis_deg": fill["slope_deg"],
-        }
-    passages = Compound(children=fill_passages)
-
-    # --- assemble the bucket ----------------------------------------------
-    # Fill supports first, onto the lean post-reset bucket (closure order):
-    # fusing them after the cap/shoulder makes the second fuse pathological.
-    for passage, support, label in zip(
-        fill_passages, fill_supports, ("left", "right")
-    ):
-        bucket = _cut_one(
-            bucket,
-            passage,
-            feature=f"bucket with unobstructed {label} fill passage",
-        )
-        bucket = _fuse_one(
-            bucket,
-            support,
-            feature=f"bucket with hollow {label} fill blister",
-        )
-        _progress(f"joint: {label} fill support fused")
-    # The sand cap carries the two fill holes; tolerance-fuse the seam pieces.
-    capped = wall_cap
-    for passage, label in zip(fill_passages, ("left", "right")):
-        capped = _cut_one(
-            capped, passage, feature=f"sand cap with {label} fill hole"
-        )
-    bucket = _fuse_one(
-        bucket,
-        bucket_shoulder_land,
-        feature="bucket with gasket shoulder land",
-    )
-    _progress("joint: shoulder land fused")
-    bucket = _fuse_one(
-        bucket, capped, feature="bucket with wall-stack sand cap"
-    )
-    _progress("joint: wall cap fused")
-    # re-cut the authoritative bores so no boolean seam skins a passage
-    final_fill_clearances: list[Solid] = []
-    for x_sign, label in ((-1.0, "left"), (1.0, "right")):
-        mouth_x = x_sign * simplified.FRONT_FILL_ABS_XZ_MM
-        final_clearance = _single_solid(
-            source._cylinder_between(
-                Vector(
-                    mouth_x,
-                    source.SHOULDER_Y
-                    - simplified.FRONT_FILL_MOUTH_OVERTRAVEL_MM,
-                    simplified.FRONT_FILL_ABS_XZ_MM,
-                ),
-                Vector(
-                    mouth_x,
-                    source.SHOULDER_Y
-                    + SAND_CAP_THICKNESS_MM
-                    + simplified.FRONT_FILL_CAP_OVERLAP_MM,
-                    simplified.FRONT_FILL_ABS_XZ_MM,
-                ),
-                diameter=(
-                    base.P.fill_entry_d + 2.0 * FINAL_FILL_PASSAGE_CLEARANCE_MM
-                ),
-            ),
-            feature=f"{label} final fill-mouth clearance cylinder",
-        )
-        final_cut = bucket.cut(final_clearance)
-        parts = [final_cut] if isinstance(final_cut, Solid) else list(final_cut)
-        bucket = _single_solid(
-            max(parts, key=lambda solid: solid.volume).clean().fix(),
-            feature=f"bucket with final clear {label} fill passage",
-        )
-        final_fill_clearances.append(final_clearance)
-    _progress("joint: bucket assembled (shoulder+cap+fills)")
-
-    fill_passage_blockage = _audit_fill_passages(bucket, passages)
-
-    # --- assemble the baffle ----------------------------------------------
-    baffle = _fuse_one(
-        baffle,
-        baffle_land,
-        feature="baffle with continuous perimeter gasket backing",
-    )
-    rib = _minimal_baffle_rib(nominal)
-    rib_root = _shape_volume(rib.intersect(baffle))
-    if rib_root <= 0.01:
-        raise ValueError("The minimal baffle rib has no collar/land root")
-    baffle = _fuse_one(
-        baffle, rib, feature="baffle with one minimal stiffening rib"
-    )
-    _progress("joint: baffle assembled (land+rib)")
-
-    # --- (Stage 2) top tongue-and-groove hinge ----------------------------
-    hinge_audit: dict[str, Any] = {"present": False}
-    if BUILD_TOP_HINGE:
-        bucket, baffle, hinge_audit = _add_top_tongue_groove(bucket, baffle)
-
-    # --- gasket-support probes (both faces, at the 1.0 mm shoulder) --------
-    gasket_bucket_probe = single._single_face_band(
-        GASKET_WIDTH_MM,
-        source.SHOULDER_Y,
-        source.SHOULDER_Y + 0.25,
-        feature="bucket gasket-support probe",
-    )
-    gasket_baffle_probe = single._single_face_band(
-        GASKET_WIDTH_MM,
-        source.BAFFLE_BED_Y - 0.25,
-        source.BAFFLE_BED_Y,
-        feature="baffle gasket-support probe",
-    )
-    gasket_bucket_support_ratio = _shape_volume(
-        gasket_bucket_probe.intersect(bucket)
-    ) / gasket_bucket_probe.volume
-    gasket_baffle_support_ratio = _shape_volume(
-        gasket_baffle_probe.intersect(baffle)
-    ) / gasket_baffle_probe.volume
-    if min(
-        gasket_bucket_support_ratio, gasket_baffle_support_ratio
-    ) < MINIMUM_GASKET_SUPPORT_RATIO:
-        raise ValueError(
-            "The simplified gasket lacks full support: "
-            f"bucket={gasket_bucket_support_ratio:.6f}, "
-            f"baffle={gasket_baffle_support_ratio:.6f}"
-        )
-    _progress(
-        "joint: support ratios "
-        f"bucket={gasket_bucket_support_ratio:.4f} "
-        f"baffle={gasket_baffle_support_ratio:.4f}"
-    )
-
-    # --- interference ------------------------------------------------------
-    bucket_baffle_overlap = _shape_volume(bucket.intersect(baffle))
-    gasket_bucket_overlap = _shape_volume(gasket.intersect(bucket))
-    gasket_baffle_overlap = _shape_volume(gasket.intersect(baffle))
-    if max(
-        bucket_baffle_overlap, gasket_bucket_overlap, gasket_baffle_overlap
-    ) > MAX_ALLOWED_INTERFERENCE_MM3:
-        raise ValueError(
-            "Simplified joint interference: "
-            f"bucket/baffle={bucket_baffle_overlap:.6f}, "
-            f"gasket/bucket={gasket_bucket_overlap:.6f}, "
-            f"gasket/baffle={gasket_baffle_overlap:.6f} mm3"
-        )
-    _progress("joint: interference checks done")
-
-    # --- sand cap seals the live void front at all four corners ------------
-    live_void = max(base._sand_void().solids(), key=lambda solid: solid.volume)
-    target_slab = Pos(
-        0.0, source.SHOULDER_Y + SAND_CAP_THICKNESS_MM / 2.0, 0.0
-    ) * Box(
-        220.0, SAND_CAP_THICKNESS_MM, 220.0,
-        align=(Align.CENTER, Align.CENTER, Align.CENTER),
-    )
-    # The open void front (void slab not covered by bucket) minus the intended
-    # fill mouths must be ~0.  The closure's iterative envelope cut is proven;
-    # guard the empty/null-result cases OCCT raises on when a cut fully clears.
-    unclosed = live_void.intersect(target_slab).cut(bucket)
-    unclosed_solids = [s for s in unclosed.solids() if s.volume > 1e-9]
-    for passage, support in zip(fill_passages, fill_supports):
-        if not unclosed_solids:
-            break
-        envelope = _single_solid(
-            passage.fuse(support).clean().fix(),
-            feature="sand-fill passage audit envelope",
-        )
-        try:
-            cut_result = Compound(children=unclosed_solids).cut(envelope)
-        except ValueError:
-            unclosed_solids = []  # cut cleared the last residual
-            break
-        unclosed_solids = [
-            s for s in cut_result.solids() if s.volume > 1e-9
-        ]
-    unclosed_sand_cap_mm3 = sum(s.volume for s in unclosed_solids)
-    if unclosed_sand_cap_mm3 > 0.05:
-        raise ValueError(
-            "The simplified sand cap left an opening of "
-            f"{unclosed_sand_cap_mm3:.6f} mm3"
-        )
-    _progress("joint: sand-cap seal audit done")
-
-    # --- exterior fairing on the baffle is byte-identical ------------------
-    target_area = parent._build_parabolic_conformal_geometry()[
-        "outer_fairing_area_mm2"
-    ]
-    fairing_faces = [
-        face
-        for face in baffle.faces()
-        if abs(face.area - target_area) <= FAIRING_AREA_TOLERANCE_MM2
-    ]
-    if len(fairing_faces) != 1:
-        raise ValueError("The simplified structure changed the G1 fairing")
-    _progress("joint: fairing guard done")
-
-    structure = Compound(children=[baffle_land, rib])
+    # The authoritative implementation owns these detailed audits.  Copy them
+    # into the leaf diagnostics rather than recreating weaker proxy checks.
     _FILL_AUDIT.clear()
-    _FILL_AUDIT.update(fill_audit)
+    _FILL_AUDIT.update(previous._FILL_AUDIT)
+    for label in ("left", "right"):
+        _FILL_AUDIT[label]["front_clearance_start_y_mm"] = (
+            source.BAFFLE_BED_Y
+            - simplified.FRONT_FILL_MOUTH_OVERTRAVEL_MM
+        )
+        _FILL_AUDIT[label]["front_bulkhead_keepout_diameter_mm"] = (
+            base.P.fill_entry_d
+            + 2.0 * simplified.FRONT_FILL_SUPPORT_WALL_MM
+            + 2.0 * previous.FRONT_BULKHEAD_FILL_CLEARANCE_MM
+        )
+        _FILL_AUDIT[label]["front_bulkhead_rear_y_mm"] = (
+            source.SHOULDER_Y + previous.FRONT_BULKHEAD_THICKNESS_MM
+        )
     _JOINT_AUDIT.clear()
+    _JOINT_AUDIT.update(previous._JOINT_AUDIT)
     _JOINT_AUDIT.update(
         {
-            "installation_motion": (
-                "pivot-in at the top hinge then seat the bottom"
-                if BUILD_TOP_HINGE
-                else "straight drop-on along the split normal"
-            ),
+            "installation_motion": "seam-only validation; retention disabled",
             "gasket_closed_gap_mm": GASKET_CLOSED_GAP_MM,
             "shoulder_y_mm": source.SHOULDER_Y,
             "baffle_bed_y_mm": source.BAFFLE_BED_Y,
-            "seal_land_width_mm": SEAL_LAND_WIDTH_MM,
-            "gasket_width_mm": GASKET_WIDTH_MM,
-            "bucket_gasket_shoulder_thickness_mm": BUCKET_SHOULDER_THICKNESS_MM,
-            "gasket_bucket_support_ratio": gasket_bucket_support_ratio,
-            "gasket_baffle_support_ratio": gasket_baffle_support_ratio,
-            "baffle_minimal_rib_root_mm3": rib_root,
-            "baffle_minimal_rib_count": 1,
-            "fill_passage_blockage_mm3": fill_passage_blockage,
-            "front_hidden_fill_port_count": 2,
-            "unclosed_non_fill_sand_cap_mm3": unclosed_sand_cap_mm3,
-            "wall_stack_sand_cap_thickness_mm": SAND_CAP_THICKNESS_MM,
-            "deleted_features": [
-                "outside_gasket_face_closure",
-                "baffle_corner_closure_panels",
-                "continuous_bucket_front_transition",
-                "front_transition_quadrants",
-                "full_annulus_closed_skin_probe",
-                "captive_M4_nut_apparatus",
-                "service_bypass_perimeter_dip",
-            ],
-            "top_hinge": hinge_audit,
+            "seam_architecture": "authoritative nested L/R/T + flat bottom",
+            "authoritative_common_joint_inherited": True,
+            "front_bulkhead_architecture": (
+                "planar shoulder face plate plus constant-height support wedge"
+            ),
+            "authoritative_outside_gasket_closure_retained": False,
+            "authoritative_corner_closure_panels_retained": True,
+            "authoritative_front_closure_audit_retained": True,
+            "top_hinge": {"present": False},
         }
     )
-
-    return {
-        "bucket": bucket,
-        "baffle": baffle,
-        "gasket": gasket,
-        "shoulder": Compound(children=[bucket_shoulder_land, *fill_supports]),
-        "nominal_envelope": nominal,
-        "clearance_envelope": clearance,
-        "reference_bucket": reference_bucket,
-        "reference_baffle": reference_baffle,
-        "fairing_area_mm2": fairing_faces[0].area,
-        "fairing_area_difference_mm2": fairing_faces[0].area - target_area,
-        "bucket_baffle_overlap_mm3": bucket_baffle_overlap,
-        "gasket_bucket_overlap_mm3": gasket_bucket_overlap,
-        "gasket_baffle_overlap_mm3": gasket_baffle_overlap,
-        "front_fill_passages": passages,
-        "front_fill_final_clearances": tuple(final_fill_clearances),
-        "front_fill_supports": Compound(children=fill_supports),
-        "bucket_bulkhead": Compound(children=[wall_cap]),
-        "bucket_front_transition": Compound(children=[]),
-        "baffle_structure": structure,
-    }
+    _progress("joint: authoritative L/R/T seam + flat bottom restored")
+    return common
 
 
 # ---------------------------------------------------------------------------
@@ -976,13 +666,11 @@ def _add_bottom_screws(
         # Clip to the exterior and clear the gasket; keep it out of the baffle
         # plug so it cannot reach forward into the front cap.
         blister_raw = (
-            source._cylinder_between(
+            (source._cylinder_between(
                 surface + direction * previous.SCREW_BLISTER_AXIS_START_MM,
                 surface + direction * previous.BUCKET_SLEEVE_AXIS_END_MM,
                 diameter=previous.BUCKET_SLEEVE_D_MM,
-            )
-            .intersect(authoritative_outer)
-            .intersect(bucket_side_clip)
+            ) & authoritative_outer & bucket_side_clip)
             .cut(gasket_keep_clear)
         )
         blister = _single_solid(
@@ -1029,7 +717,7 @@ def _add_bottom_screws(
             nut_access, slot_mouth, swept_nut, hex_seat, slot_rotation_deg, _dot,
         ) = previous._nut_loading_access(nut_center, z_sign=z_sign)
         mouth_breakthrough = _shape_volume(
-            nut_access.intersect(service_face_probe).intersect(baffle)
+            nut_access & service_face_probe & baffle
         )
         if mouth_breakthrough <= 0.01:
             raise ValueError(
@@ -1226,7 +914,7 @@ def _section_compound(shape: Any, clip: Solid, *, feature: str) -> Compound:
     pieces = [
         piece.clean().fix()
         for solid in shape.solids()
-        for piece in solid.intersect(clip).solids()
+        for piece in (solid & clip).solids()
         if piece.volume > 1e-6
     ]
     if not pieces or not all(piece.is_valid for piece in pieces):
@@ -1289,7 +977,6 @@ def generate() -> dict[str, Any]:
     previous._lightweight_common_joint = _simple_tongue_groove_joint
     previous._accessible_fastener_concept = _removable_baffle_fastener_concept
     previous._generate_close_sections = _generate_close_sections
-    single._perimeter_wire = _straight_perimeter_wire
     # BOTH must be patched -- SHOULDER_Y was frozen at import from the old gap.
     source.GASKET_CLOSED_GAP_MM = GASKET_CLOSED_GAP_MM
     source.SHOULDER_Y = source.BAFFLE_BED_Y + GASKET_CLOSED_GAP_MM
@@ -1301,7 +988,6 @@ def generate() -> dict[str, Any]:
         previous._lightweight_common_joint = original_joint
         previous._accessible_fastener_concept = original_fastener
         previous._generate_close_sections = original_close_sections
-        single._perimeter_wire = original_perimeter_wire
         source.GASKET_CLOSED_GAP_MM = original_gap
         source.SHOULDER_Y = original_shoulder
 

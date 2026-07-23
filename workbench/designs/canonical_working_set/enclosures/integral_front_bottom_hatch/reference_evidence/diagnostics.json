@@ -1,0 +1,1728 @@
+{
+  "name": "sand_cube_190x210_parabolic_g1_lightweight_coherent_closure",
+  "status": "complete front-fill perimeter-sealed dual captive-square-nut closure",
+  "isolation": {
+    "experiment_dir": "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_front_fill_perimeter_seal",
+    "output_dir": "build/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_front_fill_perimeter_seal",
+    "dual_captive_square_nut_parent_modified": false,
+    "authoritative_rear_corner_variant_modified": false,
+    "shared_upstream_generators_modified": false
+  },
+  "design_inputs": {
+    "name": "sand_cube_190x210_parabolic_g1_lightweight_coherent_closure",
+    "width": 190.0,
+    "depth": 210.0,
+    "height": 190.0,
+    "target_tuning_hz": 39.75065,
+    "speed_of_sound_m_s": 343.0,
+    "air_density_kg_m3": 1.204,
+    "outer_skin_t": 2.0,
+    "sand_gap_t": 3.0,
+    "inner_skin_t": 2.0,
+    "edge_fillet_r": 8.0,
+    "port_width": 40.0,
+    "port_depth": 40.0,
+    "port_wall_t": 3.0,
+    "structural_tower_wall_t": 5.0,
+    "structural_wall_transition_start_z": 84.0,
+    "structural_wall_transition_end_z": 87.5,
+    "port_x": 0.0,
+    "port_y": 82.0,
+    "tower_width": 40.0,
+    "tower_depth": 40.0,
+    "tower_transition_end_z": 84.0,
+    "upper_tower_y": 82.0,
+    "upper_tower_shift_start_z": 100.0,
+    "upper_tower_shift_end_z": 135.0,
+    "horizontal_z": -65.0,
+    "bend_centerline_r": 50.0,
+    "brace_port_clearance": 1.5,
+    "tube_install_clearance": 0.3,
+    "inlet_mouth_y": -28.25,
+    "inlet_x": -61.5,
+    "inlet_flare_l": 18.0,
+    "inlet_mouth_width": 44.474711915874174,
+    "inlet_mouth_height": 44.474711915874174,
+    "inlet_mouth_center_z": -62.76264404206292,
+    "inlet_flat_width": 40.0,
+    "inlet_flat_height": 40.0,
+    "inlet_flat_center_z": -65.0,
+    "inlet_end_correction_factor": 0.85,
+    "outlet_flare_l": 25.0,
+    "outlet_mouth_width": 58.58327406350724,
+    "outlet_mouth_depth": 58.58327406350724,
+    "outlet_end_correction_factor": 0.613,
+    "lower_elbow_vertical_x": 64.0,
+    "lower_elbow_vertical_y": 84.0,
+    "upper_drift_control_fraction": [
+      0.0,
+      0.0,
+      0.0,
+      0.22,
+      0.5,
+      0.78,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "asymmetric_vertical_return_top_z": 84.0,
+    "baseline_outlet_top_z": 282.549703718656,
+    "target_outlet_drop": 28.8954,
+    "front_brace_blend_length": 15.0,
+    "front_brace_baffle_embed": 2.0,
+    "front_brace_ring_embed": 1.0,
+    "rear_cradle_front_y": 98.0,
+    "rear_cradle_depth": 11.0,
+    "rear_cradle_height": 10.0,
+    "tube_tab_t": 4.0,
+    "tube_tab_seating_clearance": 0.3,
+    "bottom_tab_width": 12.0,
+    "bottom_tab_left_offset_from_tube": 20.0,
+    "bottom_tab_right_offset_from_tube": 20.0,
+    "bottom_tab_depth": 8.0,
+    "bottom_tab_bottom_z": -88.0,
+    "rear_tab_width": 14.0,
+    "rear_tab_inner_left_offset_from_tube": 20.0,
+    "rear_tab_outer_left_offset_from_tube": 31.0,
+    "rear_tab_height": 8.0,
+    "tube_mount_clearance_d": 4.5,
+    "tube_mount_insert_d": 4.8,
+    "tube_mount_insert_depth": 6.5,
+    "bottom_tube_mount_insert_depth": 5.0,
+    "internal_tower_bottom_z": 62.0,
+    "internal_mount_plate_t": 4.0,
+    "internal_mount_plate_w": 88.0,
+    "internal_mount_roof_front_y": 64.0,
+    "internal_mount_roof_depth": 44.0,
+    "internal_mount_rear_bottom_z": 62.0,
+    "internal_mount_platform_d": 14.0,
+    "internal_mount_roof_x": 36.0,
+    "internal_mount_roof_y": 70.0,
+    "internal_mount_rear_x": 36.0,
+    "internal_mount_rear_z": 69.0,
+    "internal_mount_clearance_d": 4.5,
+    "internal_mount_insert_d": 4.8,
+    "internal_mount_insert_depth": 6.5,
+    "horn_center_x": 0.0,
+    "horn_target_physical_mouth_d": 190.0,
+    "horn_profile_mouth_outer_d_input": 192.5299283,
+    "horn_reference_wavefront_t": 0.242,
+    "horn_reference_axial_length": 92.38213681735276,
+    "horn_axial_shorten": 10.0,
+    "horn_target_axial_length": 82.38213681735276,
+    "horn_solved_wavefront_t": 0.49437398987356584,
+    "de250_official_throat_d": 25.0,
+    "horn_center_z": 194.9999947914171,
+    "horn_mount_face_y": -5.47803490744143,
+    "horn_forward_projection_mm": 4.0,
+    "horn_face_t": 4.0,
+    "horn_acoustic_hole_d": 42.0,
+    "horn_mount_ring_r": 50.0,
+    "de250_envelope_r": 60.0,
+    "de250_rear_depth": 62.0,
+    "horn_spoke_gap": 2.0,
+    "horn_spoke_d": 10.0,
+    "horn_spoke_root_r": 46.0,
+    "horn_spoke_turn_extra_r": 5.0
+  },
+  "enclosure": {
+    "outer_dimensions_mm": [
+      190.0,
+      210.0,
+      190.0
+    ],
+    "front_face_mm": [
+      190.0,
+      190.0
+    ],
+    "extra_depth_vs_190_cube_mm": 20.0,
+    "non_front_wall_stack_outer_sand_inner_mm": [
+      2.0,
+      3.0,
+      2.0
+    ],
+    "wall_stack_geometry": {
+      "method": "concentric all-edge filleted envelopes clipped above the solid floor",
+      "outer_edge_radius_mm": 8.0,
+      "inside_outer_skin_radius_mm": 6.0,
+      "inside_sand_gap_radius_mm": 3.0,
+      "acoustic_face_radius_mm": 1.0,
+      "nominal_outer_sand_inner_mm": [
+        2.0,
+        3.0,
+        2.0
+      ],
+      "solid_floor_nominal_thickness_mm": 7.0,
+      "bottom_sand_void_present": false,
+      "sand_void_min_z_mm": -88.0,
+      "sand_void_overlap_with_protected_outer_skin_mm3": 0.0,
+      "sand_void_overlap_below_floor_top_mm3": 0.0,
+      "port_channel_cut_into_floor": false,
+      "actual_port_channel_depth_mm": 0.0,
+      "unclipped_installation_envelope_penetration_below_floor_top_mm": 0.3000000999999912,
+      "outer_tube_floor_tangency_error_mm": -9.999999406318238e-08,
+      "remaining_solid_floor_under_port_mm": 7.0,
+      "bottom_insert_pocket_depth_mm": 5.0,
+      "remaining_floor_under_bottom_insert_pocket_mm": 2.0
+    },
+    "construction": "The established 190 x 210 x 190 enclosure, centered black-hole face, GX16, solid floor, 2-3-2 walls, and port-relieved brace network are retained.  The rear sand-fill entries are closed and replaced by two baffle-hidden front entries through a capped wall stack.",
+    "scaled_black_hole": {
+      "center_offset_up_mm": 0.0,
+      "larger_200_mm_design_outer_diameter_mm": 183.0,
+      "scaled_outer_diameter_mm": 174.0,
+      "driver_opening_diameter_mm": 130.5,
+      "seat_land_outer_diameter_mm": 158.0,
+      "recess_depth_preserved_from_larger_design_mm": 16.933333333333334,
+      "driver_seat_depth_mm": 19.183333333333334,
+      "larger_design_radial_blend_span_mm": 26.25,
+      "scaled_radial_blend_span_mm": 21.75,
+      "top_clearance_after_edge_fillet_mm": 0.0,
+      "design_intent": "The woofer remains dead-centered and the contour extends exactly to the cabinet edge-radius tangent on all four sides. Its 21.75 mm radial blend is substantially gentler than the previous 161 mm-diameter draft while preserving the larger design's exact axial depth."
+    },
+    "restored_original_features": {
+      "gx16": {
+        "center_xz_mm": [
+          -74.0,
+          -74.0
+        ],
+        "rear_face_y_mm": 115.0,
+        "solid_connector_island": true,
+        "captive_inner_hex_pocket": true,
+        "placed_hardware": {
+          "hex_pocket_center_y_mm": 109.4,
+          "raw_nut_center_y_mm": -5.25,
+          "body_flange_ring_raw_y_mm": -2.0,
+          "body_y_offset_mm": 115.8,
+          "nut_display_thickness_mm": 3.2,
+          "pocket_rotation_deg": 15.0,
+          "step_rotation_deg": 45.0,
+          "rear_face_y_mm": 115.0,
+          "placed_bbox_min_mm": [
+            -84.819,
+            99.3,
+            -84.819
+          ],
+          "placed_bbox_max_mm": [
+            -63.181,
+            120.8,
+            -63.181
+          ],
+          "outside_rear_projection_mm": 5.8,
+          "inside_projection_from_inner_face_mm": 8.7,
+          "rear_extension_shift_mm": 20.0
+        }
+      },
+      "sand_fill_ports": {
+        "count": 0,
+        "rear_entries_removed": true,
+        "rear_wall_is_solid": true,
+        "replacement_front_hidden_entries": {
+          "count": 2,
+          "mouth_centers_xz_mm": [
+            [
+              -65.0,
+              78.0
+            ],
+            [
+              65.0,
+              78.0
+            ]
+          ],
+          "entry_diameter_mm": 9.15,
+          "transition_length_mm": 16.0,
+          "support_wall_mm": 1.2,
+          "concealed_by_installed_baffle": true
+        }
+      },
+      "internal_bracing": {
+        "transverse_window_brace": true,
+        "transverse_window_brace_is_top_and_side_u_frame": true,
+        "transverse_window_bottom_rail_retained": false,
+        "window_brace_center_y_mm": 10.0,
+        "window_brace_depth_mm": 10.0,
+        "top_longitudinal_brace": true,
+        "bottom_longitudinal_brace": false,
+        "left_right_longitudinal_braces": true,
+        "longitudinal_brace_depth_mm": 10.0,
+        "all_rib_inward_heights_mm": [
+          10.0,
+          10.0,
+          10.0
+        ],
+        "window_and_longitudinal_inward_faces_flush": true,
+        "port_relief_clearance_mm": 1.5,
+        "front_seamless_blend_count": 4,
+        "front_roots_follow_visible_black_hole_contour": true,
+        "front_roots_fill_local_relief_void": true,
+        "front_root_tail_offset_from_driver_seat_mm": 13.0,
+        "front_blend_seat_diameter_mm": 158.0,
+        "front_root_inner_diameter_mm": 156.0,
+        "front_mounting_land_radial_embed_mm": 1.0,
+        "canonical_buttress_volume_mm3": 1399.9999999999998,
+        "canonical_buttress_axial_depth_mm": 14.0,
+        "all_four_buttresses_equal_volume": true,
+        "all_four_buttresses_equal_axial_depth": true,
+        "legacy_front_tabs_removed_before_buttress_fusion": true,
+        "black_hole_tools_run_before_final_buttress_fusion": true,
+        "rear_horizontal_cradle": {
+          "front_y_mm": 98.0,
+          "depth_mm": 11.0,
+          "height_mm": 10.0,
+          "tube_seat_clearance_mm": 1.5
+        },
+        "continuous_floor_rail_retained": false,
+        "floor_support_is_solid_floor_insert_pockets": false,
+        "minimum_analytic_clearance_to_woofer_mm": 1.7499999999999716,
+        "design_intent": "The original equal-height top and side brace network and all four conformal black-hole roots remain. Near the roof cartridge, the top rail flows into a smooth constant-width D-shaped cradle. Its inner and outer boundaries follow the flange and roof-island curvature, while a full-height installation keepout prevents any front or rear overhang.",
+        "tube_mounting_features_deferred": false,
+        "serviceable_tower_y_fork_added": false,
+        "serviceable_tower_conformal_d_cradle_added": true
+      }
+    }
+  },
+  "alignment": {
+    "type": "single 40 mm circular port with an R75 lower-left rear sweep, R50 lower-right rear rise, exact rear-flush 56 mm absorber straight, four rotated R35.7 upper elbows, and unchanged exterior tower",
+    "dsp_playback_goal_hz": 39.75065,
+    "calculated_tuning_hz": 39.174167937278966,
+    "predicted_natural_small_signal_f3_hz": 50.9,
+    "dsp_assisted_goal": {
+      "design_goal": "No audible 39-40 Hz attenuation at moderate playback with DSP",
+      "natural_39_hz_attenuation_vs_60_80_hz_db": 6.016940230937337,
+      "nominal_low_shelf_or_peak_boost_db": 6.02,
+      "nominal_center_frequency_hz": 39.0,
+      "suggested_q": 0.7,
+      "power_multiplier_at_full_boost": 3.996630727794158,
+      "dsp_applied_cases": {
+        "25_w_broadband_reference": {
+          "effective_amplifier_power_at_39_hz_w": 99.91576819485395,
+          "flattened_39_hz_spl_db_1m_ideal_half_space": 95.95437333169775,
+          "port_velocity_at_39_hz_m_s": 21.35689536961847,
+          "port_mach_at_39_hz": 0.06226500107760487,
+          "cone_excursion_at_39_hz_mm": 1.151928155959111
+        },
+        "50_w_broadband_reference": {
+          "effective_amplifier_power_at_39_hz_w": 199.8315363897079,
+          "flattened_39_hz_spl_db_1m_ideal_half_space": 98.96467328833756,
+          "port_velocity_at_39_hz_m_s": 30.203211081897585,
+          "port_mach_at_39_hz": 0.08805600898512415,
+          "cone_excursion_at_39_hz_mm": 1.6290724210368042
+        }
+      },
+      "moderate_volume_definition": "Use the bass limiter so boosted low-frequency demand remains near the 25-50 W acoustic cases; do not treat the TPA3255 voltage capability as permission to run 200 W of continuous boosted bass.",
+      "required_protection": "4th-order high-pass at 28-30 Hz plus dynamic bass limiting",
+      "qualification": "The DSP case is evaluated at 39 Hz below the natural vent tuning. Final audibility depends on room gain, placement, leakage, and the measured unit."
+    },
+    "packaging_tuning_tradeoff": {
+      "exterior_tower_height_preserved": true,
+      "current_natural_tuning_hz": 39.174167937278966,
+      "exact_39p1_hz_recovery_deferred": false,
+      "approximate_additional_internal_effective_length_needed_mm": 3.0,
+      "both_lower_rear_corners_used": true,
+      "exterior_tower_xy_and_height_preserved": true,
+      "remaining_offset_above_39p1_hz": 0.07416793727896476
+    }
+  },
+  "volume_accounting": {
+    "method": "Exact OpenCascade intersection of the printed cavity features, supplied woofer solids, and complete in-box port envelope with the acoustic domain, followed by guarded pairwise inclusion-exclusion. The detailed GX16 STEP uses its conservative in-cavity bounding-box intersection because its surface model makes an exact boolean disproportionately slow. Binding posts and amplifier electronics are deferred.",
+    "gross_modeled_cavity_with_black_hole_relief_l": 5.8138779718901334,
+    "printed_non_port_intrusions_braces_blisters_and_platforms_l": 0.10010035542189678,
+    "e150he_44_step_displacement_l": 0.5821724379675838,
+    "gx16_conservative_bbox_displacement_upper_bound_l": 0.004073324508436025,
+    "internal_port_envelope_including_air_l": 0.7213419348558363,
+    "cross_category_overlap_correction_l": 0.0,
+    "pair_overlap_count": 15,
+    "triple_overlap_count": 0,
+    "final_modeled_net_box_volume_l": 4.406189919136381
+  },
+  "port": {
+    "airway_ellipse_mm": [
+      40.0,
+      40.0
+    ],
+    "constant_area_airway_is_round": true,
+    "constant_area_airway_diameter_mm": 40.0,
+    "area_mm2": 1256.6370614359173,
+    "equivalent_round_diameter_mm": 40.0,
+    "ellipse_aspect_ratio": 1.0,
+    "lower_internal_wall_thickness_mm": 3.0,
+    "visible_weight_bearing_tower_wall_thickness_mm": 5.0,
+    "wall_thickness_transition_hidden_below_roof": true,
+    "wall_thickness_transition_z_mm": [
+      84.0,
+      87.5
+    ],
+    "separate_printed_internal_tube": {
+      "enabled": true,
+      "core_shell_only": false,
+      "join_collars_deferred": false,
+      "mounting_tabs_deferred": true,
+      "heat_set_insert_features_deferred": false,
+      "lower_tower_spigot_added": true,
+      "acoustic_bore_diameter_mm": 40.0,
+      "socket_join_is_above_internal_header_endpoint": true
+    },
+    "internally_mounted_upper_tower": {
+      "enabled": true,
+      "serviceable": true,
+      "visible_profile": "straight 40 mm bore / 50 mm OD circle",
+      "separate_outlet_flare": true,
+      "underside_d_flange": true,
+      "blind_roof_fasteners": 3,
+      "downward_bosses": 0
+    },
+    "inlet_mouth_ellipse_mm": [
+      44.474711915874174,
+      44.474711915874174
+    ],
+    "inlet_mouth_center_xyz_mm": [
+      -61.5,
+      -28.25,
+      -62.76264404206292
+    ],
+    "inlet_clearance_from_driver_seat_plane_mm": 47.56666666666666,
+    "inlet_clearance_in_equivalent_diameters": 1.1891666666666665,
+    "inlet_lateral_install_clearance_to_left_wall_mm": 0.9626440420629194,
+    "inlet_axial_clearance_to_front_seat_plane_mm": 47.56666666666666,
+    "inlet_minimum_axial_clearance_mm": 47.56666666666666,
+    "inlet_minimum_axial_clearance_in_equivalent_diameters": 1.1891666666666665,
+    "main_airway_at_throat_mm": [
+      40.0,
+      40.0
+    ],
+    "main_airway_center_z_mm": -65.0,
+    "asymmetric_route": {
+      "module_order": [
+        "19.250 mm rearward floor straight",
+        "90 degree R75 lower-left rear sweep",
+        "0.500 mm rear-wall tangent",
+        "90 degree R50 lower-right rear rise",
+        "0.500 mm vertical collar straight",
+        "31.654 degree R35.7 pre-absorber elbow",
+        "22.561 degree R35.7 pre-absorber steering elbow",
+        "56.000 mm rear-flush absorber straight",
+        "19.748 degree R35.7 post-absorber steering elbow",
+        "28.998 degree R35.7 tower return elbow",
+        "2.000 mm final vertical straight"
+      ],
+      "elbow_angles_deg": [
+        90.0,
+        90.0,
+        31.654314201559874,
+        22.56071874870515,
+        19.747864406016543,
+        28.99797713036616
+      ],
+      "elbow_centerline_radii_mm": [
+        75.0,
+        50.0,
+        35.7,
+        35.7,
+        35.7,
+        35.7
+      ],
+      "total_direction_change_deg": 282.96087448664775,
+      "inter_elbow_straight_mm": 19.75,
+      "offset_diagonal_straight_mm": 56.0,
+      "short_vertical_straights_mm": [
+        0.5,
+        2.0
+      ],
+      "lateral_offset_mm": 64.03124237432849,
+      "lateral_offset_direction_xy": [
+        -0.9995120760870788,
+        -0.031234752377721213
+      ],
+      "rise_elbow_exit_xyz_mm": [
+        63.99999999999999,
+        84.0,
+        -15.000000000000004
+      ],
+      "route_start_xyz_mm": [
+        -61.5,
+        -10.25,
+        -65.0
+      ],
+      "route_end_xyz_mm": [
+        0.0,
+        82.0,
+        84.0
+      ],
+      "physical_length_mm": 338.7526643500914,
+      "minimum_centerline_radius_to_bore_ratio": 0.8925000000000001,
+      "all_sections_constant_circle": true,
+      "all_curves_constant_radius": true,
+      "bespoke_spline_sections": 0,
+      "absorber_axis_parallel_to_rear_wall": true,
+      "absorber_axis_y_mm": 79.5,
+      "absorber_d_flat_nominal_rear_clearance_mm": 0.0,
+      "lower_left_nominal_side_clearance_mm": 3.5,
+      "lower_rear_nominal_clearance_mm": 1.0,
+      "lower_right_nominal_side_clearance_mm": 1.0,
+      "pre_absorber_rearward_shift_mm": 4.5,
+      "post_absorber_rearward_shift_mm": 2.5,
+      "upper_elbow_angles_deg": [
+        31.654314201559874,
+        22.56071874870515,
+        19.747864406016543,
+        28.99797713036616
+      ],
+      "packaging_clearance_mm": {
+        "right_side_nominal": 1.0,
+        "right_side_installation_envelope": 0.7000000000000028,
+        "rear_nominal": 1.0,
+        "rear_installation_envelope": 0.7000000000000028
+      }
+    },
+    "outlet_mouth_ellipse_mm": [
+      58.58327406350724,
+      58.58327406350724
+    ],
+    "outlet_mouth_is_round": true,
+    "bend_centerline_radius_mm": 50.0,
+    "bend_inside_air_radius_mm": 30.0,
+    "broad_plan_sweep_count": 1,
+    "discrete_vertical_elbow_count": 3,
+    "bend_count": 4,
+    "lengths": {
+      "required_effective_length_mm": 537.8815970040858,
+      "effective_length_shortfall_vs_exact_39_hz_mm": -15.947276033750086,
+      "physical_centerline_length_mm": 526.4069680687445,
+      "inlet_flare_physical_length_mm": 18.0,
+      "inlet_flare_area_equivalent_length_mm": 16.20978448428724,
+      "compound_route_physical_length_mm": 338.7526643500914,
+      "compound_route_lower_sweep_length_mm": 137.55972450961724,
+      "compound_route_lower_sweep_radius_mm": 88.1805278884462,
+      "compound_route_lower_sweep_turn_deg": 82.04766843395737,
+      "compound_route_bend_base_length_mm": 78.53981633974483,
+      "compound_route_upper_drift_length_mm": 122.65312350072931,
+      "upper_drift_control_fraction": [
+        0.0,
+        0.0,
+        0.0,
+        0.22,
+        0.5,
+        0.78,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "upper_drift_end_z_mm": 84.0,
+      "central_vertical_length_mm": 144.65430371865602,
+      "central_tower_path_length_mm": 144.65430371865315,
+      "vertical_constant_area_length_mm": 144.65430371865315,
+      "vertical_rise_mm": 243.65430371865602,
+      "outlet_flare_physical_length_mm": 25.0,
+      "outlet_flare_area_equivalent_length_mm": 17.354594420092628,
+      "inlet_end_correction_mm": 18.901752564246525,
+      "outlet_end_correction_mm": 17.955773500464968,
+      "area_corrected_physical_length_mm": 516.9713469731245,
+      "effective_length_mm": 553.8288730378359,
+      "outlet_throat_z_mm": 228.65430371865602,
+      "outlet_z_mm": 253.65430371865602,
+      "calculated_tuning_hz": 39.174167937278966
+    },
+    "outlet_height_target": {
+      "baseline_top_z_mm": 282.549703718656,
+      "requested_drop_mm": 28.8954,
+      "target_top_z_mm": 253.65430371865602,
+      "actual_top_z_mm": 253.65430371865602,
+      "actual_drop_mm": 28.895399999999995,
+      "drop_error_mm": -3.552713678800501e-15,
+      "outlet_below_de250_body_top_mm": 1.3456910727610705
+    },
+    "visible_outlet_height_above_box_mm": 158.65430371865602,
+    "physical_interface": {
+      "airway_clearance_above_floor_mm": 2.999999900000006,
+      "outer_tube_floor_tangency_error_mm": -9.999999406318238e-08,
+      "floor_channel_cut_depth_mm": 0.0,
+      "clearance_to_floor_outer_skin_mm": 4.999999900000006,
+      "internal_vertical_center_y_mm": 82.0,
+      "rear_wall_acoustic_face_y_mm": 108.0,
+      "tube_outer_rear_y_below_external_shift_mm": 105.0,
+      "tube_outer_clearance_to_rear_acoustic_face_mm": 3.0,
+      "installation_envelope_clearance_to_rear_acoustic_face_mm": 2.700000000000003,
+      "structural_tower_outer_rear_y_mm": 107.0,
+      "structural_tower_clearance_to_rear_acoustic_face_mm": 1.0,
+      "structural_tower_installation_clearance_to_rear_acoustic_face_mm": 0.7,
+      "rear_2_3_2_wall_encroached": false,
+      "external_tower_center_offset_mm": 0.0,
+      "external_tower_is_straight": true
+    },
+    "header_manufacturing_analogy": "constant-radius elbows and short straight coupons, with elbow planes rotated in 3D like a fabricated exhaust header"
+  },
+  "response_and_velocity": {
+    "model": "Small-signal electro-mechano-acoustic lumped model using Dayton's series-coil T/S parameters, the locally modeled net volume and airway area, and port loss Q=10.",
+    "port_loss_q_assumption": 10.0,
+    "predicted_f3_hz": 50.9,
+    "passband_reference_70_100_hz_db": 82.78757380045806,
+    "power_cases": {
+      "25_w": {
+        "input_voltage_v_rms_series_coils": 12.84523257866513,
+        "peak_port_velocity": {
+          "frequency_hz": 29.6,
+          "ideal_half_space_spl_db_1m": 83.82572086900299,
+          "port_velocity_m_s": 12.045744711808954,
+          "cone_excursion_mm": 3.7313836225044437
+        },
+        "peak_cone_excursion_15_to_120_hz": {
+          "frequency_hz": 15.0,
+          "ideal_half_space_spl_db_1m": 62.77200855315398,
+          "port_velocity_m_s": 8.001889080641712,
+          "cone_excursion_mm": 9.590726058147869
+        },
+        "samples": [
+          {
+            "frequency_hz": 20,
+            "ideal_half_space_spl_db_1m": 72.24587926738054,
+            "port_velocity_m_s": 10.191123896697368,
+            "cone_excursion_mm": 7.9477360690752805
+          },
+          {
+            "frequency_hz": 30,
+            "ideal_half_space_spl_db_1m": 84.17092843282383,
+            "port_velocity_m_s": 12.04216123753609,
+            "cone_excursion_mm": 3.5529211116740087
+          },
+          {
+            "frequency_hz": 35,
+            "ideal_half_space_spl_db_1m": 87.79587199388897,
+            "port_velocity_m_s": 11.536637990112547,
+            "cone_excursion_mm": 1.5306938085842356
+          },
+          {
+            "frequency_hz": 39,
+            "ideal_half_space_spl_db_1m": 89.93743310076042,
+            "port_velocity_m_s": 10.682947852561519,
+            "cone_excursion_mm": 0.5762068037995157
+          },
+          {
+            "frequency_hz": 40,
+            "ideal_half_space_spl_db_1m": 90.38870920760844,
+            "port_velocity_m_s": 10.432199482721215,
+            "cone_excursion_mm": 0.6072958294423134
+          },
+          {
+            "frequency_hz": 43,
+            "ideal_half_space_spl_db_1m": 91.57465867703252,
+            "port_velocity_m_s": 9.63221024232739,
+            "cone_excursion_mm": 1.0957019364504996
+          },
+          {
+            "frequency_hz": 50,
+            "ideal_half_space_spl_db_1m": 93.57705009092791,
+            "port_velocity_m_s": 7.723369668883751,
+            "cone_excursion_mm": 2.0867329172092
+          },
+          {
+            "frequency_hz": 60,
+            "ideal_half_space_spl_db_1m": 95.24774245618835,
+            "port_velocity_m_s": 5.422541514010222,
+            "cone_excursion_mm": 2.576418840955366
+          },
+          {
+            "frequency_hz": 80,
+            "ideal_half_space_spl_db_1m": 96.66100420720716,
+            "port_velocity_m_s": 2.6943461832815214,
+            "cone_excursion_mm": 2.251901395307864
+          }
+        ]
+      },
+      "50_w": {
+        "input_voltage_v_rms_series_coils": 18.16590212458495,
+        "peak_port_velocity": {
+          "frequency_hz": 29.6,
+          "ideal_half_space_spl_db_1m": 86.8360208256428,
+          "port_velocity_m_s": 17.035255540324215,
+          "cone_excursion_mm": 5.276973325362634
+        },
+        "peak_cone_excursion_15_to_120_hz": {
+          "frequency_hz": 15.0,
+          "ideal_half_space_spl_db_1m": 65.78230850979381,
+          "port_velocity_m_s": 11.316380062448687,
+          "cone_excursion_mm": 13.563334864437769
+        },
+        "samples": [
+          {
+            "frequency_hz": 20,
+            "ideal_half_space_spl_db_1m": 75.25617922402036,
+            "port_velocity_m_s": 14.412425630533962,
+            "cone_excursion_mm": 11.239796139048092
+          },
+          {
+            "frequency_hz": 30,
+            "ideal_half_space_spl_db_1m": 87.18122838946364,
+            "port_velocity_m_s": 17.030187742407108,
+            "cone_excursion_mm": 5.024589222171076
+          },
+          {
+            "frequency_hz": 35,
+            "ideal_half_space_spl_db_1m": 90.80617195052878,
+            "port_velocity_m_s": 16.31526990980585,
+            "cone_excursion_mm": 2.1647279439403526
+          },
+          {
+            "frequency_hz": 39,
+            "ideal_half_space_spl_db_1m": 92.94773305740023,
+            "port_velocity_m_s": 15.107969739217026,
+            "cone_excursion_mm": 0.8148794766649279
+          },
+          {
+            "frequency_hz": 40,
+            "ideal_half_space_spl_db_1m": 93.39900916424826,
+            "port_velocity_m_s": 14.753357993845928,
+            "cone_excursion_mm": 0.8588459983699375
+          },
+          {
+            "frequency_hz": 43,
+            "ideal_half_space_spl_db_1m": 94.58495863367233,
+            "port_velocity_m_s": 13.622002360328429,
+            "cone_excursion_mm": 1.5495565388467591
+          },
+          {
+            "frequency_hz": 50,
+            "ideal_half_space_spl_db_1m": 96.58735004756775,
+            "port_velocity_m_s": 10.922494132956404,
+            "cone_excursion_mm": 2.9510859925676236
+          },
+          {
+            "frequency_hz": 60,
+            "ideal_half_space_spl_db_1m": 98.25804241282816,
+            "port_velocity_m_s": 7.668631751644391,
+            "cone_excursion_mm": 3.6436064672326482
+          },
+          {
+            "frequency_hz": 80,
+            "ideal_half_space_spl_db_1m": 99.67130416384697,
+            "port_velocity_m_s": 3.8103809141249125,
+            "cone_excursion_mm": 3.184669494371277
+          }
+        ]
+      },
+      "100_w": {
+        "input_voltage_v_rms_series_coils": 25.69046515733026,
+        "peak_port_velocity": {
+          "frequency_hz": 29.6,
+          "ideal_half_space_spl_db_1m": 89.84632078228262,
+          "port_velocity_m_s": 24.091489423617908,
+          "cone_excursion_mm": 7.462767245008887
+        },
+        "peak_cone_excursion_15_to_120_hz": {
+          "frequency_hz": 15.0,
+          "ideal_half_space_spl_db_1m": 68.7926084664336,
+          "port_velocity_m_s": 16.003778161283424,
+          "cone_excursion_mm": 19.181452116295738
+        },
+        "samples": [
+          {
+            "frequency_hz": 20,
+            "ideal_half_space_spl_db_1m": 78.26647918066017,
+            "port_velocity_m_s": 20.382247793394736,
+            "cone_excursion_mm": 15.895472138150561
+          },
+          {
+            "frequency_hz": 30,
+            "ideal_half_space_spl_db_1m": 90.19152834610345,
+            "port_velocity_m_s": 24.08432247507218,
+            "cone_excursion_mm": 7.105842223348017
+          },
+          {
+            "frequency_hz": 35,
+            "ideal_half_space_spl_db_1m": 93.81647190716859,
+            "port_velocity_m_s": 23.073275980225095,
+            "cone_excursion_mm": 3.0613876171684713
+          },
+          {
+            "frequency_hz": 39,
+            "ideal_half_space_spl_db_1m": 95.95803301404004,
+            "port_velocity_m_s": 21.365895705123037,
+            "cone_excursion_mm": 1.1524136075990314
+          },
+          {
+            "frequency_hz": 40,
+            "ideal_half_space_spl_db_1m": 96.40930912088807,
+            "port_velocity_m_s": 20.86439896544243,
+            "cone_excursion_mm": 1.2145916588846268
+          },
+          {
+            "frequency_hz": 43,
+            "ideal_half_space_spl_db_1m": 97.59525859031214,
+            "port_velocity_m_s": 19.26442048465478,
+            "cone_excursion_mm": 2.1914038729009993
+          },
+          {
+            "frequency_hz": 50,
+            "ideal_half_space_spl_db_1m": 99.59765000420754,
+            "port_velocity_m_s": 15.446739337767502,
+            "cone_excursion_mm": 4.1734658344184
+          },
+          {
+            "frequency_hz": 60,
+            "ideal_half_space_spl_db_1m": 101.26834236946797,
+            "port_velocity_m_s": 10.845083028020444,
+            "cone_excursion_mm": 5.152837681910732
+          },
+          {
+            "frequency_hz": 80,
+            "ideal_half_space_spl_db_1m": 102.68160412048678,
+            "port_velocity_m_s": 5.388692366563043,
+            "cone_excursion_mm": 4.503802790615728
+          }
+        ]
+      },
+      "200_w": {
+        "input_voltage_v_rms_series_coils": 36.3318042491699,
+        "peak_port_velocity": {
+          "frequency_hz": 29.6,
+          "ideal_half_space_spl_db_1m": 92.85662073892243,
+          "port_velocity_m_s": 34.07051108064843,
+          "cone_excursion_mm": 10.553946650725267
+        },
+        "peak_cone_excursion_15_to_120_hz": {
+          "frequency_hz": 15.0,
+          "ideal_half_space_spl_db_1m": 71.80290842307342,
+          "port_velocity_m_s": 22.632760124897374,
+          "cone_excursion_mm": 27.126669728875537
+        },
+        "samples": [
+          {
+            "frequency_hz": 20,
+            "ideal_half_space_spl_db_1m": 81.27677913729998,
+            "port_velocity_m_s": 28.824851261067924,
+            "cone_excursion_mm": 22.479592278096185
+          },
+          {
+            "frequency_hz": 30,
+            "ideal_half_space_spl_db_1m": 93.20182830274327,
+            "port_velocity_m_s": 34.060375484814216,
+            "cone_excursion_mm": 10.049178444342152
+          },
+          {
+            "frequency_hz": 35,
+            "ideal_half_space_spl_db_1m": 96.8267718638084,
+            "port_velocity_m_s": 32.6305398196117,
+            "cone_excursion_mm": 4.329455887880705
+          },
+          {
+            "frequency_hz": 39,
+            "ideal_half_space_spl_db_1m": 98.96833297067985,
+            "port_velocity_m_s": 30.215939478434052,
+            "cone_excursion_mm": 1.6297589533298558
+          },
+          {
+            "frequency_hz": 40,
+            "ideal_half_space_spl_db_1m": 99.41960907752788,
+            "port_velocity_m_s": 29.506715987691855,
+            "cone_excursion_mm": 1.717691996739875
+          },
+          {
+            "frequency_hz": 43,
+            "ideal_half_space_spl_db_1m": 100.60555854695195,
+            "port_velocity_m_s": 27.244004720656857,
+            "cone_excursion_mm": 3.0991130776935183
+          },
+          {
+            "frequency_hz": 50,
+            "ideal_half_space_spl_db_1m": 102.60794996084735,
+            "port_velocity_m_s": 21.844988265912807,
+            "cone_excursion_mm": 5.902171985135247
+          },
+          {
+            "frequency_hz": 60,
+            "ideal_half_space_spl_db_1m": 104.27864232610779,
+            "port_velocity_m_s": 15.337263503288781,
+            "cone_excursion_mm": 7.2872129344652965
+          },
+          {
+            "frequency_hz": 80,
+            "ideal_half_space_spl_db_1m": 105.6919040771266,
+            "port_velocity_m_s": 7.620761828249825,
+            "cone_excursion_mm": 6.369338988742554
+          }
+        ]
+      }
+    },
+    "recommended_protection": "Use a 4th-order high-pass at 28-30 Hz and dynamic bass limiting."
+  },
+  "geometry": {
+    "base_bbox": {
+      "min_mm": [
+        -95.0011,
+        -95.0,
+        -95.0011
+      ],
+      "max_mm": [
+        95.0011,
+        115.0,
+        95.0011
+      ],
+      "size_mm": [
+        190.0021,
+        210.0,
+        190.0021
+      ]
+    },
+    "internal_tube_bbox": {
+      "min_mm": [
+        -86.7374,
+        -28.25,
+        -88.0
+      ],
+      "max_mm": [
+        87.0,
+        108.0,
+        86.6
+      ],
+      "size_mm": [
+        173.7374,
+        136.25,
+        174.6
+      ]
+    },
+    "tower_bbox": {
+      "min_mm": [
+        -40.0,
+        42.0,
+        82.5
+      ],
+      "max_mm": [
+        40.0,
+        116.2916,
+        253.6543
+      ],
+      "size_mm": [
+        80.0,
+        74.2916,
+        171.1543
+      ]
+    },
+    "airway_bbox": {
+      "min_mm": [
+        -83.7374,
+        -28.25,
+        -85.0
+      ],
+      "max_mm": [
+        84.0,
+        111.2916,
+        253.6543
+      ],
+      "size_mm": [
+        167.7374,
+        139.5416,
+        338.6543
+      ]
+    },
+    "assembly_bbox": {
+      "min_mm": [
+        -95.0011,
+        -95.0,
+        -95.0011
+      ],
+      "max_mm": [
+        95.0011,
+        120.8,
+        253.6543
+      ],
+      "size_mm": [
+        190.0021,
+        215.8,
+        348.6554
+      ]
+    },
+    "solid_counts": {
+      "base": 1,
+      "internal_tube": 6,
+      "tower": 2,
+      "airway": 1,
+      "gx16": 7
+    },
+    "validity": {
+      "base": true,
+      "internal_tube": true,
+      "tower": true,
+      "airway": true,
+      "gx16_all_solids": true
+    },
+    "step_roundtrip": {
+      "sand_cube_190x210_single_oval_port_base.step": {
+        "source_solid_count": 1,
+        "imported_solid_count": 1,
+        "solid_count_matches": true,
+        "all_imported_solids_valid": true
+      },
+      "sand_cube_190x210_single_oval_port_internal_tube.step": {
+        "source_solid_count": 6,
+        "imported_solid_count": 6,
+        "solid_count_matches": true,
+        "all_imported_solids_valid": true
+      },
+      "sand_cube_190x210_single_oval_port_tower.step": {
+        "source_solid_count": 2,
+        "imported_solid_count": 2,
+        "solid_count_matches": true,
+        "all_imported_solids_valid": true
+      },
+      "sand_cube_190x210_single_oval_port_airway.step": {
+        "source_solid_count": 1,
+        "imported_solid_count": 1,
+        "solid_count_matches": true,
+        "all_imported_solids_valid": true
+      },
+      "sand_cube_190x210_single_oval_port_gx16.step": {
+        "source_solid_count": 7,
+        "imported_solid_count": 7,
+        "solid_count_matches": true,
+        "all_imported_solids_valid": true
+      },
+      "sand_cube_190x210_single_oval_port_horn.step": {
+        "source_solid_count": 1,
+        "imported_solid_count": 1,
+        "solid_count_matches": true,
+        "all_imported_solids_valid": true
+      },
+      "sand_cube_190x210_single_oval_port_assembly.step": {
+        "source_solid_count": 16,
+        "imported_solid_count": 16,
+        "solid_count_matches": true,
+        "all_imported_solids_valid": true
+      },
+      "sand_cube_190x210_single_oval_port_hardware_check.step": {
+        "source_solid_count": 21,
+        "imported_solid_count": 21,
+        "solid_count_matches": true,
+        "all_imported_solids_valid": true
+      },
+      "sand_cube_190x210_single_oval_port_cutaway.step": {
+        "method": "actual X<=0 conformal enclosure face intersection plus the complete inherited internal/hardware cutaway",
+        "half_shell_face_count": 116,
+        "source_solid_count": 19,
+        "imported_solid_count": 19,
+        "solid_count_matches": true,
+        "source_face_count": 1154,
+        "imported_face_count": 1154,
+        "face_count_matches": true,
+        "all_imported_solids_valid": true,
+        "all_imported_faces_valid": true
+      }
+    },
+    "interference_mm3": {
+      "base_to_tower_mm3": 0.0,
+      "base_to_internal_tube_mm3": 0.0,
+      "base_to_airway_mm3": 0.0,
+      "internal_tube_to_airway_mm3": 0.0,
+      "internal_tube_to_tower_mm3": 0.0,
+      "internal_tube_to_woofer_mm3": 0.0,
+      "internal_tube_to_gx16_mm3": 0.0,
+      "tower_to_airway_mm3": 0.0,
+      "airway_to_woofer_mm3": 0.0,
+      "port_outer_to_woofer_mm3": 0.0,
+      "airway_to_gx16_mm3": 0.0,
+      "port_outer_to_gx16_mm3": 0.0,
+      "tower_to_woofer_mm3": 0.0,
+      "tower_to_horn_mm3": 0.0,
+      "tower_to_de250_mm3": 0.0,
+      "airway_to_de250_mm3": 0.0
+    },
+    "gx16_interface": {
+      "source_cutout_and_hardware_contract_reused": true,
+      "center_alignment_error_mm": 0.0,
+      "rear_extension_shift_mm": 20.0
+    },
+    "single_external_rising_support": true,
+    "cutaway_includes_base_tube_tower_woofer_gx16_horn_and_de250": true,
+    "cutaway_opaque_airway_debug_solid_removed": true,
+    "horn_and_de250": {
+      "requested_wording_checked": "No BMC component exists; the supplied and fitted component is B&C DE250.",
+      "compression_driver_source": "objects/Compression DriverDE250.step",
+      "compression_driver_official_spec": {
+        "source": "https://www.bcspeakers.com/en/products/hf-driver/1/8/DE250",
+        "exit_diameter_mm": 25.0,
+        "two_bolt_pattern": "2 x M6 on 76 mm BCD",
+        "three_bolt_pattern": "3 x M6 on 57 mm BCD",
+        "overall_diameter_mm": 120.0,
+        "depth_mm": 62.0
+      },
+      "compression_driver_reference_cleanup": {
+        "physical_body_and_central_throat_retained": true,
+        "disconnected_three_hole_bolt_placeholders_removed": 3
+      },
+      "horn_source": "exact Le Cleac'h 2007 spreadsheet recurrence",
+      "primary_reference": "https://dome-acoustique.fr/gratuit/pavillon_JMLC.zip",
+      "profile": {
+        "profile": "Le Cleac'h 2007 spreadsheet recurrence",
+        "profile_method": "le_cleach_2007",
+        "solved_cutoff_hz": 1002.0,
+        "solved_cutoff_hz_exact": 1002.0055766014225,
+        "mouth_inner_d_mm": 186.13,
+        "axial_length_mm": 82.382,
+        "axial_length_mm_exact": 82.38213681804386,
+        "exit_angle_deg": 140.0,
+        "calculation_step_mm": 0.046238,
+        "sample_count": 3020,
+        "recurrence_terminal_angle_deg": 139.99999999964052,
+        "cad_spline_throat_tangent_deg": 7.9999999999997,
+        "cad_spline_terminal_tangent_deg": 140.0000000000033,
+        "cad_spline_constraint_point_count": 379,
+        "cad_spline_max_profile_deviation_mm": 0.001509059361231704
+      },
+      "profile_inputs": {
+        "physical_rolled_envelope_target_d_mm": 190.0,
+        "calibrated_profile_mouth_outer_d_input_mm": 192.5299283,
+        "physical_rolled_envelope_d_mm": 190.00011186354104,
+        "acoustic_mouth_inner_d_mm": 186.13,
+        "throat_d_mm": 25.4,
+        "official_de250_exit_d_mm": 25.0,
+        "horn_minus_driver_exit_diameter_mm": 0.3999999999999986,
+        "horn_to_driver_exit_area_ratio": 1.032256,
+        "throat_is_not_undersized": true,
+        "wavefront_t": 0.49437398987356584,
+        "reference_wavefront_t": 0.242,
+        "reference_axial_length_mm": 92.38213681735276,
+        "target_axial_shortening_mm": 10.0,
+        "target_axial_length_mm": 82.38213681735276,
+        "axial_length_target_error_mm": 6.911022865097038e-10,
+        "throat_half_angle_deg": 8.0,
+        "terminal_rollback_angle_deg": 140.0,
+        "uniform_scaling_used": false
+      },
+      "clamp_stack_mm": {
+        "ring_front_y": -9.47803490744143,
+        "ring_rear_y": -5.47803490744143,
+        "horn_spigot_rear_y": -5.478,
+        "de250_mount_face_y": -5.47803490744143,
+        "ring_thickness": 4.0
+      },
+      "alignment_to_enclosure": {
+        "enclosure_front_y_mm": -95.0,
+        "horn_forwardmost_rolled_surface_y_mm": -99.0,
+        "horn_forward_projection_mm": 4.0,
+        "target_forward_projection_mm": 4.0,
+        "forward_position_error_mm": 0.0,
+        "front_flush_constraint_released": true,
+        "acoustic_mouth_plane_y_mm": -87.86017172548529,
+        "acoustic_mouth_plane_setback_from_front_mm": 7.139828274514713,
+        "enclosure_roof_z_mm": 95.0,
+        "horn_bottom_z_mm": 99.99994382453752,
+        "horn_bottom_gap_mm": 4.9999438245375245,
+        "target_bottom_gap_mm": 5.0,
+        "cabinet_face_width_mm": 190.0,
+        "physical_rolled_envelope_d_mm": 190.00011186354104,
+        "envelope_to_face_width_error_mm": 0.0001118635410364277
+      },
+      "driver_mount_status": "reference placement only; tube-to-DE250 structure deferred"
+    },
+    "structural_mounts_deferred": false,
+    "named_reference_step_roundtrip": {
+      "parabolic_g1_conformal_bare_shell_reference.step": {
+        "source_solid_count": 1,
+        "imported_solid_count": 1,
+        "solid_count_matches": true,
+        "all_imported_solids_valid": true
+      },
+      "parabolic_g1_conformal_full_detail_base.step": {
+        "source_solid_count": 1,
+        "imported_solid_count": 1,
+        "solid_count_matches": true,
+        "all_imported_solids_valid": true
+      }
+    },
+    "true_half_cutaway_step_roundtrip": {
+      "method": "actual X<=0 conformal enclosure face intersection plus the complete inherited internal/hardware cutaway",
+      "half_shell_face_count": 116,
+      "source_solid_count": 19,
+      "imported_solid_count": 19,
+      "solid_count_matches": true,
+      "source_face_count": 1154,
+      "imported_face_count": 1154,
+      "face_count_matches": true,
+      "all_imported_solids_valid": true,
+      "all_imported_faces_valid": true
+    },
+    "centered_captive_nut_step_roundtrip": {
+      "centered_captive_nut_bucket.step": {
+        "source_solid_count": 1,
+        "imported_solid_count": 1,
+        "solid_count_matches": true,
+        "source_face_count": 376,
+        "imported_face_count": 376,
+        "face_count_matches": true,
+        "all_imported_solids_valid": true,
+        "all_imported_faces_valid": true
+      },
+      "centered_captive_nut_baffle.step": {
+        "source_solid_count": 1,
+        "imported_solid_count": 1,
+        "solid_count_matches": true,
+        "source_face_count": 166,
+        "imported_face_count": 166,
+        "face_count_matches": true,
+        "all_imported_solids_valid": true,
+        "all_imported_faces_valid": true
+      },
+      "centered_captive_nut_hardware_reference.step": {
+        "source_solid_count": 6,
+        "imported_solid_count": 6,
+        "solid_count_matches": true,
+        "source_face_count": 28,
+        "imported_face_count": 28,
+        "face_count_matches": true,
+        "all_imported_solids_valid": true,
+        "all_imported_faces_valid": true
+      },
+      "centered_captive_nut_assembled.step": {
+        "source_solid_count": 9,
+        "imported_solid_count": 9,
+        "solid_count_matches": true,
+        "source_face_count": 600,
+        "imported_face_count": 600,
+        "face_count_matches": true,
+        "all_imported_solids_valid": true,
+        "all_imported_faces_valid": true
+      },
+      "centered_captive_nut_exploded.step": {
+        "source_solid_count": 9,
+        "imported_solid_count": 9,
+        "solid_count_matches": true,
+        "source_face_count": 600,
+        "imported_face_count": 600,
+        "face_count_matches": true,
+        "all_imported_solids_valid": true,
+        "all_imported_faces_valid": true
+      },
+      "centered_captive_nut_full_system.step": {
+        "source_solid_count": 18,
+        "imported_solid_count": 18,
+        "solid_count_matches": true,
+        "source_face_count": 996,
+        "imported_face_count": 996,
+        "face_count_matches": true,
+        "all_imported_solids_valid": true,
+        "all_imported_faces_valid": true
+      },
+      "centered_captive_nut_cutaway.step": {
+        "source_solid_count": 25,
+        "imported_solid_count": 25,
+        "solid_count_matches": true,
+        "source_face_count": 1389,
+        "imported_face_count": 1389,
+        "face_count_matches": true,
+        "all_imported_solids_valid": true,
+        "all_imported_faces_valid": true
+      },
+      "centered_captive_nut_joint_section.step": {
+        "source_solid_count": 6,
+        "imported_solid_count": 6,
+        "solid_count_matches": true,
+        "source_face_count": 351,
+        "imported_face_count": 351,
+        "face_count_matches": true,
+        "all_imported_solids_valid": true,
+        "all_imported_faces_valid": true
+      }
+    }
+  },
+  "moderate_volume_limits": [
+    "The 40 mm bore has 3.9% more area than the smooth 39.243 mm variant, lowering velocity for the same volume flow but requiring more effective length at the same box volume and tuning.",
+    "The floor route uses broad R75 and R50 corner sweeps. The four upper steering elbows use R35.7 centerlines (0.893D), retain the 40 mm circular bore, and avoid spline or flattened sections.",
+    "No empirical bend-loss correction is baked into the Helmholtz length. Final tuning, compression, and noise must be measured on a printed core before mounts and couplers are frozen."
+  ],
+  "files": {
+    "sand_cube_190x210_single_oval_port_base.step": "/Users/jaspercurry/Code/CAD - Enclosure/build/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_lightweight_coherent_closure/sand_cube_190x210_single_oval_port_base.step",
+    "sand_cube_190x210_single_oval_port_internal_tube.step": "/Users/jaspercurry/Code/CAD - Enclosure/build/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_lightweight_coherent_closure/sand_cube_190x210_single_oval_port_internal_tube.step",
+    "sand_cube_190x210_single_oval_port_tower.step": "/Users/jaspercurry/Code/CAD - Enclosure/build/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_lightweight_coherent_closure/sand_cube_190x210_single_oval_port_tower.step",
+    "sand_cube_190x210_single_oval_port_airway.step": "/Users/jaspercurry/Code/CAD - Enclosure/build/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_lightweight_coherent_closure/sand_cube_190x210_single_oval_port_airway.step",
+    "sand_cube_190x210_single_oval_port_gx16.step": "/Users/jaspercurry/Code/CAD - Enclosure/build/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_lightweight_coherent_closure/sand_cube_190x210_single_oval_port_gx16.step",
+    "sand_cube_190x210_single_oval_port_horn.step": "/Users/jaspercurry/Code/CAD - Enclosure/build/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_lightweight_coherent_closure/sand_cube_190x210_single_oval_port_horn.step",
+    "sand_cube_190x210_single_oval_port_assembly.step": "/Users/jaspercurry/Code/CAD - Enclosure/build/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_lightweight_coherent_closure/sand_cube_190x210_single_oval_port_assembly.step",
+    "sand_cube_190x210_single_oval_port_hardware_check.step": "/Users/jaspercurry/Code/CAD - Enclosure/build/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_lightweight_coherent_closure/sand_cube_190x210_single_oval_port_hardware_check.step",
+    "sand_cube_190x210_single_oval_port_cutaway.step": "/Users/jaspercurry/Code/CAD - Enclosure/build/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_lightweight_coherent_closure/sand_cube_190x210_single_oval_port_cutaway.step",
+    "diagnostics": "/Users/jaspercurry/Code/CAD - Enclosure/build/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_lightweight_coherent_closure/diagnostics.json",
+    "exterior_viewer": "/Users/jaspercurry/Code/CAD - Enclosure/build/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_lightweight_coherent_closure/viewer/index.html",
+    "cutaway_viewer": "/Users/jaspercurry/Code/CAD - Enclosure/build/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_lightweight_coherent_closure/cutaway_viewer/index.html",
+    "parabolic_g1_conformal_bare_shell_reference.step": "/Users/jaspercurry/Code/CAD - Enclosure/build/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_lightweight_coherent_closure/parabolic_g1_conformal_bare_shell_reference.step",
+    "parabolic_g1_conformal_full_detail_base.step": "/Users/jaspercurry/Code/CAD - Enclosure/build/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_lightweight_coherent_closure/parabolic_g1_conformal_full_detail_base.step",
+    "centered_captive_nut_bucket.step": "/Users/jaspercurry/Code/CAD - Enclosure/build/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_lightweight_coherent_closure/centered_captive_nut_bucket.step",
+    "centered_captive_nut_baffle.step": "/Users/jaspercurry/Code/CAD - Enclosure/build/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_lightweight_coherent_closure/centered_captive_nut_baffle.step",
+    "centered_captive_nut_hardware_reference.step": "/Users/jaspercurry/Code/CAD - Enclosure/build/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_lightweight_coherent_closure/centered_captive_nut_hardware_reference.step",
+    "centered_captive_nut_assembled.step": "/Users/jaspercurry/Code/CAD - Enclosure/build/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_lightweight_coherent_closure/centered_captive_nut_assembled.step",
+    "centered_captive_nut_exploded.step": "/Users/jaspercurry/Code/CAD - Enclosure/build/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_lightweight_coherent_closure/centered_captive_nut_exploded.step",
+    "centered_captive_nut_full_system.step": "/Users/jaspercurry/Code/CAD - Enclosure/build/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_lightweight_coherent_closure/centered_captive_nut_full_system.step",
+    "centered_captive_nut_cutaway.step": "/Users/jaspercurry/Code/CAD - Enclosure/build/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_lightweight_coherent_closure/centered_captive_nut_cutaway.step",
+    "centered_captive_nut_joint_section.step": "/Users/jaspercurry/Code/CAD - Enclosure/build/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_lightweight_coherent_closure/centered_captive_nut_joint_section.step",
+    "centered_captive_nut_viewer": "/Users/jaspercurry/Code/CAD - Enclosure/build/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_lightweight_coherent_closure/viewer/index.html",
+    "centered_captive_nut_exploded_viewer": "/Users/jaspercurry/Code/CAD - Enclosure/build/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_lightweight_coherent_closure/exploded_viewer/index.html",
+    "centered_captive_nut_cutaway_viewer": "/Users/jaspercurry/Code/CAD - Enclosure/build/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_lightweight_coherent_closure/cutaway_viewer/index.html",
+    "centered_captive_nut_joint_section_viewer": "/Users/jaspercurry/Code/CAD - Enclosure/build/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_lightweight_coherent_closure/joint_section_viewer/index.html",
+    "centered_captive_nut_bucket_viewer": "/Users/jaspercurry/Code/CAD - Enclosure/build/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_lightweight_coherent_closure/bucket_viewer/index.html",
+    "centered_captive_nut_baffle_viewer": "/Users/jaspercurry/Code/CAD - Enclosure/build/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_lightweight_coherent_closure/baffle_viewer/index.html"
+  },
+  "header_route_inputs": {
+    "plan_elbow_radius_mm": 75.0,
+    "plan_elbow_angle_deg": 90.0,
+    "inter_elbow_straight_mm": 19.75,
+    "rise_elbow_radius_mm": 50.0,
+    "rise_elbow_angle_deg": 90.0,
+    "offset_elbow_radius_mm": 35.7,
+    "offset_elbow_angle_deg": 45.0761128536401,
+    "target_tower_x_mm": 0.0,
+    "target_tower_y_mm": 82.0,
+    "target_tower_z_mm": 84.0
+  },
+  "comparison_to_smooth_39mm_variant": {
+    "old_bore_diameter_mm": 39.242833740697165,
+    "new_bore_diameter_mm": 40.0,
+    "port_area_change_percent": 3.8961038961039085,
+    "old_net_box_volume_l": 4.570116862348586,
+    "new_net_box_volume_l": 4.406189919136381,
+    "net_volume_change_l": -0.16392694321220525,
+    "old_in_box_port_envelope_l": 0.5613552356435764,
+    "new_in_box_port_envelope_l": 0.7213419348558363,
+    "old_compound_route_length_mm": 317.2556340705263,
+    "new_compound_route_length_mm": 338.7526643500914,
+    "old_outlet_top_z_mm": 243.11320371865602,
+    "new_outlet_top_z_mm": 253.65430371865602,
+    "old_tuning_hz": 39.00000006750667,
+    "new_tuning_hz": 39.174167937278966
+  },
+  "serviceable_tower": {
+    "installation_direction": "tower cartridge inserted from inside through roof",
+    "visible_tower": {
+      "airway_diameter_mm": 40.0,
+      "outside_diameter_mm": 50.0,
+      "wall_thickness_mm": 5.0,
+      "straight_above_enclosure": true
+    },
+    "roof_island": {
+      "local_total_thickness_mm": 7.0,
+      "fills_only_existing_sand_gap": true,
+      "downward_insert_bosses": 0,
+      "blind_insert_count": 3,
+      "insert_pocket_diameter_mm": 4.8,
+      "insert_depth_mm": 4.2,
+      "remaining_outer_cap_mm": 2.8,
+      "fastener_centers_xy_mm": [
+        [
+          0.0,
+          48.0
+        ],
+        [
+          -32.0,
+          92.0
+        ],
+        [
+          32.0,
+          92.0
+        ]
+      ]
+    },
+    "d_flange": {
+      "radius_mm": 40.0,
+      "thickness_mm": 5.5,
+      "underside_is_flat_print_bed_face": true,
+      "rear_clipped_to_acoustic_face": true,
+      "clearance_hole_diameter_mm": 4.5,
+      "rtv_groove_depth_mm": 0.6,
+      "rtv_groove_width_mm": 0.8,
+      "o_ring_required": false
+    },
+    "modular_interfaces": {
+      "count": 2,
+      "locations": [
+        "lower duct to tower",
+        "tower to outlet flare"
+      ],
+      "shared_acoustic_bore_diameter_mm": 40.0,
+      "lower_socket_depth_mm": 4.5,
+      "upper_flare_socket_depth_mm": 10.0,
+      "lower_receiver_projection_below_d_flange_mm": 0.0,
+      "lower_receiver_fully_recessed_above_print_face": true,
+      "lower_socket_mouth_z_mm": 82.5,
+      "lower_socket_shoulder_z_mm": 87.0,
+      "lower_socket_entrance_chamfer_added": false,
+      "lower_socket_shoulder_angle_deg": 90.0,
+      "lower_spigot_outside_diameter_mm": 43.5,
+      "lower_socket_inside_diameter_mm": 44.1,
+      "lower_receiver_minimum_wall_mm": 2.9499999999999993,
+      "lower_receiver_material_area_retained_fraction": 0.6168777777777776,
+      "lower_receiver_bending_inertia_retained_fraction": 0.6687571988888887,
+      "final_header_vertical_straight_available_mm": 2.0,
+      "straight_remaining_below_spigot_root_mm": 0.29999999999999716,
+      "lower_radial_clearance_mm": 0.3,
+      "upper_radial_clearance_mm": 0.25,
+      "lower_male_wall_thickness_mm": 1.75,
+      "upper_male_wall_thickness_mm": 2.55,
+      "lower_nominal_axial_clearance_mm": 0.4,
+      "upper_nominal_axial_seating_gap_mm": 0.2,
+      "lower_receiver_uses_internal_sealant": true,
+      "inner_transition_has_diameter_step": false
+    },
+    "top_brace": {
+      "original_network_retained": true,
+      "shape": "constant-width conformal D cradle",
+      "inside_clearance_to_flange_mm": 1.0,
+      "cradle_width_mm": 8.0,
+      "inner_and_outer_boundaries_are_smooth": true,
+      "inward_face_flush_with_original_ribs": true,
+      "rear_root_fused_into_rear_wall": true,
+      "vertical_installation_sweep_margin_mm": 0.5,
+      "front_or_rear_overhang_traps_flange": false,
+      "rear_capture_groove_used": false,
+      "retention": "three underside screws into blind solid-roof inserts"
+    },
+    "deferred": [
+      "final print-process tolerance coupon",
+      "snap features for the removable flare",
+      "external tube ribs or constrained-layer damping",
+      "final horn clamp redesign"
+    ],
+    "separate_step_roundtrip": {
+      "serviceable_40mm_tower_cartridge.step": {
+        "source_solid_count": 1,
+        "imported_solid_count": 1,
+        "all_imported_solids_valid": true
+      },
+      "serviceable_40mm_removable_flare.step": {
+        "source_solid_count": 1,
+        "imported_solid_count": 1,
+        "all_imported_solids_valid": true
+      }
+    }
+  },
+  "internal_squat_absorber": {
+    "source_experiment": "experiments/sand_cube_190x210_port_absorber_slotted_d_squat",
+    "source_geometry_modified": false,
+    "continuous_bore_diameter_mm": 40.0,
+    "body_height_mm": 30.0,
+    "connected_length_mm": 56.0,
+    "body_footprint_mm": [
+      74.96720390571545,
+      76.9344078114309
+    ],
+    "sealed_chamber_volume_cm3": 53.32981472032441,
+    "target_absorber_frequency_hz": 334.7,
+    "nominal_finished_slot_width_mm": 0.4,
+    "nominal_finished_slot_length_mm": 7.166387965983018,
+    "placement": {
+      "straight_center_xyz_mm": [
+        31.283172266075464,
+        79.50000000048473,
+        35.09775377757181
+      ],
+      "straight_tangent_xyz": [
+        -0.7080454917138217,
+        0.0,
+        0.7061668228285244
+      ],
+      "absorber_center_path_mm_from_inlet": 296.37998144678045,
+      "provisional_physical_path_mm_at_baseline_top": 555.3023680687475,
+      "first_mode_pressure_squared_coupling_fraction": 0.9613067751817287,
+      "rear_acoustic_face_y_mm": 108.0,
+      "installed_envelope_bbox_min_mm": [
+        -7.0436722600188855,
+        33.03279609476928,
+        -3.2257091445289987
+      ],
+      "installed_envelope_bbox_max_mm": [
+        69.6100167921698,
+        108.00000000048473,
+        73.42121669967263
+      ],
+      "minimum_rear_wall_clearance_mm": -4.847322543355403e-10,
+      "material_intrusion_into_airway_mm3": 0.0,
+      "gross_envelope_to_woofer_mm3": 0.0,
+      "actual_physical_path_mm": 526.4069680687445
+    },
+    "route_changes": {
+      "lower_rise_center_xy_mm": [
+        64.0,
+        84.0
+      ],
+      "floor_rear_straight_mm": 19.25,
+      "lower_left_sweep_angle_deg": 90.0,
+      "lower_left_sweep_radius_mm": 75.0,
+      "rear_wall_tangent_mm": 0.5,
+      "lower_right_rise_angle_deg": 90.0,
+      "lower_right_rise_radius_mm": 50.0,
+      "upper_elbow_count": 4,
+      "upper_elbow_angles_deg": [
+        31.654314201559874,
+        22.56071874870515,
+        19.747864406016543,
+        28.99797713036616
+      ],
+      "upper_elbow_radius_mm": 35.7,
+      "upper_radius_to_bore_ratio": 0.8925000000000001,
+      "absorber_service_straight_mm": 56.0,
+      "absorber_axis_y_mm": 79.5,
+      "absorber_nominal_rear_clearance_mm": 0.0
+    },
+    "manufacturing": {
+      "absorber_is_separately_printable": true,
+      "adapter_socket_depth_mm": 10.0,
+      "host_tube_break_between_adapter_shoulders_mm": 36.0,
+      "d_flat_faces_rear_wall": true,
+      "chamber_lobe_faces_forward": true,
+      "brace_clearance_mm": 1.0,
+      "entire_d_flat_exact_nominal_rear_contact": true,
+      "modeled_printing_relief_mm": 0.0,
+      "future_mounting_tab_included": false,
+      "rear_wall_mounting_node_included": false
+    },
+    "separate_step_roundtrip": {
+      "internal_d_squat_absorber_installed.step": {
+        "source_solid_count": 4,
+        "imported_solid_count": 4,
+        "all_imported_solids_valid": true
+      },
+      "internal_d_squat_absorber_print_reference.step": {
+        "source_solid_count": 4,
+        "imported_solid_count": 4,
+        "all_imported_solids_valid": true
+      }
+    }
+  },
+  "parabolic_conformal_front": {
+    "construction": "exact committed exterior, collar, and conformal wall geometry; native rear/top wall features are formed before hollowing, and the authoritative assembly pipeline follows",
+    "outer_fairing_face_count_after_detailing": 1,
+    "outer_fairing_face_area_mm2": 15313.746129436162,
+    "outer_fairing_area_difference_mm2": -6.03011176281143e-06,
+    "corner_pullback_mm": 15.0,
+    "edge_midpoint_pullback_mm": 8.0,
+    "crest_diameter_mm": 174.0,
+    "through_opening_diameter_mm": 130.5,
+    "collar_outer_diameter_mm": 158.00000000000003,
+    "collar_radial_width_mm": 13.750000000000014,
+    "collar_rear_face_y_mm": -75.81666666666666,
+    "large_circular_interface_radii_mm": [
+      65.25,
+      79.0,
+      87.0
+    ],
+    "remaining_triangle_seam_face_count": 0,
+    "target_wall_thickness_mm": 7.0,
+    "minimum_sampled_wall_thickness_mm": 6.998091100262768,
+    "maximum_sampled_wall_thickness_mm": 7.011888828848356,
+    "gross_acoustic_domain_change_l": -0.01601808319688495,
+    "legacy_gross_acoustic_domain_l": 5.829896055087019,
+    "conformal_gross_acoustic_domain_l": 5.8138779718901334,
+    "full_base_frontmost_y_mm": -95.00000010000001
+  },
+  "preserved_full_detail_contract": {
+    "solid_bottom_floor": true,
+    "dual_skin_2_3_2_walls": true,
+    "driver_insert_bores": 4,
+    "front_collar_buttresses": 4,
+    "internal_brace_network": true,
+    "roof_harmonic_tube_opening_and_saddle": true,
+    "gx16_island_cutout_and_hardware": true,
+    "sand_fill_ports_and_internal_blisters": 0,
+    "removable_internal_port_and_mounting_tabs": true,
+    "rear_flush_d_squat_absorber": true,
+    "serviceable_exterior_tower_and_flare": true,
+    "horn_de250_and_support_geometry": true,
+    "true_geometric_half_shell_cutaway": true,
+    "detail_cut_audits": {
+      "conformal GX16-cut base": {
+        "signed_whole_body_volume_delta_mm3": 4008.7866811032873,
+        "cutter_volume_mm3": 2307.4219384984335,
+        "residual_cutter_volume_mm3": 0,
+        "bounding_box_growth_mm": 0.0
+      }
+    },
+    "rear_sand_fill_ports": 0,
+    "front_hidden_sand_fill_ports": 2,
+    "solid_rear_wall": true,
+    "gx16_rear_opening_preserved": true
+  },
+  "front_fill_perimeter_seal_closure": {
+    "description": "Two flush-clipped cylindrical bucket blisters carry shallow recessed M4 head pockets and coaxial shank bores to GB6170 hex nuts loaded from the baffle service face",
+    "service_notes": "Slide each M4 hex nut through the visible service-face mouth until it seats in the terminal hex, install the baffle straight on, and tighten the recessed top and bottom screws",
+    "geometry": {
+      "fastener_count": 2,
+      "screw_nominal_d_mm": 4.0,
+      "screw_clearance_d_mm": 4.5,
+      "head_counterbore_d_mm": 9.8,
+      "head_counterbore_depth_mm": 3.6,
+      "nut_standard": "GB6170 M4 x 0.7",
+      "m4_nut_pitch_mm": 0.7,
+      "m4_nut_across_flats_mm": 7.0,
+      "m4_nut_across_corners_mm": 8.082903768654761,
+      "m4_nut_height_mm": 3.2,
+      "m4_nut_pocket_across_flats_mm": 7.4,
+      "m4_nut_pocket_height_mm": 3.6,
+      "nut_loading_slot_width_mm": 7.5,
+      "nut_loading_slot_height_mm": 3.6,
+      "nut_loading_face_entry_x_mm": 0.0,
+      "nut_loading_face_inward_offset_mm": 1.0,
+      "nut_loading_direction": "from printer-bed gasket/collar face in the screw bore center plane directly to the nut seat",
+      "nut_slots_open_on_baffle_service_face": true,
+      "gasket_path_deviation_mm": 0.0,
+      "straight_drop_on_insertion_path": true,
+      "authoritative_fairing_face_exactly_preserved": true,
+      "baffle_exterior_bounds_difference_mm": {
+        "min_x": 0.0,
+        "max_x": 0.0,
+        "min_y": 0.0,
+        "max_y": 0.0,
+        "min_z": 0.0,
+        "max_z": 0.0
+      },
+      "bucket_exterior_bounds_difference_mm": {
+        "min_x": 0.0,
+        "max_x": 0.0,
+        "min_y": 0.0,
+        "max_y": 0.0,
+        "min_z": 0.0,
+        "max_z": 0.0
+      },
+      "external_bucket_humps": false,
+      "bucket_baffle_overlap_mm3": 0.0,
+      "fasteners": {
+        "bottom": {
+          "surface_center_mm": [
+            0.0,
+            -72.0,
+            -95.0
+          ],
+          "direction": [
+            0.0,
+            -0.7431448254773942,
+            0.6691306063588582
+          ],
+          "angle_from_face_normal_deg": 48.0,
+          "nut_center_mm": [
+            0.0,
+            -82.40402755668352,
+            -85.63217151097598
+          ],
+          "nut_depth_forward_of_baffle_bed_mm": 6.587360890016853,
+          "slot_mouth_center_mm": [
+            0.0,
+            -75.81666666666666,
+            -77.3161660668269
+          ],
+          "slot_mouth_breakthrough_mm3": 4.582759915404739,
+          "slot_cut_through_block_mm3": 359.6816731119268,
+          "slot_mouth_to_gasket_centerline_mm": 5.508833933173108,
+          "loading_slot_construction": "one shortest straight printer-bed-face prism in the screw center plane",
+          "loading_slot_rotation_about_screw_axis_deg": 90.0,
+          "loading_slot_axis_dot_screw_axis": 0.06307242860716226,
+          "loading_slot_angle_from_perpendicular_deg": 3.6161842800869852,
+          "loading_slot_perpendicular_to_screw_axis": false,
+          "loading_slot_screw_plane_alignment_error_mm": 0.0,
+          "loading_slot_in_screw_bore_cross_section": true,
+          "loading_slot_shortest_gasket_clear_path_from_bed_face": true,
+          "terminal_seat_shape": "hexagonal",
+          "terminal_hex_center_error_from_screw_axis_mm": 0.0,
+          "nominal_nut_outside_hex_seat_mm3": 0,
+          "nominal_nut_insertion_obstruction_mm3": 0.0,
+          "bucket_support_construction": "one flush-clipped tilted cylindrical blister",
+          "bucket_gusset_count": 0,
+          "bucket_blister_diameter_mm": 12.5,
+          "bucket_blister_root_mm3": 676.0209880823559,
+          "baffle_housing_root_mm3": 1709.5601182698972,
+          "baffle_housing_construction": "one bed-grown rectangular block",
+          "separate_baffle_backstop_count": 0,
+          "nut_bearing_support_ratio": 0.9999258281221847,
+          "head_bearing_support_ratio": 0.9202275477940076,
+          "hard_gasket_overlap_mm3": 0,
+          "cutter_gasket_overlap_mm3": 0
+        },
+        "top": {
+          "surface_center_mm": [
+            0.0,
+            -72.0,
+            95.0
+          ],
+          "direction": [
+            0.0,
+            -0.7431448254773942,
+            -0.6691306063588582
+          ],
+          "angle_from_face_normal_deg": 48.0,
+          "nut_center_mm": [
+            0.0,
+            -82.40402755668352,
+            85.63217151097598
+          ],
+          "nut_depth_forward_of_baffle_bed_mm": 6.587360890016853,
+          "slot_mouth_center_mm": [
+            0.0,
+            -75.81666666666666,
+            77.3161660668269
+          ],
+          "slot_mouth_breakthrough_mm3": 4.582759915404695,
+          "slot_cut_through_block_mm3": 359.68167320421617,
+          "slot_mouth_to_gasket_centerline_mm": 5.508833933173108,
+          "loading_slot_construction": "one shortest straight printer-bed-face prism in the screw center plane",
+          "loading_slot_rotation_about_screw_axis_deg": -90.0,
+          "loading_slot_axis_dot_screw_axis": 0.06307242860716226,
+          "loading_slot_angle_from_perpendicular_deg": 3.6161842800869852,
+          "loading_slot_perpendicular_to_screw_axis": false,
+          "loading_slot_screw_plane_alignment_error_mm": 0.0,
+          "loading_slot_in_screw_bore_cross_section": true,
+          "loading_slot_shortest_gasket_clear_path_from_bed_face": true,
+          "terminal_seat_shape": "hexagonal",
+          "terminal_hex_center_error_from_screw_axis_mm": 0.0,
+          "nominal_nut_outside_hex_seat_mm3": 0,
+          "nominal_nut_insertion_obstruction_mm3": 0.0,
+          "bucket_support_construction": "one flush-clipped tilted cylindrical blister",
+          "bucket_gusset_count": 0,
+          "bucket_blister_diameter_mm": 12.5,
+          "bucket_blister_root_mm3": 566.7692417336938,
+          "baffle_housing_root_mm3": 1709.5596466896902,
+          "baffle_housing_construction": "one bed-grown rectangular block",
+          "separate_baffle_backstop_count": 0,
+          "nut_bearing_support_ratio": 0.9999258265927609,
+          "head_bearing_support_ratio": 0.9202275477939962,
+          "hard_gasket_overlap_mm3": 0,
+          "cutter_gasket_overlap_mm3": 0
+        }
+      }
+    },
+    "validation": {
+      "bucket_baffle_overlap_mm3": 0.0,
+      "gasket_bucket_overlap_mm3": 0.0,
+      "gasket_baffle_overlap_mm3": 0.0,
+      "closure_passage_overlap_with_nominal_acoustic_domain_envelope_mm3": 0,
+      "hardware_overlap_with_nominal_acoustic_domain_envelope_mm3": 0,
+      "hardware_to_hard_part_interference_mm3": 0,
+      "gasket_front_plane_y_mm": -75.81666666666666,
+      "closure_passage_rearmost_y_mm": -68.12674416845968,
+      "hardware_rearmost_y_mm": -69.1746984777545,
+      "minimum_dry_side_clearance_to_gasket_plane_mm": -8.039922498206977,
+      "fastener_or_tie_entirely_outside_seal": true,
+      "closure_passage_mode": "two fully housed dry-side passages outside the gasket",
+      "modeled_open_leak_path_to_enclosure_air": false,
+      "minimum_sealed_tunnel_roof_mm": 1.2,
+      "bucket_valid": true,
+      "baffle_valid": true,
+      "sealed_slot_void_overlap_with_nominal_domain_mm3": 0,
+      "nominal_domain_overlap_is_open_leak": false,
+      "seal_basis": "both slot mouths lie outside the gasket outer edge; all cutters have zero gasket overlap; the cassette is a closed baffle housing with the audited minimum wall"
+    },
+    "pivot_sweep_interference_mm3": {
+      "not_applicable_straight_on_installation": 0.0
+    },
+    "new_to_inherited_interference_mm3": {
+      "bucket_contact_mm3": 11.981742696603714,
+      "baffle_contact_mm3": 0.0,
+      "gasket_contact_mm3": 0.0,
+      "inherited_baseline_contact_mm3": 11.981742696603714,
+      "closed_closure_contact_mm3": 11.981742696603714,
+      "new_excess_interference_mm3": 0.0
+    },
+    "added_acoustic_displacement_mm3": -85666.04896373462,
+    "modeled_net_volume_l": 4.491855968100115,
+    "modeled_natural_tuning_hz": 38.79881629495543,
+    "port_length_mm": 526.4069680687445,
+    "port_length_change_mm": 0.0,
+    "gasket_width_mm": 5.0,
+    "gasket_uncompressed_thickness_mm": 2.0,
+    "gasket_modeled_closed_gap_mm": 1.15,
+    "gasket_continuous_and_uninterrupted": true,
+    "authoritative_exterior_preserved": true,
+    "joint": {},
+    "front_fill": {}
+  }
+}

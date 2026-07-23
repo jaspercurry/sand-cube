@@ -1,0 +1,94 @@
+{
+  "release_id": "enclosure_v1_front_baffle_v1",
+  "part": "front_baffle",
+  "status": "final_v1_physical_print_started",
+  "frozen_date": "2026-07-20",
+  "units": "millimeters",
+  "release_policy": "immutable; future changes require a later release version",
+  "canonical_artifacts": [
+    {
+      "path": "artifacts/front_baffle_v1.step",
+      "role": "exact final CAD solid",
+      "bytes": 13097838,
+      "sha256": "ac0ead81bcab149124257582b2988132f6e5f9c99b0ded1d67b0e0c4765c228c"
+    },
+    {
+      "path": "artifacts/front_baffle_v1_x2d_pla_matte.3mf",
+      "role": "exact native Bambu Studio X2D PLA Matte print project",
+      "bytes": 3129682,
+      "sha256": "d0c30eaef67edcdd289189e9391640ed64662b9c8f2209f1062c9072a21e1aea"
+    }
+  ],
+  "source_boundary": {
+    "strategy": "frozen approved pre-fin STEP plus isolated final-fin builder",
+    "reason": "exclude abandoned baffle and bucket experiment inheritance from the final release",
+    "approved_input": {
+      "path": "source/inputs/front_baffle_v1_approved_pre_fin.step",
+      "bytes": 8687475,
+      "sha256": "5e2b9c24e78baad8ed83f55bbd2fd94d375323f773f1fb35249d65b0d0d3000e"
+    },
+    "isolated_builder": {
+      "path": "source/generate_front_baffle_v1.py",
+      "sha256": "0d2e22908aa0e40692778d32da0ca32686cd256260e549f812a5a7cca2fb7134"
+    },
+    "frozen_math": {
+      "path": "source/front_baffle_v1_parameters.json",
+      "sha256": "037fde981f6acbab1d9d4102b9509f4cb245a7b01dcdcdab7cd00234490c2d26"
+    },
+    "native_project_mesh_input": {
+      "path": "source/inputs/front_baffle_v1_bed_oriented_mesh.3mf",
+      "bytes": 3888749,
+      "sha256": "8d3e23cfcc90116506ea4a6dae7b364b4d9bb0a0876893b275b2ed118d57fd2a"
+    }
+  },
+  "approved_geometry": {
+    "solid_count": 1,
+    "valid": true,
+    "fin_count": 4,
+    "fin_angles_deg": [45.0, 135.0, 225.0, 315.0],
+    "fin_thickness_mm": 1.6,
+    "fin_full_collar_contact_height_mm": 12.983333333333334,
+    "added_material_volume_mm3": 1061.2731505473494,
+    "approved_exterior_bounds_change_mm": 0.0,
+    "bucket_overlap_mm3": 0.0,
+    "gasket_overlap_mm3": 0.0,
+    "driver_keepout_overlap_mm3": 0.0,
+    "nut_loading_keepout_overlap_mm3": 0.0,
+    "estimated_installed_net_enclosure_volume_l": 4.346092509515265
+  },
+  "print_project": {
+    "application": "Bambu Studio 2.7.1.57",
+    "printer": "Bambu Lab X2D 0.4 nozzle",
+    "filament": "Bambu PLA Matte",
+    "plate": "textured plate",
+    "orientation": "gasket and driver-collar service face on build plate",
+    "layer_height_mm": 0.12,
+    "first_layer_height_mm": 0.2,
+    "wall_loops": 6,
+    "top_shell_layers": 7,
+    "bottom_shell_layers": 7,
+    "sparse_infill_percent": 0,
+    "supports": false,
+    "outer_brim_mm": 5.0,
+    "mesh_face_count": 246746,
+    "manifold": true
+  },
+  "verification": {
+    "canonical_step_copy_matches_approved_build_byte_for_byte": true,
+    "canonical_bambu_project_copy_matches_approved_build_byte_for_byte": true,
+    "isolated_rebuild_job_id": "20260720T203526-generate-front-baffle-v1-543bd13ea3",
+    "isolated_rebuild_exit_status": "completed",
+    "isolated_rebuild_peak_rss_gib": 1.04,
+    "isolated_rebuild_elapsed_seconds": 14.738,
+    "isolated_rebuild_added_volume_matches_mm3": true,
+    "isolated_rebuild_exterior_bounds_match": true,
+    "isolated_rebuild_step_roundtrip_valid": true,
+    "native_project_job_id": "20260720T200927-create-bambu-x2d-finned-baffle-project-143b055b70"
+  },
+  "development_boundary": {
+    "front_baffle_v1": "frozen in this directory",
+    "bucket_v1": "reserved at releases/enclosure_v1/bucket",
+    "future_baffle_work": "develop outside this release and publish as a later version"
+  },
+  "viewer": "http://127.0.0.1:8767/baffle_finned_viewer/index.html?build=54a84ac8df"
+}

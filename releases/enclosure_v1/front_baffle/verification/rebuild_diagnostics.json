@@ -1,0 +1,38 @@
+{
+  "scope": "isolated Front Baffle V1 release rebuild",
+  "release_root": "/Users/jaspercurry/Code/CAD - Enclosure/releases/enclosure_v1/front_baffle",
+  "approved_input": "/Users/jaspercurry/Code/CAD - Enclosure/releases/enclosure_v1/front_baffle/source/inputs/front_baffle_v1_approved_pre_fin.step",
+  "output": "build/releases/enclosure_v1/front_baffle/front_baffle_v1_rebuilt.step",
+  "cad_job_id": "20260720T203526-generate-front-baffle-v1-543bd13ea3",
+  "fin_count": 4,
+  "fin_angles_deg": [
+    45.0,
+    135.0,
+    225.0,
+    315.0
+  ],
+  "fin_thickness_mm": 1.6,
+  "added_material_volume_mm3": 1061.2731505473494,
+  "expected_added_material_volume_mm3": 1061.2731505473494,
+  "approved_exterior_bounds_delta_mm": {
+    "min_x": 0.0,
+    "max_x": 0.0,
+    "min_y": 0.0,
+    "max_y": 0.0,
+    "min_z": 0.0,
+    "max_z": 0.0
+  },
+  "source_solid_count": 1,
+  "source_valid": true,
+  "step_roundtrip_solid_count": 1,
+  "step_roundtrip_valid": true,
+  "final_bounds_mm": {
+    "min_x": -95.00105070833588,
+    "max_x": 95.0010507083392,
+    "min_y": -95.00000010000001,
+    "max_y": -75.81666656665709,
+    "min_z": -95.00105070833588,
+    "max_z": 95.0010507083392
+  },
+  "final_volume_mm3": 233685.96529357508
+}

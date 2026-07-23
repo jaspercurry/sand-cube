@@ -14,7 +14,10 @@ __pycache__/
 *.3mf
 *.step
 !objects/*.step
+# Immutable release payloads are intentionally versioned.
+!releases/enclosure_v1/**/*.step
 *.stl
 *.brep
 *.png
 *.log
+!releases/enclosure_v1/**/*.3mf

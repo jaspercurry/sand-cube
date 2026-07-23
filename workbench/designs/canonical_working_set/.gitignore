@@ -2,3 +2,7 @@
 # symbolic links to hash-bound references, not copied/generated CAD files, and
 # are part of the curated working-set map.
 !**/links/*.step
+
+# Durable, hash-bound intake evidence is copied here so the canonical links do
+# not depend on ignored build outputs.
+!**/reference_evidence/*.step

@@ -1,0 +1,79 @@
+{
+  "scope": "optional four-diagonal-fin printability baffle variant",
+  "source_baffle_step": "/Users/jaspercurry/Code/CAD - Enclosure/build/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_lightweight_coherent_closure/centered_captive_nut_baffle.step",
+  "accepted_baffle_preserved": true,
+  "fin_count": 4,
+  "fin_angles_deg": [
+    45.0,
+    135.0,
+    225.0,
+    315.0
+  ],
+  "fin_thickness_mm": 1.6,
+  "fin_inner_radius_mm": 77.5,
+  "fin_outer_radius_mm": 121.03902376910854,
+  "fin_full_collar_contact_height_mm": 12.983333333333334,
+  "fin_skin_embed_mm": 0.8,
+  "fin_fuse_tolerance_mm": 0.02,
+  "construction": "four open bed-grown radial walls following the current diagonal acoustic-side conformal inner wall and embedded into that skin",
+  "closed_ring_count": 0,
+  "honeycomb_cell_count": 0,
+  "floating_fin_end_count": 0,
+  "added_material_volume_mm3": 1061.2731505473494,
+  "added_material_volume_l": 0.0010612731505473493,
+  "added_volume_percent_of_current_net": 0.02441305745334233,
+  "revised_estimated_net_volume_l": 4.346092509515265,
+  "baffle_exterior_bounds_difference_mm": {
+    "min_x": 0.0,
+    "max_x": 0.0,
+    "min_y": 0.0,
+    "max_y": 0.0,
+    "min_z": 0.0,
+    "max_z": 0.0
+  },
+  "bucket_overlap_mm3": 0.0,
+  "gasket_overlap_mm3": 0,
+  "fins": [
+    {
+      "index": 1,
+      "angle_deg": 45.0,
+      "candidate_volume_mm3": 789.8728354669474,
+      "bed_contact_mm3": 17.415609507643396,
+      "baffle_skin_overlap_mm3": 154.64491342217542,
+      "driver_keepout_overlap_mm3": 0.0,
+      "nut_loading_keepout_overlap_mm3": 0.0
+    },
+    {
+      "index": 2,
+      "angle_deg": 135.0,
+      "candidate_volume_mm3": 789.8728354669475,
+      "bed_contact_mm3": 17.41560950764339,
+      "baffle_skin_overlap_mm3": 122.79701232215955,
+      "driver_keepout_overlap_mm3": 0.0,
+      "nut_loading_keepout_overlap_mm3": 0.0
+    },
+    {
+      "index": 3,
+      "angle_deg": 225.0,
+      "candidate_volume_mm3": 789.8728354669477,
+      "bed_contact_mm3": 17.415609507643413,
+      "baffle_skin_overlap_mm3": 122.79701232221632,
+      "driver_keepout_overlap_mm3": 0.0,
+      "nut_loading_keepout_overlap_mm3": 0.0
+    },
+    {
+      "index": 4,
+      "angle_deg": 315.0,
+      "candidate_volume_mm3": 789.8728354669474,
+      "bed_contact_mm3": 17.41560950764344,
+      "baffle_skin_overlap_mm3": 154.6449134223254,
+      "driver_keepout_overlap_mm3": 0.0,
+      "nut_loading_keepout_overlap_mm3": 0.0
+    }
+  ],
+  "step_roundtrip": {
+    "source_solid_count": 1,
+    "imported_solid_count": 1,
+    "all_imported_solids_valid": true
+  }
+}

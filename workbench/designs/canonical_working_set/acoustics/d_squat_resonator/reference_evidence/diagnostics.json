@@ -1,0 +1,514 @@
+{
+  "name": "sand_cube_190x210_port_absorber_slotted_d_squat_rev_d_v1",
+  "status": "Rev D thermoviscous-minimax calibration geometry; not production-validated",
+  "design_inputs": {
+    "name": "sand_cube_190x210_port_absorber_slotted_d_squat_rev_d_v1",
+    "main_bore_d": 40.0,
+    "host_tube_wall_t": 3.0,
+    "main_port_area_mm2": 1256.6370614359173,
+    "main_port_physical_length_mm": 508.0815787648397,
+    "reported_lf_effective_length_mm": 541.0,
+    "net_box_volume_l": 4.524,
+    "bass_reflex_tuning_hz": 39.12,
+    "overall_length": 30.0,
+    "maximum_outer_d": 68.0,
+    "bucket_wall_t": 3.0,
+    "bottom_floor_t": 3.0,
+    "bucket_top_t": 3.0,
+    "core_wall_t": 3.0,
+    "slip_clearance_radial": 0.2,
+    "lower_lip_height": 6.0,
+    "lower_lip_radial_t": 1.0,
+    "lower_lip_clearance": 0.2,
+    "upper_skirt_height": 0.0,
+    "upper_skirt_radial_t": 2.5,
+    "rail_count": 4,
+    "rail_angle_offset_deg": 30.0,
+    "rail_tangential_width": 6.0,
+    "rail_core_overlap": 0.8,
+    "neck_physical_length": 5.0,
+    "holes_per_rail": 6,
+    "hole_row_pitch": 10.0,
+    "pilot_diamond_span": 0.9,
+    "nominal_ream_diameter_override": null,
+    "adapter_plate_t": 3.0,
+    "adapter_socket_depth": 10.0,
+    "adapter_socket_wall_t": 3.0,
+    "adapter_socket_clearance_diametral": 0.4,
+    "adapter_tube_wall_variants": [
+      3.0,
+      5.0
+    ],
+    "target_absorber_frequency_hz": 338.25,
+    "assumed_absorber_q_for_tmm": 1.0,
+    "speed_of_sound_m_s": 343.0,
+    "air_density_kg_m3": 1.204,
+    "dynamic_viscosity_pa_s": 1.81e-05,
+    "end_correction_beta": 0.85,
+    "end_correction_beta_low": 0.7,
+    "end_correction_beta_high": 1.0,
+    "coupling_path_mm": 273.8815502462105,
+    "inlet_flare_length_mm": 18.0,
+    "inlet_mouth_d": 44.5,
+    "throat_d": 40.0,
+    "outlet_flare_length_mm": 25.0,
+    "outlet_mouth_d": 58.6,
+    "outlet_radiation_end_factor": 0.6133,
+    "pilot_slot_width": 0.3,
+    "pilot_slot_length": 4.0,
+    "nominal_finished_slot_width": 0.4,
+    "slot_end_correction_hydraulic_factor": 0.85,
+    "witness_slot_widths": [
+      0.4,
+      0.5,
+      0.6
+    ],
+    "witness_notch_radial_depth": 0.35,
+    "witness_notch_tangential_width": 2.4,
+    "witness_notch_axial_height": 0.2,
+    "coupon_height": 32.0,
+    "coupon_floor_t": 3.0,
+    "coupon_slot_widths": [
+      0.3,
+      0.4,
+      0.5,
+      0.6
+    ],
+    "target_cavity_volume_cm3": 53.32981472028645,
+    "d_arc_center_x": 8.0,
+    "d_outer_arc_radius": 38.46720390571545,
+    "d_outer_flat_x": -28.5,
+    "core_top_clearance_radial": 0.2,
+    "slot_boss_top_clearance": 6.0,
+    "bucket_seat_depth": 0.5,
+    "bucket_seat_vertical_clearance": 0.1,
+    "bucket_seat_inward_clearance": 0.2,
+    "adapter_plate_r": 28.5,
+    "slot_center_z": 12.0,
+    "minimum_slot_land_mm": 2.0,
+    "integrated_body_center_path_mm": 276.8815502462105,
+    "inertial_end_low_at_nominal_mm": 0.65,
+    "inertial_end_high_at_nominal_mm": 1.5,
+    "inertial_end_mid_at_nominal_mm": 1.1,
+    "resistive_end_per_side_width_factor": 0.425,
+    "reference_duct_attenuation_np_per_m": 0.1
+  },
+  "packaging": {
+    "body_x_mm": 74.96720390571545,
+    "body_y_mm": 76.9344078114309,
+    "body_z_mm": 30.000000200000002,
+    "connected_x_mm": 74.96720390571545,
+    "connected_y_mm": 76.9344078114309,
+    "connected_z_mm": 56.0,
+    "bore_center_from_flat_speaker_wall_mm": 28.5,
+    "bore_edge_from_flat_speaker_wall_mm": 8.5,
+    "50mm_tube_from_flat_speaker_wall_mm": 3.5,
+    "base_core_to_inner_flat_cavity_mm": 2.5,
+    "flat_face_x_mm": -28.5,
+    "solved_outer_arc_radius_mm": 38.46720390571545
+  },
+  "acoustic_target": {
+    "target_frequency_hz": 338.25,
+    "target_cavity_volume_cm3": 53.32981472028645,
+    "cad_cavity_volume_cm3": 53.32981472032441,
+    "provisional_pressure_antinode_mm_from_inlet": 255.31099332933195,
+    "model_target_hz": 338.25,
+    "placement_target_path_mm_from_inlet": 273.8815502462105,
+    "integrated_body_center_path_mm_from_inlet": 276.8815502462105,
+    "placement_tolerance_interpretation": "With the existing integrated body position, the Rev D slit is 3 mm toward the inlet from the body center.  Its modeled pressure coupling remains about 0.993; measure the bare port before treating 338.25 Hz as authoritative."
+  },
+  "print_ready_pilot": {
+    "air": {
+      "density_kg_m3": 1.204,
+      "speed_m_s": 343.0,
+      "dynamic_viscosity_pa_s": 1.81e-05
+    },
+    "branch": {
+      "slot_count": 4,
+      "width_mm": 0.3,
+      "overall_length_mm": 4.0,
+      "physical_depth_mm": 5.0,
+      "cavity_volume_cm3": 53.32981472032441,
+      "inertial_end_total_mm": 0.825,
+      "resistive_end_per_side_width_factor": 0.425
+    },
+    "geometry": {
+      "area_each_mm2": 1.1806858347057705,
+      "total_area_mm2": 4.722743338823081,
+      "hydraulic_diameter_mm": 0.5661079902476885
+    },
+    "reference_frequency_hz": 338.25,
+    "viscous_boundary_layer_mm": 0.1189411696553022,
+    "width_over_boundary_layer": 2.522255337402649,
+    "dynamic_density_ratio_at_reference": {
+      "real": 1.1974901600842238,
+      "imag": -0.9609265753448379
+    },
+    "neck_impedance_at_reference_pa_s_m3": {
+      "real": 2735978.8835387924,
+      "imag": 3691077.7654437893
+    },
+    "resonance_frequency_hz": 196.7035689598261,
+    "resonance_q_from_reactance_slope": 0.7946639980767207,
+    "neck_resistance_at_resonance_pa_s_m3": 2702692.687165105,
+    "duct_characteristic_impedance_pa_s_m3": 328632.675792731,
+    "resistance_over_duct_impedance": 8.2240534379171,
+    "qualification": [
+      "Linear viscous parallel-plate neck model; no thermal bulk-modulus correction.",
+      "Inertial and resistive end corrections are explicit uncertain inputs.",
+      "No leakage, wall compliance, three-dimensional entrance flow, or nonlinear jetting."
+    ]
+  },
+  "nominal_finished_slot": {
+    "air": {
+      "density_kg_m3": 1.204,
+      "speed_m_s": 343.0,
+      "dynamic_viscosity_pa_s": 1.81e-05
+    },
+    "branch": {
+      "slot_count": 4,
+      "width_mm": 0.4,
+      "overall_length_mm": 9.06623263067912,
+      "physical_depth_mm": 5.0,
+      "cavity_volume_cm3": 53.32981472032441,
+      "inertial_end_total_mm": 1.1,
+      "resistive_end_per_side_width_factor": 0.425
+    },
+    "geometry": {
+      "area_each_mm2": 3.59215675841524,
+      "total_area_mm2": 14.368627033660959,
+      "hydraulic_diameter_mm": 0.772959704247902
+    },
+    "reference_frequency_hz": 338.25,
+    "viscous_boundary_layer_mm": 0.1189411696553022,
+    "width_over_boundary_layer": 3.363007116536866,
+    "dynamic_density_ratio_at_reference": {
+      "real": 1.192446542592704,
+      "imag": -0.5607780566142719
+    },
+    "neck_impedance_at_reference_pa_s_m3": {
+      "real": 533287.1963535129,
+      "imag": 1257682.1955038677
+    },
+    "resonance_frequency_hz": 337.1778193876912,
+    "resonance_q_from_reactance_slope": 2.340074754524967,
+    "neck_resistance_at_resonance_pa_s_m3": 533116.3979828377,
+    "duct_characteristic_impedance_pa_s_m3": 328632.675792731,
+    "resistance_over_duct_impedance": 1.6222257774484814,
+    "qualification": [
+      "Linear viscous parallel-plate neck model; no thermal bulk-modulus correction.",
+      "Inertial and resistive end corrections are explicit uncertain inputs.",
+      "No leakage, wall compliance, three-dimensional entrance flow, or nonlinear jetting."
+    ]
+  },
+  "witness_target_lengths_by_finished_width_mm": {
+    "0.4": 9.06623263067912,
+    "0.5": 7.509040502390942,
+    "0.6": 6.459764796589143
+  },
+  "geometry_validation": {
+    "continuous_40mm_bore": true,
+    "body_material_intrusion_mm3": 0,
+    "connected_assembly_intrusion_mm3": 0,
+    "core_bucket_material_intersection_mm3": 0.0,
+    "common_cavity_solid_count": 1,
+    "slot_connections": [
+      {
+        "slot": 1,
+        "angle_deg": 30.0,
+        "bore_overlap_mm3": 0.5376365811168814,
+        "cavity_overlap_mm3": 0.5388235137622828
+      },
+      {
+        "slot": 2,
+        "angle_deg": 120.0,
+        "bore_overlap_mm3": 0.5376365785072558,
+        "cavity_overlap_mm3": 0.5388235137622965
+      },
+      {
+        "slot": 3,
+        "angle_deg": 210.0,
+        "bore_overlap_mm3": 0.5376365785072845,
+        "cavity_overlap_mm3": 0.5388235137622901
+      },
+      {
+        "slot": 4,
+        "angle_deg": 300.0,
+        "bore_overlap_mm3": 0.5376365811168865,
+        "cavity_overlap_mm3": 0.5388235137622905
+      }
+    ],
+    "slot_cavity_backing": [
+      {
+        "angle_deg": 30.0,
+        "radial_cavity_backing_mm": 17.16912479724928
+      },
+      {
+        "angle_deg": 120.0,
+        "radial_cavity_backing_mm": 5.783941020097153
+      },
+      {
+        "angle_deg": 210.0,
+        "radial_cavity_backing_mm": 3.3127183366982678
+      },
+      {
+        "angle_deg": 300.0,
+        "radial_cavity_backing_mm": 13.783941020097153
+      }
+    ],
+    "flat_side_has_no_slot": true
+  },
+  "printability": {
+    "supports_required": false,
+    "core": "D floor on build plate, 3 mm tube wall and four 5 mm local slot bosses grown upward from the floor",
+    "bucket": "invert with D top cap on build plate",
+    "adapters": "round plates on build plate, sockets upward",
+    "flat_wall_face": "vertical throughout; no overhang",
+    "assembly_seal": "removable gasket in lower D locating rebate plus external face gasket beneath the top socket-adapter plate; no internal skirt",
+    "internal_alignment_skirt": false,
+    "lower_d_seat_depth_mm": 0.5,
+    "lower_d_seat_inward_clearance_mm": 0.2
+  },
+  "acoustic_models": {
+    "ideal_q1": {
+      "status": "superseded by verified branch and duct model below"
+    },
+    "smooth_wall_boundary_q": {
+      "status": "superseded by verified branch and duct model below"
+    },
+    "qualification": "Comparative linear TMM only; attenuation and Q require the same-level microphone test used for the cylindrical variants."
+  },
+  "step_roundtrip": {
+    "port_absorber_d_squat_rev_d_inner_core_pilot.step": {
+      "source_solid_count": 1,
+      "imported_solid_count": 1,
+      "solid_count_matches": true,
+      "all_imported_solids_valid": true
+    },
+    "port_absorber_d_squat_rev_d_inner_core_0p40_finished_reference.step": {
+      "source_solid_count": 1,
+      "imported_solid_count": 1,
+      "solid_count_matches": true,
+      "all_imported_solids_valid": true
+    },
+    "port_absorber_d_squat_rev_d_outer_bucket.step": {
+      "source_solid_count": 1,
+      "imported_solid_count": 1,
+      "solid_count_matches": true,
+      "all_imported_solids_valid": true
+    },
+    "port_absorber_d_squat_rev_d_socket_adapter_40id_46od.step": {
+      "source_solid_count": 1,
+      "imported_solid_count": 1,
+      "solid_count_matches": true,
+      "all_imported_solids_valid": true
+    },
+    "port_absorber_d_squat_rev_d_socket_adapter_40id_50od.step": {
+      "source_solid_count": 1,
+      "imported_solid_count": 1,
+      "solid_count_matches": true,
+      "all_imported_solids_valid": true
+    },
+    "port_absorber_d_squat_rev_d_assembly_finished_reference.step": {
+      "source_solid_count": 2,
+      "imported_solid_count": 2,
+      "solid_count_matches": true,
+      "all_imported_solids_valid": true
+    },
+    "port_absorber_d_squat_rev_d_connected_46od_tubes.step": {
+      "source_solid_count": 4,
+      "imported_solid_count": 4,
+      "solid_count_matches": true,
+      "all_imported_solids_valid": true
+    },
+    "port_absorber_d_squat_rev_d_connected_50od_tubes.step": {
+      "source_solid_count": 4,
+      "imported_solid_count": 4,
+      "solid_count_matches": true,
+      "all_imported_solids_valid": true
+    },
+    "port_absorber_d_squat_rev_d_cutaway.step": {
+      "source_solid_count": 4,
+      "imported_solid_count": 4,
+      "solid_count_matches": true,
+      "all_imported_solids_valid": true
+    },
+    "port_absorber_d_squat_rev_d_exploded.step": {
+      "source_solid_count": 4,
+      "imported_solid_count": 4,
+      "solid_count_matches": true,
+      "all_imported_solids_valid": true
+    },
+    "port_absorber_d_squat_rev_d_print_layout.step": {
+      "source_solid_count": 5,
+      "imported_solid_count": 5,
+      "solid_count_matches": true,
+      "all_imported_solids_valid": true
+    },
+    "port_absorber_d_squat_rev_d_air_domain_finished.step": {
+      "source_solid_count": 1,
+      "imported_solid_count": 1,
+      "solid_count_matches": true,
+      "all_imported_solids_valid": true
+    },
+    "port_absorber_d_squat_rev_d_calibration_coupon.step": {
+      "source_solid_count": 1,
+      "imported_solid_count": 1,
+      "solid_count_matches": true,
+      "all_imported_solids_valid": true
+    }
+  },
+  "slot_layout": {
+    "slot_center_z_mm": 12.0,
+    "boss_z_min_mm": 3.0,
+    "boss_z_max_mm": 21.0,
+    "axial_lands_mm": {
+      "lower": 4.46688368466044,
+      "upper": 4.466883684660438
+    },
+    "neck_air_volume_total_mm3": 71.8431351683048
+  },
+  "verified_acoustic_model": {
+    "nominal_mid_end_case": {
+      "air": {
+        "density_kg_m3": 1.204,
+        "speed_m_s": 343.0,
+        "dynamic_viscosity_pa_s": 1.81e-05
+      },
+      "branch": {
+        "slot_count": 4,
+        "width_mm": 0.4,
+        "overall_length_mm": 9.06623263067912,
+        "physical_depth_mm": 5.0,
+        "cavity_volume_cm3": 53.32981472032441,
+        "inertial_end_total_mm": 1.1,
+        "resistive_end_per_side_width_factor": 0.425
+      },
+      "geometry": {
+        "area_each_mm2": 3.59215675841524,
+        "total_area_mm2": 14.368627033660959,
+        "hydraulic_diameter_mm": 0.772959704247902
+      },
+      "reference_frequency_hz": 338.25,
+      "viscous_boundary_layer_mm": 0.1189411696553022,
+      "width_over_boundary_layer": 3.363007116536866,
+      "dynamic_density_ratio_at_reference": {
+        "real": 1.192446542592704,
+        "imag": -0.5607780566142719
+      },
+      "neck_impedance_at_reference_pa_s_m3": {
+        "real": 533287.1963535129,
+        "imag": 1257682.1955038677
+      },
+      "resonance_frequency_hz": 337.1778193876912,
+      "resonance_q_from_reactance_slope": 2.340074754524967,
+      "neck_resistance_at_resonance_pa_s_m3": 533116.3979828377,
+      "duct_characteristic_impedance_pa_s_m3": 328632.675792731,
+      "resistance_over_duct_impedance": 1.6222257774484814,
+      "qualification": [
+        "Linear viscous parallel-plate neck model; no thermal bulk-modulus correction.",
+        "Inertial and resistive end corrections are explicit uncertain inputs.",
+        "No leakage, wall compliance, three-dimensional entrance flow, or nonlinear jetting."
+      ]
+    },
+    "end_correction_cases": {
+      "0.65_mm": {
+        "resonance_hz": 348.52477295872666,
+        "q": 2.2546846798719913,
+        "resistance_over_z0": 1.6277883869010046
+      },
+      "1.1_mm": {
+        "resonance_hz": 337.1778193876912,
+        "q": 2.340074754524967,
+        "resistance_over_z0": 1.6222257774484814
+      },
+      "1.5_mm": {
+        "resonance_hz": 327.97522704127323,
+        "q": 2.4134677153482476,
+        "resistance_over_z0": 1.6178163859905
+      }
+    },
+    "reference_duct_case": {
+      "port": {
+        "length_mm": 508.0815787648397,
+        "bore_diameter_mm": 40.0,
+        "inlet_flare_length_mm": 18.0,
+        "inlet_mouth_diameter_mm": 44.5,
+        "outlet_flare_length_mm": 25.0,
+        "outlet_mouth_diameter_mm": 58.6,
+        "outlet_radiation_end_factor": 0.6133,
+        "segments": 420,
+        "attenuation_np_per_m": 0.1
+      },
+      "branch_path_mm": 273.8815502462105,
+      "source_load_definition": "1 Pa fixed pressure at inlet; outlet terminated by low-ka unflanged radiation impedance; reported response is outlet volume velocity.",
+      "branch_model": {
+        "air": {
+          "density_kg_m3": 1.204,
+          "speed_m_s": 343.0,
+          "dynamic_viscosity_pa_s": 1.81e-05
+        },
+        "branch": {
+          "slot_count": 4,
+          "width_mm": 0.4,
+          "overall_length_mm": 9.06623263067912,
+          "physical_depth_mm": 5.0,
+          "cavity_volume_cm3": 53.32981472032441,
+          "inertial_end_total_mm": 1.1,
+          "resistive_end_per_side_width_factor": 0.425
+        },
+        "geometry": {
+          "area_each_mm2": 3.59215675841524,
+          "total_area_mm2": 14.368627033660959,
+          "hydraulic_diameter_mm": 0.772959704247902
+        },
+        "reference_frequency_hz": 338.25,
+        "viscous_boundary_layer_mm": 0.1189411696553022,
+        "width_over_boundary_layer": 3.363007116536866,
+        "dynamic_density_ratio_at_reference": {
+          "real": 1.192446542592704,
+          "imag": -0.5607780566142719
+        },
+        "neck_impedance_at_reference_pa_s_m3": {
+          "real": 533287.1963535129,
+          "imag": 1257682.1955038677
+        },
+        "resonance_frequency_hz": 337.1778193876912,
+        "resonance_q_from_reactance_slope": 2.340074754524967,
+        "neck_resistance_at_resonance_pa_s_m3": 533116.3979828377,
+        "duct_characteristic_impedance_pa_s_m3": 328632.675792731,
+        "resistance_over_duct_impedance": 1.6222257774484814,
+        "qualification": [
+          "Linear viscous parallel-plate neck model; no thermal bulk-modulus correction.",
+          "Inertial and resistive end corrections are explicit uncertain inputs.",
+          "No leakage, wall compliance, three-dimensional entrance flow, or nonlinear jetting."
+        ]
+      },
+      "bare_peak_frequency_hz": 338.25,
+      "treated_worst_peak_frequency_hz": 276.25,
+      "treated_worst_peak_vs_bare_peak_db": -17.648450711534608,
+      "treated_at_bare_peak_db": -21.24472952310591,
+      "bare_pressure_antinode_path_mm": 255.31099332933195,
+      "normalized_pressure_at_branch": 0.9928730724940151,
+      "qualification": [
+        "Bends represented by centerline length only.",
+        "Absolute dB values are comparative and source/load dependent.",
+        "Distributed attenuation is a user input, not a fitted physical law."
+      ]
+    },
+    "model_limitations": [
+      "Parallel-plate viscous density; no thermal bulk-modulus correction.",
+      "End correction is swept and remains the dominant linear uncertainty.",
+      "One-dimensional duct uses bend centerline length only.",
+      "Reference 0.1 Np/m loss is hypothetical; dB values are not predictions.",
+      "No leakage, wall compliance, 3-D entrance flow, or nonlinear jetting."
+    ]
+  },
+  "manufacturing_caveats": [
+    "The 0.30 mm printed pilots are sacrificial guides, not trusted dimensions.",
+    "Measure the finished 0.40 mm gap with feeler gauges at several heights.",
+    "Coupon rail 1 carries a full 8.87 mm-class slot; other rails screen gap width.",
+    "The removable bucket needs a real gasket and positive external retention.",
+    "The socket plates are fit interfaces, not yet a validated structural tower joint."
+  ]
+}

@@ -1,6 +1,6 @@
 # Feedback log
 
-## 2026-07-22 — working-set map created
+## 2026-07-22 — working-set map created (historical capture)
 
 - Read the repository and workbench rules, model catalog, enclosure contract,
   complete enclosure recovery directory, both deferred project records, and
@@ -29,3 +29,22 @@
   dependencies.
 - `scripts/cad_review.py check-catalog` passed with 10 primary models and 41
   experiment families.
+
+## 2026-07-22 — clean input landing and portability update
+
+- Based the landing on clean `origin/main` at
+  `73b29e51434e4a139efcb09574f8dc1c94bd485f`; the dirty intake checkout at
+  `ea5539f3372e1bad5ad05eba85f4bd9a53e8c868` remained read-only.
+- Landed the selected source, dependency closure, recovery/deferred records,
+  and immutable V1 release. The file-by-file intake and exclusions live in
+  `workbench/designs/input_landing_2026_07_22/`.
+- Copied exactly thirteen selected evidence files, totaling `53,707,865`
+  bytes, into component-local `reference_evidence/` directories with exact
+  original hashes.
+- Repointed the thirteen artifact links away from ignored `build/` paths.
+  All canonical links now resolve in a clean checkout.
+- Preserved the original generated paths, source/artifact freshness blockers,
+  and approved semantic roles in per-component evidence manifests.
+- No geometry or evidence was regenerated, modified, or newly approved.
+- Final checksum, catalog, lightweight, doctor, and clean-checkout results are
+  recorded in the input-landing feedback log.

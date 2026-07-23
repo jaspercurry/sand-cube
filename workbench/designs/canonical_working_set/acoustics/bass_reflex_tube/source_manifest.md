@@ -13,15 +13,15 @@ Inventory date: 2026-07-22
 | `experiments/sand_cube_190x210_internal_squat_absorber_flush/generate_sand_cube_190x210_internal_squat_absorber_flush.py` | `888fe48ad804c6ac49f5805d237dd7974b686cac1bc09eeec5e8ef6d049bb474` |
 | `experiments/sand_cube_190x210_internal_squat_absorber_rear_corners/generate_sand_cube_190x210_internal_squat_absorber_rear_corners.py` | `1b2fcd344726f192b37e9081b6e41588b797a1a35e3301600ba2dbe77455307d` |
 
-These files already had uncommitted changes when first inventoried and remain
-in place.
+These source files were already present in the clean baseline and remain
+tracked in place.
 
 ## Reference evidence
 
 | Local link | Repository path | SHA-256 |
 |---|---|---|
-| `links/tube_reference.step` | `build/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_lightweight_coherent_closure/sand_cube_190x210_single_oval_port_internal_tube.step` | `5667fa455b81f8fc0f9a4645677a359f7b9072f0750eaff4f39a2099255fa19c` |
-| `links/route_diagnostics.json` | `build/sand_cube_190x210_internal_squat_absorber_rear_corners/diagnostics.json` | `dce0dcd3452ee8a98cea69073a52b3c3a299e42ec1a0e5bd716197cbf27af913` |
+| `links/tube_reference.step` | `workbench/designs/canonical_working_set/acoustics/bass_reflex_tube/reference_evidence/sand_cube_190x210_single_oval_port_internal_tube.step` | `5667fa455b81f8fc0f9a4645677a359f7b9072f0750eaff4f39a2099255fa19c` |
+| `links/route_diagnostics.json` | `workbench/designs/canonical_working_set/acoustics/bass_reflex_tube/reference_evidence/diagnostics.json` | `dce0dcd3452ee8a98cea69073a52b3c3a299e42ec1a0e5bd716197cbf27af913` |
 
 Catalog identity: `exp-190x210-rear-corners` (supporting), with the preceding
 port/tower/absorber experiments retained as dependencies and studies.

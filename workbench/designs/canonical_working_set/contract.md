@@ -1,5 +1,10 @@
 # Canonical working-set organization contract
 
+The original map-creation contract below is historical. Its prohibition on
+artifact promotion applied to the initial navigation-only change. The
+2026-07-22 input landing later promoted the exact selected evidence bytes into
+immutable `reference_evidence/` owners without changing geometry.
+
 ## Requested result
 
 Provide one trustworthy, easy-to-navigate directory for the fundamental
@@ -41,3 +46,12 @@ A new agent can enter this directory, identify the correct variant, locate its
 owner and evidence, understand what each reference contributes, see what is
 blocked, and avoid the known cross-variant substitutions without searching the
 entire repository first.
+
+## Portability amendment
+
+- A clean checkout must resolve every canonical link.
+- `reference_checksums.sha256` must pass without ignored `build/` output or the
+  dirty intake checkout.
+- Promoted evidence remains derived, immutable, and subordinate to Python.
+- Per-component evidence manifests retain original generated paths, hashes,
+  sizes, producers where known, semantic roles, and freshness caveats.

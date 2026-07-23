@@ -5,8 +5,8 @@ This directory is a curated navigation and handoff layer. Read `README.md`,
 `source_manifest.md` before changing anything.
 
 1. Files under `links/` are symbolic links to existing owners and hash-bound
-   evidence. Do not edit linked `build/` files. Do not replace a link with a
-   copied source or STEP file.
+   evidence. Do not edit or regenerate linked `reference_evidence/` files in
+   place. Never replace a source link with copied source.
 2. Existing experiment directories retain their current dependency chain and
    working-tree state. Refactor by creating an explicit new owner, then promote
    only after coordinated validation; do not relocate or flatten ancestors.
