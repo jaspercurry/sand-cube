@@ -1,0 +1,76 @@
+{
+  "provenanceOutput": "build/workbench/variant_r_underside_seam_refinement/review/snapshot-candidate-provenance.json",
+  "jobs": [
+    {
+      "input": "build/workbench/variant_r_underside_seam_refinement/review/candidate_trimmed_unspliced_assembly.step",
+      "mode": "view",
+      "display": {
+        "mode": "solid",
+        "projection": "orthographic",
+        "edges": {
+          "color": "#1b2430"
+        }
+      },
+      "outputs": [
+        {
+          "path": "build/workbench/variant_r_underside_seam_refinement/review/candidate-assembly-isometric.png",
+          "camera": "iso"
+        }
+      ],
+      "render": {
+        "padding": 0.08,
+        "sizeProfile": "diagnostic",
+        "viewLabels": true
+      }
+    },
+    {
+      "input": "build/workbench/variant_r_underside_seam_refinement/review/candidate_trimmed_unspliced_assembly.step",
+      "mode": "view",
+      "display": {
+        "mode": "rendered",
+        "projection": "orthographic"
+      },
+      "outputs": [
+        {
+          "path": "build/workbench/variant_r_underside_seam_refinement/review/candidate-assembly-low-underside.png",
+          "camera": {
+            "position": [245.0, -355.0, -250.0],
+            "target": [0.0, -80.0, -82.0],
+            "up": [0.0, 0.0, 1.0],
+            "zoom": 1.2
+          }
+        }
+      ],
+      "render": {
+        "padding": 0.08,
+        "sizeProfile": "diagnostic",
+        "viewLabels": false
+      }
+    },
+    {
+      "input": "build/workbench/variant_r_underside_seam_refinement/review/candidate_trimmed_unspliced_assembly.step",
+      "mode": "section",
+      "section": {
+        "plane": "YZ",
+        "offset": 86.0
+      },
+      "display": {
+        "mode": "solid",
+        "projection": "orthographic",
+        "edges": {
+          "color": "#1b2430"
+        }
+      },
+      "outputs": [
+        {
+          "path": "build/workbench/variant_r_underside_seam_refinement/review/candidate-bottom-corner-section.png"
+        }
+      ],
+      "render": {
+        "padding": 0.08,
+        "sizeProfile": "section",
+        "viewLabels": true
+      }
+    }
+  ]
+}

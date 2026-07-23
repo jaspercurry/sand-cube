@@ -1,0 +1,152 @@
+{
+  "provenanceOutput": "build/workbench/variant_r_underside_seam_refinement/review/snapshot-matched-provenance.json",
+  "jobs": [
+    {
+      "input": "build/workbench/variant_r_underside_seam_refinement/review/earlier_flat_bottom_baffle.step",
+      "mode": "view",
+      "display": {
+        "mode": "rendered",
+        "projection": "orthographic"
+      },
+      "outputs": [
+        {
+          "path": "build/workbench/variant_r_underside_seam_refinement/review/earlier-smooth-lower-front.png",
+          "camera": {
+            "preset": "front",
+            "target": [0.0, -90.0, -80.0],
+            "zoom": 2.0
+          }
+        }
+      ],
+      "render": {
+        "padding": 0.04,
+        "sizeProfile": "diagnostic",
+        "viewLabels": false
+      }
+    },
+    {
+      "input": "build/workbench/variant_r_underside_seam_refinement/review/current_spliced_baffle.step",
+      "mode": "view",
+      "display": {
+        "mode": "rendered",
+        "projection": "orthographic"
+      },
+      "outputs": [
+        {
+          "path": "build/workbench/variant_r_underside_seam_refinement/review/current-smooth-lower-front.png",
+          "camera": {
+            "preset": "front",
+            "target": [0.0, -90.0, -80.0],
+            "zoom": 2.0
+          }
+        }
+      ],
+      "render": {
+        "padding": 0.04,
+        "sizeProfile": "diagnostic",
+        "viewLabels": false
+      }
+    },
+    {
+      "input": "build/workbench/variant_r_underside_seam_refinement/review/candidate_trimmed_unspliced_baffle.step",
+      "mode": "view",
+      "display": {
+        "mode": "rendered",
+        "projection": "orthographic"
+      },
+      "outputs": [
+        {
+          "path": "build/workbench/variant_r_underside_seam_refinement/review/candidate-smooth-lower-front.png",
+          "camera": {
+            "preset": "front",
+            "target": [0.0, -90.0, -80.0],
+            "zoom": 2.0
+          }
+        }
+      ],
+      "render": {
+        "padding": 0.04,
+        "sizeProfile": "diagnostic",
+        "viewLabels": false
+      }
+    },
+    {
+      "input": "build/workbench/variant_r_underside_seam_refinement/review/earlier_flat_bottom_baffle.step",
+      "mode": "view",
+      "display": {
+        "mode": "solid",
+        "projection": "orthographic",
+        "edges": {
+          "color": "#1b2430"
+        }
+      },
+      "outputs": [
+        {
+          "path": "build/workbench/variant_r_underside_seam_refinement/review/earlier-edge-overlay-lower-front.png",
+          "camera": {
+            "preset": "front",
+            "target": [0.0, -90.0, -80.0],
+            "zoom": 2.0
+          }
+        }
+      ],
+      "render": {
+        "padding": 0.04,
+        "sizeProfile": "diagnostic",
+        "viewLabels": false
+      }
+    },
+    {
+      "input": "build/workbench/variant_r_underside_seam_refinement/review/current_spliced_baffle.step",
+      "mode": "view",
+      "display": {
+        "mode": "solid",
+        "projection": "orthographic",
+        "edges": {
+          "color": "#1b2430"
+        }
+      },
+      "outputs": [
+        {
+          "path": "build/workbench/variant_r_underside_seam_refinement/review/current-edge-overlay-lower-front.png",
+          "camera": {
+            "preset": "front",
+            "target": [0.0, -90.0, -80.0],
+            "zoom": 2.0
+          }
+        }
+      ],
+      "render": {
+        "padding": 0.04,
+        "sizeProfile": "diagnostic",
+        "viewLabels": false
+      }
+    },
+    {
+      "input": "build/workbench/variant_r_underside_seam_refinement/review/candidate_trimmed_unspliced_baffle.step",
+      "mode": "view",
+      "display": {
+        "mode": "solid",
+        "projection": "orthographic",
+        "edges": {
+          "color": "#1b2430"
+        }
+      },
+      "outputs": [
+        {
+          "path": "build/workbench/variant_r_underside_seam_refinement/review/candidate-edge-overlay-lower-front.png",
+          "camera": {
+            "preset": "front",
+            "target": [0.0, -90.0, -80.0],
+            "zoom": 2.0
+          }
+        }
+      ],
+      "render": {
+        "padding": 0.04,
+        "sizeProfile": "diagnostic",
+        "viewLabels": false
+      }
+    }
+  ]
+}
