@@ -196,3 +196,38 @@ authoritative structured facts are in `atomic_manifest.json`.
   context compression.
 - Subsequent checkpoints will be recorded without pausing. Genuine
   safety/equivalence blockers still remain stop conditions.
+
+## 2026-07-23 — exploratory baseline repair and equivalence stop
+
+- After a context compression, the complete `brief.md` was read again and its
+  SHA-256 again matched
+  `7cb5fad7514df1670ba9fd017cce0d44369564018515e3b4ec5be2c55d4bb96e`.
+- Scratch Workbench measurement showed that the rear ramp was already located
+  at its intended design-coordinate Y/Z envelope before a second placement was
+  applied. An uncommitted correction cleared the original two-solid rail
+  failure and allowed the leaf base STEP to be exported for diagnosis.
+- The experiments remained outside the accepted source boundary. The resulting
+  leaf base STEP has SHA-256
+  `2b00cc4f7c0d9203758893ffcab2039325d072070fb33c94f001b47ef9b09203`
+  and is explicitly diagnostic evidence, not an accepted baseline.
+- Fit job
+  `20260723T111344-validate-simple-tongue-groove-baffle-51e3ab94c6`
+  then failed the protected top-seam occupancy gate at two of 1,248 samples;
+  the first point was `[-45.0, -71.75, 86.25]` mm.
+- Focused diagnostic job
+  `20260723T113000-diagnose-seam-identity-34754b3ab1` completed in
+  384.514 seconds at 1,402,896,384 bytes peak RSS. Nine of 75 nearby samples
+  confirmed the same direction: the authoritative bucket contains material
+  where the flat-bottom hybrid bucket does not.
+- In a 4 mm cube around the first mismatch, the authoritative bucket occupied
+  `35.80665201146918 mm³`, the hybrid occupied `35.40168722922 mm³`, and their
+  overlap equaled the hybrid volume. The reference-only difference was
+  `0.40496478224918064 mm³`; the hybrid-only difference was zero.
+- Both local diagnostic sections were one valid solid after STEP round-trip.
+  Their exact paths and hashes are recorded in `atomic_manifest.json`.
+- This is material geometry drift, not a matching-boundary or serialization
+  artifact. Correcting it would reconcile the authoritative sculpted seam with
+  the flat-bottom reference, which the brief reserves for later synthesis.
+- Every exploratory source, viewer-adapter, alias, and validator edit was
+  reverted. The committed coordinate-contract pilot remains the only Phase B
+  source change.
