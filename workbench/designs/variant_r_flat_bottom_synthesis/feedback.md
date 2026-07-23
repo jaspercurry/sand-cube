@@ -44,3 +44,25 @@
   detour edges, and insert one flat lower edge between the unchanged bottom
   corner tangency points.
 
+## 2026-07-23 — rear-ramp rail prerequisite
+
+- A Build123d Workbench scratch reproduction confirmed that `Plane.YZ`
+  preserved the ramp polygon's global Y/Z coordinates. The unplaced ramp
+  occupied X `[-5, 5]`, Y `[98, 108]`, Z `[78, 89]` mm and intersected the
+  main rail over the intended 1 mm Y overlap.
+- Applying the source's second placement moved that same ramp to Y
+  `[201, 211]`, Z `[161.5, 172.5]` mm and produced a two-solid compound.
+- Removing only the redundant placement produced one valid rail solid at
+  `18,459.833333 mm³`, with bounds X `[-5, 5]`, Y
+  `[-64.3166667, 108]`, Z `[78, 89]` mm.
+- Focused coordinated job
+  `20260723T125800-validate-rail-50fbe655ec` completed in 27.341 seconds at
+  552,828,928 bytes peak RSS. It validated all three rotated rails as valid
+  equal-volume solids and retained three valid solids after STEP round-trip.
+- The runner published the rail STEP with SHA-256
+  `c0fb5fff731a3ee0603dd85309f7283964f3a1e51fd58a5522ac1d72beeda1f5`
+  and diagnostics with SHA-256
+  `19e56b5260941821ccab66a0013d13761ab5a8981bcd12311b3d7880dfdb4dc6`.
+  The job workspace was removed and no owned process remained.
+- After the change, the native-free suite again passed 86 tests and 19
+  subtests, 77 CAD entrypoint checks, catalog consistency, and lint.
