@@ -26,6 +26,14 @@ The main flow is:
 `examples.py` provides a complete synthetic contract and release review packet
 without touching native CAD.
 
+A PASS-eligible packet binds every artifact to a successful, zero-exit,
+fully-cleaned execution record with repository-relative output hashes. Snapshot
+claims name the rendered PNG, its source STEP and sidecar, and an explicit
+inspection attestation. Viewer claims name a probed read-only session record.
+Those fields are defined only by the dataclasses in
+[`model.py`](model.py) and enforced by [`validation.py`](validation.py); there
+is no parallel hand-written JSON schema.
+
 Repository users validate and inspect these objects through
 `scripts/cad_review.py verify`. The authoritative profile/check/evidence policy
 is [`policy.py`](policy.py); CLI and repository adapters consume that policy and

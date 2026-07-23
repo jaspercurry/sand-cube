@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "source_sha256": "e280df525a1b5043c92ecea1c75192921c07e6ed1a923854fc224ee6d82bde40",
+  "parameters_sha256": "79848adf97ffb73274cae45211215b276f22c2b550c6ce73af970ddfc85ee670",
+  "measurements": {
+    "JC-DIM-NOMINAL-LENGTH": {"unit": "mm", "value": 80.0, "tolerance": 0.000001},
+    "JC-DIM-NOMINAL-DEPTH": {"unit": "mm", "value": 30.0, "tolerance": 0.000001},
+    "JC-DIM-NOMINAL-HEIGHT": {"unit": "mm", "value": 11.0, "tolerance": 0.000001},
+    "JC-DIM-ANALYTIC-LOWER-VOLUME": {"unit": "mm3", "value": 12377.913743824034, "tolerance": 0.000001},
+    "JC-DIM-ANALYTIC-UPPER-VOLUME": {"unit": "mm3", "value": 10837.113743824035, "tolerance": 0.000001},
+    "JC-DIM-ANALYTIC-GASKET-VOLUME": {"unit": "mm3", "value": 232.0, "tolerance": 0.000001},
+    "JC-DIM-ASSEMBLY-LENGTH": {"unit": "mm", "value": 80.0, "tolerance": 0.000001},
+    "JC-DIM-ASSEMBLY-DEPTH": {"unit": "mm", "value": 30.0, "tolerance": 0.000001},
+    "JC-DIM-ASSEMBLY-HEIGHT": {"unit": "mm", "value": 11.0, "tolerance": 0.000001},
+    "JC-DIM-LOWER-VOLUME": {"unit": "mm3", "value": 12377.91374382403, "tolerance": 0.000001},
+    "JC-DIM-UPPER-VOLUME": {"unit": "mm3", "value": 10837.113743824031, "tolerance": 0.000001},
+    "JC-DIM-GASKET-LEFT-VOLUME": {"unit": "mm3", "value": 231.99999999999994, "tolerance": 0.000001},
+    "JC-DIM-GASKET-RIGHT-VOLUME": {"unit": "mm3", "value": 231.99999999999994, "tolerance": 0.000001},
+    "JC-CLEAR-SIDE": {"unit": "mm", "value": 0.20000000000000018, "tolerance": 0.000001},
+    "JC-CLEAR-END": {"unit": "mm", "value": 1.0, "tolerance": 0.000001},
+    "JC-FIT-GASKET-COMPRESSION": {"unit": "mm", "value": 0.5, "tolerance": 0.000001},
+    "JC-INTERFERENCE-RIGID": {"unit": "mm3", "value": 0.0, "tolerance": 0.000001},
+    "JC-INTERFERENCE-GASKET": {"unit": "mm3", "value": 0.0, "tolerance": 0.000001},
+    "JC-SECTION-VERTICAL-CLEARANCE": {"unit": "mm", "value": 1.1999999999999993, "tolerance": 0.000001},
+    "JC-ROUNDTRIP-SOLID-COUNT": {"unit": "count", "value": 2, "tolerance": 0},
+    "JC-ROUNDTRIP-VOLUME": {"unit": "mm3", "value": 23215.027487648054, "tolerance": 0.000001},
+    "JC-ROUNDTRIP-LOWER-VOLUME": {"unit": "mm3", "value": 12377.913743824027, "tolerance": 0.000001},
+    "JC-ROUNDTRIP-UPPER-VOLUME": {"unit": "mm3", "value": 10837.113743824028, "tolerance": 0.000001}
+  }
+}

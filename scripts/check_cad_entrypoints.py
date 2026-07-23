@@ -3,26 +3,29 @@
 from __future__ import annotations
 
 import argparse
+import ast
 from pathlib import Path
-import re
 import subprocess
 import sys
+import tomllib
 
 
 ROOT = Path(__file__).resolve().parents[1]
 MARKER = "_ensure_cad_coordinated(__name__, __file__, _CAD_SAFETY_ROOT)"
-HEAVY_IMPORT = re.compile(
-    r"^(?:from|import)\s+(?:OCP|build123d|cadquery|ocp_tessellate|ocp_vscode|vtk)",
-    re.MULTILINE,
+NATIVE_PREFIXES = (
+    "OCP",
+    "build123d",
+    "cadquery",
+    "ocp_tessellate",
+    "ocp_vscode",
+    "vtk",
 )
-NATIVE_FREE_SCRIPT_IMPORT = r"(?:cad_review|cad_verification_io)\b"
-INDIRECT_CAD_IMPORT = re.compile(
-    rf"^(?:from\s+(?:src|experiments)\."
-    rf"|from\s+scripts\.(?!{NATIVE_FREE_SCRIPT_IMPORT})"
-    rf"|import\s+generate_)",
-    re.MULTILINE,
-)
-GUARD = '''
+NATIVE_FREE_SCRIPT_MODULES = {"scripts.cad_review", "scripts.cad_verification_io"}
+AUDITED_NATIVE_FREE_PATHS = {
+    Path("scripts/cad_review.py"),
+    Path("scripts/cad_verification_io.py"),
+}
+GUARD = """
 
 # This guard must remain before all native CAD/threaded-library imports.
 from pathlib import Path as _CadSafetyPath
@@ -39,25 +42,87 @@ if str(_CAD_SAFETY_ROOT) not in _cad_safety_sys.path:
 from cad_runner.entrypoint import ensure_coordinated as _ensure_cad_coordinated
 
 _ensure_cad_coordinated(__name__, __file__, _CAD_SAFETY_ROOT)
-'''
+"""
 
 
 def _repository_python_files() -> list[Path]:
-    result = subprocess.run(
-        [
-            "git",
-            "ls-files",
-            "--cached",
-            "--others",
-            "--exclude-standard",
-            "*.py",
-        ],
-        cwd=ROOT,
-        check=True,
-        capture_output=True,
-        text=True,
+    if (ROOT / ".git").exists():
+        result = subprocess.run(
+            [
+                "git",
+                "ls-files",
+                "--cached",
+                "--others",
+                "--exclude-standard",
+                "*.py",
+            ],
+            cwd=ROOT,
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+        if result.returncode == 0:
+            return [ROOT / line for line in result.stdout.splitlines() if line]
+    return sorted(
+        path
+        for path in ROOT.rglob("*.py")
+        if not any(
+            part in {"build", ".venv", "__pycache__"} or part.startswith(".")
+            for part in path.relative_to(ROOT).parts
+        )
     )
-    return [ROOT / line for line in result.stdout.splitlines() if line]
+
+
+def _imported_modules(text: str) -> tuple[tuple[str, int], ...]:
+    tree = ast.parse(text)
+    imports: list[tuple[str, int]] = []
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Import):
+            imports.extend((alias.name, node.lineno) for alias in node.names)
+        elif isinstance(node, ast.ImportFrom) and node.module:
+            imports.append((node.module, node.lineno))
+    return tuple(imports)
+
+
+def _module_requires_cad(module: str) -> bool:
+    if module in NATIVE_FREE_SCRIPT_MODULES:
+        return False
+    if module == "src" or module.startswith("src."):
+        return True
+    if module == "experiments" or module.startswith("experiments."):
+        return True
+    if module.startswith("scripts."):
+        return True
+    if module.startswith("generate_"):
+        return True
+    return any(
+        module == prefix or module.startswith(f"{prefix}.")
+        for prefix in NATIVE_PREFIXES
+    )
+
+
+def source_requires_cad_guard(text: str) -> bool:
+    """Return whether imports anywhere in an AST cross into the CAD runtime."""
+
+    return any(
+        _module_requires_cad(module) for module, _line in _imported_modules(text)
+    )
+
+
+def _cataloged_entrypoints() -> set[Path]:
+    catalog_path = ROOT / ".cad-project/models.toml"
+    if not catalog_path.is_file():
+        return set()
+    with catalog_path.open("rb") as stream:
+        catalog = tomllib.load(stream)
+    entries: set[Path] = set()
+    for section in ("models", "experiments"):
+        for record in catalog.get(section, ()):
+            for key in ("entrypoint", "generator"):
+                value = record.get(key)
+                if isinstance(value, str) and value.endswith(".py"):
+                    entries.add(Path(value))
+    return entries
 
 
 def _path_is_declared_cad_entrypoint(path: Path) -> bool:
@@ -75,33 +140,57 @@ def _path_is_declared_cad_entrypoint(path: Path) -> bool:
 
 def repository_cad_entrypoints() -> list[Path]:
     entries: list[Path] = []
+    cataloged = _cataloged_entrypoints()
     for path in _repository_python_files():
         text = path.read_text(encoding="utf-8")
-        if 'if __name__ == "__main__":' not in text:
-            continue
+        relative = path.relative_to(ROOT)
         if (
-            HEAVY_IMPORT.search(text)
-            or INDIRECT_CAD_IMPORT.search(text)
-            or _path_is_declared_cad_entrypoint(path)
+            relative.parts
+            and relative.parts[0] == "tests"
+            and relative not in cataloged
+        ):
+            continue
+        if relative in cataloged or (
+            'if __name__ == "__main__":' in text
+            and (
+                source_requires_cad_guard(text)
+                or _path_is_declared_cad_entrypoint(path)
+            )
         ):
             entries.append(path)
-    return entries
+    return sorted(set(entries))
+
+
+def entrypoint_source_violations(relative: Path, text: str) -> list[str]:
+    """Audit one known entrypoint; exposed for focused policy tests."""
+
+    problems: list[str] = []
+    if MARKER not in text:
+        return [f"{relative}: missing CAD coordinator guard"]
+    marker_offset = text.index(MARKER)
+    marker_line = text[:marker_offset].count("\n") + 1
+    import_lines = [
+        line for module, line in _imported_modules(text) if _module_requires_cad(module)
+    ]
+    if import_lines and marker_line > min(import_lines):
+        problems.append(f"{relative}: guard appears after native CAD import")
+    if "preexec_fn" in text or "os.fork(" in text:
+        problems.append(f"{relative}: unsafe fork-triggering process code")
+    return problems
 
 
 def violations() -> list[str]:
     problems: list[str] = []
+    for relative in sorted(AUDITED_NATIVE_FREE_PATHS):
+        path = ROOT / relative
+        if path.is_file() and source_requires_cad_guard(
+            path.read_text(encoding="utf-8")
+        ):
+            problems.append(f"{relative}: audited native-free module imports CAD code")
     for path in repository_cad_entrypoints():
         text = path.read_text(encoding="utf-8")
         relative = path.relative_to(ROOT)
-        if MARKER not in text:
-            problems.append(f"{relative}: missing CAD coordinator guard")
-            continue
-        marker_offset = text.index(MARKER)
-        heavy = HEAVY_IMPORT.search(text)
-        if heavy and marker_offset > heavy.start():
-            problems.append(f"{relative}: guard appears after native CAD import")
-        if "preexec_fn" in text or re.search(r"\bos\.fork\s*\(", text):
-            problems.append(f"{relative}: unsafe fork-triggering process code")
+        problems.extend(entrypoint_source_violations(relative, text))
     return problems
 
 

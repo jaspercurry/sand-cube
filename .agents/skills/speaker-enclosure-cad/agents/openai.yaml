@@ -1,0 +1,4 @@
+interface:
+  display_name: "Speaker Enclosure CAD"
+  short_description: "Build, validate, and review enclosure CAD"
+  default_prompt: "Use $speaker-enclosure-cad to run a measured design iteration on this speaker enclosure."

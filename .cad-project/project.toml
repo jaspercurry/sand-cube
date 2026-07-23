@@ -1,0 +1,28 @@
+schema_version = 1
+artifact_root = "build"
+model_catalog = ".cad-project/models.toml"
+cad_units = "mm"
+
+[runtime]
+python = ".venv/bin/python"
+concurrency_limit = 1
+coordinator_module = "cad_runner"
+
+[dependencies]
+build123d = "0.11.1"
+cadquery_ocp_novtk = "7.9.3.1"
+build123d_mcp = "0.3.79"
+
+[viewer]
+name = "Text-to-CAD"
+version = "0.3.9"
+commit = "fdbb4b4fb62d95ae298cfe9a46fdc7092bdaf423"
+tool_root = "build/tool-evaluations/text-to-cad-0.3.9"
+host = "127.0.0.1"
+preferred_port = 4178
+read_only = true
+
+[mcp]
+server = "build123d_workbench"
+scope = "project"
+role = "disposable in-memory scratch geometry and focused rendering"

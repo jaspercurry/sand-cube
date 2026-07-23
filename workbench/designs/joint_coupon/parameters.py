@@ -62,31 +62,29 @@ class CouponParameters:
         return self.groove_width / 2.0 + self.gasket_land_gap + self.gasket_width / 2.0
 
 
-def load_parameters(path: Path = PARAMETERS_PATH) -> tuple[dict[str, Any], CouponParameters]:
+def load_parameters(
+    path: Path = PARAMETERS_PATH,
+) -> tuple[dict[str, Any], CouponParameters]:
     raw = json.loads(path.read_text(encoding="utf-8"))
     return raw, CouponParameters.from_mapping(raw)
 
 
 def expected_volumes(params: CouponParameters) -> dict[str, float]:
-    hole_volume_per_plate = (
-        4.0
-        * pi
-        * (params.fastener_diameter / 2.0) ** 2
-        * params.lower_thickness
+    lower_hole_volume = (
+        4.0 * pi * (params.fastener_diameter / 2.0) ** 2 * params.lower_thickness
+    )
+    upper_hole_volume = (
+        4.0 * pi * (params.fastener_diameter / 2.0) ** 2 * params.upper_thickness
     )
     lower = (
         params.length * params.depth * params.lower_thickness
         + params.tongue_length * params.tongue_width * params.tongue_height
-        - hole_volume_per_plate
+        - lower_hole_volume
     )
     upper = (
         params.length * params.depth * params.upper_thickness
         - params.groove_length * params.groove_width * params.groove_depth
-        - hole_volume_per_plate
+        - upper_hole_volume
     )
-    gasket = (
-        params.gasket_length
-        * params.gasket_width
-        * params.gasket_closed_thickness
-    )
+    gasket = params.gasket_length * params.gasket_width * params.gasket_closed_thickness
     return {"lower": lower, "upper": upper, "gasket_each": gasket}

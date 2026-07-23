@@ -13,7 +13,9 @@ from .model import (
     DesignContract,
     Expectation,
     Fingerprint,
+    InspectionAttestation,
     JobMetrics,
+    JobOutput,
     ModelIdentity,
     Requirement,
     ReviewPacket,
@@ -21,6 +23,7 @@ from .model import (
     ToolIdentity,
     ToolchainIdentity,
     VisualEvidence,
+    ViewerSessionRecord,
 )
 from .policy import (
     CheckKind,
@@ -106,8 +109,7 @@ def minimal_review_packet(
 
     contract = contract or minimal_contract()
     requirements = {
-        requirement.requirement_id: requirement
-        for requirement in contract.requirements
+        requirement.requirement_id: requirement for requirement in contract.requirements
     }
     source_fingerprints = (
         Fingerprint("examples/synthetic_joint.py", _digest(b"synthetic source")),
@@ -116,17 +118,43 @@ def minimal_review_packet(
         Fingerprint("examples/parameters.json", _digest(b'{"length":80}')),
     )
     step_bytes = b"synthetic STEP evidence"
-    artifact = ArtifactEvidence(
-        artifact_id="artifact.synthetic-step",
-        path="build/examples/synthetic_joint.step",
-        media_type="model/step",
-        sha256=_digest(step_bytes),
-        size_bytes=len(step_bytes),
-        created_at=_FINISHED,
-        contract_fingerprint=contract_fingerprint(contract),
-        source_fingerprint=fingerprint_collection(source_fingerprints),
-        input_fingerprint=fingerprint_collection(input_fingerprints),
+    artifact_values = (
+        (
+            "artifact.synthetic-step",
+            "build/examples/synthetic_joint.step",
+            "model/step",
+            step_bytes,
+        ),
+        (
+            "artifact.synthetic-sidecar",
+            "build/examples/.synthetic_joint.step.glb",
+            "model/gltf-binary",
+            b"synthetic topology sidecar",
+        ),
+        (
+            "artifact.synthetic-snapshot",
+            "build/examples/synthetic_joint_section.png",
+            "image/png",
+            b"synthetic rendered PNG",
+        ),
     )
+    artifacts = tuple(
+        ArtifactEvidence(
+            artifact_id=artifact_id,
+            path=path,
+            media_type=media_type,
+            sha256=_digest(payload),
+            size_bytes=len(payload),
+            created_at=_FINISHED,
+            contract_fingerprint=contract_fingerprint(contract),
+            source_fingerprint=fingerprint_collection(source_fingerprints),
+            input_fingerprint=fingerprint_collection(input_fingerprints),
+        )
+        for artifact_id, path, media_type, payload in artifact_values
+    )
+    artifact = artifacts[0]
+    sidecar = artifacts[1]
+    rendered = artifacts[2]
     viewer = VisualEvidence(
         evidence_id="viewer.synthetic-step",
         channel=EvidenceChannel.VIEWER,
@@ -135,6 +163,8 @@ def minimal_review_packet(
         purpose="Interactive inspection of the exact exported STEP.",
         created_at=_FINISHED,
         artifact_id=artifact.artifact_id,
+        source_artifact_ids=(sidecar.artifact_id,),
+        viewer_record_id="viewer-record.synthetic-step",
         renderer="Text-to-CAD Viewer",
         read_only=True,
     )
@@ -145,9 +175,33 @@ def minimal_review_packet(
         locator="build/examples/synthetic_joint_section.png",
         purpose="Confirm the joint section answers the visual fit question.",
         created_at=_FINISHED,
-        artifact_id=artifact.artifact_id,
+        artifact_id=rendered.artifact_id,
+        source_artifact_ids=(artifact.artifact_id, sidecar.artifact_id),
+        attestation_id="attestation.synthetic-snapshot",
         renderer="Text-to-CAD Snapshot",
-        inspected_by_agent=True,
+    )
+    attestation = InspectionAttestation(
+        attestation_id="attestation.synthetic-snapshot",
+        inspector="codex-agent",
+        inspected_at=_FINISHED,
+        statement="Inspected the rendered joint section against its STEP and sidecar.",
+        artifact_fingerprints=tuple(
+            Fingerprint(item.artifact_id, item.sha256)
+            for item in (artifact, sidecar, rendered)
+        ),
+    )
+    viewer_record = ViewerSessionRecord(
+        record_id="viewer-record.synthetic-step",
+        url=viewer.locator,
+        recorded_at=_FINISHED,
+        server_app="cad-viewer",
+        backend="local-fs",
+        dynamic_root=True,
+        generation_available=False,
+        viewer_version="1.8.0",
+        artifact_fingerprints=tuple(
+            Fingerprint(item.artifact_id, item.sha256) for item in (artifact, sidecar)
+        ),
     )
     results = (
         assess(
@@ -191,21 +245,34 @@ def minimal_review_packet(
                 ToolIdentity("synthetic-kernel", "1", "test-double"),
             )
         ),
-        artifacts=(artifact,),
+        artifacts=artifacts,
         results=results,
-        job_metrics=JobMetrics(
-            job_id="job.synthetic-001",
-            started_at=_STARTED,
-            finished_at=_FINISHED,
-            elapsed_seconds=1.25,
-            exit_code=0,
-            worker_pid=1234,
-            peak_rss_bytes=12_345_678,
-            cleanup_completed=True,
-            orphan_processes=0,
-            outputs=(artifact.path,),
+        jobs=(
+            JobMetrics(
+                role="job.synthetic-production",
+                job_id="job.synthetic-001",
+                name="synthetic-release",
+                state="completed",
+                target="examples/build_synthetic_joint.py",
+                profile=VerificationProfile.RELEASE,
+                command=("examples/build_synthetic_joint.py", "--profile", "release"),
+                started_at=_STARTED,
+                finished_at=_FINISHED,
+                elapsed_seconds=1.25,
+                exit_code=0,
+                worker_pid=1234,
+                peak_rss_bytes=12_345_678,
+                cleanup_completed=True,
+                orphan_processes=0,
+                outputs=tuple(
+                    JobOutput(item.path, item.sha256, item.size_bytes)
+                    for item in artifacts
+                ),
+            ),
         ),
         visual_evidence=(viewer, snapshot),
+        inspection_attestations=(attestation,),
+        viewer_records=(viewer_record,),
         confirmed_facts=(
             "Synthetic dimensions, fit, round-trip, and visual checks passed.",
         ),

@@ -1,0 +1,358 @@
+schema_version = 1
+
+[policy]
+experiment_root = "experiments"
+model_statuses = ["stable", "development", "released", "workbench", "archived"]
+experiment_statuses = ["active", "promoted-support", "supporting", "study", "historical"]
+
+# Primary models are the short, user-facing map of the repository. Generated
+# output paths are allowed not to exist; source, entrypoint, and validation
+# paths must exist and are checked by scripts/model_catalog.py.
+
+[[models]]
+id = "final-enclosure-200"
+name = "Current 200 mm enclosure"
+status = "stable"
+kind = "enclosure"
+source = "src/final_enclosure.py"
+implementation = "experiments/sand_cube_8_5_black_hole/generate_contoured_inner_variants.py"
+entrypoint = "scripts/generate_final_enclosure.py"
+parameters = "experiments/sand_cube_8_5_black_hole/generate_contoured_inner_variants.py"
+output = "build/sand_cube_200_wall_7_black_hole"
+notes = "Stable API points to the 200 mm / 7 mm-wall FINAL_VARIANT; legacy folder names are not dimensions."
+
+[[models]]
+id = "final-system"
+name = "Current enclosure, horn, and bracket assembly"
+status = "stable"
+kind = "system"
+source = "scripts/generate_final_system_assembly.py"
+entrypoint = "scripts/generate_final_system_assembly.py"
+parameters = "params.py"
+output = "build/final_system"
+
+[[models]]
+id = "final-jmlc-horn"
+name = "Current B&C DE250 JMLC horn"
+status = "stable"
+kind = "horn"
+source = "src/final_horn.py"
+implementation = "src/features/horn.py"
+entrypoint = "scripts/generate_final_system_assembly.py"
+parameters = "params.py"
+output = "build/final_system/final_jmlc_horn_placed.step"
+
+[[models]]
+id = "horn-bracket"
+name = "Folded 4 mm horn bracket"
+status = "stable"
+kind = "component"
+source = "src/features/bracket.py"
+entrypoint = "scripts/generate_bracket_assembly.py"
+parameters = "params.py"
+output = "build/bracket"
+
+[[models]]
+id = "electronics-enclosure"
+name = "Electronics enclosure layout set"
+status = "stable"
+kind = "component"
+source = "src/features/electronics.py"
+entrypoint = "scripts/generate_electronics_enclosure_layouts.py"
+parameters = "params.py"
+output = "build/electronics_enclosure"
+
+[[models]]
+id = "compact-6in-system"
+name = "Compact 6 inch enclosure and horn system"
+status = "stable"
+kind = "system"
+source = "src/compact_6in/enclosure.py"
+entrypoint = "scripts/generate_compact_6in.py"
+parameters = "src/compact_6in/params.py"
+output = "build/compact_6in"
+
+[[models]]
+id = "development-190x210-tongue-groove"
+name = "190 x 210 removable tongue-and-groove baffle"
+status = "development"
+kind = "enclosure"
+source = "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle/generate_sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle.py"
+entrypoint = "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle/generate_sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle.py"
+validator = "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle/validate_simple_tongue_groove_baffle.py"
+output = "build/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle"
+
+[[models]]
+id = "joint-coupon"
+name = "Workbench gasket and joint coupon"
+status = "workbench"
+kind = "coupon"
+source = "workbench/designs/joint_coupon/model.py"
+entrypoint = "workbench/designs/joint_coupon/build.py"
+parameters = "workbench/designs/joint_coupon/params.json"
+workbench = "workbench/designs/joint_coupon"
+output = "build/workbench/joint_coupon"
+
+[[models]]
+id = "legacy-enclosure-203"
+name = "Archived 203 mm enclosure"
+status = "archived"
+kind = "enclosure"
+source = "archive/old_enclosure.py"
+entrypoint = "scripts/generate_archive_old_enclosure.py"
+parameters = "params.py"
+output = "build/archive/old_enclosure"
+notes = "Kept for regeneration and comparison; its 203 mm dimensions are not current defaults."
+
+# Experiment entries are an exhaustive index of immediate experiments/*
+# directories. The checker fails if a folder is added, removed, or renamed
+# without updating this catalog.
+
+[[experiments]]
+id = "exp-jmlc-square-baffle"
+name = "JMLC square-baffle studies"
+status = "study"
+family = "horn-baffle"
+directory = "experiments/jmlc_square_baffle"
+entrypoint = "experiments/jmlc_square_baffle/generate_rolled_cube.py"
+
+[[experiments]]
+id = "exp-max-black-hole-baffle"
+name = "Maximum black-hole baffle variants"
+status = "study"
+family = "baffle"
+directory = "experiments/max_black_hole_baffle"
+entrypoint = "experiments/max_black_hole_baffle/generate_variants.py"
+
+[[experiments]]
+id = "exp-190x210-header-port"
+name = "190 x 210 modular header port"
+status = "study"
+family = "port"
+directory = "experiments/sand_cube_190x210_header_port"
+entrypoint = "experiments/sand_cube_190x210_header_port/generate_sand_cube_190x210_header_port.py"
+
+[[experiments]]
+id = "exp-190x210-internal-squat-absorber"
+name = "Internal ultra-squat absorber"
+status = "study"
+family = "absorber"
+directory = "experiments/sand_cube_190x210_internal_squat_absorber"
+entrypoint = "experiments/sand_cube_190x210_internal_squat_absorber/generate_sand_cube_190x210_internal_squat_absorber.py"
+
+[[experiments]]
+id = "exp-190x210-internal-squat-absorber-flush"
+name = "Rear-flush internal squat absorber"
+status = "study"
+family = "absorber"
+directory = "experiments/sand_cube_190x210_internal_squat_absorber_flush"
+entrypoint = "experiments/sand_cube_190x210_internal_squat_absorber_flush/generate_sand_cube_190x210_internal_squat_absorber_flush.py"
+
+[[experiments]]
+id = "exp-190x210-rear-corners"
+name = "Rear-corner absorber base"
+status = "supporting"
+family = "enclosure-base"
+directory = "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners"
+entrypoint = "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners/generate_sand_cube_190x210_internal_squat_absorber_rear_corners.py"
+
+[[experiments]]
+id = "exp-190x210-inverse-le-cleach-front"
+name = "Inverse Le Cleac'h front solver"
+status = "study"
+family = "front-profile"
+directory = "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_inverse_le_cleach_front"
+entrypoint = "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_inverse_le_cleach_front/solve_inverse_le_cleach_front.py"
+
+[[experiments]]
+id = "exp-190x210-le-cleach-g2-fairing"
+name = "15 mm Le Cleac'h G2 fairing"
+status = "study"
+family = "front-profile"
+directory = "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_le_cleach_front_15mm_g2_fairing"
+entrypoint = "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_le_cleach_front_15mm_g2_fairing/generate_sand_cube_190x210_internal_squat_absorber_rear_corners_le_cleach_front_15mm_g2_fairing.py"
+
+[[experiments]]
+id = "exp-190x210-le-cleach-square-crop-r8"
+name = "Square-cropped Le Cleac'h front with R8 blend"
+status = "study"
+family = "front-profile"
+directory = "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_le_cleach_front_15mm_square_crop_r8"
+entrypoint = "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_le_cleach_front_15mm_square_crop_r8/generate_sand_cube_190x210_internal_squat_absorber_rear_corners_le_cleach_front_15mm_square_crop_r8.py"
+
+[[experiments]]
+id = "exp-190x210-le-cleach-square-crop-unified-r8"
+name = "Square-cropped Le Cleac'h front with unified R8 perimeter"
+status = "study"
+family = "front-profile"
+directory = "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_le_cleach_front_15mm_square_crop_unified_r8"
+entrypoint = "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_le_cleach_front_15mm_square_crop_unified_r8/generate_sand_cube_190x210_internal_squat_absorber_rear_corners_le_cleach_front_15mm_square_crop_unified_r8.py"
+
+[[experiments]]
+id = "exp-190x210-centered-captive-nut"
+name = "Centered captive-nut closure"
+status = "historical"
+family = "baffle-closure"
+directory = "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_centered_captive_nut"
+entrypoint = "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_centered_captive_nut/generate_sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_centered_captive_nut.py"
+
+[[experiments]]
+id = "exp-190x210-conformal-full-system"
+name = "Parabolic-G1 conformal full system"
+status = "supporting"
+family = "enclosure-base"
+directory = "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_conformal_full_system"
+entrypoint = "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_conformal_full_system/generate_sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_conformal_full_system.py"
+
+[[experiments]]
+id = "exp-190x210-conformal-inner-wall"
+name = "Parabolic-G1 conformal inner wall"
+status = "study"
+family = "enclosure-wall"
+directory = "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_conformal_inner_wall"
+entrypoint = "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_conformal_inner_wall/generate_sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_conformal_inner_wall.py"
+
+[[experiments]]
+id = "exp-190x210-parabolic-fairing"
+name = "Parabolic-G1 fairing"
+status = "study"
+family = "front-profile"
+directory = "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_fairing"
+entrypoint = "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_fairing/generate_sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_fairing.py"
+
+[[experiments]]
+id = "exp-190x210-hooked-gasketed-baffle"
+name = "Hooked gasketed baffle"
+status = "historical"
+family = "baffle-closure"
+directory = "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_hooked_gasketed_baffle"
+entrypoint = "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_hooked_gasketed_baffle/generate_sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_hooked_gasketed_baffle.py"
+
+[[experiments]]
+id = "exp-190x210-nested-seam-concepts"
+name = "Nested-seam closure concepts"
+status = "historical"
+family = "baffle-closure"
+directory = "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_nested_seam_closure_concepts"
+entrypoint = "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_nested_seam_closure_concepts/generate_sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_nested_seam_closure_concepts.py"
+
+[[experiments]]
+id = "exp-190x210-printable-bucket"
+name = "Parabolic-G1 printable bucket"
+status = "supporting"
+family = "enclosure-base"
+directory = "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_printable_bucket"
+entrypoint = "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_printable_bucket/generate_sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_printable_bucket.py"
+
+[[experiments]]
+id = "exp-190x210-simple-tongue-groove"
+name = "Simple tongue-and-groove removable baffle"
+status = "active"
+family = "baffle-closure"
+directory = "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle"
+entrypoint = "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle/generate_sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle.py"
+
+[[experiments]]
+id = "exp-190x210-port-absorber-bucket"
+name = "Removable bucket port absorber"
+status = "study"
+family = "port-absorber"
+directory = "experiments/sand_cube_190x210_port_absorber_bucket"
+entrypoint = "experiments/sand_cube_190x210_port_absorber_bucket/generate_port_absorber_bucket.py"
+
+[[experiments]]
+id = "exp-190x210-port-absorber-collar"
+name = "Removable Helmholtz absorber collar"
+status = "study"
+family = "port-absorber"
+directory = "experiments/sand_cube_190x210_port_absorber_collar"
+entrypoint = "experiments/sand_cube_190x210_port_absorber_collar/generate_port_absorber_collar.py"
+
+[[experiments]]
+id = "exp-190x210-port-absorber-slotted-bucket"
+name = "Slotted bucket port absorber"
+status = "study"
+family = "port-absorber"
+directory = "experiments/sand_cube_190x210_port_absorber_slotted_bucket"
+entrypoint = "experiments/sand_cube_190x210_port_absorber_slotted_bucket/generate_port_absorber_slotted_bucket.py"
+
+[[experiments]]
+id = "exp-190x210-port-absorber-slotted-compact"
+name = "Compact slotted bucket port absorber"
+status = "study"
+family = "port-absorber"
+directory = "experiments/sand_cube_190x210_port_absorber_slotted_bucket_compact"
+entrypoint = "experiments/sand_cube_190x210_port_absorber_slotted_bucket_compact/generate_port_absorber_slotted_bucket_compact.py"
+
+[[experiments]]
+id = "exp-190x210-port-absorber-d-squat"
+name = "D-shaped ultra-squat slotted absorber Rev C"
+status = "study"
+family = "port-absorber"
+directory = "experiments/sand_cube_190x210_port_absorber_slotted_d_squat"
+entrypoint = "experiments/sand_cube_190x210_port_absorber_slotted_d_squat/generate_port_absorber_slotted_d_squat.py"
+
+[[experiments]]
+id = "exp-190x210-port-absorber-d-squat-rev-d"
+name = "D-shaped ultra-squat slotted absorber Rev D"
+status = "study"
+family = "port-absorber"
+directory = "experiments/sand_cube_190x210_port_absorber_slotted_d_squat_rev_d"
+entrypoint = "experiments/sand_cube_190x210_port_absorber_slotted_d_squat_rev_d/generate_port_absorber_slotted_d_squat_rev_d.py"
+
+[[experiments]]
+id = "exp-190x210-serviceable-tower"
+name = "Serviceable port-tower concept"
+status = "study"
+family = "port"
+directory = "experiments/sand_cube_190x210_serviceable_tower"
+entrypoint = "experiments/sand_cube_190x210_serviceable_tower/generate_sand_cube_190x210_serviceable_tower.py"
+
+[[experiments]]
+id = "exp-190x210-single-oval-port"
+name = "Single oval 39 Hz port study"
+status = "study"
+family = "port"
+directory = "experiments/sand_cube_190x210_single_oval_port"
+entrypoint = "experiments/sand_cube_190x210_single_oval_port/generate_sand_cube_190x210_single_oval_port.py"
+
+[[experiments]]
+id = "exp-200-hybrid-port"
+name = "200 mm folded hybrid port concept"
+status = "study"
+family = "port"
+directory = "experiments/sand_cube_200_hybrid_port"
+entrypoint = "experiments/sand_cube_200_hybrid_port/generate_sand_cube_200_hybrid_port.py"
+
+[[experiments]]
+id = "exp-200-port-tower"
+name = "200 mm port tower"
+status = "study"
+family = "port"
+directory = "experiments/sand_cube_200_port_tower"
+entrypoint = "experiments/sand_cube_200_port_tower/generate_sand_cube_200_port_tower.py"
+
+[[experiments]]
+id = "exp-200-twin-inlet-port"
+name = "200 mm twin-inlet single-spine port"
+status = "study"
+family = "port"
+directory = "experiments/sand_cube_200_twin_inlet_port"
+entrypoint = "experiments/sand_cube_200_twin_inlet_port/generate_sand_cube_200_twin_inlet_port.py"
+
+[[experiments]]
+id = "exp-black-hole-enclosure"
+name = "Black-hole enclosure variant family"
+status = "promoted-support"
+family = "enclosure-base"
+directory = "experiments/sand_cube_8_5_black_hole"
+entrypoint = "experiments/sand_cube_8_5_black_hole/generate_contoured_inner_variants.py"
+notes = "Contains the implementation promoted through src/final_enclosure.py; the folder name is historical."
+
+[[experiments]]
+id = "exp-viscoelastic-test-molds"
+name = "Viscoelastic rebound test molds"
+status = "study"
+family = "materials-test"
+directory = "experiments/viscoelastic_test_molds"
+entrypoint = "experiments/viscoelastic_test_molds/generate_viscoelastic_test_molds.py"

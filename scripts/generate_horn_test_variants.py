@@ -7,13 +7,30 @@ compare Onshape import behavior against local OpenCascade validity checks.
 
 from __future__ import annotations
 
+
+# This guard must remain before all native CAD/threaded-library imports.
+from pathlib import Path as _CadSafetyPath
+import sys as _cad_safety_sys
+
+_CAD_SAFETY_ROOT = next(
+    parent
+    for parent in _CadSafetyPath(__file__).resolve().parents
+    if (parent / "pyproject.toml").is_file()
+    and (parent / "AGENTS.md").is_file()
+)
+if str(_CAD_SAFETY_ROOT) not in _cad_safety_sys.path:
+    _cad_safety_sys.path.insert(0, str(_CAD_SAFETY_ROOT))
+from cad_runner.entrypoint import ensure_coordinated as _ensure_cad_coordinated
+
+_ensure_cad_coordinated(__name__, __file__, _CAD_SAFETY_ROOT)
+
 import json
 import math
 import sys
 from collections import Counter
 from pathlib import Path
 
-from build123d import Align, Cylinder, Location, Mode, Solid, export_step
+from build123d import Align, Cylinder, Location, Mode, Solid
 from OCP.BOPAlgo import BOPAlgo_CheckerSI
 from OCP.BRep import BRep_Tool
 from OCP.BRepAdaptor import BRepAdaptor_Curve, BRepAdaptor_Surface
@@ -23,6 +40,7 @@ from OCP.BRepBuilderAPI import (
     BRepBuilderAPI_MakeWire,
 )
 from OCP.BRepCheck import BRepCheck_Analyzer
+from src.cad_io import export_step
 from OCP.BRepGProp import BRepGProp
 from OCP.BRepPrimAPI import BRepPrimAPI_MakeRevol
 from OCP.GC import GC_MakeArcOfCircle

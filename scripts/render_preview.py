@@ -2,6 +2,25 @@
 
 from __future__ import annotations
 
+
+# This guard must remain before all native CAD/threaded-library imports.
+from pathlib import Path as _CadSafetyPath
+import sys as _cad_safety_sys
+
+_CAD_SAFETY_ROOT = next(
+    parent
+    for parent in _CadSafetyPath(__file__).resolve().parents
+    if (parent / "pyproject.toml").is_file()
+    and (parent / "AGENTS.md").is_file()
+)
+if str(_CAD_SAFETY_ROOT) not in _cad_safety_sys.path:
+    _cad_safety_sys.path.insert(0, str(_CAD_SAFETY_ROOT))
+from cad_runner.entrypoint import ensure_coordinated as _ensure_cad_coordinated
+
+_ensure_cad_coordinated(__name__, __file__, _CAD_SAFETY_ROOT)
+
+from cad_runner.outputs import job_output_path
+
 from pathlib import Path
 import sys
 
@@ -81,9 +100,24 @@ def render(path: Path, *, elev: float, azim: float, title: str) -> None:
 
 
 def main() -> None:
-    render(Path("build/preview_iso.png"), elev=24, azim=-38, title="Sand Cube - ISO Preview")
-    render(Path("build/preview_front.png"), elev=0, azim=-90, title="Sand Cube - Front Preview")
-    render(Path("build/preview_rear.png"), elev=0, azim=90, title="Sand Cube - Rear Preview")
+    render(
+        job_output_path(Path("build/preview_iso.png")),
+        elev=24,
+        azim=-38,
+        title="Sand Cube - ISO Preview",
+    )
+    render(
+        job_output_path(Path("build/preview_front.png")),
+        elev=0,
+        azim=-90,
+        title="Sand Cube - Front Preview",
+    )
+    render(
+        job_output_path(Path("build/preview_rear.png")),
+        elev=0,
+        azim=90,
+        title="Sand Cube - Rear Preview",
+    )
 
 
 if __name__ == "__main__":

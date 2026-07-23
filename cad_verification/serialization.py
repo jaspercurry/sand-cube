@@ -14,7 +14,9 @@ from .model import (
     DesignContract,
     Expectation,
     Fingerprint,
+    InspectionAttestation,
     JobMetrics,
+    JobOutput,
     ModelIdentity,
     Requirement,
     RequirementResult,
@@ -24,6 +26,7 @@ from .model import (
     ToolIdentity,
     ToolchainIdentity,
     VisualEvidence,
+    ViewerSessionRecord,
 )
 from .policy import (
     CheckKind,
@@ -202,8 +205,7 @@ def _requirement_to_dict(requirement: Requirement) -> dict[str, Any]:
             "adapter": requirement.check.adapter,
             "kind": requirement.check.kind.value,
             "parameters": {
-                key: value
-                for key, value in sorted(requirement.check.parameters)
+                key: value for key, value in sorted(requirement.check.parameters)
             },
         },
         "cost_profile": requirement.cost_profile.value,
@@ -244,9 +246,7 @@ def _requirement_from_dict(value: Any, path: str) -> Requirement:
         required=("absolute",),
     )
     return Requirement(
-        requirement_id=_string(
-            data["requirement_id"], f"{path}.requirement_id"
-        ),
+        requirement_id=_string(data["requirement_id"], f"{path}.requirement_id"),
         description=_string(data["description"], f"{path}.description"),
         check=CheckSpec(
             kind=_enum(CheckKind, check_data["kind"], f"{path}.check.kind"),
@@ -256,9 +256,7 @@ def _requirement_from_dict(value: Any, path: str) -> Requirement:
                 for key, parameter in sorted(parameters.items())
             ),
         ),
-        expectation=_expectation_from_dict(
-            data["expectation"], f"{path}.expectation"
-        ),
+        expectation=_expectation_from_dict(data["expectation"], f"{path}.expectation"),
         unit=_enum(Unit, data["unit"], f"{path}.unit"),
         tolerance=Tolerance(
             _number(
@@ -396,9 +394,7 @@ def _result_from_dict(value: Any, path: str) -> RequirementResult:
     if not isinstance(references, list):
         raise SerializationError(f"{path}.evidence_refs must be an array")
     return RequirementResult(
-        requirement_id=_string(
-            data["requirement_id"], f"{path}.requirement_id"
-        ),
+        requirement_id=_string(data["requirement_id"], f"{path}.requirement_id"),
         status=_enum(ResultStatus, data["status"], f"{path}.status"),
         actual=_actual_from_dict(data["actual"], f"{path}.actual"),
         evidence_channel=channel,
@@ -460,16 +456,18 @@ def _artifact_from_dict(value: Any, path: str) -> ArtifactEvidence:
 def _visual_to_dict(evidence: VisualEvidence) -> dict[str, Any]:
     return {
         "artifact_id": evidence.artifact_id,
+        "attestation_id": evidence.attestation_id,
         "channel": evidence.channel.value,
         "created_at": _datetime_text(evidence.created_at),
         "evidence_id": evidence.evidence_id,
-        "inspected_by_agent": evidence.inspected_by_agent,
         "locator": evidence.locator,
         "purpose": evidence.purpose,
         "read_only": evidence.read_only,
         "reason": evidence.reason,
         "renderer": evidence.renderer,
         "scope": evidence.scope.value,
+        "source_artifact_ids": sorted(evidence.source_artifact_ids),
+        "viewer_record_id": evidence.viewer_record_id,
     }
 
 
@@ -484,11 +482,16 @@ def _visual_from_dict(value: Any, path: str) -> VisualEvidence:
         "created_at",
         "artifact_id",
         "renderer",
-        "inspected_by_agent",
+        "source_artifact_ids",
+        "attestation_id",
+        "viewer_record_id",
         "read_only",
         "reason",
     )
     _exact_keys(data, path=path, required=keys)
+    source_artifacts = data["source_artifact_ids"]
+    if not isinstance(source_artifacts, list):
+        raise SerializationError(f"{path}.source_artifact_ids must be an array")
     return VisualEvidence(
         evidence_id=_string(data["evidence_id"], f"{path}.evidence_id"),
         channel=_enum(EvidenceChannel, data["channel"], f"{path}.channel"),
@@ -498,25 +501,59 @@ def _visual_from_dict(value: Any, path: str) -> VisualEvidence:
         created_at=_parse_datetime(data["created_at"], f"{path}.created_at"),
         artifact_id=_optional_string(data["artifact_id"], f"{path}.artifact_id"),
         renderer=_string(data["renderer"], f"{path}.renderer"),
-        inspected_by_agent=_boolean(
-            data["inspected_by_agent"], f"{path}.inspected_by_agent"
+        source_artifact_ids=tuple(
+            _string(item, f"{path}.source_artifact_ids[{index}]")
+            for index, item in enumerate(source_artifacts)
+        ),
+        attestation_id=_optional_string(
+            data["attestation_id"], f"{path}.attestation_id"
+        ),
+        viewer_record_id=_optional_string(
+            data["viewer_record_id"], f"{path}.viewer_record_id"
         ),
         read_only=_boolean(data["read_only"], f"{path}.read_only"),
         reason=_optional_string(data["reason"], f"{path}.reason"),
     )
 
 
+def _job_output_to_dict(output: JobOutput) -> dict[str, Any]:
+    return {
+        "path": output.path,
+        "sha256": output.sha256,
+        "size_bytes": output.size_bytes,
+    }
+
+
+def _job_output_from_dict(value: Any, path: str) -> JobOutput:
+    data = _mapping(value, path)
+    _exact_keys(data, path=path, required=("path", "sha256", "size_bytes"))
+    return JobOutput(
+        path=_string(data["path"], f"{path}.path"),
+        sha256=_string(data["sha256"], f"{path}.sha256"),
+        size_bytes=_integer(data["size_bytes"], f"{path}.size_bytes"),
+    )
+
+
 def _job_to_dict(metrics: JobMetrics) -> dict[str, Any]:
     return {
         "cleanup_completed": metrics.cleanup_completed,
+        "command": list(metrics.command),
         "elapsed_seconds": metrics.elapsed_seconds,
         "exit_code": metrics.exit_code,
         "finished_at": _datetime_text(metrics.finished_at),
         "job_id": metrics.job_id,
+        "name": metrics.name,
         "orphan_processes": metrics.orphan_processes,
-        "outputs": sorted(metrics.outputs),
+        "outputs": [
+            _job_output_to_dict(output)
+            for output in sorted(metrics.outputs, key=lambda item: item.path)
+        ],
         "peak_rss_bytes": metrics.peak_rss_bytes,
+        "profile": metrics.profile.value,
+        "role": metrics.role,
+        "state": metrics.state,
         "started_at": _datetime_text(metrics.started_at),
+        "target": metrics.target,
         "worker_pid": metrics.worker_pid,
     }
 
@@ -525,6 +562,12 @@ def _job_from_dict(value: Any, path: str) -> JobMetrics:
     data = _mapping(value, path)
     keys = (
         "job_id",
+        "role",
+        "name",
+        "state",
+        "target",
+        "profile",
+        "command",
         "started_at",
         "finished_at",
         "elapsed_seconds",
@@ -539,13 +582,23 @@ def _job_from_dict(value: Any, path: str) -> JobMetrics:
     outputs = data["outputs"]
     if not isinstance(outputs, list):
         raise SerializationError(f"{path}.outputs must be an array")
+    command = data["command"]
+    if not isinstance(command, list):
+        raise SerializationError(f"{path}.command must be an array")
     return JobMetrics(
+        role=_string(data["role"], f"{path}.role"),
         job_id=_string(data["job_id"], f"{path}.job_id"),
+        name=_string(data["name"], f"{path}.name"),
+        state=_string(data["state"], f"{path}.state"),
+        target=_string(data["target"], f"{path}.target"),
+        profile=_enum(VerificationProfile, data["profile"], f"{path}.profile"),
+        command=tuple(
+            _string(item, f"{path}.command[{index}]")
+            for index, item in enumerate(command)
+        ),
         started_at=_parse_datetime(data["started_at"], f"{path}.started_at"),
         finished_at=_parse_datetime(data["finished_at"], f"{path}.finished_at"),
-        elapsed_seconds=_number(
-            data["elapsed_seconds"], f"{path}.elapsed_seconds"
-        ),
+        elapsed_seconds=_number(data["elapsed_seconds"], f"{path}.elapsed_seconds"),
         exit_code=_integer(data["exit_code"], f"{path}.exit_code"),
         worker_pid=_optional_integer(data["worker_pid"], f"{path}.worker_pid"),
         peak_rss_bytes=_optional_integer(
@@ -554,12 +607,115 @@ def _job_from_dict(value: Any, path: str) -> JobMetrics:
         cleanup_completed=_boolean(
             data["cleanup_completed"], f"{path}.cleanup_completed"
         ),
-        orphan_processes=_integer(
-            data["orphan_processes"], f"{path}.orphan_processes"
-        ),
+        orphan_processes=_integer(data["orphan_processes"], f"{path}.orphan_processes"),
         outputs=tuple(
-            _string(output, f"{path}.outputs[{index}]")
+            _job_output_from_dict(output, f"{path}.outputs[{index}]")
             for index, output in enumerate(outputs)
+        ),
+    )
+
+
+def _attestation_to_dict(attestation: InspectionAttestation) -> dict[str, Any]:
+    return {
+        "artifact_fingerprints": [
+            _fingerprint_to_dict(fingerprint)
+            for fingerprint in sorted(
+                attestation.artifact_fingerprints,
+                key=lambda item: item.subject,
+            )
+        ],
+        "attestation_id": attestation.attestation_id,
+        "inspected_at": _datetime_text(attestation.inspected_at),
+        "inspector": attestation.inspector,
+        "statement": attestation.statement,
+    }
+
+
+def _attestation_from_dict(value: Any, path: str) -> InspectionAttestation:
+    data = _mapping(value, path)
+    _exact_keys(
+        data,
+        path=path,
+        required=(
+            "attestation_id",
+            "inspector",
+            "inspected_at",
+            "statement",
+            "artifact_fingerprints",
+        ),
+    )
+    fingerprints = data["artifact_fingerprints"]
+    if not isinstance(fingerprints, list):
+        raise SerializationError(f"{path}.artifact_fingerprints must be an array")
+    return InspectionAttestation(
+        attestation_id=_string(data["attestation_id"], f"{path}.attestation_id"),
+        inspector=_string(data["inspector"], f"{path}.inspector"),
+        inspected_at=_parse_datetime(data["inspected_at"], f"{path}.inspected_at"),
+        statement=_string(data["statement"], f"{path}.statement"),
+        artifact_fingerprints=tuple(
+            _fingerprint_from_dict(
+                item,
+                f"{path}.artifact_fingerprints[{index}]",
+            )
+            for index, item in enumerate(fingerprints)
+        ),
+    )
+
+
+def _viewer_record_to_dict(record: ViewerSessionRecord) -> dict[str, Any]:
+    return {
+        "artifact_fingerprints": [
+            _fingerprint_to_dict(fingerprint)
+            for fingerprint in sorted(
+                record.artifact_fingerprints,
+                key=lambda item: item.subject,
+            )
+        ],
+        "backend": record.backend,
+        "dynamic_root": record.dynamic_root,
+        "generation_available": record.generation_available,
+        "record_id": record.record_id,
+        "recorded_at": _datetime_text(record.recorded_at),
+        "server_app": record.server_app,
+        "url": record.url,
+        "viewer_version": record.viewer_version,
+    }
+
+
+def _viewer_record_from_dict(value: Any, path: str) -> ViewerSessionRecord:
+    data = _mapping(value, path)
+    _exact_keys(
+        data,
+        path=path,
+        required=(
+            "record_id",
+            "url",
+            "recorded_at",
+            "server_app",
+            "backend",
+            "dynamic_root",
+            "generation_available",
+            "viewer_version",
+            "artifact_fingerprints",
+        ),
+    )
+    fingerprints = data["artifact_fingerprints"]
+    if not isinstance(fingerprints, list):
+        raise SerializationError(f"{path}.artifact_fingerprints must be an array")
+    return ViewerSessionRecord(
+        record_id=_string(data["record_id"], f"{path}.record_id"),
+        url=_string(data["url"], f"{path}.url"),
+        recorded_at=_parse_datetime(data["recorded_at"], f"{path}.recorded_at"),
+        server_app=_string(data["server_app"], f"{path}.server_app"),
+        backend=_string(data["backend"], f"{path}.backend"),
+        dynamic_root=_boolean(data["dynamic_root"], f"{path}.dynamic_root"),
+        generation_available=_boolean(
+            data["generation_available"], f"{path}.generation_available"
+        ),
+        viewer_version=_string(data["viewer_version"], f"{path}.viewer_version"),
+        artifact_fingerprints=tuple(
+            _fingerprint_from_dict(item, f"{path}.artifact_fingerprints[{index}]")
+            for index, item in enumerate(fingerprints)
         ),
     )
 
@@ -581,7 +737,16 @@ def review_packet_to_dict(packet: ReviewPacket) -> dict[str, Any]:
                 key=lambda item: item.subject,
             )
         ],
-        "job_metrics": _job_to_dict(packet.job_metrics),
+        "inspection_attestations": [
+            _attestation_to_dict(attestation)
+            for attestation in sorted(
+                packet.inspection_attestations,
+                key=lambda item: item.attestation_id,
+            )
+        ],
+        "jobs": [
+            _job_to_dict(job) for job in sorted(packet.jobs, key=lambda item: item.role)
+        ],
         "model": _model_to_dict(packet.model),
         "packet_id": packet.packet_id,
         "profile": packet.profile.value,
@@ -615,6 +780,10 @@ def review_packet_to_dict(packet: ReviewPacket) -> dict[str, Any]:
                 key=lambda item: item.evidence_id,
             )
         ],
+        "viewer_records": [
+            _viewer_record_to_dict(record)
+            for record in sorted(packet.viewer_records, key=lambda item: item.record_id)
+        ],
     }
 
 
@@ -636,8 +805,10 @@ def review_packet_from_dict(
         "toolchain",
         "artifacts",
         "results",
-        "job_metrics",
+        "jobs",
         "visual_evidence",
+        "inspection_attestations",
+        "viewer_records",
         "confirmed_facts",
         "remaining_uncertainty",
         "created_at",
@@ -679,9 +850,7 @@ def review_packet_from_dict(
     facts = array("confirmed_facts")
     uncertainty = array("remaining_uncertainty")
     packet = ReviewPacket(
-        schema_version=_integer(
-            data["schema_version"], "review_packet.schema_version"
-        ),
+        schema_version=_integer(data["schema_version"], "review_packet.schema_version"),
         packet_id=_string(data["packet_id"], "review_packet.packet_id"),
         contract_id=_string(data["contract_id"], "review_packet.contract_id"),
         contract_fingerprint=_string(
@@ -717,8 +886,9 @@ def review_packet_from_dict(
             _result_from_dict(item, f"review_packet.results[{index}]")
             for index, item in enumerate(array("results"))
         ),
-        job_metrics=_job_from_dict(
-            data["job_metrics"], "review_packet.job_metrics"
+        jobs=tuple(
+            _job_from_dict(item, f"review_packet.jobs[{index}]")
+            for index, item in enumerate(array("jobs"))
         ),
         visual_evidence=tuple(
             _visual_from_dict(
@@ -726,6 +896,20 @@ def review_packet_from_dict(
                 f"review_packet.visual_evidence[{index}]",
             )
             for index, item in enumerate(array("visual_evidence"))
+        ),
+        inspection_attestations=tuple(
+            _attestation_from_dict(
+                item,
+                f"review_packet.inspection_attestations[{index}]",
+            )
+            for index, item in enumerate(array("inspection_attestations"))
+        ),
+        viewer_records=tuple(
+            _viewer_record_from_dict(
+                item,
+                f"review_packet.viewer_records[{index}]",
+            )
+            for index, item in enumerate(array("viewer_records"))
         ),
         confirmed_facts=tuple(
             _string(item, f"review_packet.confirmed_facts[{index}]")

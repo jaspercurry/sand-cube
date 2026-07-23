@@ -5,6 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import datetime
 from math import isfinite
+from pathlib import PurePosixPath
 import re
 from typing import Iterable
 
@@ -401,8 +402,7 @@ def validate_contract(contract: DesignContract) -> tuple[ValidationIssue, ...]:
                 "must be a Unit",
             )
         elif (
-            expectation.kind is ExpectationKind.EXACT
-            and expectation.exact is not None
+            expectation.kind is ExpectationKind.EXACT and expectation.exact is not None
         ):
             _validate_actual(
                 ActualValue(expectation.exact, requirement.unit),
@@ -675,6 +675,150 @@ def validate_review_packet(
                             "observed size does not match recorded size",
                         )
 
+    attestations_by_id = {}
+    for index, attestation in enumerate(packet.inspection_attestations):
+        path = f"inspection_attestations[{index}]"
+        _stable_id(
+            attestation.attestation_id,
+            path=f"{path}.attestation_id",
+            issues=issues,
+        )
+        if attestation.attestation_id in attestations_by_id:
+            _issue(
+                issues,
+                "attestation.duplicate_id",
+                f"{path}.attestation_id",
+                f"duplicate attestation ID {attestation.attestation_id}",
+            )
+        attestations_by_id[attestation.attestation_id] = attestation
+        _nonempty(attestation.inspector, path=f"{path}.inspector", issues=issues)
+        _nonempty(attestation.statement, path=f"{path}.statement", issues=issues)
+        _valid_datetime(
+            attestation.inspected_at,
+            path=f"{path}.inspected_at",
+            issues=issues,
+        )
+        if not attestation.artifact_fingerprints:
+            _issue(
+                issues,
+                "attestation.artifacts_empty",
+                f"{path}.artifact_fingerprints",
+                "inspection must fingerprint every reviewed artifact",
+            )
+        seen_attested_artifacts: set[str] = set()
+        for fingerprint_index, fingerprint in enumerate(
+            attestation.artifact_fingerprints
+        ):
+            fingerprint_path = f"{path}.artifact_fingerprints[{fingerprint_index}]"
+            if fingerprint.subject in seen_attested_artifacts:
+                _issue(
+                    issues,
+                    "attestation.artifact_duplicate",
+                    f"{fingerprint_path}.subject",
+                    f"duplicate artifact {fingerprint.subject!r}",
+                )
+            seen_attested_artifacts.add(fingerprint.subject)
+            artifact = artifacts_by_id.get(fingerprint.subject)
+            if artifact is None:
+                _issue(
+                    issues,
+                    "attestation.artifact_unknown",
+                    f"{fingerprint_path}.subject",
+                    "attestation does not reference a packet artifact",
+                )
+            elif fingerprint.sha256 != artifact.sha256:
+                _issue(
+                    issues,
+                    "attestation.hash_mismatch",
+                    f"{fingerprint_path}.sha256",
+                    "attested hash does not match the packet artifact",
+                )
+            _valid_sha(
+                fingerprint.sha256,
+                path=f"{fingerprint_path}.sha256",
+                issues=issues,
+            )
+
+    viewer_records_by_id = {}
+    for index, record in enumerate(packet.viewer_records):
+        path = f"viewer_records[{index}]"
+        _stable_id(record.record_id, path=f"{path}.record_id", issues=issues)
+        if record.record_id in viewer_records_by_id:
+            _issue(
+                issues,
+                "viewer_record.duplicate_id",
+                f"{path}.record_id",
+                f"duplicate Viewer record ID {record.record_id}",
+            )
+        viewer_records_by_id[record.record_id] = record
+        _nonempty(record.url, path=f"{path}.url", issues=issues)
+        _valid_datetime(record.recorded_at, path=f"{path}.recorded_at", issues=issues)
+        if record.server_app != "cad-viewer":
+            _issue(
+                issues,
+                "viewer_record.app_invalid",
+                f"{path}.server_app",
+                "must identify the repository CAD Viewer",
+            )
+        if record.backend != "local-fs":
+            _issue(
+                issues,
+                "viewer_record.backend_invalid",
+                f"{path}.backend",
+                "must use the local-fs backend",
+            )
+        if record.dynamic_root is not True:
+            _issue(
+                issues,
+                "viewer_record.root_invalid",
+                f"{path}.dynamic_root",
+                "must use a dynamic read-only artifact root",
+            )
+        if record.generation_available is not False:
+            _issue(
+                issues,
+                "viewer_record.generation_enabled",
+                f"{path}.generation_available",
+                "Viewer artifact generation must be disabled",
+            )
+        _nonempty(record.viewer_version, path=f"{path}.viewer_version", issues=issues)
+        if not record.artifact_fingerprints:
+            _issue(
+                issues,
+                "viewer_record.artifacts_empty",
+                f"{path}.artifact_fingerprints",
+                "must bind the STEP and sidecar",
+            )
+        seen_viewer_artifacts: set[str] = set()
+        for fingerprint_index, fingerprint in enumerate(record.artifact_fingerprints):
+            fingerprint_path = f"{path}.artifact_fingerprints[{fingerprint_index}]"
+            if fingerprint.subject in seen_viewer_artifacts:
+                _issue(
+                    issues,
+                    "viewer_record.artifact_duplicate",
+                    f"{fingerprint_path}.subject",
+                    "artifact bindings must be unique",
+                )
+            seen_viewer_artifacts.add(fingerprint.subject)
+            artifact = artifacts_by_id.get(fingerprint.subject)
+            if artifact is None:
+                _issue(
+                    issues,
+                    "viewer_record.artifact_unknown",
+                    f"{fingerprint_path}.subject",
+                    "does not reference a packet artifact",
+                )
+            elif fingerprint.sha256 != artifact.sha256:
+                _issue(
+                    issues,
+                    "viewer_record.hash_mismatch",
+                    f"{fingerprint_path}.sha256",
+                    "Viewer record hash does not match the packet artifact",
+                )
+            _valid_sha(
+                fingerprint.sha256, path=f"{fingerprint_path}.sha256", issues=issues
+            )
+
     visual_by_id = {}
     for index, evidence in enumerate(packet.visual_evidence):
         path = f"visual_evidence[{index}]"
@@ -718,6 +862,21 @@ def validate_review_packet(
                     f"{path}.artifact_id",
                     "channel requires an exported artifact",
                 )
+        if len(set(evidence.source_artifact_ids)) != len(evidence.source_artifact_ids):
+            _issue(
+                issues,
+                "visual.source_artifacts_duplicate",
+                f"{path}.source_artifact_ids",
+                "must not contain duplicates",
+            )
+        for source_index, artifact_id in enumerate(evidence.source_artifact_ids):
+            if artifact_id not in artifacts_by_id:
+                _issue(
+                    issues,
+                    "visual.source_artifact_unknown",
+                    f"{path}.source_artifact_ids[{source_index}]",
+                    "does not reference a packet artifact",
+                )
             elif evidence.artifact_id not in artifacts_by_id:
                 _issue(
                     issues,
@@ -734,13 +893,41 @@ def validate_review_packet(
                 f"{path}.reason",
                 "fallback or exceptional channel requires a reason",
             )
-        if policy.requires_agent_inspection and not evidence.inspected_by_agent:
+        attestation = (
+            None
+            if evidence.attestation_id is None
+            else attestations_by_id.get(evidence.attestation_id)
+        )
+        if evidence.attestation_id is not None and attestation is None:
             _issue(
                 issues,
-                "visual.not_inspected",
-                f"{path}.inspected_by_agent",
-                "channel requires explicit agent inspection",
+                "visual.attestation_unknown",
+                f"{path}.attestation_id",
+                "does not reference a packet inspection attestation",
             )
+        if policy.requires_agent_inspection and attestation is None:
+            _issue(
+                issues,
+                "visual.attestation_missing",
+                f"{path}.attestation_id",
+                "channel requires an explicit agent inspection attestation",
+            )
+        if attestation is not None:
+            attested_ids = {
+                fingerprint.subject for fingerprint in attestation.artifact_fingerprints
+            }
+            required_ids = set(evidence.source_artifact_ids)
+            if evidence.artifact_id is not None:
+                required_ids.add(evidence.artifact_id)
+            missing_attestations = sorted(required_ids - attested_ids)
+            if missing_attestations:
+                _issue(
+                    issues,
+                    "visual.attestation_incomplete",
+                    f"{path}.attestation_id",
+                    "attestation omits reviewed artifacts: "
+                    + ", ".join(missing_attestations),
+                )
         if policy.requires_read_only and not evidence.read_only:
             _issue(
                 issues,
@@ -748,10 +935,76 @@ def validate_review_packet(
                 f"{path}.read_only",
                 "Viewer evidence must be read-only",
             )
+        if evidence.channel is EvidenceChannel.VIEWER:
+            viewer_record = (
+                None
+                if evidence.viewer_record_id is None
+                else viewer_records_by_id.get(evidence.viewer_record_id)
+            )
+            if viewer_record is None:
+                _issue(
+                    issues,
+                    "visual.viewer_record_missing",
+                    f"{path}.viewer_record_id",
+                    "Viewer evidence requires a probed read-only session record",
+                )
+            else:
+                if evidence.locator != viewer_record.url:
+                    _issue(
+                        issues,
+                        "visual.viewer_locator_mismatch",
+                        f"{path}.locator",
+                        "Viewer locator must match its probed session record",
+                    )
+                bound_ids = {
+                    fingerprint.subject
+                    for fingerprint in viewer_record.artifact_fingerprints
+                }
+                required_ids = set(evidence.source_artifact_ids)
+                if evidence.artifact_id is not None:
+                    required_ids.add(evidence.artifact_id)
+                if required_ids - bound_ids:
+                    _issue(
+                        issues,
+                        "visual.viewer_record_incomplete",
+                        f"{path}.viewer_record_id",
+                        "Viewer record omits the viewed STEP or sidecar",
+                    )
+        if evidence.channel is EvidenceChannel.SNAPSHOT:
+            rendered = artifacts_by_id.get(evidence.artifact_id or "")
+            if rendered is not None:
+                if rendered.media_type != "image/png":
+                    _issue(
+                        issues,
+                        "visual.snapshot_media_invalid",
+                        f"{path}.artifact_id",
+                        "Snapshot evidence must reference a rendered PNG artifact",
+                    )
+                if evidence.locator != rendered.path:
+                    _issue(
+                        issues,
+                        "visual.snapshot_locator_mismatch",
+                        f"{path}.locator",
+                        "Snapshot locator must equal the rendered artifact path",
+                    )
+            source_media = {
+                artifacts_by_id[item].media_type
+                for item in evidence.source_artifact_ids
+                if item in artifacts_by_id
+            }
+            if (
+                "model/step" not in source_media
+                or "model/gltf-binary" not in source_media
+            ):
+                _issue(
+                    issues,
+                    "visual.snapshot_sources_incomplete",
+                    f"{path}.source_artifact_ids",
+                    "Snapshot must bind its source STEP and topology sidecar",
+                )
 
     expected_by_id = {
-        requirement.requirement_id: requirement
-        for requirement in selected_requirements
+        requirement.requirement_id: requirement for requirement in selected_requirements
     }
     results_by_id = {}
     known_evidence_ids = set(artifacts_by_id) | set(visual_by_id)
@@ -830,10 +1083,7 @@ def validate_review_packet(
         if requirement is None:
             continue
         check_policy = CHECK_POLICIES[requirement.check.kind]
-        if (
-            result.actual is not None
-            and result.actual.unit is not requirement.unit
-        ):
+        if result.actual is not None and result.actual.unit is not requirement.unit:
             _issue(
                 issues,
                 "result.unit_mismatch",
@@ -896,99 +1146,221 @@ def validate_review_packet(
             f"missing result for {requirement_id}; it remains UNVERIFIED",
         )
 
-    metrics = packet.job_metrics
-    _executor_id(metrics.job_id, path="job_metrics.job_id", issues=issues)
-    started_valid = _valid_datetime(
-        metrics.started_at,
-        path="job_metrics.started_at",
-        issues=issues,
-    )
-    finished_valid = _valid_datetime(
-        metrics.finished_at,
-        path="job_metrics.finished_at",
-        issues=issues,
-    )
-    if started_valid and finished_valid and metrics.finished_at < metrics.started_at:
-        _issue(
-            issues,
-            "job.time_invalid",
-            "job_metrics.finished_at",
-            "must not precede started_at",
+    if not packet.jobs:
+        _issue(issues, "jobs.empty", "jobs", "packet must include an execution job")
+    seen_job_ids: set[str] = set()
+    seen_roles: set[str] = set()
+    all_outputs = {}
+    valid_started: list[datetime] = []
+    valid_finished: list[datetime] = []
+    for job_index, metrics in enumerate(packet.jobs):
+        path = f"jobs[{job_index}]"
+        _stable_id(metrics.role, path=f"{path}.role", issues=issues)
+        if metrics.role in seen_roles:
+            _issue(
+                issues, "job.role_duplicate", f"{path}.role", "job role must be unique"
+            )
+        seen_roles.add(metrics.role)
+        _executor_id(metrics.job_id, path=f"{path}.job_id", issues=issues)
+        if metrics.job_id in seen_job_ids:
+            _issue(
+                issues, "job.id_duplicate", f"{path}.job_id", "job ID must be unique"
+            )
+        seen_job_ids.add(metrics.job_id)
+        _nonempty(metrics.name, path=f"{path}.name", issues=issues)
+        _nonempty(metrics.target, path=f"{path}.target", issues=issues)
+        if not metrics.command:
+            _issue(issues, "job.command_empty", f"{path}.command", "must not be empty")
+        for command_index, argument in enumerate(metrics.command):
+            _nonempty(argument, path=f"{path}.command[{command_index}]", issues=issues)
+        if metrics.profile is not packet.profile:
+            _issue(
+                issues,
+                "job.profile_mismatch",
+                f"{path}.profile",
+                "job profile must match packet profile",
+            )
+        if metrics.state != "completed":
+            _issue(
+                issues,
+                "job.state_failed",
+                f"{path}.state",
+                "PASS evidence requires a completed job",
+            )
+        if not isinstance(metrics.exit_code, int):
+            _issue(issues, "job.exit_invalid", f"{path}.exit_code", "must be int")
+        elif metrics.exit_code != 0:
+            _issue(
+                issues,
+                "job.exit_failed",
+                f"{path}.exit_code",
+                "PASS evidence requires exit code 0",
+            )
+        if not isinstance(metrics.cleanup_completed, bool):
+            _issue(
+                issues,
+                "job.cleanup_invalid",
+                f"{path}.cleanup_completed",
+                "must be a boolean",
+            )
+        elif not metrics.cleanup_completed:
+            _issue(
+                issues,
+                "job.cleanup_failed",
+                f"{path}.cleanup_completed",
+                "PASS evidence requires completed cleanup",
+            )
+        if (
+            not isinstance(metrics.orphan_processes, int)
+            or metrics.orphan_processes < 0
+        ):
+            _issue(
+                issues,
+                "job.orphans_invalid",
+                f"{path}.orphan_processes",
+                "must be a non-negative integer",
+            )
+        elif metrics.orphan_processes != 0:
+            _issue(
+                issues,
+                "job.orphans_remain",
+                f"{path}.orphan_processes",
+                "PASS evidence requires zero orphan processes",
+            )
+        started_valid = _valid_datetime(
+            metrics.started_at, path=f"{path}.started_at", issues=issues
         )
-    if (
-        not _is_number(metrics.elapsed_seconds)
-        or not isfinite(float(metrics.elapsed_seconds))
-        or metrics.elapsed_seconds < 0
-    ):
-        _issue(
-            issues,
-            "job.elapsed_invalid",
-            "job_metrics.elapsed_seconds",
-            "must be finite and non-negative",
+        finished_valid = _valid_datetime(
+            metrics.finished_at, path=f"{path}.finished_at", issues=issues
         )
-    if not isinstance(metrics.exit_code, int):
-        _issue(issues, "job.exit_invalid", "job_metrics.exit_code", "must be int")
-    if not isinstance(metrics.cleanup_completed, bool):
-        _issue(
-            issues,
-            "job.cleanup_invalid",
-            "job_metrics.cleanup_completed",
-            "must be a boolean",
-        )
-    if metrics.worker_pid is not None and (
-        not isinstance(metrics.worker_pid, int) or metrics.worker_pid <= 0
-    ):
-        _issue(
-            issues,
-            "job.pid_invalid",
-            "job_metrics.worker_pid",
-            "must be a positive integer or null",
-        )
-    if metrics.peak_rss_bytes is not None and (
-        not isinstance(metrics.peak_rss_bytes, int) or metrics.peak_rss_bytes < 0
-    ):
-        _issue(
-            issues,
-            "job.rss_invalid",
-            "job_metrics.peak_rss_bytes",
-            "must be a non-negative integer or null",
-        )
-    if not isinstance(metrics.orphan_processes, int) or metrics.orphan_processes < 0:
-        _issue(
-            issues,
-            "job.orphans_invalid",
-            "job_metrics.orphan_processes",
-            "must be a non-negative integer",
-        )
-    if len(set(metrics.outputs)) != len(metrics.outputs):
-        _issue(
-            issues,
-            "job.outputs_duplicate",
-            "job_metrics.outputs",
-            "must not contain duplicates",
-        )
-    for index, output in enumerate(metrics.outputs):
-        _nonempty(output, path=f"job_metrics.outputs[{index}]", issues=issues)
+        if started_valid:
+            valid_started.append(metrics.started_at)
+        if finished_valid:
+            valid_finished.append(metrics.finished_at)
+        if (
+            started_valid
+            and finished_valid
+            and metrics.finished_at < metrics.started_at
+        ):
+            _issue(
+                issues,
+                "job.time_invalid",
+                f"{path}.finished_at",
+                "must not precede started_at",
+            )
+        if (
+            not _is_number(metrics.elapsed_seconds)
+            or not isfinite(float(metrics.elapsed_seconds))
+            or metrics.elapsed_seconds < 0
+        ):
+            _issue(
+                issues,
+                "job.elapsed_invalid",
+                f"{path}.elapsed_seconds",
+                "must be finite and non-negative",
+            )
+        if metrics.worker_pid is not None and (
+            not isinstance(metrics.worker_pid, int) or metrics.worker_pid <= 0
+        ):
+            _issue(
+                issues,
+                "job.pid_invalid",
+                f"{path}.worker_pid",
+                "must be a positive integer or null",
+            )
+        if metrics.peak_rss_bytes is not None and (
+            not isinstance(metrics.peak_rss_bytes, int) or metrics.peak_rss_bytes < 0
+        ):
+            _issue(
+                issues,
+                "job.rss_invalid",
+                f"{path}.peak_rss_bytes",
+                "must be a non-negative integer or null",
+            )
+        seen_output_paths: set[str] = set()
+        for output_index, output in enumerate(metrics.outputs):
+            output_path = f"{path}.outputs[{output_index}]"
+            relative = PurePosixPath(output.path)
+            if (
+                not output.path
+                or relative.is_absolute()
+                or ".." in relative.parts
+                or "\\" in output.path
+            ):
+                _issue(
+                    issues,
+                    "job.output_path_invalid",
+                    f"{output_path}.path",
+                    "must be a repository-relative POSIX path",
+                )
+            if output.path in seen_output_paths:
+                _issue(
+                    issues,
+                    "job.outputs_duplicate",
+                    f"{output_path}.path",
+                    "job output paths must be unique",
+                )
+            seen_output_paths.add(output.path)
+            _valid_sha(output.sha256, path=f"{output_path}.sha256", issues=issues)
+            if (
+                not isinstance(output.size_bytes, int)
+                or isinstance(output.size_bytes, bool)
+                or output.size_bytes < 0
+            ):
+                _issue(
+                    issues,
+                    "job.output_size_invalid",
+                    f"{output_path}.size_bytes",
+                    "must be a non-negative integer",
+                )
+            existing = all_outputs.get(output.path)
+            if existing is not None and existing != output:
+                _issue(
+                    issues,
+                    "job.output_conflict",
+                    f"{output_path}.path",
+                    "multiple jobs claim different content for one output",
+                )
+            all_outputs[output.path] = output
+
+    for artifact_index, artifact in enumerate(packet.artifacts):
+        output = all_outputs.get(artifact.path)
+        if output is None:
+            _issue(
+                issues,
+                "artifact.job_output_missing",
+                f"artifacts[{artifact_index}].path",
+                "artifact is not a recorded successful job output",
+            )
+        elif (
+            output.sha256 != artifact.sha256 or output.size_bytes != artifact.size_bytes
+        ):
+            _issue(
+                issues,
+                "artifact.job_output_mismatch",
+                f"artifacts[{artifact_index}].sha256",
+                "artifact does not match its recorded job output",
+            )
 
     packet_time_valid = _valid_datetime(
         packet.created_at,
         path="created_at",
         issues=issues,
     )
-    if packet_time_valid and finished_valid and packet.created_at < metrics.finished_at:
+    if packet_time_valid and valid_finished and packet.created_at < max(valid_finished):
         _issue(
             issues,
             "packet.time_invalid",
             "created_at",
             "review packet cannot predate job completion",
         )
-    if packet_time_valid and started_valid:
+    if packet_time_valid and valid_started:
         for index, artifact in enumerate(packet.artifacts):
             if (
                 isinstance(artifact.created_at, datetime)
                 and artifact.created_at.tzinfo is not None
                 and (
-                    artifact.created_at < metrics.started_at
+                    artifact.created_at < min(valid_started)
                     or artifact.created_at > packet.created_at
                 )
             ):

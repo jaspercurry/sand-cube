@@ -23,13 +23,13 @@ from build123d import (
     Rot,
     Unit,
     add,
-    export_step,
     fillet,
     make_face,
     revolve,
 )
 
 from src.features.baffle import black_hole_baffle
+from src.cad_io import export_step
 
 from .params import CompactParams, p
 

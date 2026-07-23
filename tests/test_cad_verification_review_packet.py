@@ -66,8 +66,10 @@ class CadVerificationReviewPacketTest(unittest.TestCase):
             "toolchain",
             "artifacts",
             "results",
-            "job_metrics",
+            "jobs",
             "visual_evidence",
+            "inspection_attestations",
+            "viewer_records",
             "confirmed_facts",
             "remaining_uncertainty",
         }
@@ -140,9 +142,9 @@ class CadVerificationReviewPacketTest(unittest.TestCase):
                 replace(snapshot, scope=EvidenceScope.SCRATCH),
                 "visual.scope_invalid",
             ),
-            "snapshot_inspection": (
-                replace(snapshot, inspected_by_agent=False),
-                "visual.not_inspected",
+            "snapshot_attestation": (
+                replace(snapshot, attestation_id=None),
+                "visual.attestation_missing",
             ),
             "mcp_exported": (
                 replace(
@@ -217,7 +219,6 @@ class CadVerificationReviewPacketTest(unittest.TestCase):
                 self.assertIn(expected_code, self.issue_codes(self.packet, probe=probe))
 
     def test_matching_artifact_probe_is_accepted(self) -> None:
-        artifact = self.packet.artifacts[0]
         probe = FakeArtifactProbe(
             {
                 artifact.path: ArtifactObservation(
@@ -225,6 +226,7 @@ class CadVerificationReviewPacketTest(unittest.TestCase):
                     sha256=artifact.sha256,
                     size_bytes=artifact.size_bytes,
                 )
+                for artifact in self.packet.artifacts
             }
         )
 
@@ -261,22 +263,91 @@ class CadVerificationReviewPacketTest(unittest.TestCase):
 
     def test_invalid_job_metrics_are_rejected(self) -> None:
         metrics = replace(
-            self.packet.job_metrics,
+            self.packet.jobs[0],
             elapsed_seconds=-1.0,
             orphan_processes=-1,
         )
-        packet = replace(self.packet, job_metrics=metrics)
+        packet = replace(self.packet, jobs=(metrics,))
 
         codes = self.issue_codes(packet)
         self.assertIn("job.elapsed_invalid", codes)
         self.assertIn("job.orphans_invalid", codes)
 
+    def test_every_failed_execution_state_blocks_pass_eligibility(self) -> None:
+        metrics = self.packet.jobs[0]
+        cases = {
+            "state": (replace(metrics, state="failed"), "job.state_failed"),
+            "exit": (replace(metrics, exit_code=137), "job.exit_failed"),
+            "cleanup": (
+                replace(metrics, cleanup_completed=False),
+                "job.cleanup_failed",
+            ),
+            "orphans": (
+                replace(metrics, orphan_processes=4),
+                "job.orphans_remain",
+            ),
+        }
+        for label, (replacement, expected) in cases.items():
+            with self.subTest(label=label):
+                packet = replace(self.packet, jobs=(replacement,))
+                self.assertIn(expected, self.issue_codes(packet))
+
+    def test_artifacts_are_hash_bound_to_successful_job_outputs(self) -> None:
+        metrics = self.packet.jobs[0]
+        outputs = list(metrics.outputs)
+        outputs[0] = replace(outputs[0], sha256="0" * 64)
+        packet = replace(
+            self.packet,
+            jobs=(replace(metrics, outputs=tuple(outputs)),),
+        )
+
+        self.assertIn("artifact.job_output_mismatch", self.issue_codes(packet))
+
+    def test_snapshot_requires_rendered_png_sources_and_attestation(self) -> None:
+        viewer, snapshot = self.packet.visual_evidence
+        cases = {
+            "wrong_render": (
+                replace(snapshot, artifact_id=self.packet.artifacts[0].artifact_id),
+                "visual.snapshot_media_invalid",
+            ),
+            "wrong_locator": (
+                replace(snapshot, locator="build/examples/removed.png"),
+                "visual.snapshot_locator_mismatch",
+            ),
+            "missing_sources": (
+                replace(snapshot, source_artifact_ids=()),
+                "visual.snapshot_sources_incomplete",
+            ),
+            "missing_attestation": (
+                replace(snapshot, attestation_id=None),
+                "visual.attestation_missing",
+            ),
+        }
+        for label, (replacement, expected) in cases.items():
+            with self.subTest(label=label):
+                packet = replace(self.packet, visual_evidence=(viewer, replacement))
+                self.assertIn(expected, self.issue_codes(packet))
+
+    def test_visual_attestation_rejects_wrong_source_and_render_hashes(self) -> None:
+        attestation = self.packet.inspection_attestations[0]
+        for index in (0, -1):
+            fingerprints = list(attestation.artifact_fingerprints)
+            fingerprints[index] = replace(fingerprints[index], sha256="0" * 64)
+            packet = replace(
+                self.packet,
+                inspection_attestations=(
+                    replace(attestation, artifact_fingerprints=tuple(fingerprints)),
+                ),
+            )
+            with self.subTest(index=index):
+                self.assertIn("attestation.hash_mismatch", self.issue_codes(packet))
+
     def test_external_executor_id_is_preserved(self) -> None:
         metrics = replace(
-            self.packet.job_metrics,
+            self.packet.jobs[0],
             job_id="20260723T000857-joint-coupon-release-60829aa5fa",
         )
-        packet = replace(self.packet, job_metrics=metrics)
+        packet = replace(self.packet, jobs=(metrics,))
 
         self.assertNotIn("id.invalid", self.issue_codes(packet))
 

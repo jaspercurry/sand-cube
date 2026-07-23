@@ -58,9 +58,7 @@ def actual_satisfies(requirement: Requirement, actual: ActualValue) -> bool:
             )
         return actual.value == expected
 
-    if not isinstance(actual.value, (int, float)) or isinstance(
-        actual.value, bool
-    ):
+    if not isinstance(actual.value, (int, float)) or isinstance(actual.value, bool):
         return False
     assert expectation.minimum is not None
     assert expectation.maximum is not None
@@ -118,11 +116,7 @@ def aggregate_status(
     statuses = tuple(result.status for result in results)
     if ResultStatus.FAIL in statuses:
         return ResultStatus.FAIL
-    if (
-        missing_requirements
-        or not statuses
-        or ResultStatus.UNVERIFIED in statuses
-    ):
+    if missing_requirements or not statuses or ResultStatus.UNVERIFIED in statuses:
         return ResultStatus.UNVERIFIED
     return ResultStatus.PASS
 

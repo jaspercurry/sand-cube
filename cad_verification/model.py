@@ -19,7 +19,7 @@ from .policy import (
 )
 
 
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2
 Scalar: TypeAlias = bool | int | float | str
 
 
@@ -153,14 +153,51 @@ class VisualEvidence:
     created_at: datetime
     renderer: str
     artifact_id: str | None = None
-    inspected_by_agent: bool = False
+    source_artifact_ids: tuple[str, ...] = ()
+    attestation_id: str | None = None
+    viewer_record_id: str | None = None
     read_only: bool = False
     reason: str | None = None
 
 
 @dataclass(frozen=True)
+class InspectionAttestation:
+    attestation_id: str
+    inspector: str
+    inspected_at: datetime
+    statement: str
+    artifact_fingerprints: tuple[Fingerprint, ...]
+
+
+@dataclass(frozen=True)
+class ViewerSessionRecord:
+    record_id: str
+    url: str
+    recorded_at: datetime
+    server_app: str
+    backend: str
+    dynamic_root: bool
+    generation_available: bool
+    viewer_version: str
+    artifact_fingerprints: tuple[Fingerprint, ...]
+
+
+@dataclass(frozen=True)
+class JobOutput:
+    path: str
+    sha256: str
+    size_bytes: int
+
+
+@dataclass(frozen=True)
 class JobMetrics:
+    role: str
     job_id: str
+    name: str
+    state: str
+    target: str
+    profile: VerificationProfile
+    command: tuple[str, ...]
     started_at: datetime
     finished_at: datetime
     elapsed_seconds: float
@@ -169,7 +206,7 @@ class JobMetrics:
     peak_rss_bytes: int | None
     cleanup_completed: bool
     orphan_processes: int
-    outputs: tuple[str, ...] = ()
+    outputs: tuple[JobOutput, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -184,8 +221,10 @@ class ReviewPacket:
     toolchain: ToolchainIdentity
     artifacts: tuple[ArtifactEvidence, ...]
     results: tuple[RequirementResult, ...]
-    job_metrics: JobMetrics
+    jobs: tuple[JobMetrics, ...]
     visual_evidence: tuple[VisualEvidence, ...]
+    inspection_attestations: tuple[InspectionAttestation, ...]
+    viewer_records: tuple[ViewerSessionRecord, ...]
     confirmed_facts: tuple[str, ...]
     remaining_uncertainty: tuple[str, ...]
     created_at: datetime

@@ -6,6 +6,7 @@ from datetime import datetime, timezone
 from hashlib import sha256
 from pathlib import Path
 from typing import Any
+from urllib.parse import parse_qs, urlsplit
 
 from cad_verification import (
     PROFILE_POLICIES,
@@ -105,9 +106,7 @@ def contract_profile_report(
         "contract_fingerprint": contract_fingerprint(contract),
         "profile": profile.value,
         "profile_description": PROFILE_POLICIES[profile].description,
-        "included_costs": [
-            cost.value for cost in PROFILE_POLICIES[profile].includes
-        ],
+        "included_costs": [cost.value for cost in PROFILE_POLICIES[profile].includes],
         "status": "valid",
         "requirements": [
             {**_requirement_base(requirement), "status": "selected", "actual": None}
@@ -160,6 +159,45 @@ def _fingerprint_issues(
     return issues
 
 
+def _viewer_url_issues(packet, repository_root: Path) -> list[ValidationIssue]:
+    """Validate the repository's local read-only Viewer link contract."""
+
+    issues: list[ValidationIssue] = []
+    artifacts = {artifact.artifact_id: artifact for artifact in packet.artifacts}
+    root = repository_root.resolve()
+    for index, evidence in enumerate(packet.visual_evidence):
+        if evidence.channel.value != "viewer":
+            continue
+        path = f"visual_evidence[{index}].locator"
+        parsed = urlsplit(evidence.locator)
+        query = parse_qs(parsed.query, keep_blank_values=True)
+        artifact = artifacts.get(evidence.artifact_id or "")
+        candidate = None
+        if artifact is not None:
+            candidate = (root / artifact.path).resolve()
+        valid = (
+            parsed.scheme == "http"
+            and parsed.hostname in {"127.0.0.1", "localhost"}
+            and parsed.port is not None
+            and parsed.path == "/"
+            and not parsed.fragment
+            and set(query) == {"dir", "file"}
+            and all(len(values) == 1 for values in query.values())
+            and candidate is not None
+            and query.get("dir") == [str(candidate.parent)]
+            and query.get("file") == [candidate.name]
+        )
+        if not valid:
+            issues.append(
+                ValidationIssue(
+                    "viewer.url_invalid",
+                    path,
+                    "URL does not match the repository local read-only artifact-link contract",
+                )
+            )
+    return issues
+
+
 def review_packet_report(
     contract_path: Path,
     packet_path: Path,
@@ -185,6 +223,7 @@ def review_packet_report(
             repository_root=repository_root,
         )
     )
+    issues.extend(_viewer_url_issues(packet, repository_root))
     issues.extend(
         _fingerprint_issues(
             packet.input_fingerprints,
@@ -222,7 +261,9 @@ def review_packet_report(
                 ),
                 "evidence_refs": [] if result is None else result["evidence_refs"],
                 "diagnostic": (
-                    "required result is missing" if result is None else result["diagnostic"]
+                    "required result is missing"
+                    if result is None
+                    else result["diagnostic"]
                 ),
             }
         )
@@ -247,8 +288,10 @@ def review_packet_report(
         "input_fingerprints": packet_data["input_fingerprints"],
         "toolchain": packet_data["toolchain"],
         "artifacts": packet_data["artifacts"],
-        "job_metrics": packet_data["job_metrics"],
+        "jobs": packet_data["jobs"],
         "visual_evidence": packet_data["visual_evidence"],
+        "inspection_attestations": packet_data["inspection_attestations"],
+        "viewer_records": packet_data["viewer_records"],
         "confirmed_facts": packet_data["confirmed_facts"],
         "remaining_uncertainty": packet_data["remaining_uncertainty"],
     }

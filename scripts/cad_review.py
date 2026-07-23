@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+from datetime import datetime, timezone
 import hashlib
 import importlib.metadata
 import json
@@ -21,10 +22,6 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from cad_runner.statistics import (  # noqa: E402
-    collect_job_statistics,
-    render_job_statistics,
-)
 from cad_verification import VerificationProfile  # noqa: E402
 from scripts.cad_verification_io import (  # noqa: E402
     contract_profile_report,
@@ -251,12 +248,43 @@ def command_link(args: argparse.Namespace, config: dict) -> int:
     info = fetch_server_info(args.viewer_url)
     assert_read_only_server(info, config)
     link, digest = artifact_link(args.step, args.viewer_url, config)
-    print(
-        json.dumps(
-            {"artifact": str(args.step.resolve()), "sha256": digest, "url": link},
-            indent=2,
-        )
-    )
+    step = args.step.expanduser().resolve()
+    sidecar = step.with_name(f".{step.name}.glb")
+    if not sidecar.is_file():
+        raise FileNotFoundError(f"Viewer link requires the exact sidecar: {sidecar}")
+    payload = {
+        "schema_version": 1,
+        "record_id": f"viewer-record.{step.stem.lower().replace('_', '-')}",
+        "recorded_at": datetime.now(timezone.utc).isoformat(),
+        "url": link,
+        "server": {
+            key: info.get(key)
+            for key in (
+                "app",
+                "backend",
+                "dynamicRoot",
+                "stepArtifactGenerationAvailable",
+                "viewerVersion",
+            )
+        },
+        "artifacts": [
+            {
+                "path": str(step.relative_to(ROOT)),
+                "sha256": digest,
+            },
+            {
+                "path": str(sidecar.relative_to(ROOT)),
+                "sha256": sha256_file(sidecar),
+            },
+        ],
+    }
+    encoded = json.dumps(payload, indent=2, sort_keys=True) + "\n"
+    if args.record:
+        record = args.record.expanduser().resolve()
+        record.relative_to(ROOT)
+        record.parent.mkdir(parents=True, exist_ok=True)
+        record.write_text(encoded, encoding="utf-8")
+    print(encoded, end="")
     return 0
 
 
@@ -407,6 +435,8 @@ def command_snapshot(args: argparse.Namespace, _config: dict) -> int:
 
 
 def command_stats(args: argparse.Namespace, config: dict) -> int:
+    from cad_runner.statistics import collect_job_statistics, render_job_statistics
+
     state_root = repo_path(config["artifact_root"]) / "cad-jobs"
     statistics = collect_job_statistics(state_root, target_limit=args.limit)
     if args.json:
@@ -427,9 +457,7 @@ def _print_verification_report(report: dict, *, as_json: bool) -> None:
     for requirement in report["requirements"]:
         actual = requirement.get("actual")
         actual_text = (
-            "missing"
-            if actual is None
-            else f"{actual['value']} {actual['unit']}"
+            "missing" if actual is None else f"{actual['value']} {actual['unit']}"
         )
         print(
             f"  {requirement['status'].upper()} "
@@ -437,8 +465,7 @@ def _print_verification_report(report: dict, *, as_json: bool) -> None:
         )
     for issue in report.get("issues", ()):
         print(
-            f"  ERROR {issue['path']}: {issue['message']} "
-            f"[{issue['code']}]",
+            f"  ERROR {issue['path']}: {issue['message']} [{issue['code']}]",
             file=sys.stderr,
         )
 
@@ -492,6 +519,7 @@ def parser() -> argparse.ArgumentParser:
     )
     link.add_argument("step", type=Path)
     link.add_argument("--viewer-url", required=True)
+    link.add_argument("--record", type=Path)
     link.set_defaults(handler=command_link)
 
     doctor = subparsers.add_parser("doctor", help="check pins and Viewer safety")
@@ -571,7 +599,7 @@ def parser() -> argparse.ArgumentParser:
 
 def main(argv: list[str] | None = None) -> int:
     args = parser().parse_args(argv)
-    config = load_project_config()
+    config = None if args.command == "verify" else load_project_config()
     return int(args.handler(args, config))
 
 

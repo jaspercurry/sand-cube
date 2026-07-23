@@ -22,6 +22,7 @@ import argparse
 from datetime import datetime, timezone
 import json
 from math import isfinite
+import os
 from pathlib import Path
 from typing import Any
 
@@ -49,6 +50,7 @@ from workbench.designs.joint_coupon.verification import (
     design_contract,
     input_fingerprints,
     source_fingerprints,
+    sha256_file,
 )
 
 
@@ -57,6 +59,7 @@ OUTPUT_ROOT = ROOT / "build/workbench/joint_coupon"
 ASSEMBLY_ARTIFACT = "artifact.joint-coupon-assembly-step"
 LOWER_ARTIFACT = "artifact.joint-coupon-lower-step"
 UPPER_ARTIFACT = "artifact.joint-coupon-upper-step"
+BASELINE_ROOT = ROOT / "workbench/designs/joint_coupon/baseline"
 
 
 def _parser() -> argparse.ArgumentParser:
@@ -127,6 +130,57 @@ def _measure(
     )
 
 
+def _baseline_comparison(results: list[RequirementResult]) -> dict[str, Any]:
+    baseline_path = BASELINE_ROOT / "measurements.json"
+    baseline = json.loads(baseline_path.read_text(encoding="utf-8"))
+    source_path = BASELINE_ROOT / "pre_integration_model.py.txt"
+    parameters_path = BASELINE_ROOT / "params.json"
+    identity_matches = {
+        "source_fixture": sha256_file(source_path) == baseline["source_sha256"],
+        "current_model_source": (
+            sha256_file(ROOT / "workbench/designs/joint_coupon/model.py")
+            == baseline["source_sha256"]
+        ),
+        "parameter_fixture": (
+            sha256_file(parameters_path) == baseline["parameters_sha256"]
+        ),
+        "current_parameters": (
+            sha256_file(ROOT / "workbench/designs/joint_coupon/params.json")
+            == baseline["parameters_sha256"]
+        ),
+    }
+    actual_by_id = {result.requirement_id: result.actual for result in results}
+    compared = []
+    mismatches = []
+    for requirement_id, expected in baseline["measurements"].items():
+        actual = actual_by_id.get(requirement_id)
+        if actual is None:
+            continue
+        delta = abs(float(actual.value) - float(expected["value"]))
+        matches = (
+            actual.unit.value == expected["unit"] and delta <= expected["tolerance"]
+        )
+        record = {
+            "requirement_id": requirement_id,
+            "expected": expected,
+            "actual": {"value": actual.value, "unit": actual.unit.value},
+            "delta": delta,
+            "matches": matches,
+        }
+        compared.append(record)
+        if not matches:
+            mismatches.append(record)
+    return {
+        "baseline": str(baseline_path.relative_to(ROOT)),
+        "identity_matches": identity_matches,
+        "compared_count": len(compared),
+        "measurements": compared,
+        "mismatches": mismatches,
+        "passed": all(identity_matches.values()) and not mismatches,
+        "comparison_kind": "tolerance-based geometry; STEP byte identity is not claimed",
+    }
+
+
 def _fast_results(
     params: CouponParameters,
     requirements,
@@ -137,9 +191,7 @@ def _fast_results(
     finite_positive = all(isfinite(value) and value > 0.0 for value in values)
     fastener_radius = params.fastener_diameter / 2.0
     gasket_outer_y = (
-        params.groove_width / 2.0
-        + params.gasket_land_gap
-        + params.gasket_width
+        params.groove_width / 2.0 + params.gasket_land_gap + params.gasket_width
     )
     layout_feasible = all(
         (
@@ -150,33 +202,170 @@ def _fast_results(
             params.groove_depth >= params.tongue_height,
         )
     )
-    assembly_height = params.lower_thickness + params.closed_gap + params.upper_thickness
-    _measure(requirements, results, "JC-STRUCT-PARAMETERS-FINITE", finite_positive, Unit.BOOLEAN, "All 18 parsed parameter values are finite and positive.")
-    _measure(requirements, results, "JC-STRUCT-LAYOUT-FEASIBLE", layout_feasible, Unit.BOOLEAN, "Analytic feature bounds remain within the plate envelope.")
-    _measure(requirements, results, "JC-DIM-NOMINAL-LENGTH", params.length, Unit.MILLIMETER, "Nominal X extent read from the authoritative parameter input.")
-    _measure(requirements, results, "JC-DIM-NOMINAL-DEPTH", params.depth, Unit.MILLIMETER, "Nominal Y extent read from the authoritative parameter input.")
-    _measure(requirements, results, "JC-DIM-NOMINAL-HEIGHT", assembly_height, Unit.MILLIMETER, "Analytic closed Z extent from plate thicknesses and gap.")
-    _measure(requirements, results, "JC-DIM-ANALYTIC-LOWER-VOLUME", expected["lower"], Unit.CUBIC_MILLIMETER, "Native-free analytic lower volume.")
-    _measure(requirements, results, "JC-DIM-ANALYTIC-UPPER-VOLUME", expected["upper"], Unit.CUBIC_MILLIMETER, "Native-free analytic upper volume.")
-    _measure(requirements, results, "JC-DIM-ANALYTIC-GASKET-VOLUME", expected["gasket_each"], Unit.CUBIC_MILLIMETER, "Native-free analytic volume of each compressed gasket reference.")
+    assembly_height = (
+        params.lower_thickness + params.closed_gap + params.upper_thickness
+    )
+    _measure(
+        requirements,
+        results,
+        "JC-STRUCT-PARAMETERS-FINITE",
+        finite_positive,
+        Unit.BOOLEAN,
+        "All 18 parsed parameter values are finite and positive.",
+    )
+    _measure(
+        requirements,
+        results,
+        "JC-STRUCT-LAYOUT-FEASIBLE",
+        layout_feasible,
+        Unit.BOOLEAN,
+        "Analytic feature bounds remain within the plate envelope.",
+    )
+    _measure(
+        requirements,
+        results,
+        "JC-DIM-NOMINAL-LENGTH",
+        params.length,
+        Unit.MILLIMETER,
+        "Nominal X extent read from the authoritative parameter input.",
+    )
+    _measure(
+        requirements,
+        results,
+        "JC-DIM-NOMINAL-DEPTH",
+        params.depth,
+        Unit.MILLIMETER,
+        "Nominal Y extent read from the authoritative parameter input.",
+    )
+    _measure(
+        requirements,
+        results,
+        "JC-DIM-NOMINAL-HEIGHT",
+        assembly_height,
+        Unit.MILLIMETER,
+        "Analytic closed Z extent from plate thicknesses and gap.",
+    )
+    _measure(
+        requirements,
+        results,
+        "JC-DIM-ANALYTIC-LOWER-VOLUME",
+        expected["lower"],
+        Unit.CUBIC_MILLIMETER,
+        "Native-free analytic lower volume.",
+    )
+    _measure(
+        requirements,
+        results,
+        "JC-DIM-ANALYTIC-UPPER-VOLUME",
+        expected["upper"],
+        Unit.CUBIC_MILLIMETER,
+        "Native-free analytic upper volume.",
+    )
+    _measure(
+        requirements,
+        results,
+        "JC-DIM-ANALYTIC-GASKET-VOLUME",
+        expected["gasket_each"],
+        Unit.CUBIC_MILLIMETER,
+        "Native-free analytic volume of each compressed gasket reference.",
+    )
     return results
 
 
-def _fit_results(params: CouponParameters, model, requirements) -> list[RequirementResult]:
+def _fit_results(
+    params: CouponParameters, model, requirements
+) -> list[RequirementResult]:
     results: list[RequirementResult] = []
     expected = expected_volumes(params)
     assembly = _bbox(model.assembly)
-    _measure(requirements, results, "JC-STRUCT-LOWER-VALID", bool(model.lower.is_valid), Unit.BOOLEAN, "OpenCascade reports the lower rigid coupon valid.")
-    _measure(requirements, results, "JC-STRUCT-UPPER-VALID", bool(model.upper.is_valid), Unit.BOOLEAN, "OpenCascade reports the upper rigid coupon valid.")
-    _measure(requirements, results, "JC-STRUCT-LOWER-SOLID-COUNT", len(model.lower.solids()), Unit.COUNT, "Lower rigid topology solid count.")
-    _measure(requirements, results, "JC-STRUCT-UPPER-SOLID-COUNT", len(model.upper.solids()), Unit.COUNT, "Upper rigid topology solid count.")
-    _measure(requirements, results, "JC-DIM-ASSEMBLY-LENGTH", assembly["x"], Unit.MILLIMETER, "Built closed-assembly bounding-box X extent.")
-    _measure(requirements, results, "JC-DIM-ASSEMBLY-DEPTH", assembly["y"], Unit.MILLIMETER, "Built closed-assembly bounding-box Y extent.")
-    _measure(requirements, results, "JC-DIM-ASSEMBLY-HEIGHT", assembly["z"], Unit.MILLIMETER, "Built closed-assembly bounding-box Z extent.")
-    _measure(requirements, results, "JC-DIM-LOWER-VOLUME", model.lower.volume, Unit.CUBIC_MILLIMETER, f"Built lower volume; analytic target {expected['lower']:.6f} mm3.")
-    _measure(requirements, results, "JC-DIM-UPPER-VOLUME", model.upper.volume, Unit.CUBIC_MILLIMETER, f"Built upper volume; analytic target {expected['upper']:.6f} mm3.")
-    _measure(requirements, results, "JC-DIM-GASKET-LEFT-VOLUME", model.gasket_left.volume, Unit.CUBIC_MILLIMETER, "Built left compressed gasket reference volume.")
-    _measure(requirements, results, "JC-DIM-GASKET-RIGHT-VOLUME", model.gasket_right.volume, Unit.CUBIC_MILLIMETER, "Built right compressed gasket reference volume.")
+    _measure(
+        requirements,
+        results,
+        "JC-STRUCT-LOWER-VALID",
+        bool(model.lower.is_valid),
+        Unit.BOOLEAN,
+        "OpenCascade reports the lower rigid coupon valid.",
+    )
+    _measure(
+        requirements,
+        results,
+        "JC-STRUCT-UPPER-VALID",
+        bool(model.upper.is_valid),
+        Unit.BOOLEAN,
+        "OpenCascade reports the upper rigid coupon valid.",
+    )
+    _measure(
+        requirements,
+        results,
+        "JC-STRUCT-LOWER-SOLID-COUNT",
+        len(model.lower.solids()),
+        Unit.COUNT,
+        "Lower rigid topology solid count.",
+    )
+    _measure(
+        requirements,
+        results,
+        "JC-STRUCT-UPPER-SOLID-COUNT",
+        len(model.upper.solids()),
+        Unit.COUNT,
+        "Upper rigid topology solid count.",
+    )
+    _measure(
+        requirements,
+        results,
+        "JC-DIM-ASSEMBLY-LENGTH",
+        assembly["x"],
+        Unit.MILLIMETER,
+        "Built closed-assembly bounding-box X extent.",
+    )
+    _measure(
+        requirements,
+        results,
+        "JC-DIM-ASSEMBLY-DEPTH",
+        assembly["y"],
+        Unit.MILLIMETER,
+        "Built closed-assembly bounding-box Y extent.",
+    )
+    _measure(
+        requirements,
+        results,
+        "JC-DIM-ASSEMBLY-HEIGHT",
+        assembly["z"],
+        Unit.MILLIMETER,
+        "Built closed-assembly bounding-box Z extent.",
+    )
+    _measure(
+        requirements,
+        results,
+        "JC-DIM-LOWER-VOLUME",
+        model.lower.volume,
+        Unit.CUBIC_MILLIMETER,
+        f"Built lower volume; analytic target {expected['lower']:.6f} mm3.",
+    )
+    _measure(
+        requirements,
+        results,
+        "JC-DIM-UPPER-VOLUME",
+        model.upper.volume,
+        Unit.CUBIC_MILLIMETER,
+        f"Built upper volume; analytic target {expected['upper']:.6f} mm3.",
+    )
+    _measure(
+        requirements,
+        results,
+        "JC-DIM-GASKET-LEFT-VOLUME",
+        model.gasket_left.volume,
+        Unit.CUBIC_MILLIMETER,
+        "Built left compressed gasket reference volume.",
+    )
+    _measure(
+        requirements,
+        results,
+        "JC-DIM-GASKET-RIGHT-VOLUME",
+        model.gasket_right.volume,
+        Unit.CUBIC_MILLIMETER,
+        "Built right compressed gasket reference volume.",
+    )
     tongue = _bbox(model.tongue)
     groove = _bbox(model.groove)
     side_clearance = (groove["y"] - tongue["y"]) / 2.0
@@ -190,12 +379,54 @@ def _fit_results(params: CouponParameters, model, requirements) -> list[Requirem
         for rigid in (model.lower, model.upper)
     )
     section_clearance = groove["max_z"] - tongue["max_z"]
-    _measure(requirements, results, "JC-CLEAR-SIDE", side_clearance, Unit.MILLIMETER, "Groove/tongue Y extents measured 0.2 mm clearance per side.")
-    _measure(requirements, results, "JC-CLEAR-END", end_clearance, Unit.MILLIMETER, "Groove/tongue X extents measured 1.0 mm clearance per end.")
-    _measure(requirements, results, "JC-FIT-GASKET-COMPRESSION", gasket_compression, Unit.MILLIMETER, "Free gasket thickness minus modeled closed gasket thickness.")
-    _measure(requirements, results, "JC-INTERFERENCE-RIGID", rigid_interference, Unit.CUBIC_MILLIMETER, "Positive-volume intersection of the two closed rigid coupons.")
-    _measure(requirements, results, "JC-INTERFERENCE-GASKET", max(gasket_interferences), Unit.CUBIC_MILLIMETER, f"Four gasket/rigid intersection volumes: {gasket_interferences}.")
-    _measure(requirements, results, "JC-SECTION-VERTICAL-CLEARANCE", section_clearance, Unit.MILLIMETER, "Mid-plane groove-cutter ceiling Z minus tongue top Z.")
+    _measure(
+        requirements,
+        results,
+        "JC-CLEAR-SIDE",
+        side_clearance,
+        Unit.MILLIMETER,
+        "Groove/tongue Y extents measured 0.2 mm clearance per side.",
+    )
+    _measure(
+        requirements,
+        results,
+        "JC-CLEAR-END",
+        end_clearance,
+        Unit.MILLIMETER,
+        "Groove/tongue X extents measured 1.0 mm clearance per end.",
+    )
+    _measure(
+        requirements,
+        results,
+        "JC-FIT-GASKET-COMPRESSION",
+        gasket_compression,
+        Unit.MILLIMETER,
+        "Free gasket thickness minus modeled closed gasket thickness.",
+    )
+    _measure(
+        requirements,
+        results,
+        "JC-INTERFERENCE-RIGID",
+        rigid_interference,
+        Unit.CUBIC_MILLIMETER,
+        "Positive-volume intersection of the two closed rigid coupons.",
+    )
+    _measure(
+        requirements,
+        results,
+        "JC-INTERFERENCE-GASKET",
+        max(gasket_interferences),
+        Unit.CUBIC_MILLIMETER,
+        f"Four gasket/rigid intersection volumes: {gasket_interferences}.",
+    )
+    _measure(
+        requirements,
+        results,
+        "JC-SECTION-VERTICAL-CLEARANCE",
+        section_clearance,
+        Unit.MILLIMETER,
+        "Mid-plane groove-cutter ceiling Z minus tongue top Z.",
+    )
     return results
 
 
@@ -231,14 +462,54 @@ def _release_results(
 
     expected = expected_volumes(params)
     assembly = import_step(paths["assembly"])
-    _measure(requirements, results, "JC-ROUNDTRIP-VALID", bool(assembly.is_valid), Unit.BOOLEAN, "Re-imported assembly STEP is valid.", (ASSEMBLY_ARTIFACT,))
-    _measure(requirements, results, "JC-ROUNDTRIP-SOLID-COUNT", len(assembly.solids()), Unit.COUNT, "Re-imported assembly STEP contains both rigid solids.", (ASSEMBLY_ARTIFACT,))
-    _measure(requirements, results, "JC-ROUNDTRIP-VOLUME", assembly.volume, Unit.CUBIC_MILLIMETER, "Re-imported assembly STEP total rigid volume.", (ASSEMBLY_ARTIFACT,))
+    _measure(
+        requirements,
+        results,
+        "JC-ROUNDTRIP-VALID",
+        bool(assembly.is_valid),
+        Unit.BOOLEAN,
+        "Re-imported assembly STEP is valid.",
+        (ASSEMBLY_ARTIFACT,),
+    )
+    _measure(
+        requirements,
+        results,
+        "JC-ROUNDTRIP-SOLID-COUNT",
+        len(assembly.solids()),
+        Unit.COUNT,
+        "Re-imported assembly STEP contains both rigid solids.",
+        (ASSEMBLY_ARTIFACT,),
+    )
+    _measure(
+        requirements,
+        results,
+        "JC-ROUNDTRIP-VOLUME",
+        assembly.volume,
+        Unit.CUBIC_MILLIMETER,
+        "Re-imported assembly STEP total rigid volume.",
+        (ASSEMBLY_ARTIFACT,),
+    )
     for name, artifact_id in (("lower", LOWER_ARTIFACT), ("upper", UPPER_ARTIFACT)):
         part = import_step(paths[name])
         prefix = name.upper()
-        _measure(requirements, results, f"JC-ROUNDTRIP-{prefix}-SOLID-COUNT", len(part.solids()), Unit.COUNT, f"Re-imported {name} STEP solid count.", (artifact_id,))
-        _measure(requirements, results, f"JC-ROUNDTRIP-{prefix}-VOLUME", part.volume, Unit.CUBIC_MILLIMETER, f"Re-imported {name} STEP volume; analytic target {expected[name]:.6f} mm3.", (artifact_id,))
+        _measure(
+            requirements,
+            results,
+            f"JC-ROUNDTRIP-{prefix}-SOLID-COUNT",
+            len(part.solids()),
+            Unit.COUNT,
+            f"Re-imported {name} STEP solid count.",
+            (artifact_id,),
+        )
+        _measure(
+            requirements,
+            results,
+            f"JC-ROUNDTRIP-{prefix}-VOLUME",
+            part.volume,
+            Unit.CUBIC_MILLIMETER,
+            f"Re-imported {name} STEP volume; analytic target {expected[name]:.6f} mm3.",
+            (artifact_id,),
+        )
     return results, paths
 
 
@@ -247,8 +518,7 @@ def main(argv: list[str] | None = None) -> None:
     raw_params, params = load_parameters()
     contract = design_contract(params)
     requirements = {
-        requirement.requirement_id: requirement
-        for requirement in contract.requirements
+        requirement.requirement_id: requirement for requirement in contract.requirements
     }
     results = _fast_results(params, requirements)
     model = None
@@ -284,8 +554,11 @@ def main(argv: list[str] | None = None) -> None:
             "JC-VIS-SNAPSHOT-ISO",
             "JC-VIS-SNAPSHOT-SECTION",
         }
-    passed = not missing_native_ids and all(
-        result.status is ResultStatus.PASS for result in results
+    baseline_comparison = _baseline_comparison(results)
+    passed = (
+        not missing_native_ids
+        and baseline_comparison["passed"]
+        and all(result.status is ResultStatus.PASS for result in results)
     )
 
     sources = source_fingerprints()
@@ -294,6 +567,17 @@ def main(argv: list[str] | None = None) -> None:
         "schema_version": 1,
         "design": "joint_coupon",
         "profile": profile.value,
+        "job": {
+            "job_id": os.environ["CAD_JOB_ID"],
+            "name": f"joint-coupon-{profile.value}",
+            "target": "workbench/designs/joint_coupon/build.py",
+            "profile": profile.value,
+            "command": [
+                "workbench/designs/joint_coupon/build.py",
+                "--profile",
+                profile.value,
+            ],
+        },
         "status": "passed" if passed else "failed",
         "contract_id": contract.contract_id,
         "contract_fingerprint": contract_fingerprint(contract),
@@ -305,9 +589,8 @@ def main(argv: list[str] | None = None) -> None:
         "parameters_mm": raw_params,
         "results": [_result_dict(result) for result in results],
         "missing_native_requirement_ids": sorted(missing_native_ids),
-        "outputs": {
-            name: str(OUTPUT_ROOT / path.name) for name, path in paths.items()
-        },
+        "baseline_comparison": baseline_comparison,
+        "outputs": {name: str(OUTPUT_ROOT / path.name) for name, path in paths.items()},
     }
     (output / "design-contract.json").write_text(contract_to_json(contract))
     diagnostics_path = output / f"diagnostics-{profile.value}.json"

@@ -1,0 +1,20 @@
+{
+  "length": 80.0,
+  "depth": 30.0,
+  "lower_thickness": 5.0,
+  "upper_thickness": 5.0,
+  "closed_gap": 1.0,
+  "tongue_length": 58.0,
+  "tongue_width": 4.0,
+  "tongue_height": 3.0,
+  "groove_end_clearance": 1.0,
+  "groove_side_clearance": 0.2,
+  "groove_depth": 3.2,
+  "gasket_length": 58.0,
+  "gasket_width": 4.0,
+  "gasket_land_gap": 0.8,
+  "gasket_free_thickness": 1.5,
+  "fastener_diameter": 4.5,
+  "fastener_x": 30.0,
+  "fastener_y": 10.0
+}
