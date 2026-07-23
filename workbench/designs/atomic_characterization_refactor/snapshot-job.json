@@ -1,0 +1,42 @@
+{
+  "provenanceOutput": "build/workbench/atomic_characterization_refactor/near_perfect_bucket/snapshot-provenance.json",
+  "jobs": [
+    {
+      "input": "build/workbench/atomic_characterization_refactor/near_perfect_bucket/near_perfect_bucket.step",
+      "mode": "view",
+      "display": {
+        "mode": "solid",
+        "projection": "orthographic"
+      },
+      "outputs": [
+        {
+          "path": "build/workbench/atomic_characterization_refactor/near_perfect_bucket/snapshot-isometric.png",
+          "camera": "iso"
+        }
+      ],
+      "render": {
+        "padding": 0.12,
+        "sizeProfile": "diagnostic",
+        "viewLabels": true
+      }
+    },
+    {
+      "input": "build/workbench/atomic_characterization_refactor/near_perfect_bucket/near_perfect_bucket.step",
+      "mode": "section",
+      "section": {
+        "plane": "YZ",
+        "offset": 0.0
+      },
+      "outputs": [
+        {
+          "path": "build/workbench/atomic_characterization_refactor/near_perfect_bucket/snapshot-center-section.png"
+        }
+      ],
+      "render": {
+        "padding": 0.12,
+        "sizeProfile": "section",
+        "viewLabels": true
+      }
+    }
+  ]
+}
