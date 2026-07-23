@@ -1,6 +1,7 @@
 # Atomic characterization/refactor contract
 
-Status: Phase B active; first metadata atom complete.
+Status: Phase B stopped at a material equivalence blocker; first metadata atom
+complete.
 
 The verbatim governing request is `brief.md`. Its required SHA-256 is
 `7cb5fad7514df1670ba9fd017cce0d44369564018515e3b4ec5be2c55d4bb96e`.
@@ -61,6 +62,14 @@ reproduction gate: exact native-free tests prove its units, dimensions, datum
 planes, and axis polarity. A controlled post-refactor native run reaches the
 same pre-existing rail failure boundary with no earlier regression. No geometry
 atom may be extracted until that baseline is repaired.
+
+An exploratory, uncommitted rail repair was used only to inspect the next
+boundary. It exposed a material discrepancy between the authoritative
+left/right/top seam and the flat-bottom hybrid: a 4 mm local comparison cube
+contained `0.40496478224918064 mm³` of reference-only bucket material and no
+hybrid-only material. Restoring that material would reconcile selected
+references and is therefore later model synthesis, not an equivalence refactor.
+All exploratory source edits were reverted.
 
 ## Printability boundary
 

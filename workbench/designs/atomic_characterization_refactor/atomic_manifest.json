@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "record_id": "atomic-characterization-refactor.phase-b",
-  "recorded_at": "2026-07-23T10:10:00Z",
+  "recorded_at": "2026-07-23T11:40:00Z",
   "authority": "This file is the authoritative characterization, atom, and refactor-evidence description. Generated Markdown files are projections.",
   "scope": {
     "phase": "B",
@@ -206,6 +206,85 @@
       "Source-chain boundary comparison is useful for metadata atoms but cannot substitute for geometry equivalence.",
       "The next geometry atom remains gated by repair of the deterministic top-rail failure."
     ]
+  },
+  "exploratory_baseline_repair": {
+    "status": "discarded; no exploratory source edit retained",
+    "authority": "Diagnostic evidence only. The generated artifacts below came from uncommitted source experiments and are not an accepted baseline or production source.",
+    "purpose": "Determine whether the deterministic rail failure could be cleared without exposing a later geometry mismatch.",
+    "source_edit_boundary": [
+      "Corrected an observed double placement of the rear ramp only in the exploratory worktree state.",
+      "Tested review-only cutaway adapters after the base export became reachable.",
+      "Did not alter the three selected removable-front reference STEP files.",
+      "Reverted every exploratory source and validator edit after the semantic mismatch was measured."
+    ],
+    "jobs": [
+      {
+        "job_id": "20260723T105419-generate-sand-cube-190x210-internal-squat-absorb-429b75b3e9",
+        "status": "failed",
+        "elapsed_seconds": 281.164,
+        "peak_rss_bytes": 1308721152,
+        "boundary": "leaf base exported, then the exploratory solid cutaway remained invalid"
+      },
+      {
+        "job_id": "20260723T110650-generate-sand-cube-190x210-internal-squat-absorb-7723fda4a0",
+        "status": "failed",
+        "elapsed_seconds": 328.639,
+        "peak_rss_bytes": 1322745856,
+        "boundary": "base and viewer cutaway stages completed; a later duplicate named-reference STEP export failed"
+      },
+      {
+        "job_id": "20260723T111344-validate-simple-tongue-groove-baffle-51e3ab94c6",
+        "status": "failed semantic equivalence gate",
+        "elapsed_seconds": 420.696,
+        "peak_rss_bytes": 1394671616,
+        "boundary": "top_x_-45 bucket occupancy differed at 2 of 1248 protected samples; first point [-45.0, -71.75, 86.25]"
+      },
+      {
+        "job_id": "20260723T113000-diagnose-seam-identity-34754b3ab1",
+        "status": "completed diagnostic",
+        "elapsed_seconds": 384.514,
+        "peak_rss_bytes": 1402896384,
+        "outputs": 4
+      }
+    ],
+    "exploratory_leaf_base": {
+      "path": "build/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle/sand_cube_190x210_single_oval_port_base.step",
+      "sha256": "2b00cc4f7c0d9203758893ffcab2039325d072070fb33c94f001b47ef9b09203",
+      "bytes": 5654772,
+      "role": "diagnostic input only; not accepted or promoted"
+    },
+    "localized_seam_diagnostic": {
+      "target_mm": [-45.0, -71.75, 86.25],
+      "clip_size_mm": [4.0, 4.0, 4.0],
+      "neighborhood_samples": 75,
+      "mismatch_samples": 9,
+      "mismatch_direction": "authoritative bucket occupied; hybrid bucket and both baffles empty",
+      "reference_bucket_volume_mm3": 35.80665201146918,
+      "hybrid_bucket_volume_mm3": 35.40168722922,
+      "overlap_volume_mm3": 35.40168722922,
+      "reference_only_volume_mm3": 0.40496478224918064,
+      "hybrid_only_volume_mm3": 0.0,
+      "diagnostics": {
+        "path": "build/workbench/atomic_characterization_refactor/seam_mismatch_diagnostic/diagnostics.json",
+        "sha256": "db41c918c87018a3a19fcb14e6d7cf70aea7a92285596f5d7e73a95e33e8c461"
+      },
+      "reference_local_step": {
+        "path": "build/workbench/atomic_characterization_refactor/seam_mismatch_diagnostic/reference_bucket_local.step",
+        "sha256": "6a6574f43c6cb7f481933d1378e5761cdb12387a846110ebc3d7348164dd620b",
+        "solid_count": 1,
+        "all_solids_valid": true,
+        "roundtrip_volume_mm3": 35.8066534714463
+      },
+      "hybrid_local_step": {
+        "path": "build/workbench/atomic_characterization_refactor/seam_mismatch_diagnostic/hybrid_bucket_local.step",
+        "sha256": "ff7bac2abfb4e46d4f179a7d374dd60b4407c27bad5f9ffc2c3362f169f1c8e6",
+        "solid_count": 1,
+        "all_solids_valid": true,
+        "roundtrip_volume_mm3": 35.40168913729955
+      }
+    },
+    "decision": "Do not repair or promote the hybrid source in this equivalence-only task. Restoring the lost top-seam material would reconcile the flat-bottom and authoritative sculpted-seam constructions, which the brief reserves for later model synthesis.",
+    "retained_source_edits": []
   },
   "construction_stages": [
     "single-oval-port base creates the monolithic shell, cavity, openings and early port geometry",
@@ -1489,14 +1568,15 @@
     }
   ],
   "checkpoint": {
-    "decision": "CONTINUE_WITH_RECORDED_CHECKPOINTS",
+    "decision": "STOP_EQUIVALENCE_BLOCKER",
     "phase_b_blockers": [
       "current owning Python source fails native generation before output",
       "leaf validator cannot run without the authoritative lightweight base",
+      "an exploratory rail repair exposed a material top-seam loss in the flat-bottom hybrid: 0.40496478224918064 mm3 reference-only material inside a 4 mm local cube",
       "the three removable-front contributions remain intentionally unreconciled",
       "Variant I geometry does not exist"
     ],
-    "user_direction": "The user approved the characterization, then explicitly instructed the agent not to pause at later checkpoints and to attempt the full saved brief.",
+    "user_direction": "The user approved the characterization, then explicitly instructed the agent not to pause at routine checkpoints and to attempt the full saved brief. This does not override the brief's stop condition for an unexplained or material geometry mismatch.",
     "unresolved_source_artifact_conflicts": [
       "clean R bucket seam is STEP-derived and has wrong lower ownership",
       "hybrid assembly lower ownership predates clean seam",
