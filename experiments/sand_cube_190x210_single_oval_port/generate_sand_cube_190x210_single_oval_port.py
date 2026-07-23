@@ -97,6 +97,9 @@ from experiments.sand_cube_8_5_black_hole.generate_contoured_inner_variants impo
     _variant_sand_fill_port_cutout,
     _window_brace,
 )
+from src.enclosure_family.datums import (  # noqa: E402
+    ENCLOSURE_190X210_COORDINATES,
+)
 from src.features.horn import (  # noqa: E402
     build_jmlc_horn,
     jmlc_profile_metadata,
@@ -110,9 +113,10 @@ OUT = ROOT / "build" / "sand_cube_190x210_single_oval_port"
 @dataclass(frozen=True)
 class Design:
     name: str = "sand_cube_190x210_all_circle_weight_bearing_39hz"
-    width: float = 190.0
-    depth: float = 210.0
-    height: float = 190.0
+    width: float = ENCLOSURE_190X210_COORDINATES.width_mm
+    depth: float = ENCLOSURE_190X210_COORDINATES.depth_mm
+    height: float = ENCLOSURE_190X210_COORDINATES.height_mm
+    center_y: float = ENCLOSURE_190X210_COORDINATES.center_y_mm
     target_tuning_hz: float = 39.0
     speed_of_sound_m_s: float = 343.0
     air_density_kg_m3: float = 1.204
@@ -460,7 +464,7 @@ BLACK_HOLE_SEAT_DEPTH = (
     + BLACK_HOLE_VARIANT.driver_seat_extra_depth
 )
 REAR_EXTENSION_Y = D.depth - D.width
-REAR_INNER_Y = 10.0 + D.depth / 2.0 - D.wall_stack_t
+REAR_INNER_Y = D.center_y + D.depth / 2.0 - D.wall_stack_t
 RESTORED_FILL_X = D.width / 2.0 - 12.0
 RESTORED_FILL_Z = D.height / 2.0 - D.outer_skin_t - FINAL_200_FILL_ENTRY_D / 2.0
 RESTORED_FEATURE_VARIANT = replace(
@@ -470,7 +474,7 @@ RESTORED_FEATURE_VARIANT = replace(
     fill_port_z=RESTORED_FILL_Z,
     fill_entry_d=FINAL_200_FILL_ENTRY_D,
     window_brace=True,
-    window_brace_center_y=10.0,
+    window_brace_center_y=D.center_y,
     vertical_center_brace=True,
     vertical_brace_rear_y=REAR_INNER_Y,
     vertical_brace_height=10.0,
@@ -757,7 +761,7 @@ def _bounded_intersection_volume(left: Any, right: Any) -> float:
 
 
 def _outer_envelope() -> Part:
-    outer = Pos(0.0, 10.0, 0.0) * Box(D.width, D.depth, D.height)
+    outer = Pos(0.0, D.center_y, 0.0) * Box(D.width, D.depth, D.height)
     outer = fillet(outer.edges(), radius=D.edge_fillet_r)
     return _require_single_solid(outer.clean().fix(), feature="190 x 210 outer envelope")
 
@@ -771,7 +775,7 @@ def _inset_outer_envelope(offset: float) -> Part:
         raise ValueError(
             f"Inset {offset:.3f} mm exceeds the {D.edge_fillet_r:.3f} mm edge radius"
         )
-    inner = Pos(0.0, 10.0, 0.0) * Box(
+    inner = Pos(0.0, D.center_y, 0.0) * Box(
         D.width - 2.0 * offset,
         D.depth - 2.0 * offset,
         D.height - 2.0 * offset,
@@ -784,9 +788,9 @@ def _inset_outer_envelope(offset: float) -> Part:
 
 
 def _rectangular_cavity() -> Part:
-    front_y = 10.0 - D.depth / 2.0
+    front_y = D.center_y - D.depth / 2.0
     front_inner_y = front_y + BLACK_HOLE_SEAT_DEPTH
-    rear_inner_y = 10.0 + D.depth / 2.0 - D.wall_stack_t
+    rear_inner_y = D.center_y + D.depth / 2.0 - D.wall_stack_t
     inner_radius = D.edge_fillet_r - D.wall_stack_t
     with BuildPart() as cavity:
         with BuildSketch(Plane.XZ) as section:
@@ -819,7 +823,7 @@ def _black_hole_visible_tool() -> Part:
 
 
 def _black_hole_inner_relief() -> Part:
-    front_y = 10.0 - D.depth / 2.0
+    front_y = D.center_y - D.depth / 2.0
     relief = Pos(0.0, 0.0, BLACK_HOLE_CENTER_Z) * _front_tool_global_oriented(
         _inner_relief_tool(P, BLACK_HOLE_VARIANT),
         P,
@@ -844,9 +848,9 @@ def _sand_void() -> Part:
     # 7 mm floor stays solid, matching the original FINAL_200_VARIANT contract.
     # Construct the gap from two concentric filleted envelopes so its outer
     # surface remains exactly 2 mm inside every R8 exterior edge.
-    front_y = 10.0 - D.depth / 2.0
+    front_y = D.center_y - D.depth / 2.0
     front_inner_y = front_y + BLACK_HOLE_SEAT_DEPTH
-    rear_inner_y = 10.0 + D.depth / 2.0 - D.wall_stack_t
+    rear_inner_y = D.center_y + D.depth / 2.0 - D.wall_stack_t
     floor_top_z = -D.height / 2.0 + D.wall_stack_t
     outer_gap_boundary = _inset_outer_envelope(D.outer_skin_t)
     inner_gap_boundary = _inset_outer_envelope(
@@ -868,7 +872,7 @@ def _sand_void() -> Part:
     )
     side_roof_gap = (concentric_gap_shell & side_roof_clip).clean().fix()
 
-    rear_face_y = 10.0 + D.depth / 2.0
+    rear_face_y = D.center_y + D.depth / 2.0
     rear_gap_min_y = rear_face_y - D.outer_skin_t - D.sand_gap_t
     rear_gap_max_y = rear_face_y - D.outer_skin_t
     rear_gap_clip = Pos(
@@ -1401,7 +1405,9 @@ def _path_solids(outlet_z: float, *, outer_extra: float = 0.0) -> tuple[Part, Pa
 def _bridge_posts() -> list[Part]:
     posts: list[Part] = []
     gap_mid_x = D.width / 2.0 - D.outer_skin_t - D.sand_gap_t / 2.0
-    gap_mid_y_rear = D.depth / 2.0 + 10.0 - D.outer_skin_t - D.sand_gap_t / 2.0
+    gap_mid_y_rear = (
+        D.center_y + D.depth / 2.0 - D.outer_skin_t - D.sand_gap_t / 2.0
+    )
     gap_mid_z = D.height / 2.0 - D.outer_skin_t - D.sand_gap_t / 2.0
     for y, z in ((-30.0, -50.0), (-30.0, 50.0), (45.0, -50.0), (45.0, 50.0)):
         for x in (-gap_mid_x, gap_mid_x):
@@ -1452,7 +1458,7 @@ def _sand_fill_rear_bore(fill_x: float) -> Part:
     # Extend 1.2 mm through the rear inner face so the straight entry overlaps
     # the already-hollow transition without cutting a loft through the full base.
     depth = P.rear_cap_t + 1.2
-    rear_face_y = 10.0 + D.depth / 2.0
+    rear_face_y = D.center_y + D.depth / 2.0
     return _oriented_cylinder(
         diameter=P.fill_entry_d,
         depth=depth,
@@ -1471,7 +1477,7 @@ def _front_brace_blends() -> Compound:
     face therefore follows the real recess exactly and fills the local dual-skin
     void, while its 10 mm inward face remains coplanar with the complete rail.
     """
-    enclosure_front_y = 10.0 - D.depth / 2.0
+    enclosure_front_y = D.center_y - D.depth / 2.0
     driver_seat_y = enclosure_front_y + BLACK_HOLE_SEAT_DEPTH
     raw_front_y = enclosure_front_y - 1.0
     tail_y = (
@@ -1512,7 +1518,7 @@ def _front_brace_blends() -> Compound:
 
 def _longitudinal_wall_rails() -> Compound:
     """Build the top and side rails; the solid floor needs no lower rail."""
-    driver_seat_y = -D.depth / 2.0 + 10.0 + BLACK_HOLE_SEAT_DEPTH
+    driver_seat_y = D.center_y - D.depth / 2.0 + BLACK_HOLE_SEAT_DEPTH
     buttress_tail_y = (
         driver_seat_y
         - D.front_brace_baffle_embed
@@ -1617,7 +1623,7 @@ def _tube_mount_insert_pockets() -> list[Part]:
 def _internal_tower_mount_saddle(*, clearance: float = 0.0) -> Part:
     """L-shaped tower plate bearing on the inner roof and rear wall."""
     roof_inner_z = D.height / 2.0 - D.wall_stack_t
-    rear_inner_y = 10.0 + D.depth / 2.0 - D.wall_stack_t
+    rear_inner_y = D.center_y + D.depth / 2.0 - D.wall_stack_t
     roof = Pos(
         0.0,
         D.internal_mount_roof_front_y + D.internal_mount_roof_depth / 2.0,
@@ -1643,7 +1649,7 @@ def _internal_tower_mount_saddle(*, clearance: float = 0.0) -> Part:
 
 def _internal_tower_mount_clearance_holes() -> list[Part]:
     roof_inner_z = D.height / 2.0 - D.wall_stack_t
-    rear_inner_y = 10.0 + D.depth / 2.0 - D.wall_stack_t
+    rear_inner_y = D.center_y + D.depth / 2.0 - D.wall_stack_t
     holes: list[Part] = []
     for x in (-D.internal_mount_roof_x, D.internal_mount_roof_x):
         holes.append(
@@ -1677,7 +1683,7 @@ def _internal_tower_mount_clearance_holes() -> list[Part]:
 def _internal_tower_mount_platforms() -> Compound:
     """Point-like solid lands bridging the 2-3-2 roof and rear wall."""
     roof_inner_z = D.height / 2.0 - D.wall_stack_t
-    rear_inner_y = 10.0 + D.depth / 2.0 - D.wall_stack_t
+    rear_inner_y = D.center_y + D.depth / 2.0 - D.wall_stack_t
     platforms: list[Part] = []
     for x in (-D.internal_mount_roof_x, D.internal_mount_roof_x):
         platforms.append(
@@ -1710,7 +1716,7 @@ def _internal_tower_mount_platforms() -> Compound:
 
 def _internal_tower_mount_insert_pockets() -> list[Part]:
     roof_inner_z = D.height / 2.0 - D.wall_stack_t
-    rear_inner_y = 10.0 + D.depth / 2.0 - D.wall_stack_t
+    rear_inner_y = D.center_y + D.depth / 2.0 - D.wall_stack_t
     pockets: list[Part] = []
     for x in (-D.internal_mount_roof_x, D.internal_mount_roof_x):
         pockets.append(
@@ -1746,7 +1752,7 @@ def _internal_tower_mount_displacement(port_outer: Part) -> Part:
     roof_outer_z = D.height / 2.0
     clip = Pos(
         0.0,
-        10.0,
+        D.center_y,
         (D.internal_tower_bottom_z + roof_outer_z) / 2.0,
     ) * Box(
         300.0,
@@ -1917,7 +1923,7 @@ def build_internal_tube(port_airway: Part, port_outer: Part) -> tuple[Part, Part
     lower_z = -D.height / 2.0
     lower_clip = Pos(
         0.0,
-        10.0,
+        D.center_y,
         (lower_z + D.internal_tower_bottom_z) / 2.0,
     ) * Box(
         300.0,
@@ -2028,7 +2034,7 @@ def build_base(
     floor_top_z = -D.height / 2.0 + D.wall_stack_t
     clearance_clip = Pos(
         0.0,
-        10.0,
+        D.center_y,
         (floor_top_z + 0.01 + D.height / 2.0) / 2.0,
     ) * Box(
         D.width + 2.0,
@@ -2043,7 +2049,7 @@ def build_base(
         base.clean().fix(), feature="base with floor-tangent removable tube"
     )
 
-    front_y = -D.depth / 2.0 + 10.0
+    front_y = D.center_y - D.depth / 2.0
     driver_seat_y = front_y + BLACK_HOLE_SEAT_DEPTH
     for index in range(P.driver_screw_count):
         angle = math.tau * index / P.driver_screw_count + math.pi / 4.0
@@ -2298,7 +2304,7 @@ def build_tower(outlet_z: float) -> tuple[Part, Part, Part]:
     tower_clip_h = outlet_z - D.internal_tower_bottom_z + 30.0
     tower_clip = Pos(
         0.0,
-        10.0,
+        D.center_y,
         D.internal_tower_bottom_z + tower_clip_h / 2.0,
     ) * Box(
         300.0,
@@ -2870,7 +2876,7 @@ def generate() -> dict[str, Any]:
     floor_top_z = floor_bottom_z + D.wall_stack_t
     below_floor = Pos(
         0.0,
-        10.0,
+        D.center_y,
         (floor_bottom_z + floor_top_z) / 2.0,
     ) * Box(
         D.width + 2.0,
@@ -3035,7 +3041,7 @@ def generate() -> dict[str, Any]:
         ]
     )
     horn, de250, horn_data = _placed_face_matched_horn_and_de250()
-    enclosure_front_y = -D.depth / 2.0 + 10.0
+    enclosure_front_y = D.center_y - D.depth / 2.0
     enclosure_roof_z = D.height / 2.0
     driver_seat_y = enclosure_front_y + BLACK_HOLE_SEAT_DEPTH
     equivalent_port_d = 2.0 * math.sqrt(D.port_area_mm2 / math.pi)
@@ -3353,7 +3359,7 @@ def generate() -> dict[str, Any]:
             "restored_original_features": {
                 "gx16": {
                     "center_xz_mm": [P.gx16_x, P.gx16_z],
-                    "rear_face_y_mm": 10.0 + D.depth / 2.0,
+                    "rear_face_y_mm": D.center_y + D.depth / 2.0,
                     "solid_connector_island": True,
                     "captive_inner_hex_pocket": True,
                     "placed_hardware": gx16_data,

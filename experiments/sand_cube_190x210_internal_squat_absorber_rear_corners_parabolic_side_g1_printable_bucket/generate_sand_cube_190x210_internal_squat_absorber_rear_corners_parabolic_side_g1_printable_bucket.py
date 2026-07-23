@@ -113,7 +113,7 @@ def _rear_sand_gap() -> Solid:
         solid
         for solid in gaps
         if solid.bounding_box().min.Y
-        > 10.0 + base.D.depth / 2.0 - base.D.wall_stack_t
+        > base.D.center_y + base.D.depth / 2.0 - base.D.wall_stack_t
     ]
     if len(rear_candidates) != 1:
         raise ValueError(

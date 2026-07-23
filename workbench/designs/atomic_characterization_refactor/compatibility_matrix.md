@@ -6,7 +6,7 @@ Authority: the `compatibility_class` and `comparison` fields for each atom in `a
 
 | Atom | Classification | Variant comparison | Later-synthesis blocker |
 |---|---|---|---|
-| family.coordinate_contract | intended identical but ownership duplicated | R evidence uses this frame; I future intent adopts it but has no geometry | no single parameter owner |
+| family.coordinate_contract | identical shared metadata | R sources consume the exact owner; I future intent adopts the same frame but still has no geometry | none for coordinate metadata; geometry baseline remains blocked independently |
 | family.exterior_envelope | intended identical but currently unproved | historic R/I references share bounds; naming/bounds alone do not prove common geometry | source baseline and explicit family owner absent |
 | family.exterior_shell | ambiguous ownership | candidate references look related but are from different closure states | no reproducible shared source |
 | family.inner_wall_sand_void | stale or unreproducible baseline | only historic diagnostics assert 2/3/2 | needs current source sections |

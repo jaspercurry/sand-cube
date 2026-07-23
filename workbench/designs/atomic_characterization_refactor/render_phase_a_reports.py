@@ -1,4 +1,4 @@
-"""Render Phase A human-readable views from atomic_manifest.json.
+"""Render characterization/refactor views from atomic_manifest.json.
 
 The JSON manifest is authoritative.  The generated Markdown files are
 deterministic projections and must not be edited by hand.
@@ -289,6 +289,74 @@ def render_printability(data: dict[str, Any]) -> None:
     _write("printability_report.md", "Printability characterization", body)
 
 
+def render_pilot(data: dict[str, Any]) -> None:
+    pilot = data["phase_b_pilot"]
+    native = pilot["native_boundary_comparison"]
+    artifacts = pilot["artifact_comparison"]
+    visual = pilot["visual_comparison"]
+    body = [
+        f"Status: **{pilot['status']}**",
+        "",
+        f"Atom: `{pilot['atom_id']}`",
+        "",
+        "## Source change and module boundary",
+        "",
+        f"- Exact owner: `{pilot['exact_owner']}`",
+        f"- Boundary: {pilot['module_boundary']}",
+        *[f"- {item}" for item in pilot["source_change"]],
+        "",
+        "## Exact preserved contract",
+        "",
+        f"- Units: `{pilot['preserved_parameters']['units']}`",
+        f"- Envelope: `{pilot['preserved_parameters']['envelope_mm']}` mm",
+        f"- Center: `{pilot['preserved_parameters']['center_xyz_mm']}` mm",
+        f"- Named planes: `{pilot['preserved_parameters']['named_planes_mm']}`",
+        f"- Axis directions: `{pilot['preserved_parameters']['directions']}`",
+        f"- Tolerance: `{pilot['preserved_parameters']['tolerance']}` mm",
+        "",
+        "## Native-free evidence",
+        "",
+        f"- Fast contract: `{pilot['fast_contract']['status']}`; "
+        f"{pilot['fast_contract']['selected_requirements']} selected requirements; "
+        f"{pilot['fast_contract']['elapsed_seconds']} s; "
+        f"{pilot['fast_contract']['peak_rss_bytes']} bytes peak RSS.",
+        f"- Lightweight suite: `{pilot['lightweight_checks']['status']}`; "
+        f"{pilot['lightweight_checks']['tests']} tests and "
+        f"{pilot['lightweight_checks']['subtests']} subtests; "
+        f"{pilot['lightweight_checks']['elapsed_seconds']} s; "
+        f"{pilot['lightweight_checks']['peak_rss_bytes']} bytes peak RSS.",
+        "",
+        "## Native boundary comparison",
+        "",
+        "| State | Job | Elapsed (s) | Peak RSS (bytes) | Outputs | Result |",
+        "|---|---|---:|---:|---:|---|",
+        f"| Before | `{native['before']['job_id']}` | "
+        f"{native['before']['elapsed_seconds']} | "
+        f"{native['before']['peak_rss_bytes']} | "
+        f"{native['before']['outputs']} | `{native['before']['failure']}` |",
+        f"| After | `{native['after']['job_id']}` | "
+        f"{native['after']['elapsed_seconds']} | "
+        f"{native['after']['peak_rss_bytes']} | "
+        f"{native['after']['outputs']} | `{native['after']['failure']}` |",
+        "",
+        native["interpretation"],
+        "",
+        "## Artifact and visual comparison",
+        "",
+        f"- Before STEP SHA-256: `{artifacts['before_step_sha256']}`",
+        f"- After STEP SHA-256: `{artifacts['after_step_sha256']}`",
+        f"- After-artifact boundary: {artifacts['after_step_reason']}",
+        f"- Before visual: {visual['before']}",
+        f"- After visual: {visual['after']}",
+        f"- Claim boundary: {visual['claim']}",
+        "",
+        "## Architectural lessons",
+        "",
+        *[f"- {item}" for item in pilot["architectural_lessons"]],
+    ]
+    _write("pilot_report.md", "Phase B first-atom checkpoint", body)
+
+
 def main() -> int:
     data = _load()
     render_inventory(data)
@@ -297,6 +365,8 @@ def main() -> int:
     render_dependencies(data)
     render_baseline(data)
     render_printability(data)
+    if "phase_b_pilot" in data:
+        render_pilot(data)
     return 0
 
 

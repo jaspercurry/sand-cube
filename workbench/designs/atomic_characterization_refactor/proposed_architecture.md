@@ -1,6 +1,7 @@
 # Proposed module tree and ownership
 
-Status: proposal only. No directory or geometry source below has been created.
+Status: partially implemented. `src/enclosure_family/datums.py` now owns the
+verified coordinate-contract pilot; every other module below remains proposed.
 The atom facts and readiness states remain authoritative in
 `atomic_manifest.json`.
 
@@ -100,3 +101,11 @@ The next geometry pilot should be chosen only after the baseline decision.
 `R.front_bulkhead_gasket_support` is a useful later candidate because it has a
 clear owner and strong section invariants, but it is currently blocked by the
 ancestor build failure.
+
+## Pilot result
+
+The family coordinate contract now has one native-free immutable owner for
+units, the 190x210x190 envelope, the +10 mm Y center, named planes, and axis
+polarity. Existing 190x210 source consumers use that datum owner. The extraction
+did not add a model, generator, Boolean, or variant flag, so the catalog remains
+unchanged.

@@ -1,0 +1,231 @@
+{
+  "contract_id": "contract.enclosure-family-190x210-coordinates",
+  "model": {
+    "entrypoint": "tests/test_enclosure_family_coordinate_contract.py",
+    "model_id": "enclosure-family-190x210-coordinates",
+    "name": "190 x 210 enclosure-family coordinate contract",
+    "source": "src/enclosure_family/datums.py",
+    "variant": "shared-metadata-atom"
+  },
+  "requirements": [
+    {
+      "check": {
+        "adapter": "python.coordinate_value",
+        "kind": "dimension",
+        "parameters": {
+          "field": "width_mm"
+        }
+      },
+      "cost_profile": "fast",
+      "description": "The family width remains exactly 190 mm.",
+      "expectation": {
+        "exact": 190.0,
+        "kind": "exact"
+      },
+      "requirement_id": "COORD-DIM-X",
+      "tolerance": {
+        "absolute": 0.0
+      },
+      "unit": "mm"
+    },
+    {
+      "check": {
+        "adapter": "python.coordinate_value",
+        "kind": "dimension",
+        "parameters": {
+          "field": "depth_mm"
+        }
+      },
+      "cost_profile": "fast",
+      "description": "The family depth remains exactly 210 mm.",
+      "expectation": {
+        "exact": 210.0,
+        "kind": "exact"
+      },
+      "requirement_id": "COORD-DIM-Y",
+      "tolerance": {
+        "absolute": 0.0
+      },
+      "unit": "mm"
+    },
+    {
+      "check": {
+        "adapter": "python.coordinate_value",
+        "kind": "dimension",
+        "parameters": {
+          "field": "height_mm"
+        }
+      },
+      "cost_profile": "fast",
+      "description": "The family height remains exactly 190 mm.",
+      "expectation": {
+        "exact": 190.0,
+        "kind": "exact"
+      },
+      "requirement_id": "COORD-DIM-Z",
+      "tolerance": {
+        "absolute": 0.0
+      },
+      "unit": "mm"
+    },
+    {
+      "check": {
+        "adapter": "python.coordinate_value",
+        "kind": "dimension",
+        "parameters": {
+          "field": "center_y_mm"
+        }
+      },
+      "cost_profile": "fast",
+      "description": "The historical 190 x 210 family Y center remains exactly +10 mm.",
+      "expectation": {
+        "exact": 10.0,
+        "kind": "exact"
+      },
+      "requirement_id": "COORD-DATUM-Y",
+      "tolerance": {
+        "absolute": 0.0
+      },
+      "unit": "mm"
+    },
+    {
+      "check": {
+        "adapter": "python.coordinate_direction",
+        "kind": "structural",
+        "parameters": {
+          "field": "front_direction"
+        }
+      },
+      "cost_profile": "fast",
+      "description": "Front remains design-coordinate -Y.",
+      "expectation": {
+        "exact": "0,-1,0",
+        "kind": "exact"
+      },
+      "requirement_id": "COORD-DIR-FRONT",
+      "tolerance": {
+        "absolute": 0.0
+      },
+      "unit": "none"
+    },
+    {
+      "check": {
+        "adapter": "python.coordinate_direction",
+        "kind": "structural",
+        "parameters": {
+          "field": "rear_direction"
+        }
+      },
+      "cost_profile": "fast",
+      "description": "Rear remains design-coordinate +Y.",
+      "expectation": {
+        "exact": "0,1,0",
+        "kind": "exact"
+      },
+      "requirement_id": "COORD-DIR-REAR",
+      "tolerance": {
+        "absolute": 0.0
+      },
+      "unit": "none"
+    },
+    {
+      "check": {
+        "adapter": "python.coordinate_direction",
+        "kind": "structural",
+        "parameters": {
+          "field": "bottom_direction"
+        }
+      },
+      "cost_profile": "fast",
+      "description": "Bottom remains design-coordinate -Z.",
+      "expectation": {
+        "exact": "0,0,-1",
+        "kind": "exact"
+      },
+      "requirement_id": "COORD-DIR-BOTTOM",
+      "tolerance": {
+        "absolute": 0.0
+      },
+      "unit": "none"
+    },
+    {
+      "check": {
+        "adapter": "python.coordinate_direction",
+        "kind": "structural",
+        "parameters": {
+          "field": "top_direction"
+        }
+      },
+      "cost_profile": "fast",
+      "description": "Top remains design-coordinate +Z.",
+      "expectation": {
+        "exact": "0,0,1",
+        "kind": "exact"
+      },
+      "requirement_id": "COORD-DIR-TOP",
+      "tolerance": {
+        "absolute": 0.0
+      },
+      "unit": "none"
+    },
+    {
+      "check": {
+        "adapter": "python.coordinate_span",
+        "kind": "fit",
+        "parameters": {
+          "maximum": "rear_y_mm",
+          "minimum": "front_y_mm"
+        }
+      },
+      "cost_profile": "fit",
+      "description": "The front and rear named planes preserve the 210 mm span.",
+      "expectation": {
+        "exact": 210.0,
+        "kind": "exact"
+      },
+      "requirement_id": "COORD-FIT-YSPAN",
+      "tolerance": {
+        "absolute": 0.0
+      },
+      "unit": "mm"
+    },
+    {
+      "check": {
+        "adapter": "artifact.step_round_trip",
+        "kind": "round_trip",
+        "parameters": {}
+      },
+      "cost_profile": "release",
+      "description": "A future geometry milestone using this frame round-trips as valid STEP.",
+      "expectation": {
+        "exact": true,
+        "kind": "exact"
+      },
+      "requirement_id": "COORD-REL-STEP",
+      "tolerance": {
+        "absolute": 0.0
+      },
+      "unit": "boolean"
+    },
+    {
+      "check": {
+        "adapter": "review.coordinate_frame",
+        "kind": "visual_review",
+        "parameters": {}
+      },
+      "cost_profile": "release",
+      "description": "Exported geometry is visually reviewed in the documented design frame.",
+      "expectation": {
+        "exact": true,
+        "kind": "exact"
+      },
+      "requirement_id": "COORD-VIS-FRAME",
+      "tolerance": {
+        "absolute": 0.0
+      },
+      "unit": "boolean"
+    }
+  ],
+  "schema_version": 2,
+  "title": "190 x 210 enclosure-family coordinate acceptance"
+}

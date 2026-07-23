@@ -373,7 +373,7 @@ def _full_detail_base(
     floor_top_z = -base.D.height / 2.0 + base.D.wall_stack_t
     clearance_clip = Pos(
         0.0,
-        10.0,
+        base.D.center_y,
         (floor_top_z + 0.01 + base.D.height / 2.0) / 2.0,
     ) * Box(
         base.D.width + 2.0,
@@ -389,7 +389,7 @@ def _full_detail_base(
         feature="conformal base with floor-tangent removable tube opening",
     )
 
-    front_y = -base.D.depth / 2.0 + 10.0
+    front_y = base.D.center_y - base.D.depth / 2.0
     driver_seat_y = front_y + base.BLACK_HOLE_SEAT_DEPTH
     for index in range(base.P.driver_screw_count):
         angle = math.tau * index / base.P.driver_screw_count + math.pi / 4.0

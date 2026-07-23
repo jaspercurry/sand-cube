@@ -156,3 +156,43 @@ authoritative structured facts are in `atomic_manifest.json`.
   geometry, STEP, or sidecar changed.
 - After reloading the same tab, the Viewer displayed
   `near_perfect_bucket.step`, its STEP tree, view controls, and release 0.3.9.
+
+## 2026-07-23 — Characterization Checkpoint approved
+
+- The user inspected the hash-bound `near_perfect_bucket.step` in the repaired
+  read-only Viewer, said it looked good, and authorized the work to proceed.
+- This approval opened Phase B. It did not make the failed source baseline
+  reproducible and did not authorize geometry synthesis from STEP evidence.
+- The first atom remained the proposed metadata-only
+  `family.coordinate_contract`.
+
+## 2026-07-23 — coordinate-contract pilot
+
+- Added the native-CAD-free owner `src/enclosure_family/datums.py` for units,
+  the 190x210x190 envelope, the +10 mm Y center, named planes, and axis
+  polarity.
+- The base `Design` now consumes that owner. Existing 190x210 source consumers
+  use `Design.center_y` instead of duplicating the +10 mm datum.
+- The fast contract validated eight selected requirements in 0.079 seconds at
+  30,720,000 bytes peak RSS.
+- The complete lightweight suite passed 86 tests and 19 subtests, catalog
+  consistency, 76 entrypoint checks, and lint in 5.086 seconds at 59,359,232
+  bytes peak RSS.
+- Controlled native comparison job
+  `20260723T100534-generate-sand-cube-190x210-internal-squat-absorb-c4d37f5ec2`
+  failed after 95.849 seconds at 1,288,798,208 bytes peak RSS with the exact
+  pre-existing invariant:
+  `ValueError: rear-ramped longitudinal top rail did not produce one valid solid: 2`.
+- The run published no outputs. It provides same-boundary evidence for the
+  metadata refactor, not geometry equivalence.
+- The user-accepted frozen STEP and Snapshot remain unchanged continuity
+  evidence. No after-STEP or visual delta exists while the source baseline
+  fails.
+
+## 2026-07-23 — checkpoint-pause override
+
+- The user explicitly instructed the agent not to keep stopping at checkpoints,
+  to attempt the full saved brief, and to re-read the original prompt after
+  context compression.
+- Subsequent checkpoints will be recorded without pausing. Genuine
+  safety/equivalence blockers still remain stop conditions.

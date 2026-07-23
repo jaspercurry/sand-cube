@@ -360,7 +360,7 @@ def _absorber_checks() -> dict[str, Any]:
     woofer = Pos(0.0, 0.0, base.BLACK_HOLE_CENTER_Z) * base._confirmed_woofer(
         base.P
     )
-    rear_inner_y = 10.0 + base.D.depth / 2.0 - base.D.wall_stack_t
+    rear_inner_y = base.D.center_y + base.D.depth / 2.0 - base.D.wall_stack_t
     body_bbox = gross.bounding_box()
     material_in_airway = base._bounded_intersection_volume(material, airway)
     gross_to_woofer = base._bounded_intersection_volume(gross, woofer)

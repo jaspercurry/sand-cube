@@ -92,7 +92,7 @@ INSTALLATION_SWEEP_MARGIN = 0.50
 ROOF_INNER_Z = base.D.height / 2.0 - base.D.wall_stack_t
 ROOF_GAP_MIN_Z = ROOF_INNER_Z + base.D.inner_skin_t
 ROOF_GAP_MAX_Z = ROOF_GAP_MIN_Z + base.D.sand_gap_t
-REAR_INNER_Y = 10.0 + base.D.depth / 2.0 - base.D.wall_stack_t
+REAR_INNER_Y = base.D.center_y + base.D.depth / 2.0 - base.D.wall_stack_t
 TOWER_X = base.D.port_x
 TOWER_Y = base.D.upper_tower_y
 LOWER_INTERFACE_Z = header.H.target_tower_z_mm
@@ -281,7 +281,7 @@ def _d_cradle() -> Any:
         z0=z0,
         z1=z1,
         # The back of the brace becomes one smooth root inside the rear wall.
-        rear_y=10.0 + base.D.depth / 2.0,
+        rear_y=base.D.center_y + base.D.depth / 2.0,
     )
     inner = _d_blank(
         radius=inner_radius,
@@ -332,7 +332,7 @@ def _internal_tube_with_male_spigot(
     lower_z = -base.D.height / 2.0
     clip = Pos(
         0.0,
-        10.0,
+        base.D.center_y,
         (lower_z + LOWER_SOCKET_MOUTH_Z) / 2.0,
     ) * Box(
         300.0,
@@ -373,7 +373,7 @@ def _upper_displacement(port_outer: Any) -> Any:
     roof_outer_z = base.D.height / 2.0
     clip = Pos(
         0.0,
-        10.0,
+        base.D.center_y,
         (LOWER_SOCKET_MOUTH_Z + roof_outer_z) / 2.0,
     ) * Box(
         300.0,
@@ -443,7 +443,7 @@ def _tower_parts(outlet_z: float) -> tuple[Any, Any, Any]:
 
     flare_clip = Pos(
         0.0,
-        10.0,
+        base.D.center_y,
         (outlet_throat_z + outlet_z + 1.0) / 2.0,
     ) * Box(
         300.0,

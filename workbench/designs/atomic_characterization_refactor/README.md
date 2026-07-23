@@ -1,9 +1,12 @@
-# Atomic characterization/refactor — Phase A checkpoint
+# Atomic characterization/refactor
 
-Status: **Characterization Checkpoint — waiting for user approval.**
+Status: **Phase B in progress; first metadata atom complete.**
 
-No geometry source was edited. No removable-front references were reconciled,
-no Variant I geometry was created, and no deferred component was integrated.
+The user accepted the Phase A visual evidence and authorized Phase B. The
+metadata-only `family.coordinate_contract` pilot is complete. The user then
+explicitly instructed the agent to record but not pause at later checkpoints.
+No removable-front references have been reconciled, no Variant I geometry has
+been created, and no deferred component has been integrated.
 
 ## Governing records
 
@@ -13,6 +16,7 @@ no Variant I geometry was created, and no deferred component was integrated.
 - `atomic_manifest.json` — authoritative input, atom, evidence and checkpoint
   description
 - `render_phase_a_reports.py` — deterministic Markdown projection
+- `coordinate_contract.json` — staged verification contract for the first atom
 
 ## Generated checkpoint views
 
@@ -22,17 +26,19 @@ no Variant I geometry was created, and no deferred component was integrated.
 - `dependency_graph.md`
 - `baseline_report.md`
 - `printability_report.md`
+- `pilot_report.md`
 
 ## Architecture proposal
 
 - `proposed_architecture.md`
 
-## Blocking result
+## Current geometry boundary
 
 The current owning lightweight source does not reproduce a baseline. Its
-single controlled native run failed because the rear-ramped longitudinal top
-rail produced two solids rather than one, so the dependent leaf validator
-could not run.
+before/after controlled native runs both fail because the rear-ramped
+longitudinal top rail produces two solids rather than one. The coordinate
+extraction introduced no earlier failure, but the dependent leaf validator
+still cannot run.
 
-Phase B must not start until the user approves the checkpoint and decides how
-to resolve the source-baseline boundary.
+The next work item is to repair that deterministic source baseline before
+extracting a geometry atom.

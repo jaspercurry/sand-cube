@@ -1163,7 +1163,9 @@ def _printable_transverse_brace() -> Solid:
 
 def _printable_longitudinal_rails() -> Compound:
     variant = base.RESTORED_FEATURE_VARIANT
-    driver_seat_y = -base.D.depth / 2.0 + 10.0 + base.BLACK_HOLE_SEAT_DEPTH
+    driver_seat_y = (
+        base.D.center_y - base.D.depth / 2.0 + base.BLACK_HOLE_SEAT_DEPTH
+    )
     buttress_tail_y = (
         driver_seat_y
         - base.D.front_brace_baffle_embed

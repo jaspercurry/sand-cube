@@ -89,7 +89,7 @@ OUT = (
 )
 
 NAME = "sand_cube_190x210_exact_le_cleach_15mm_square_crop_post_r8_preview"
-FRONT_Y = 10.0 - base.D.depth / 2.0
+FRONT_Y = base.D.center_y - base.D.depth / 2.0
 TARGET_FINISHED_CORNER_PULLBACK_MM = 15.0
 SOLVED_RAW_HORN_CORNER_PULLBACK_MM = 11.6943
 SOLVED_CUTOFF_HZ = 441.5201401068668
@@ -299,7 +299,7 @@ def _trim_then_fillet_outer(
     profile: ExtendedHornProfile,
 ) -> tuple[Any, Solid, dict[str, int]]:
     """Cut the horn into a sharp square, then construct all R8 blends."""
-    sharp_box = Pos(0.0, 10.0, 0.0) * Box(
+    sharp_box = Pos(0.0, base.D.center_y, 0.0) * Box(
         base.D.width,
         base.D.depth,
         base.D.height,

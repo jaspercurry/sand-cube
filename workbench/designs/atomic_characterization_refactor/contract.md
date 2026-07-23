@@ -1,6 +1,6 @@
 # Atomic characterization/refactor contract
 
-Status: Phase A complete; stopped at the Characterization Checkpoint.
+Status: Phase B active; first metadata atom complete.
 
 The verbatim governing request is `brief.md`. Its required SHA-256 is
 `7cb5fad7514df1670ba9fd017cce0d44369564018515e3b4ec5be2c55d4bb96e`.
@@ -26,9 +26,11 @@ It may not edit geometry source, reconcile candidates, redesign printability,
 create Variant I geometry, or integrate horn/tube/resonator/bracket/electronics
 geometry.
 
-The checkpoint is a hard gate. Phase B requires explicit user approval and a
-decision about the failed source baseline. A request to continue the
-architecture refactor is not authorization to synthesize the product geometry.
+The user explicitly approved the Characterization Checkpoint. The user later
+directed the agent to continue through subsequent checkpoints without pausing
+and to attempt the complete saved brief. This removes user-wait gates but does
+not permit false equivalence claims, mix-and-match geometry, or product
+synthesis through a failed baseline.
 
 ## Required variant separation
 
@@ -53,6 +55,12 @@ proof; matching bounds alone are insufficient.
 At this checkpoint the gate is not met. The current lightweight owner fails
 before export because its top longitudinal rail produces two solids. The leaf
 validator therefore cannot run.
+
+The metadata-only `family.coordinate_contract` is exempt from the geometry
+reproduction gate: exact native-free tests prove its units, dimensions, datum
+planes, and axis polarity. A controlled post-refactor native run reaches the
+same pre-existing rail failure boundary with no earlier regression. No geometry
+atom may be extracted until that baseline is repaired.
 
 ## Printability boundary
 
