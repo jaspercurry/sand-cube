@@ -1,0 +1,4 @@
+# The repository ignores generated STEP files globally. These entries are
+# symbolic links to hash-bound references, not copied/generated CAD files, and
+# are part of the curated working-set map.
+!**/links/*.step
