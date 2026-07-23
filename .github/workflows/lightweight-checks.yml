@@ -1,0 +1,19 @@
+name: Lightweight checks
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+      - name: Sync locked development environment
+        run: uv sync --locked --group dev
+      - name: Run native-CAD-free checks
+        run: uv run --locked --group dev python scripts/check_lightweight.py

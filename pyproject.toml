@@ -11,6 +11,12 @@ dependencies = [
   "ocp-vscode",
 ]
 
+[dependency-groups]
+dev = [
+  "pytest>=8.4,<10",
+  "ruff>=0.12,<0.15",
+]
+
 [tool.ruff]
 line-length = 88
 target-version = "py312"
