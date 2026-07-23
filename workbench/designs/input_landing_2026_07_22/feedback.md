@@ -85,3 +85,18 @@ task handoff because a Git commit cannot embed its own hash.
 - Nit resolved: component evidence manifests now state that absolute build
   paths embedded inside two unchanged diagnostics files are historical
   records, not portable links.
+
+## Independent adversarial review — round 2
+
+- Exact reviewed commit:
+  `4fe8cb62ee595c244c856fd72ce54a8ad9c09ac0`.
+- Blockers: none.
+- The prior dependency omissions and evidence caveat were confirmed fixed.
+  Static inspection of all 61 inventoried Python owners found zero
+  unrepresented normal local imports.
+- Should-fix: one preserved recovery script dynamically imports the unowned
+  disposable helper `/private/tmp/capture_deleted_face_plate_candidate.py`;
+  its intake row incorrectly classified it as authoritative Python.
+- Resolution: retained the script's exact chronological bytes, reclassified it
+  as non-runnable documentation/provenance, documented the external dependency
+  boundary, and explicitly excluded the helper and its ignored STEP.

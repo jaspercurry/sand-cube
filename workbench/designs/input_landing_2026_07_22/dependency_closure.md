@@ -47,3 +47,13 @@ manifest even though a simple Python import walk would not discover them.
 
 No dependency was satisfied by copying a cache, virtual environment, or
 generated build directory.
+
+## Archival diagnostic boundary
+
+`workbench/designs/enclosure_baffle_recovery/capture_front_component_removed_candidate.py`
+is preserved byte-for-byte as chronological provenance, not authoritative or
+self-contained Python. It dynamically imports the disposable external helper
+`/private/tmp/capture_deleted_face_plate_candidate.py`, which in turn depended
+on the dirty checkout and an ignored build STEP. Neither external dependency
+is part of the active enclosure lineage, and neither is landed. The preserved
+script is intentionally classified as non-runnable documentation/provenance.
