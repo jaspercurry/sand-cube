@@ -11,17 +11,16 @@ Instead, it keeps three different things visibly separate:
    relevant source has been reconciled, built, validated, and accepted.
 
 The files under each `links/` directory are relative symbolic links. They make
-the working set easy to navigate without copying, flattening, or relocating
-the existing experiment dependency chains. Edit the real source only after
-reading the component contract and its original handoff.
+the working set easy to navigate without flattening or relocating the existing
+experiment dependency chains. Hash-bound artifact links resolve to immutable
+component-local `reference_evidence/` files; source and handoff links resolve
+to their real repository owners. Edit authoritative source only after reading
+the component contract and its original handoff.
 
-This is a map of the captured local working tree, not a self-contained archive.
-A clean Git checkout intentionally lacks ignored `build/` evidence and several
-still-uncommitted source or handoff directories. Nineteen convenience links are
-therefore expected to be unresolved in a clean checkout until those exact local
-dependencies are restored. The component manifests remain portable: they record
-each repository path, role, tracking state, and available SHA-256 independently
-of whether its convenience link currently resolves.
+This map is now self-contained in a clean Git checkout. Its selected evidence,
+source, handoff, and deferred-project links resolve without access to the
+intake checkout or ignored `build/` output. The component manifests retain the
+original generated paths and freshness caveats.
 
 ## Start here
 
@@ -39,19 +38,23 @@ bottom/front ownership. Read [the enclosure family overview](enclosures/README.m
 before borrowing geometry between them. The port and resonator remain deferred
 until their enclosure gate is satisfied.
 
-## Repository state captured
+## Landing context
 
 - Inventory date: 2026-07-22
-- Observed repository HEAD: `42db80c8c5575e8df00c1dddd76b27362f1d42fc`
-- The working tree already contained extensive modified and untracked user
-  work. No pre-existing source or artifact was moved, copied, reset, or
-  overwritten while creating this map.
-- All three user-supplied enclosure-reference hashes and the existing deferred
-  manifests were rechecked against the current files.
+- Clean landing base: `73b29e51434e4a139efcb09574f8dc1c94bd485f`
+  (`origin/main` at intake).
+- Read-only input HEAD:
+  `ea5539f3372e1bad5ad05eba85f4bd9a53e8c868`.
+- Landing branch: `codex/input-landing`; the commit containing this record is
+  the reviewed input-landing commit.
+- The dirty input checkout remains untouched. Exact source dispositions,
+  hashes, sizes, and exclusions are recorded in
+  `../input_landing_2026_07_22/`.
 
 ## Rules for the next refactor
 
-- Python is authoritative; linked files under `build/` are evidence only.
+- Python is authoritative; linked files under `reference_evidence/` are
+  evidence only.
 - Do not edit or regenerate a hash-bound reference in place.
 - Do not collapse the linked experiment ancestry into this directory.
 - Start a new independent variant for the integral-front enclosure.
@@ -64,6 +67,5 @@ until their enclosure gate is satisfied.
 See [lineage.md](lineage.md) for the dependency boundaries and
 [contract.md](contract.md) for the organizational acceptance criteria. Run
 `shasum -a 256 -c reference_checksums.sha256` from this directory to verify
-the linked working set has not drifted from this checkpoint when the captured
-local dependencies are present. A clean checkout is not expected to pass that
-artifact-completeness check by itself.
+that the self-contained linked working set has not drifted from this
+checkpoint. A clean checkout is required to pass this check.

@@ -36,9 +36,8 @@ static viewer page with the model payload baked in.
 Default command:
 
 ```bash
-UV_CACHE_DIR=/private/tmp/cad-enclosure-uv-cache \
-MPLCONFIGDIR=/private/tmp/cad-enclosure-mpl \
-uv run python scripts/generate_static_ocp_viewer.py
+MPLCONFIGDIR=.cache/matplotlib \
+.venv/bin/python scripts/generate_static_ocp_viewer.py
 ```
 
 Default input:

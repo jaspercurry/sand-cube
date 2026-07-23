@@ -80,7 +80,20 @@ kind = "enclosure"
 source = "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle/generate_sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle.py"
 entrypoint = "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle/generate_sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle.py"
 validator = "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle/validate_simple_tongue_groove_baffle.py"
+workbench = "workbench/designs/enclosure_baffle_recovery"
 output = "build/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle"
+
+[[models]]
+id = "front-baffle-v1"
+name = "Frozen printable front baffle v1"
+status = "released"
+kind = "release"
+source = "releases/enclosure_v1/front_baffle/source/generate_front_baffle_v1.py"
+entrypoint = "releases/enclosure_v1/front_baffle/source/generate_front_baffle_v1.py"
+parameters = "releases/enclosure_v1/front_baffle/source/front_baffle_v1_parameters.json"
+release = "releases/enclosure_v1/front_baffle"
+validator = "releases/enclosure_v1/front_baffle/verification/geometry_diagnostics.json"
+output = "build/releases/enclosure_v1/front_baffle"
 
 [[models]]
 id = "joint-coupon"
@@ -213,6 +226,14 @@ directory = "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_
 entrypoint = "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_conformal_inner_wall/generate_sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_conformal_inner_wall.py"
 
 [[experiments]]
+id = "exp-190x210-dual-captive-nut-printable"
+name = "Dual captive square-nut printable closure"
+status = "historical"
+family = "baffle-closure"
+directory = "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_dual_captive_square_nut_printable"
+entrypoint = "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_dual_captive_square_nut_printable/generate_sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_dual_captive_square_nut_printable.py"
+
+[[experiments]]
 id = "exp-190x210-parabolic-fairing"
 name = "Parabolic-G1 fairing"
 status = "study"
@@ -221,12 +242,36 @@ directory = "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_
 entrypoint = "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_fairing/generate_sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_fairing.py"
 
 [[experiments]]
+id = "exp-190x210-forward-captive-nut"
+name = "Forward captive square-nut closure"
+status = "historical"
+family = "baffle-closure"
+directory = "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_forward_captive_square_nut"
+entrypoint = "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_forward_captive_square_nut/generate_sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_forward_captive_square_nut.py"
+
+[[experiments]]
+id = "exp-190x210-front-fill-perimeter-seal"
+name = "Front-fill perimeter-seal closure"
+status = "historical"
+family = "baffle-closure"
+directory = "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_front_fill_perimeter_seal"
+entrypoint = "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_front_fill_perimeter_seal/generate_sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_front_fill_perimeter_seal.py"
+
+[[experiments]]
 id = "exp-190x210-hooked-gasketed-baffle"
 name = "Hooked gasketed baffle"
 status = "historical"
 family = "baffle-closure"
 directory = "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_hooked_gasketed_baffle"
 entrypoint = "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_hooked_gasketed_baffle/generate_sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_hooked_gasketed_baffle.py"
+
+[[experiments]]
+id = "exp-190x210-lightweight-coherent-closure"
+name = "Lightweight coherent closure base"
+status = "supporting"
+family = "baffle-closure"
+directory = "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_lightweight_coherent_closure"
+entrypoint = "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_lightweight_coherent_closure/generate_sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_lightweight_coherent_closure.py"
 
 [[experiments]]
 id = "exp-190x210-nested-seam-concepts"
@@ -251,6 +296,30 @@ status = "active"
 family = "baffle-closure"
 directory = "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle"
 entrypoint = "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle/generate_sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle.py"
+
+[[experiments]]
+id = "exp-190x210-simplified-printable-closure"
+name = "Simplified printable closure base"
+status = "supporting"
+family = "baffle-closure"
+directory = "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simplified_printable_closure"
+entrypoint = "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simplified_printable_closure/generate_sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simplified_printable_closure.py"
+
+[[experiments]]
+id = "exp-190x210-single-land-fasteners"
+name = "Single-land corner-fastener closure base"
+status = "supporting"
+family = "baffle-closure"
+directory = "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_single_land_corner_fasteners"
+entrypoint = "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_single_land_corner_fasteners/generate_sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_single_land_corner_fasteners.py"
+
+[[experiments]]
+id = "exp-190x210-systemic-recessed-fasteners"
+name = "Systemic joint with recessed fasteners"
+status = "supporting"
+family = "baffle-closure"
+directory = "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_systemic_joint_recessed_fasteners"
+entrypoint = "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_systemic_joint_recessed_fasteners/generate_sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_systemic_joint_recessed_fasteners.py"
 
 [[experiments]]
 id = "exp-190x210-port-absorber-bucket"
