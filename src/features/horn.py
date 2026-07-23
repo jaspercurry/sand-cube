@@ -439,6 +439,146 @@ def le_cleach_2007_profile_points(
     return points, cutoff_hz, row_step
 
 
+def le_cleach_2007_profile_for_axial_length(
+    *,
+    throat_d: float,
+    mouth_inner_r: float,
+    target_axial_length_mm: float,
+    exit_angle_deg: float,
+    throat_angle_deg: float,
+    wavefront_t_bounds: tuple[float, float] = (0.05, 4.0),
+    axial_tolerance_mm: float = 1e-7,
+    max_iterations: int = 48,
+) -> tuple[list[tuple[float, float]], float, float, float]:
+    """Solve the exact 2007 profile from a requested acoustic axial length.
+
+    The spreadsheet recurrence treats the wavefront factor ``T`` as an input.
+    For a fixed throat, mouth, throat tangent, and terminal rollback, this
+    helper solves ``T`` so the resulting meridian reaches the requested axial
+    length.  It returns the profile points, solved cutoff, workbook row step,
+    and solved wavefront factor.
+    """
+    if target_axial_length_mm <= 0.0:
+        raise ValueError("target_axial_length_mm must be positive")
+    if axial_tolerance_mm <= 0.0:
+        raise ValueError("axial_tolerance_mm must be positive")
+    if max_iterations < 1:
+        raise ValueError("max_iterations must be at least one")
+
+    lower_t, upper_t = wavefront_t_bounds
+    if lower_t <= 0.0 or upper_t <= lower_t:
+        raise ValueError(
+            "wavefront_t_bounds must be positive and strictly increasing"
+        )
+
+    def evaluate(
+        wavefront_t: float,
+    ) -> tuple[
+        float,
+        list[tuple[float, float]],
+        float,
+        float,
+    ]:
+        points, cutoff_hz, row_step = le_cleach_2007_profile_points(
+            throat_d=throat_d,
+            mouth_inner_r=mouth_inner_r,
+            exit_angle_deg=exit_angle_deg,
+            wavefront_t=wavefront_t,
+            throat_angle_deg=throat_angle_deg,
+        )
+        residual = points[-1][1] - target_axial_length_mm
+        return residual, points, cutoff_hz, row_step
+
+    # The exact recurrence has finite valid regions for some parameter sets.
+    # Start with the requested bounds, then use a small logarithmic scan only
+    # when an endpoint is invalid or the endpoints do not bracket the target.
+    samples: list[
+        tuple[
+            float,
+            float,
+            list[tuple[float, float]],
+            float,
+            float,
+        ]
+    ] = []
+
+    def add_sample(wavefront_t: float) -> None:
+        try:
+            residual, points, cutoff_hz, row_step = evaluate(wavefront_t)
+        except (OverflowError, ValueError):
+            return
+        samples.append(
+            (wavefront_t, residual, points, cutoff_hz, row_step)
+        )
+
+    add_sample(lower_t)
+    add_sample(upper_t)
+
+    def bracketed_pair():
+        ordered = sorted(samples, key=lambda item: item[0])
+        for left, right in zip(ordered, ordered[1:]):
+            if left[1] == 0.0:
+                return left, left
+            if right[1] == 0.0:
+                return right, right
+            if left[1] * right[1] < 0.0:
+                return left, right
+        return None
+
+    bracket = bracketed_pair()
+    if bracket is None:
+        log_lower = math.log(lower_t)
+        log_span = math.log(upper_t) - log_lower
+        for index in range(1, 24):
+            candidate = math.exp(log_lower + log_span * index / 24.0)
+            add_sample(candidate)
+        bracket = bracketed_pair()
+
+    if bracket is None:
+        lengths = sorted(
+            target_axial_length_mm + sample[1] for sample in samples
+        )
+        if lengths:
+            available = f"{lengths[0]:.6f} to {lengths[-1]:.6f} mm"
+        else:
+            available = "no valid profiles"
+        raise ValueError(
+            "Unable to bracket the requested Le Cleac'h axial length; "
+            f"valid sampled lengths were {available}"
+        )
+
+    left, right = bracket
+    if left is right:
+        return left[2], left[3], left[4], left[0]
+
+    best = min((left, right), key=lambda item: abs(item[1]))
+    for _ in range(max_iterations):
+        middle_t = (left[0] + right[0]) / 2.0
+        residual, points, cutoff_hz, row_step = evaluate(middle_t)
+        middle = (
+            middle_t,
+            residual,
+            points,
+            cutoff_hz,
+            row_step,
+        )
+        if abs(middle[1]) < abs(best[1]):
+            best = middle
+        if abs(middle[1]) <= axial_tolerance_mm:
+            return middle[2], middle[3], middle[4], middle[0]
+        if left[1] * middle[1] <= 0.0:
+            right = middle
+        else:
+            left = middle
+
+    if abs(best[1]) > axial_tolerance_mm:
+        raise ValueError(
+            "Le Cleac'h axial-length solve did not converge: "
+            f"{best[1]:.9f} mm residual"
+        )
+    return best[2], best[3], best[4], best[0]
+
+
 def jmlc_profile_metadata(
     *,
     throat_d: float,
@@ -504,7 +644,10 @@ def jmlc_profile_metadata(
             "cad_spline_throat_tangent_deg": wall_angle(start_tangent),
             "cad_spline_terminal_tangent_deg": wall_angle(end_tangent),
             "cad_spline_constraint_point_count": len(
-                _cad_spline_constraint_points(points)
+                _cad_spline_constraint_points(
+                    points,
+                    maximum=_cad_spline_constraint_limit(exit_angle_deg),
+                )
             ),
             "cad_spline_max_profile_deviation_mm": (
                 _maximum_profile_deviation_mm(points, curve)
@@ -541,11 +684,14 @@ def _spline_curve(
 
     if start_angle_deg is not None and end_angle_deg is not None:
         # The workbook recurrence remains at its full 4000-row resolution.
-        # Constraining all ~2800 reached rows produces a needlessly huge NURBS
-        # that some STEP tessellators skip. 401 evenly spaced constraints keep
-        # the maximum measured meridian error below 0.003 mm while preserving
-        # the exact first/last points and endpoint tangents.
-        cad_points = _cad_spline_constraint_points(points)
+        # Constraining all reached rows produces a needlessly huge NURBS that
+        # some STEP tessellators skip. The sharper curvature above 150 degrees
+        # needs a denser, still bounded sample to retain the same measured
+        # meridian accuracy as the 140-degree production profile.
+        cad_points = _cad_spline_constraint_points(
+            points,
+            maximum=_cad_spline_constraint_limit(end_angle_deg),
+        )
         point_array = TColgp_HArray1OfPnt(1, len(cad_points))
         for index, (radius, z) in enumerate(cad_points, 1):
             point_array.SetValue(index, gp_Pnt(radius, 0, z))
@@ -571,6 +717,11 @@ def _spline_curve(
     for index, (radius, z) in enumerate(points, 1):
         point_array.SetValue(index, gp_Pnt(radius, 0, z))
     return GeomAPI_PointsToBSpline(point_array).Curve()
+
+
+def _cad_spline_constraint_limit(exit_angle_deg: float) -> int:
+    """Bound CAD spline density while resolving sharper rolled-back lips."""
+    return 801 if exit_angle_deg > 150.0 else 401
 
 
 def _cad_spline_constraint_points(

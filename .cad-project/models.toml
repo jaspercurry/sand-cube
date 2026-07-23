@@ -43,6 +43,32 @@ parameters = "params.py"
 output = "build/final_system/final_jmlc_horn_placed.step"
 
 [[models]]
+id = "workbench-le-cleach-horn-190"
+name = "190 mm exact-spreadsheet Le Cleac'h horn — 140° rollback"
+status = "workbench"
+kind = "horn"
+source = "workbench/designs/le_cleach_horn_190/model.py"
+entrypoint = "workbench/designs/le_cleach_horn_190/variants/rollback_140/build.py"
+parameters = "workbench/designs/le_cleach_horn_190/variants/rollback_140/params.py"
+validator = "workbench/designs/le_cleach_horn_190/variants/rollback_140/build.py"
+workbench = "workbench/designs/le_cleach_horn_190"
+output = "build/workbench/le_cleach_horn_190/variants/rollback_140"
+notes = "Accepted 140° baseline; solves exact 2007 recurrence wavefront T from the explicit axial target."
+
+[[models]]
+id = "workbench-le-cleach-horn-190-rollback-160"
+name = "190 mm exact-spreadsheet Le Cleac'h horn — 160° rollback"
+status = "workbench"
+kind = "horn"
+source = "workbench/designs/le_cleach_horn_190/model.py"
+entrypoint = "workbench/designs/le_cleach_horn_190/variants/rollback_160/build.py"
+parameters = "workbench/designs/le_cleach_horn_190/variants/rollback_160/params.py"
+validator = "workbench/designs/le_cleach_horn_190/variants/rollback_160/build.py"
+workbench = "workbench/designs/le_cleach_horn_190"
+output = "build/workbench/le_cleach_horn_190/variants/rollback_160"
+notes = "Accepted 160° comparison; same external envelope and axial target with independently calibrated acoustic mouth input."
+
+[[models]]
 id = "horn-bracket"
 name = "Folded 4 mm horn bracket"
 status = "stable"

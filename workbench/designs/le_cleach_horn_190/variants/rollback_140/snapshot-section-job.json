@@ -1,0 +1,27 @@
+{
+  "provenanceOutput": "build/workbench/le_cleach_horn_190/variants/rollback_140/snapshot-section-provenance.json",
+  "jobs": [
+    {
+      "input": "build/workbench/le_cleach_horn_190/variants/rollback_140/le_cleach_horn_190_rollback_140.step",
+      "mode": "section",
+      "appearance": "workbench",
+      "display": {
+        "mode": "solid"
+      },
+      "section": {
+        "plane": "YZ",
+        "offset": 0.0,
+        "format": "png"
+      },
+      "outputs": [
+        {
+          "path": "build/workbench/le_cleach_horn_190/variants/rollback_140/snapshot-meridian-section.png"
+        }
+      ],
+      "render": {
+        "sizeProfile": "section",
+        "viewLabels": true
+      }
+    }
+  ]
+}

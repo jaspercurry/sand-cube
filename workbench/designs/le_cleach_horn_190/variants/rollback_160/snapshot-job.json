@@ -1,0 +1,25 @@
+{
+  "provenanceOutput": "build/workbench/le_cleach_horn_190/variants/rollback_160/snapshot-provenance.json",
+  "jobs": [
+    {
+      "input": "build/workbench/le_cleach_horn_190/variants/rollback_160/le_cleach_horn_190_rollback_160.step",
+      "mode": "view",
+      "appearance": "workbench",
+      "display": {
+        "mode": "solid",
+        "projection": "orthographic"
+      },
+      "outputs": [
+        {
+          "path": "build/workbench/le_cleach_horn_190/variants/rollback_160/snapshot-isometric.png",
+          "camera": "iso"
+        }
+      ],
+      "render": {
+        "padding": 0.12,
+        "sizeProfile": "diagnostic",
+        "viewLabels": true
+      }
+    }
+  ]
+}
