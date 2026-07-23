@@ -1198,19 +1198,10 @@ def _printable_longitudinal_rails() -> Compound:
                 (ramp_front_y, cavity_half - radial_height),
             )
         extrude(amount=tangential_width / 2.0, both=True)
-    # BuildSketch normalizes this local polygon about the sketch origin; put
-    # the resulting trapezoidal prism back at its specified Y/Z envelope.
-    placed_rear_ramp = Pos(
-        0.0,
-        (rear_y + ramp_front_y) / 2.0,
-        (
-            cavity_half
-            + skin_embed
-            + cavity_half
-            - radial_height
-        )
-        / 2.0,
-    ) * rear_ramp.part
+    # Plane.YZ preserves the polygon's design-coordinate Y/Z envelope; an
+    # additional placement would translate the ramp a second time and leave
+    # it disconnected from the main rail.
+    placed_rear_ramp = rear_ramp.part
     top = _single_solid(
         main.fuse(placed_rear_ramp).clean().fix(),
         feature="rear-ramped longitudinal top rail",
