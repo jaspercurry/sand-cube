@@ -45,7 +45,7 @@
   dev python scripts/cad_review.py doctor` passed with Build123d 0.11.1,
   OCP 7.9.3.1, Build123d-MCP 0.3.79, the 10/38 catalog, and the pinned
   read-only Text-to-CAD 0.3.9 runtime.
-- A manifest identity audit passed all 107 rows: 58 copied inputs, 35
+- A manifest identity audit passed all 109 rows: 58 copied inputs, 37
   base-satisfied inputs, 13 promoted evidence files, and one reviewed catalog
   source.
 - The four evidence manifests describe exactly 13 files and `53,707,865`
@@ -70,3 +70,18 @@
 
 The exact commit hash and fresh-checkout adversarial review are reported in the
 task handoff because a Git commit cannot embed its own hash.
+
+## Independent adversarial review — round 1
+
+- Exact reviewed commit:
+  `6eb6bc1659cb9e432c12e7ff9c6aedfc791f4974`.
+- Blockers: none.
+- Should-fix: the manifest omitted two tracked sibling imports,
+  `sand_cube_8_5_black_hole/generate_variants.py` and
+  `jmlc_square_baffle/explore_variants.py`. Both existed in the clean baseline
+  and execution was green, but the provenance closure was incomplete.
+- Resolution: added both exact baseline hashes/sizes as `selected-base` rows
+  and corrected the closure documentation and counts.
+- Nit resolved: component evidence manifests now state that absolute build
+  paths embedded inside two unchanged diagnostics files are historical
+  records, not portable links.
