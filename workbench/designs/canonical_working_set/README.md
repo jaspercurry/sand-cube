@@ -26,7 +26,7 @@ original generated paths and freshness caveats.
 
 | Unit | Current role | Geometry status |
 |---|---|---|
-| [Removable front baffle](enclosures/removable_front_baffle/README.md) | Active enclosure recovery | Three approved reference roles; no reconciled final pair yet |
+| [Removable front baffle](enclosures/removable_front_baffle/README.md) | Active Variant R development | Stage 1 sculpted seam, complementary lower ownership, and planar baffle base accepted; retention deferred |
 | [Integral front / bottom hatch](enclosures/integral_front_bottom_hatch/README.md) | Independent future enclosure variant | Full-perimeter exterior frozen; monolithic source branch and hatch not built |
 | [40 mm bass-reflex tube](acoustics/bass_reflex_tube/README.md) | Deferred packaging lineage | Preserved historical route; blocked on final enclosure |
 | [D-squat resonator](acoustics/d_squat_resonator/README.md) | Deferred Rev C/Rev D reconciliation | Rev C placement and Rev D acoustic references remain distinct |

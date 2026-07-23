@@ -1,5 +1,15 @@
 # Two-Variant Enclosure Closure — Handoff & Course Correction
 
+> **2026-07-23 supersession note:** The Stage 1 Variant R seam and print-edge
+> course correction described below is now resolved in parameterized source.
+> The exact sculpted left/right/top seam is retained, complementary lower
+> ownership is synthesized, and the baffle has a true planar print face.
+> Top-hinge and lower-fastener work remains deferred, so the retention sections
+> below are historical context and future-design input rather than claims about
+> the current accepted geometry. See
+> `workbench/designs/variant_r_flat_bottom_synthesis/` and this experiment's
+> `README.md` for the current measured status.
+
 Status: **Variant A geometry builds green but is physically wrong and must be re-done with the corrected architecture below.** Read this whole file before touching code. A ready-to-paste brief for a fresh agent is in `NEXT_AGENT_PROMPT.md` (same dir).
 
 ---

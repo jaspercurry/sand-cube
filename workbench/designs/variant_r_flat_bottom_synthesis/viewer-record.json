@@ -1,0 +1,23 @@
+{
+  "artifacts": [
+    {
+      "path": "build/workbench/variant_r_flat_bottom_synthesis/review/variant_r_review_assembly.step",
+      "sha256": "ffcd16f32f113f992666eadadb3c29a82fc4b0b339e38affc2fc49495aaa31c8"
+    },
+    {
+      "path": "build/workbench/variant_r_flat_bottom_synthesis/review/.variant_r_review_assembly.step.glb",
+      "sha256": "316766b458c6ccfe46db22ad69b1382ab08f053ddac328b1667dc3ed3dfe7b66"
+    }
+  ],
+  "record_id": "viewer-record.variant-r-review-assembly",
+  "recorded_at": "2026-07-23T15:41:01.889527+00:00",
+  "schema_version": 1,
+  "server": {
+    "app": "cad-viewer",
+    "backend": "local-fs",
+    "dynamicRoot": true,
+    "stepArtifactGenerationAvailable": false,
+    "viewerVersion": "0.3.9"
+  },
+  "url": "http://127.0.0.1:4178/?dir=%2FUsers%2Fjaspercurry%2F.codex%2Fworktrees%2F8b9b%2FCAD+-+Enclosure%2Fbuild%2Fworkbench%2Fvariant_r_flat_bottom_synthesis%2Freview&file=variant_r_review_assembly.step"
+}
