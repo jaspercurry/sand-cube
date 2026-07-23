@@ -143,3 +143,8 @@ The independent reviewer inspected base
 
 No geometry, STEP export, PR #2, active removable-baffle, or tongue-and-groove
 source was changed while addressing the review.
+
+The same reviewer then inspected the exact amended base-to-HEAD diff at
+`7afb9168eef12100560e5e2b3e3465daa6026025` and reported no actionable
+findings. The final report and residual risks are recorded in
+`independent-review.md`.
