@@ -1,0 +1,146 @@
+{
+  "iteration": "variant_r_flat_bottom_synthesis",
+  "stage": "Stage 1 sculpted seam and planar baffle base",
+  "status": "complete",
+  "authority": {
+    "generator": {
+      "path": "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle/generate_sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle.py",
+      "sha256": "6d8072eb32a1e86b54528fe80144155d0fc2b9d0996bdc76a8168c06e4c91f0c"
+    },
+    "validator": {
+      "path": "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle/validate_simple_tongue_groove_baffle.py",
+      "sha256": "13e0dc227c64cfaa555e0a709ba7220c373319c5289f23bd3769aee871e7ddef"
+    },
+    "brief": {
+      "path": "workbench/designs/variant_r_flat_bottom_synthesis/brief.md",
+      "sha256": "4a508a36a387f835ef5b0bc897312ed659e9d972c688999cc0ab69d63844a406"
+    },
+    "contract": {
+      "path": "workbench/designs/variant_r_flat_bottom_synthesis/contract.md",
+      "sha256": "2ad854a8a3a35441de3ebec3c891f1fa5fd03a0bd2d88df9fb26691380f1d9ca"
+    }
+  },
+  "jobs": {
+    "perimeter": {
+      "job_id": "20260723T130214-validate-perimeter-c591164fdd",
+      "elapsed_seconds": 24.848,
+      "peak_rss_bytes": 532414464,
+      "diagnostics_sha256": "8e44f62cb1a87afe91bee13ab4a116cc51cad5df13f4802b84c1c26618e9837a"
+    },
+    "splice": {
+      "job_id": "20260723T131729-validate-splice-8db0a3f7de",
+      "elapsed_seconds": 29.276,
+      "peak_rss_bytes": 565575680,
+      "diagnostics_sha256": "090844cbb11d192f30849f5ea89041c2a4e9fb5e707f062519e4b7bf13de5a08"
+    },
+    "print_transfer": {
+      "job_id": "20260723T150947-validate-print-transfer-17f22c836f",
+      "elapsed_seconds": 103.528,
+      "peak_rss_bytes": 943128576,
+      "diagnostics_sha256": "31da9344a96967a87165a4938e32682dab07228c39144c13fce89e2148a3d65d"
+    },
+    "full_fit": {
+      "job_id": "20260723T151259-validate-simple-tongue-groove-baffle-74db9f9037",
+      "elapsed_seconds": 1543.325,
+      "peak_rss_bytes": 1380220928,
+      "cleanup_completed": true,
+      "orphan_processes": 0
+    },
+    "exported_print_contact": {
+      "job_id": "20260723T153848-validate-print-contact-e0d9ded786",
+      "elapsed_seconds": 17.144,
+      "peak_rss_bytes": 545046528,
+      "diagnostics_sha256": "831a8d59c1224810539bdd4017c862c68a89c93e0a72cf3c963831f36f2830ea"
+    },
+    "review_package": {
+      "job_id": "20260723T153916-package-review-8a719db8af",
+      "elapsed_seconds": 76.822,
+      "peak_rss_bytes": 1067237376
+    },
+    "review_sidecar": {
+      "job_id": "20260723T154042-text-to-cad-artifacts-72d19abd68",
+      "elapsed_seconds": 6.057,
+      "peak_rss_bytes": 484720640
+    },
+    "baffle_sidecar": {
+      "job_id": "20260723T154208-text-to-cad-artifacts-2baa807349",
+      "elapsed_seconds": 4.552,
+      "peak_rss_bytes": 425508864
+    },
+    "snapshot": {
+      "job_id": "20260723T154224-text-to-cad-artifacts-bcee70e3a7",
+      "elapsed_seconds": 4.648,
+      "peak_rss_bytes": 1524334592
+    }
+  },
+  "artifacts": {
+    "bucket_step": {
+      "path": "build/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle/simple_tongue_groove_bucket.step",
+      "sha256": "836c2132b09eb950d46f52c26396bc499c71109dcc25a46b4ade77cc7522cd6b"
+    },
+    "baffle_step": {
+      "path": "build/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle/simple_tongue_groove_baffle.step",
+      "sha256": "4036538dfccd55541ada5b92be1cee68498127093f55aa6d0f03af263dda6006"
+    },
+    "validation": {
+      "path": "build/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle/validation_diagnostics.json",
+      "sha256": "c827b673c83dc925e1a24fe72ad71205e49f7608acb56873de59814273030196"
+    },
+    "review_assembly": {
+      "path": "build/workbench/variant_r_flat_bottom_synthesis/review/variant_r_review_assembly.step",
+      "sha256": "ffcd16f32f113f992666eadadb3c29a82fc4b0b339e38affc2fc49495aaa31c8"
+    },
+    "review_sidecar": {
+      "path": "build/workbench/variant_r_flat_bottom_synthesis/review/.variant_r_review_assembly.step.glb",
+      "sha256": "316766b458c6ccfe46db22ad69b1382ab08f053ddac328b1667dc3ed3dfe7b66"
+    },
+    "baffle_sidecar": {
+      "path": "build/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle/.simple_tongue_groove_baffle.step.glb",
+      "sha256": "ce23059d97ac3d5a9fc56bfbffa6a7c03d3bd22ab5a843d7ccf2f431d016c0d4"
+    },
+    "snapshot_overview": {
+      "path": "build/workbench/variant_r_flat_bottom_synthesis/review/snapshot-isometric_20260723T154225Z.png",
+      "sha256": "9150298aca8a3ed8752708f338d65d2e4271ef67ddde1e2a26177ea3ef33620d"
+    },
+    "snapshot_baffle_front": {
+      "path": "build/workbench/variant_r_flat_bottom_synthesis/review/snapshot-baffle-front_20260723T154225Z.png",
+      "sha256": "23f0d231d12607f0f189a3e0fd78479f0d1f8c6eaab6261c697dadb7cd7d8944"
+    }
+  },
+  "measurements": {
+    "bucket_valid_solid_count": 1,
+    "baffle_valid_solid_count": 1,
+    "bucket_baffle_overlap_mm3": 0.0,
+    "protected_lrt_material_mismatch_count": 0,
+    "gasket_bucket_support_ratio": 1.0,
+    "gasket_baffle_support_ratio": 1.0,
+    "bottom_seal_connected_component_count": 1,
+    "baffle_print_bed_z_mm": -91.5,
+    "baffle_print_contact_face_count": 1,
+    "baffle_print_contact_x_span_mm": 187.02097935912883,
+    "baffle_print_contact_y_span_mm": 17.55265124549223,
+    "baffle_print_contact_area_mm2": 2277.9500229303967,
+    "reference_below_plane_transition_mm": 0.3503233033499953,
+    "candidate_below_plane_transition_mm": 0.0
+  },
+  "viewer": {
+    "url": "http://127.0.0.1:4178/?dir=%2FUsers%2Fjaspercurry%2F.codex%2Fworktrees%2F8b9b%2FCAD+-+Enclosure%2Fbuild%2Fworkbench%2Fvariant_r_flat_bottom_synthesis%2Freview&file=variant_r_review_assembly.step",
+    "record_path": "workbench/designs/variant_r_flat_bottom_synthesis/viewer-record.json",
+    "record_sha256": "7a60f67edd857270df8660a59d8bcf3aff80b6bb37d469d9fa025e37cfd9e98f"
+  },
+  "release_verification": {
+    "profile": "release",
+    "status": "pass",
+    "issues": [],
+    "contract_fingerprint": "11b0b386b1ed207b18ebb501ec293106923a3ab83f8a14f39844ff06b1af33cb",
+    "input_fingerprint": "ec3048be60f487964be7d559304652d547bc68d43dd073cab28682e3a2194d38",
+    "contract_json_sha256": "6c4a7c59823edca82a454e07ffe481de88fe17b35feeb95c09b39fd6465d624e",
+    "release_packet_sha256": "73876c49d0055d204c6d841061e348282a4d10c67678c9431031f2978592d7a2"
+  },
+  "deferred": [
+    "top hinge",
+    "lower fasteners",
+    "physical first-layer adhesion and print stability",
+    "final physical assembly validation"
+  ]
+}

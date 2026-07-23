@@ -32,7 +32,16 @@ import os
 import sys
 from pathlib import Path
 
-from build123d import Align, Box, Compound, Pos, Unit, export_step, import_step
+from build123d import (
+    Align,
+    Box,
+    Compound,
+    GeomType,
+    Pos,
+    Unit,
+    export_step,
+    import_step,
+)
 from OCP.BRepClass3d import BRepClass3d_SolidClassifier
 from OCP.gp import gp_Pnt
 from OCP.TopAbs import TopAbs_IN, TopAbs_ON
@@ -123,7 +132,49 @@ def _seam_band_volumes():
 
 
 def _shape_volume(shape) -> float:
+    if shape is None:
+        return 0.0
     return sum(solid.volume for solid in shape.solids())
+
+
+def _difference_volume(left, right) -> float:
+    left_volume = _shape_volume(left)
+    if left_volume <= 1e-9:
+        return 0.0
+    if _shape_volume(right) <= 1e-9:
+        return left_volume
+    return _shape_volume(left - right)
+
+
+def _local_material_difference(
+    reference_shape,
+    hybrid_shape,
+    point: tuple[float, float, float],
+    *,
+    cube_size_mm: float,
+) -> dict[str, float | list[float]]:
+    cube = Pos(*point) * Box(
+        cube_size_mm,
+        cube_size_mm,
+        cube_size_mm,
+        align=(Align.CENTER, Align.CENTER, Align.CENTER),
+    )
+    reference_local = reference_shape & cube
+    hybrid_local = hybrid_shape & cube
+    return {
+        "center_mm": list(point),
+        "cube_size_mm": cube_size_mm,
+        "reference_volume_mm3": _shape_volume(reference_local),
+        "hybrid_volume_mm3": _shape_volume(hybrid_local),
+        "reference_only_mm3": _difference_volume(
+            reference_local,
+            hybrid_local,
+        ),
+        "hybrid_only_mm3": _difference_volume(
+            hybrid_local,
+            reference_local,
+        ),
+    }
 
 
 def _enclosure_body_audit(full_base, reference: dict, hybrid: dict) -> dict:
@@ -208,25 +259,65 @@ def _seam_identity(reference: dict, hybrid: dict) -> dict:
         for part in ("bucket", "baffle"):
             reference_classifier = classifiers[("reference", part)]
             hybrid_classifier = classifiers[("hybrid", part)]
-            mismatch_points = [
+            classifier_mismatch_points = [
                 point
                 for point in points
                 if occupied(reference_classifier, point)
                 != occupied(hybrid_classifier, point)
             ]
-            if mismatch_points:
+            local_material_differences = [
+                _local_material_difference(
+                    reference[part],
+                    hybrid[part],
+                    point,
+                    cube_size_mm=1.0,
+                )
+                for point in classifier_mismatch_points
+            ]
+            material_mismatches = [
+                difference
+                for difference in local_material_differences
+                if max(
+                    difference["reference_only_mm3"],
+                    difference["hybrid_only_mm3"],
+                )
+                > 0.001
+            ]
+            if material_mismatches:
                 raise ValueError(
-                    f"{label} {part} seam occupancy differs from the "
-                    f"authoritative joint at {len(mismatch_points)} of "
-                    f"{len(points)} points; first={mismatch_points[0]}"
+                    f"{label} {part} seam material differs from the "
+                    f"authoritative joint at {len(material_mismatches)} of "
+                    f"{len(points)} points; first={material_mismatches[0]}"
                 )
             part_results[part] = {
                 "sample_count": len(points),
-                "occupancy_mismatch_count": 0,
+                "classifier_mismatch_count": len(classifier_mismatch_points),
+                "material_mismatch_count": 0,
+                "boundary_equivalent_classifier_mismatches": (
+                    local_material_differences
+                ),
+                "local_material_cube_size_mm": 1.0,
+                "local_material_tolerance_mm3": 0.001,
                 "grid_spacing_mm": 0.5,
             }
         results[label] = part_results
     return results
+
+
+def _known_top_mismatch_cube(reference: dict, hybrid: dict) -> dict:
+    result = _local_material_difference(
+        reference["bucket"],
+        hybrid["bucket"],
+        (-45.0, -71.75, 86.25),
+        cube_size_mm=4.0,
+    )
+    if max(result["reference_only_mm3"], result["hybrid_only_mm3"]) > 0.01:
+        raise ValueError(
+            "The known top-seam mismatch cube still contains material drift: "
+            f"{result}"
+        )
+    result["tolerance_mm3"] = 0.01
+    return result
 
 
 def _section(shape, clip, *, feature: str) -> Compound:
@@ -481,6 +572,51 @@ def _flat_bottom_audit(hybrid: dict) -> dict:
     }
 
 
+def _baffle_print_contact_audit(baffle) -> dict:
+    """Require the trimmed baffle topology to terminate on one planar bed."""
+    tolerance = 0.01
+    bed_z = min(vertex.Z for vertex in baffle.vertices())
+    contacts = []
+    for face in baffle.faces():
+        bounds = face.bounding_box()
+        if (
+            face.geom_type == GeomType.PLANE
+            and bounds.size.Z <= tolerance
+            and abs(bounds.min.Z - bed_z) <= tolerance
+            and abs(bounds.max.Z - bed_z) <= tolerance
+        ):
+            contacts.append(
+                {
+                    "area_mm2": face.area,
+                    "x_span_mm": bounds.size.X,
+                    "y_span_mm": bounds.size.Y,
+                }
+            )
+    if not contacts:
+        raise ValueError(f"Baffle has no planar face at bed Z={bed_z}")
+    largest = max(contacts, key=lambda record: record["x_span_mm"])
+    if (
+        abs(bed_z - model.BAFFLE_PRINT_BED_Z_MM) > tolerance
+        or largest["x_span_mm"] < 187.0
+        or largest["area_mm2"] < 2200.0
+    ):
+        raise ValueError(
+            "Baffle print contact misses the full-width plane contract: "
+            f"bed_z={bed_z}, largest={largest}"
+        )
+    return {
+        "build_direction_design_coordinates": "+Z",
+        "bed_z_mm": bed_z,
+        "planar_contact_face_count": len(contacts),
+        "total_planar_contact_area_mm2": sum(
+            record["area_mm2"] for record in contacts
+        ),
+        "largest_planar_contact_face": largest,
+        "brim_assumed": True,
+        "physical_adhesion_validated": False,
+    }
+
+
 def main() -> None:
     if not AUTHORITATIVE_BASE_STEP.is_file():
         raise FileNotFoundError(AUTHORITATIVE_BASE_STEP)
@@ -499,6 +635,7 @@ def main() -> None:
         common = model._build_authoritative_joint(
             full_base,
             hybrid_bottom=True,
+            reference_joint=reference,
         )
         model._FILL_AUDIT.clear()
         model._FILL_AUDIT.update(model.previous._FILL_AUDIT)
@@ -528,8 +665,12 @@ def main() -> None:
         seam_fingerprint_1 = _seam_band_volumes()
         seam_identity = _seam_identity(reference, common)
         print("harness: L/R/T seam identity verified", flush=True)
+        known_top_mismatch_cube = _known_top_mismatch_cube(reference, common)
+        print("harness: known top mismatch cube reconciled", flush=True)
         flat_bottom = _flat_bottom_audit(common)
         print("harness: flat bottom + seal continuity verified", flush=True)
+        print_contact = _baffle_print_contact_audit(common["baffle"])
+        print("harness: baffle print contact verified", flush=True)
         section_round_trip = _export_sections(reference, common)
         print("harness: inspection sections exported", flush=True)
     finally:
@@ -615,6 +756,7 @@ def main() -> None:
         "baffle_bridge_roots_mm3": joint["baffle_bridge_roots_mm3"],
         "front_fill": fill,
         "seam_identity_lrt": seam_identity,
+        "known_top_mismatch_cube": known_top_mismatch_cube,
         "corner_seal": {
             "front_bulkhead_exact_exterior_audit": joint[
                 "front_bulkhead_exact_exterior_audit"
@@ -633,6 +775,7 @@ def main() -> None:
             ],
         },
         "flat_bottom": flat_bottom,
+        "baffle_print_contact": print_contact,
         "inspection_section_roundtrip": section_round_trip,
         "exterior_identity": {
             "fairing_area_difference_mm2": common[

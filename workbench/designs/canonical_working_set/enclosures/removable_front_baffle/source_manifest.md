@@ -1,6 +1,6 @@
 # Removable front-baffle source manifest
 
-Inventory date: 2026-07-22
+Inventory date: 2026-07-23
 
 ## Reference artifacts
 
@@ -17,19 +17,28 @@ unpromoted and STEP-derived.
 
 | Role | Repository path | SHA-256 / state |
 |---|---|---|
-| Active leaf generator | `experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle/generate_sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle.py` | `496a9d9797e0b27d14b8762a2a7bc5efac8c7c747e13308265c5ca65fa3f6f7c`; landed source |
-| Standalone validator | `experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle/validate_simple_tongue_groove_baffle.py` | `f3f07e1323a32d58404822a860d82e341ff07b4e8025f5889730d5efa4112298`; landed source |
-| Corrective handoff | `experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle/HANDOFF.md` | `6732d270cda9ed509808fffad13e1038b509fe64b3182ed599995f1fd5f4184c` |
+| Active leaf generator | `experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle/generate_sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle.py` | `6d8072eb32a1e86b54528fe80144155d0fc2b9d0996bdc76a8168c06e4c91f0c`; accepted Stage 1 source |
+| Standalone validator | `experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle/validate_simple_tongue_groove_baffle.py` | `13e0dc227c64cfaa555e0a709ba7220c373319c5289f23bd3769aee871e7ddef`; current Stage 1 validator |
+| Corrective handoff | `experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle/HANDOFF.md` | `fce0245bbc2227152ee27b23b2cf2740a9ae50b2a771c68028ee6647bdf92b5d`; historical course correction with current supersession note |
 | Shared closure owner | `experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_lightweight_coherent_closure/generate_sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_lightweight_coherent_closure.py` | `0f318a52cf4148d2f2367a18176867acfad76e5a6827d77ca42e5395ce43ba2a`; landed source |
 | Nested-seam ancestor | `experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_nested_seam_closure_concepts/generate_sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_nested_seam_closure_concepts.py` | `02e415cd5a83d61fe9c01d54153c21d8e41a293eb17e45aa6a4bc53986d97f42`; pre-existing tracked source |
 
 Catalog identity: `development-190x210-tongue-groove` and
 `exp-190x210-simple-tongue-groove`.
 
-## Blockers
+## Accepted Stage 1 outputs
 
-- The clean-hunk result has not passed a coordinated source build.
-- Bottom ownership is not reconciled in the clean-hunk source result.
-- The final hinge, fasteners, gasket reroute, and assembly path are not
-  accepted.
-- Final net acoustic volume is not established.
+- Bucket STEP:
+  `836c2132b09eb950d46f52c26396bc499c71109dcc25a46b4ade77cc7522cd6b`.
+- Baffle STEP:
+  `4036538dfccd55541ada5b92be1cee68498127093f55aa6d0f03af263dda6006`.
+- Validation diagnostics:
+  `c827b673c83dc925e1a24fe72ad71205e49f7608acb56873de59814273030196`.
+- Review assembly:
+  `ffcd16f32f113f992666eadadb3c29a82fc4b0b339e38affc2fc49495aaa31c8`.
+
+## Deferred work
+
+- Top hinge and lower fasteners are intentionally disabled and unaccepted.
+- Physical print adhesion, stability, and final assembly are not validated.
+- Final retained-assembly net acoustic volume is not established.

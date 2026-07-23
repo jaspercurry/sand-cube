@@ -1,6 +1,6 @@
 # Variant R flat-bottom synthesis contract
 
-Status: active
+Status: complete — Stage 1 geometry and release evidence validated
 
 ## Authorization and boundary
 
@@ -56,8 +56,10 @@ The STEP files are evidence only. Parameterized Python remains authoritative.
 
 1. Bucket and baffle are each one valid solid before export and after STEP
    round-trip.
-2. Left/right/top bucket and baffle seam occupancy matches the authoritative
-   sculpted joint at every protected 0.5 mm sample.
+2. Left/right/top bucket and baffle seam material matches the authoritative
+   sculpted joint at every protected 0.5 mm sample. A point-classifier
+   disagreement exactly on a reconstructed boundary is acceptable only when a
+   1 mm local cube has at most `0.001 mm³` symmetric material difference.
 3. The known top-seam mismatch cube near
    `[-45.0, -71.75, 86.25]` contains no unexplained reference-only or
    candidate-only material above `0.01 mm³`.
@@ -67,7 +69,11 @@ The STEP files are evidence only. Parameterized Python remains authoritative.
 6. Bucket and baffle lower lands are supported at or above the existing
    minimum gasket-support ratio.
 7. The baffle has a genuinely planar full-width lower bed-contact edge and a
-   reported seating span and planar area.
+   reported seating span and planar area. The accepted reference was found to
+   contain two trimmed-topology transition nubs extending `0.350323 mm` below
+   its nominal `Z = -91.5 mm` plane; the synthesized baffle must contain no
+   topology below that plane. The final contact must be one planar face at
+   `Z = -91.5 mm`, at least `187.0 mm` wide and `2200 mm²` in area.
 8. The lower bucket and baffle ownership is complementary: overlap remains at
    or below the existing tolerance, while sealing and corner closures remain
    present.
@@ -109,3 +115,30 @@ The production entrypoint output must reproduce the accepted candidate's
 semantic measurements within the tolerances above. Scratch or failed-job
 artifacts cannot be described as complete.
 
+## Validated result
+
+- Coordinated full-fit job:
+  `20260723T151259-validate-simple-tongue-groove-baffle-74db9f9037`;
+  `1543.325 s`, `1,380,220,928` bytes peak RSS, successful cleanup, and no
+  owned orphan process.
+- Bucket STEP:
+  `836c2132b09eb950d46f52c26396bc499c71109dcc25a46b4ade77cc7522cd6b`.
+- Baffle STEP:
+  `4036538dfccd55541ada5b92be1cee68498127093f55aa6d0f03af263dda6006`.
+- Both parts are one valid solid before export and after STEP round-trip, with
+  zero positive-volume overlap.
+- Protected left/right/top material mismatches are zero; the known top
+  comparison cube is also exact.
+- Bucket and baffle gasket support ratios are both `1.0`. The lower land
+  support ratios are both `1.0` across `5772` samples, and the lower seal is
+  one connected component.
+- The final baffle terminates at `Z = -91.5 mm` on one planar
+  `187.020979 × 17.552651 mm` face of `2277.950023 mm²`. No trimmed topology
+  extends below that face.
+- Fill blockage and unclosed non-fill sand-cap volume are zero, and all
+  bottom-corner closure checks pass.
+- `BUILD_TOP_HINGE` and `BUILD_BOTTOM_SCREWS` remain intentionally disabled.
+  Their geometry and assembly path are deferred to later stages.
+- A brim remains assumed. CAD establishes the contact geometry but does not
+  validate first-layer adhesion, print stability, or the completed physical
+  assembly.

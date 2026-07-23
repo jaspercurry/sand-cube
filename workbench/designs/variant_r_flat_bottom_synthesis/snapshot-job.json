@@ -1,0 +1,43 @@
+{
+  "provenanceOutput": "build/workbench/variant_r_flat_bottom_synthesis/review/snapshot-provenance.json",
+  "jobs": [
+    {
+      "input": "build/workbench/variant_r_flat_bottom_synthesis/review/variant_r_review_assembly.step",
+      "mode": "view",
+      "display": {
+        "mode": "solid",
+        "projection": "orthographic"
+      },
+      "outputs": [
+        {
+          "path": "build/workbench/variant_r_flat_bottom_synthesis/review/snapshot-isometric.png",
+          "camera": "iso"
+        }
+      ],
+      "render": {
+        "padding": 0.12,
+        "sizeProfile": "diagnostic",
+        "viewLabels": true
+      }
+    },
+    {
+      "input": "build/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle/simple_tongue_groove_baffle.step",
+      "mode": "view",
+      "display": {
+        "mode": "solid",
+        "projection": "orthographic"
+      },
+      "outputs": [
+        {
+          "path": "build/workbench/variant_r_flat_bottom_synthesis/review/snapshot-baffle-front.png",
+          "camera": "front"
+        }
+      ],
+      "render": {
+        "padding": 0.08,
+        "sizeProfile": "diagnostic",
+        "viewLabels": true
+      }
+    }
+  ]
+}
