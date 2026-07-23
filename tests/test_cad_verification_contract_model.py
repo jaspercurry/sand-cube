@@ -8,10 +8,12 @@ import sys
 import unittest
 
 from cad_verification import (
+    ARTIFACT_POLICIES,
     CHECK_POLICIES,
     EVIDENCE_POLICIES,
     PROFILE_POLICIES,
     ActualValue,
+    ArtifactRole,
     CheckKind,
     CheckSpec,
     EvidenceChannel,
@@ -26,7 +28,6 @@ from cad_verification import (
     contract_from_json,
     contract_to_dict,
     contract_to_json,
-    profile_status,
     requirements_for_profile,
     unverified,
     validate_contract,
@@ -42,6 +43,7 @@ class CadVerificationContractModelTest(unittest.TestCase):
         return {issue.code for issue in validate_contract(contract)}
 
     def test_policy_catalogs_are_complete_single_sources(self) -> None:
+        self.assertEqual(set(ARTIFACT_POLICIES), set(ArtifactRole))
         self.assertEqual(set(PROFILE_POLICIES), set(VerificationProfile))
         self.assertEqual(set(EVIDENCE_POLICIES), set(EvidenceChannel))
         self.assertEqual(set(CHECK_POLICIES), set(CheckKind))
@@ -108,7 +110,7 @@ class CadVerificationContractModelTest(unittest.TestCase):
 
         codes = self.issue_codes(malformed)
         self.assertIn("profile.empty", codes)
-        self.assertIn("profile.release_incomplete", codes)
+        self.assertIn("profile.required_check_missing", codes)
 
     def test_range_and_exact_evaluation_honor_absolute_tolerance(self) -> None:
         fit = self.contract.requirements[1]
@@ -146,15 +148,6 @@ class CadVerificationContractModelTest(unittest.TestCase):
             aggregate_status((unverified("CAD-FIT-001", "not run"), failing)),
             ResultStatus.FAIL,
         )
-        self.assertEqual(
-            profile_status(
-                self.contract,
-                VerificationProfile.RELEASE,
-                passing[:-1],
-            ),
-            ResultStatus.UNVERIFIED,
-        )
-
     def test_contract_serialization_is_deterministic_and_round_trips(self) -> None:
         encoded = contract_to_json(self.contract)
         decoded = contract_from_json(encoded)

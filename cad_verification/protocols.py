@@ -5,7 +5,13 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Mapping, Protocol
 
-from .model import ActualValue, ArtifactObservation, Requirement, Scalar
+from .model import (
+    ActualValue,
+    ArtifactObservation,
+    EvidenceReference,
+    Requirement,
+    Scalar,
+)
 
 
 @dataclass(frozen=True)
@@ -14,7 +20,7 @@ class Measurement:
 
     actual: ActualValue
     diagnostic: str
-    evidence_refs: tuple[str, ...] = ()
+    evidence_refs: tuple[EvidenceReference, ...] = ()
 
 
 class MeasurementAdapter(Protocol):

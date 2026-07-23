@@ -4,8 +4,8 @@ from .evaluation import (
     actual_satisfies,
     aggregate_status,
     assess,
-    profile_status,
     requirements_for_profile,
+    review_packet_status,
     unverified,
 )
 from .model import (
@@ -13,6 +13,7 @@ from .model import (
     ActualValue,
     ArtifactEvidence,
     ArtifactObservation,
+    ArtifactReference,
     CheckSpec,
     DesignContract,
     Expectation,
@@ -26,11 +27,14 @@ from .model import (
     ToolIdentity,
     ToolchainIdentity,
     VisualEvidence,
+    VisualEvidenceReference,
 )
 from .policy import (
+    ARTIFACT_POLICIES,
     CHECK_POLICIES,
     EVIDENCE_POLICIES,
     PROFILE_POLICIES,
+    ArtifactRole,
     CheckKind,
     EvidenceChannel,
     EvidenceScope,
@@ -65,6 +69,7 @@ from .validation import (
 
 
 __all__ = [
+    "ARTIFACT_POLICIES",
     "CHECK_POLICIES",
     "EVIDENCE_POLICIES",
     "PROFILE_POLICIES",
@@ -72,7 +77,9 @@ __all__ = [
     "ActualValue",
     "ArtifactEvidence",
     "ArtifactObservation",
+    "ArtifactReference",
     "ArtifactProbe",
+    "ArtifactRole",
     "CheckKind",
     "CheckSpec",
     "DesignContract",
@@ -99,6 +106,7 @@ __all__ = [
     "VerificationProfile",
     "VerificationValidationError",
     "VisualEvidence",
+    "VisualEvidenceReference",
     "actual_satisfies",
     "aggregate_status",
     "assess",
@@ -110,12 +118,12 @@ __all__ = [
     "contract_to_dict",
     "contract_to_json",
     "fingerprint_collection",
-    "profile_status",
     "requirements_for_profile",
     "review_packet_from_dict",
     "review_packet_from_json",
     "review_packet_to_dict",
     "review_packet_to_json",
+    "review_packet_status",
     "unverified",
     "validate_contract",
     "validate_review_packet",

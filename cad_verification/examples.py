@@ -9,6 +9,7 @@ from .evaluation import assess
 from .model import (
     ActualValue,
     ArtifactEvidence,
+    ArtifactReference,
     CheckSpec,
     DesignContract,
     Expectation,
@@ -21,8 +22,10 @@ from .model import (
     ToolIdentity,
     ToolchainIdentity,
     VisualEvidence,
+    VisualEvidenceReference,
 )
 from .policy import (
+    ArtifactRole,
     CheckKind,
     EvidenceChannel,
     EvidenceScope,
@@ -116,16 +119,63 @@ def minimal_review_packet(
         Fingerprint("examples/parameters.json", _digest(b'{"length":80}')),
     )
     step_bytes = b"synthetic STEP evidence"
-    artifact = ArtifactEvidence(
+    sidecar_bytes = b'{"artifact":"synthetic_joint.step"}'
+    render_bytes = b"synthetic PNG evidence"
+    contract_digest = contract_fingerprint(contract)
+    source_digest = fingerprint_collection(source_fingerprints)
+    input_digest = fingerprint_collection(input_fingerprints)
+    step_artifact = ArtifactEvidence(
         artifact_id="artifact.synthetic-step",
+        role=ArtifactRole.STEP,
         path="build/examples/synthetic_joint.step",
         media_type="model/step",
         sha256=_digest(step_bytes),
         size_bytes=len(step_bytes),
         created_at=_FINISHED,
-        contract_fingerprint=contract_fingerprint(contract),
-        source_fingerprint=fingerprint_collection(source_fingerprints),
-        input_fingerprint=fingerprint_collection(input_fingerprints),
+        contract_fingerprint=contract_digest,
+        source_fingerprint=source_digest,
+        input_fingerprint=input_digest,
+    )
+    step_reference = ArtifactReference(
+        step_artifact.artifact_id,
+        step_artifact.role,
+        step_artifact.sha256,
+    )
+    sidecar_artifact = ArtifactEvidence(
+        artifact_id="artifact.synthetic-sidecar",
+        role=ArtifactRole.TOPOLOGY_SIDECAR,
+        path="build/examples/synthetic_joint.step.meta.json",
+        media_type="application/json",
+        sha256=_digest(sidecar_bytes),
+        size_bytes=len(sidecar_bytes),
+        created_at=_FINISHED,
+        contract_fingerprint=contract_digest,
+        source_fingerprint=source_digest,
+        input_fingerprint=input_digest,
+        source_artifact_refs=(step_reference,),
+    )
+    sidecar_reference = ArtifactReference(
+        sidecar_artifact.artifact_id,
+        sidecar_artifact.role,
+        sidecar_artifact.sha256,
+    )
+    render_artifact = ArtifactEvidence(
+        artifact_id="artifact.synthetic-render",
+        role=ArtifactRole.RENDER_IMAGE,
+        path="build/examples/synthetic_joint_section.png",
+        media_type="image/png",
+        sha256=_digest(render_bytes),
+        size_bytes=len(render_bytes),
+        created_at=_FINISHED,
+        contract_fingerprint=contract_digest,
+        source_fingerprint=source_digest,
+        input_fingerprint=input_digest,
+        source_artifact_refs=(step_reference,),
+    )
+    render_reference = ArtifactReference(
+        render_artifact.artifact_id,
+        render_artifact.role,
+        render_artifact.sha256,
     )
     viewer = VisualEvidence(
         evidence_id="viewer.synthetic-step",
@@ -134,8 +184,8 @@ def minimal_review_packet(
         locator="http://127.0.0.1:4178/?file=synthetic_joint.step",
         purpose="Interactive inspection of the exact exported STEP.",
         created_at=_FINISHED,
-        artifact_id=artifact.artifact_id,
         renderer="Text-to-CAD Viewer",
+        artifact_refs=(step_reference, sidecar_reference),
         read_only=True,
     )
     snapshot = VisualEvidence(
@@ -145,8 +195,8 @@ def minimal_review_packet(
         locator="build/examples/synthetic_joint_section.png",
         purpose="Confirm the joint section answers the visual fit question.",
         created_at=_FINISHED,
-        artifact_id=artifact.artifact_id,
         renderer="Text-to-CAD Snapshot",
+        artifact_refs=(step_reference, sidecar_reference, render_reference),
         inspected_by_agent=True,
     )
     results = (
@@ -167,14 +217,14 @@ def minimal_review_packet(
             ActualValue(True, Unit.BOOLEAN),
             evidence_channel=EvidenceChannel.PROGRAMMATIC_GEOMETRY,
             diagnostic="STEP import preserved valid geometry.",
-            evidence_refs=(artifact.artifact_id,),
+            evidence_refs=(step_reference,),
         ),
         assess(
             requirements["CAD-VIS-001"],
             ActualValue(True, Unit.BOOLEAN),
             evidence_channel=EvidenceChannel.SNAPSHOT,
             diagnostic="Agent inspected the exported-STEP section view.",
-            evidence_refs=(snapshot.evidence_id,),
+            evidence_refs=(VisualEvidenceReference(snapshot.evidence_id),),
         ),
     )
     return ReviewPacket(
@@ -191,7 +241,7 @@ def minimal_review_packet(
                 ToolIdentity("synthetic-kernel", "1", "test-double"),
             )
         ),
-        artifacts=(artifact,),
+        artifacts=(step_artifact, sidecar_artifact, render_artifact),
         results=results,
         job_metrics=JobMetrics(
             job_id="job.synthetic-001",
@@ -203,7 +253,11 @@ def minimal_review_packet(
             peak_rss_bytes=12_345_678,
             cleanup_completed=True,
             orphan_processes=0,
-            outputs=(artifact.path,),
+            outputs=(
+                step_artifact.path,
+                sidecar_artifact.path,
+                render_artifact.path,
+            ),
         ),
         visual_evidence=(viewer, snapshot),
         confirmed_facts=(

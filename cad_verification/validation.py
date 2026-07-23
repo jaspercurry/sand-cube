@@ -12,15 +12,20 @@ from .evaluation import actual_satisfies, requirements_for_profile
 from .model import (
     ActualValue,
     ArtifactEvidence,
+    ArtifactReference,
     DesignContract,
     Fingerprint,
     ModelIdentity,
     ReviewPacket,
     SCHEMA_VERSION,
+    VisualEvidenceReference,
 )
 from .policy import (
+    ARTIFACT_POLICIES,
     CHECK_POLICIES,
     EVIDENCE_POLICIES,
+    PROFILE_POLICIES,
+    ArtifactRole,
     CheckKind,
     EvidenceChannel,
     ExpectationKind,
@@ -444,6 +449,7 @@ def validate_contract(contract: DesignContract) -> tuple[ValidationIssue, ...]:
             )
 
     for profile in VerificationProfile:
+        profile_policy = PROFILE_POLICIES[profile]
         layer = tuple(
             requirement
             for requirement in contract.requirements
@@ -456,34 +462,34 @@ def validate_contract(contract: DesignContract) -> tuple[ValidationIssue, ...]:
                 f"profiles.{profile.value}",
                 "profile cost layer must contain at least one requirement",
             )
-            continue
-        meaningful = tuple(
-            requirement
+        else:
+            meaningful = tuple(
+                requirement
+                for requirement in layer
+                if isinstance(requirement.check.kind, CheckKind)
+                and CHECK_POLICIES[requirement.check.kind].minimum_profile
+                is profile
+            )
+            if not meaningful:
+                _issue(
+                    issues,
+                    "profile.vacuous",
+                    f"profiles.{profile.value}",
+                    "profile must add a check native to its cost tier",
+                )
+        layer_kinds = {
+            requirement.check.kind
             for requirement in layer
             if isinstance(requirement.check.kind, CheckKind)
-            and CHECK_POLICIES[requirement.check.kind].minimum_profile is profile
-        )
-        if not meaningful:
+        }
+        for required_kind in profile_policy.required_check_kinds:
+            if required_kind in layer_kinds:
+                continue
             _issue(
                 issues,
-                "profile.vacuous",
+                "profile.required_check_missing",
                 f"profiles.{profile.value}",
-                "profile must add a check native to its cost tier",
-            )
-
-    release_kinds = {
-        requirement.check.kind
-        for requirement in contract.requirements
-        if requirement.cost_profile is VerificationProfile.RELEASE
-        and isinstance(requirement.check.kind, CheckKind)
-    }
-    for required_kind in (CheckKind.ROUND_TRIP, CheckKind.VISUAL_REVIEW):
-        if required_kind not in release_kinds:
-            _issue(
-                issues,
-                "profile.release_incomplete",
-                "profiles.release",
-                f"release requires a {required_kind.value} requirement",
+                f"profile requires a {required_kind.value} requirement",
             )
 
     return tuple(issues)
@@ -493,6 +499,57 @@ def assert_valid_contract(contract: DesignContract) -> None:
     issues = validate_contract(contract)
     if issues:
         raise VerificationValidationError(issues)
+
+
+def _validate_artifact_reference(
+    reference: object,
+    artifacts_by_id: dict[str, ArtifactEvidence],
+    *,
+    path: str,
+    issues: list[ValidationIssue],
+) -> ArtifactEvidence | None:
+    if not isinstance(reference, ArtifactReference):
+        _issue(
+            issues,
+            "evidence.artifact_reference_invalid",
+            path,
+            "must be an ArtifactReference",
+        )
+        return None
+    _stable_id(reference.artifact_id, path=f"{path}.artifact_id", issues=issues)
+    _valid_sha(reference.sha256, path=f"{path}.sha256", issues=issues)
+    if not isinstance(reference.role, ArtifactRole):
+        _issue(
+            issues,
+            "artifact.role_invalid",
+            f"{path}.role",
+            "must be an ArtifactRole",
+        )
+        return None
+    artifact = artifacts_by_id.get(reference.artifact_id)
+    if artifact is None:
+        _issue(
+            issues,
+            "evidence.artifact_unknown",
+            f"{path}.artifact_id",
+            "does not reference a packet artifact",
+        )
+        return None
+    if reference.sha256 != artifact.sha256:
+        _issue(
+            issues,
+            "evidence.artifact_hash_mismatch",
+            f"{path}.sha256",
+            "does not match the referenced artifact hash",
+        )
+    if reference.role is not artifact.role:
+        _issue(
+            issues,
+            "evidence.artifact_role_mismatch",
+            f"{path}.role",
+            "does not match the referenced artifact role",
+        )
+    return artifact
 
 
 def validate_review_packet(
@@ -594,6 +651,25 @@ def validate_review_packet(
                 f"duplicate artifact ID {artifact.artifact_id}",
             )
         artifacts_by_id[artifact.artifact_id] = artifact
+        if not isinstance(artifact.role, ArtifactRole):
+            _issue(
+                issues,
+                "artifact.role_invalid",
+                f"{path}.role",
+                "must be an ArtifactRole",
+            )
+        else:
+            artifact_policy = ARTIFACT_POLICIES[artifact.role]
+            if (
+                artifact_policy.allowed_media_types
+                and artifact.media_type not in artifact_policy.allowed_media_types
+            ):
+                _issue(
+                    issues,
+                    "artifact.media_type_mismatch",
+                    f"{path}.media_type",
+                    f"{artifact.role.value} does not allow {artifact.media_type!r}",
+                )
         _nonempty(artifact.path, path=f"{path}.path", issues=issues)
         _nonempty(artifact.media_type, path=f"{path}.media_type", issues=issues)
         _valid_sha(artifact.sha256, path=f"{path}.sha256", issues=issues)
@@ -659,6 +735,52 @@ def validate_review_packet(
                             "observed size does not match recorded size",
                         )
 
+    for index, artifact in enumerate(packet.artifacts):
+        path = f"artifacts[{index}].source_artifact_refs"
+        referenced_roles: set[ArtifactRole] = set()
+        seen_source_ids: set[str] = set()
+        for reference_index, reference in enumerate(
+            artifact.source_artifact_refs
+        ):
+            reference_path = f"{path}[{reference_index}]"
+            source_artifact = _validate_artifact_reference(
+                reference,
+                artifacts_by_id,
+                path=reference_path,
+                issues=issues,
+            )
+            if source_artifact is None:
+                continue
+            if source_artifact.artifact_id == artifact.artifact_id:
+                _issue(
+                    issues,
+                    "artifact.source_self_reference",
+                    reference_path,
+                    "an artifact cannot derive from itself",
+                )
+            if source_artifact.artifact_id in seen_source_ids:
+                _issue(
+                    issues,
+                    "artifact.source_reference_duplicate",
+                    reference_path,
+                    "duplicates a source artifact reference",
+                )
+            seen_source_ids.add(source_artifact.artifact_id)
+            if isinstance(source_artifact.role, ArtifactRole):
+                referenced_roles.add(source_artifact.role)
+        if not isinstance(artifact.role, ArtifactRole):
+            continue
+        artifact_policy = ARTIFACT_POLICIES[artifact.role]
+        for required_role in artifact_policy.required_source_roles:
+            if required_role in referenced_roles:
+                continue
+            _issue(
+                issues,
+                "artifact.source_role_missing",
+                path,
+                f"{artifact.role.value} must derive from {required_role.value}",
+            )
+
     visual_by_id = {}
     for index, evidence in enumerate(packet.visual_evidence):
         path = f"visual_evidence[{index}]"
@@ -694,20 +816,35 @@ def validate_review_packet(
         _nonempty(evidence.purpose, path=f"{path}.purpose", issues=issues)
         _nonempty(evidence.renderer, path=f"{path}.renderer", issues=issues)
         _valid_datetime(evidence.created_at, path=f"{path}.created_at", issues=issues)
-        if policy.requires_artifact:
-            if evidence.artifact_id is None:
+        referenced_roles: set[ArtifactRole] = set()
+        seen_artifact_refs: set[tuple[str, ArtifactRole]] = set()
+        for reference_index, reference in enumerate(evidence.artifact_refs):
+            reference_path = f"{path}.artifact_refs[{reference_index}]"
+            artifact = _validate_artifact_reference(
+                reference,
+                artifacts_by_id,
+                path=reference_path,
+                issues=issues,
+            )
+            if artifact is None:
+                continue
+            key = (reference.artifact_id, reference.role)
+            if key in seen_artifact_refs:
                 _issue(
                     issues,
-                    "visual.artifact_missing",
-                    f"{path}.artifact_id",
-                    "channel requires an exported artifact",
+                    "visual.artifact_reference_duplicate",
+                    reference_path,
+                    "duplicates an artifact reference",
                 )
-            elif evidence.artifact_id not in artifacts_by_id:
+            seen_artifact_refs.add(key)
+            referenced_roles.add(reference.role)
+        for required_role in policy.required_artifact_roles:
+            if required_role not in referenced_roles:
                 _issue(
                     issues,
-                    "visual.artifact_unknown",
-                    f"{path}.artifact_id",
-                    "does not reference a packet artifact",
+                    "visual.artifact_role_missing",
+                    f"{path}.artifact_refs",
+                    f"{evidence.channel.value} requires {required_role.value}",
                 )
         if policy.requires_reason and not (
             isinstance(evidence.reason, str) and evidence.reason.strip()
@@ -733,12 +870,28 @@ def validate_review_packet(
                 "Viewer evidence must be read-only",
             )
 
+    if isinstance(packet.profile, VerificationProfile):
+        channels = {
+            evidence.channel
+            for evidence in packet.visual_evidence
+            if isinstance(evidence.channel, EvidenceChannel)
+        }
+        for group in PROFILE_POLICIES[packet.profile].required_evidence_groups:
+            if channels.intersection(group):
+                continue
+            choices = ", ".join(channel.value for channel in group)
+            _issue(
+                issues,
+                "profile.evidence_channel_missing",
+                "visual_evidence",
+                f"{packet.profile.value} requires one of: {choices}",
+            )
+
     expected_by_id = {
         requirement.requirement_id: requirement
         for requirement in selected_requirements
     }
     results_by_id = {}
-    known_evidence_ids = set(artifacts_by_id) | set(visual_by_id)
     for index, result in enumerate(packet.results):
         path = f"results[{index}]"
         if result.requirement_id in results_by_id:
@@ -771,14 +924,53 @@ def validate_review_packet(
             continue
         if result.actual is not None:
             _validate_actual(result.actual, path=f"{path}.actual", issues=issues)
-        for reference in result.evidence_refs:
-            if reference not in known_evidence_ids:
+        artifact_result_refs: list[ArtifactReference] = []
+        visual_result_refs: list[VisualEvidenceReference] = []
+        seen_result_refs: set[tuple[str, str]] = set()
+        for reference_index, reference in enumerate(result.evidence_refs):
+            reference_path = f"{path}.evidence_refs[{reference_index}]"
+            if isinstance(reference, ArtifactReference):
+                artifact = _validate_artifact_reference(
+                    reference,
+                    artifacts_by_id,
+                    path=reference_path,
+                    issues=issues,
+                )
+                if artifact is not None:
+                    artifact_result_refs.append(reference)
+                reference_key = ("artifact", reference.artifact_id)
+            elif isinstance(reference, VisualEvidenceReference):
+                _stable_id(
+                    reference.evidence_id,
+                    path=f"{reference_path}.evidence_id",
+                    issues=issues,
+                )
+                if reference.evidence_id not in visual_by_id:
+                    _issue(
+                        issues,
+                        "result.visual_evidence_unknown",
+                        f"{reference_path}.evidence_id",
+                        "does not reference packet visual evidence",
+                    )
+                else:
+                    visual_result_refs.append(reference)
+                reference_key = ("visual", reference.evidence_id)
+            else:
                 _issue(
                     issues,
-                    "result.evidence_unknown",
-                    f"{path}.evidence_refs",
-                    f"unknown evidence reference {reference!r}",
+                    "result.evidence_reference_invalid",
+                    reference_path,
+                    "must be an artifact or visual evidence reference",
                 )
+                continue
+            if reference_key in seen_result_refs:
+                _issue(
+                    issues,
+                    "result.evidence_reference_duplicate",
+                    reference_path,
+                    "duplicates an evidence reference",
+                )
+            seen_result_refs.add(reference_key)
 
         if result.status is ResultStatus.UNVERIFIED:
             if result.evidence_channel is not EvidenceChannel.NONE:
@@ -832,13 +1024,10 @@ def validate_review_packet(
                 f"{requirement.check.kind.value} does not accept this channel",
             )
         if check_policy.requires_artifact_reference:
-            referenced_artifact = any(
-                reference in artifacts_by_id for reference in result.evidence_refs
-            )
+            referenced_artifact = bool(artifact_result_refs)
             referenced_visual = any(
-                reference in visual_by_id
-                and visual_by_id[reference].artifact_id in artifacts_by_id
-                for reference in result.evidence_refs
+                visual_by_id[reference.evidence_id].artifact_refs
+                for reference in visual_result_refs
             )
             if not referenced_artifact and not referenced_visual:
                 _issue(
@@ -849,9 +1038,9 @@ def validate_review_packet(
                 )
         if result.evidence_channel is not EvidenceChannel.PROGRAMMATIC_GEOMETRY:
             matching_visual = any(
-                reference in visual_by_id
-                and visual_by_id[reference].channel is result.evidence_channel
-                for reference in result.evidence_refs
+                visual_by_id[reference.evidence_id].channel
+                is result.evidence_channel
+                for reference in visual_result_refs
             )
             if not matching_visual:
                 _issue(
@@ -910,14 +1099,28 @@ def validate_review_packet(
             "job_metrics.elapsed_seconds",
             "must be finite and non-negative",
         )
-    if not isinstance(metrics.exit_code, int):
+    if not isinstance(metrics.exit_code, int) or isinstance(metrics.exit_code, bool):
         _issue(issues, "job.exit_invalid", "job_metrics.exit_code", "must be int")
+    elif metrics.exit_code != 0:
+        _issue(
+            issues,
+            "job.failed",
+            "job_metrics.exit_code",
+            "verified review jobs must exit successfully",
+        )
     if not isinstance(metrics.cleanup_completed, bool):
         _issue(
             issues,
             "job.cleanup_invalid",
             "job_metrics.cleanup_completed",
             "must be a boolean",
+        )
+    elif not metrics.cleanup_completed:
+        _issue(
+            issues,
+            "job.cleanup_incomplete",
+            "job_metrics.cleanup_completed",
+            "verified review jobs must complete cleanup",
         )
     if metrics.worker_pid is not None and (
         not isinstance(metrics.worker_pid, int) or metrics.worker_pid <= 0
@@ -937,12 +1140,23 @@ def validate_review_packet(
             "job_metrics.peak_rss_bytes",
             "must be a non-negative integer or null",
         )
-    if not isinstance(metrics.orphan_processes, int) or metrics.orphan_processes < 0:
+    if (
+        not isinstance(metrics.orphan_processes, int)
+        or isinstance(metrics.orphan_processes, bool)
+        or metrics.orphan_processes < 0
+    ):
         _issue(
             issues,
             "job.orphans_invalid",
             "job_metrics.orphan_processes",
             "must be a non-negative integer",
+        )
+    elif metrics.orphan_processes != 0:
+        _issue(
+            issues,
+            "job.orphans_present",
+            "job_metrics.orphan_processes",
+            "verified review jobs must leave no owned orphan processes",
         )
     if len(set(metrics.outputs)) != len(metrics.outputs):
         _issue(
@@ -966,21 +1180,30 @@ def validate_review_packet(
             "created_at",
             "review packet cannot predate job completion",
         )
-    if packet_time_valid and started_valid:
+    if packet_time_valid:
         for index, artifact in enumerate(packet.artifacts):
             if (
                 isinstance(artifact.created_at, datetime)
                 and artifact.created_at.tzinfo is not None
-                and (
-                    artifact.created_at < metrics.started_at
-                    or artifact.created_at > packet.created_at
-                )
+                and artifact.created_at > packet.created_at
             ):
                 _issue(
                     issues,
-                    "artifact.stale_time",
+                    "artifact.time_invalid",
                     f"artifacts[{index}].created_at",
-                    "artifact timestamp is outside this review job",
+                    "artifact cannot postdate the review packet",
+                )
+        for index, evidence in enumerate(packet.visual_evidence):
+            if (
+                isinstance(evidence.created_at, datetime)
+                and evidence.created_at.tzinfo is not None
+                and evidence.created_at > packet.created_at
+            ):
+                _issue(
+                    issues,
+                    "visual.time_invalid",
+                    f"visual_evidence[{index}].created_at",
+                    "visual evidence cannot postdate the review packet",
                 )
     for field_name, values in (
         ("confirmed_facts", packet.confirmed_facts),

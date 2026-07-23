@@ -10,6 +10,7 @@ from typing import Any, Iterable, Mapping, TypeVar
 from .model import (
     ActualValue,
     ArtifactEvidence,
+    ArtifactReference,
     CheckSpec,
     DesignContract,
     Expectation,
@@ -24,8 +25,10 @@ from .model import (
     ToolIdentity,
     ToolchainIdentity,
     VisualEvidence,
+    VisualEvidenceReference,
 )
 from .policy import (
+    ArtifactRole,
     CheckKind,
     EvidenceChannel,
     EvidenceScope,
@@ -353,12 +356,92 @@ def _actual_from_dict(value: Any, path: str) -> ActualValue | None:
     )
 
 
+def _artifact_reference_to_dict(reference: ArtifactReference) -> dict[str, str]:
+    return {
+        "artifact_id": reference.artifact_id,
+        "role": reference.role.value,
+        "sha256": reference.sha256,
+    }
+
+
+def _artifact_reference_from_dict(value: Any, path: str) -> ArtifactReference:
+    data = _mapping(value, path)
+    _exact_keys(
+        data,
+        path=path,
+        required=("artifact_id", "role", "sha256"),
+    )
+    return ArtifactReference(
+        artifact_id=_string(data["artifact_id"], f"{path}.artifact_id"),
+        role=_enum(ArtifactRole, data["role"], f"{path}.role"),
+        sha256=_string(data["sha256"], f"{path}.sha256"),
+    )
+
+
+def _evidence_reference_to_dict(
+    reference: ArtifactReference | VisualEvidenceReference,
+) -> dict[str, Any]:
+    if isinstance(reference, ArtifactReference):
+        return {"kind": "artifact", **_artifact_reference_to_dict(reference)}
+    if isinstance(reference, VisualEvidenceReference):
+        return {
+            "evidence_id": reference.evidence_id,
+            "kind": "visual",
+        }
+    raise SerializationError(f"unsupported evidence reference: {reference!r}")
+
+
+def _evidence_reference_from_dict(
+    value: Any,
+    path: str,
+) -> ArtifactReference | VisualEvidenceReference:
+    data = _mapping(value, path)
+    if "kind" not in data:
+        raise SerializationError(f"{path} missing keys: kind")
+    kind = _string(data["kind"], f"{path}.kind")
+    if kind == "artifact":
+        _exact_keys(
+            data,
+            path=path,
+            required=("kind", "artifact_id", "role", "sha256"),
+        )
+        return _artifact_reference_from_dict(
+            {key: value for key, value in data.items() if key != "kind"},
+            path,
+        )
+    if kind == "visual":
+        _exact_keys(data, path=path, required=("kind", "evidence_id"))
+        return VisualEvidenceReference(
+            evidence_id=_string(data["evidence_id"], f"{path}.evidence_id")
+        )
+    raise SerializationError(f"{path}.kind has unknown value {kind!r}")
+
+
+def _evidence_reference_sort_key(
+    reference: ArtifactReference | VisualEvidenceReference,
+) -> tuple[str, str, str, str]:
+    if isinstance(reference, ArtifactReference):
+        return (
+            "artifact",
+            reference.artifact_id,
+            reference.role.value,
+            reference.sha256,
+        )
+    return ("visual", reference.evidence_id, "", "")
+
+
 def _result_to_dict(result: RequirementResult) -> dict[str, Any]:
     return {
         "actual": _actual_to_dict(result.actual),
         "diagnostic": result.diagnostic,
         "evidence_channel": result.evidence_channel.value,
-        "evidence_refs": sorted(result.evidence_refs),
+        "evidence_refs": [
+            _evidence_reference_to_dict(reference)
+            for reference in sorted(
+                result.evidence_refs,
+                key=_evidence_reference_sort_key,
+            )
+        ],
         "evidence_tier": result.evidence_tier.value,
         "requirement_id": result.requirement_id,
         "status": result.status.value,
@@ -404,7 +487,10 @@ def _result_from_dict(value: Any, path: str) -> RequirementResult:
         evidence_channel=channel,
         diagnostic=_string(data["diagnostic"], f"{path}.diagnostic"),
         evidence_refs=tuple(
-            _string(reference, f"{path}.evidence_refs[{index}]")
+            _evidence_reference_from_dict(
+                reference,
+                f"{path}.evidence_refs[{index}]",
+            )
             for index, reference in enumerate(references)
         ),
     )
@@ -418,8 +504,20 @@ def _artifact_to_dict(artifact: ArtifactEvidence) -> dict[str, Any]:
         "input_fingerprint": artifact.input_fingerprint,
         "media_type": artifact.media_type,
         "path": artifact.path,
+        "role": artifact.role.value,
         "sha256": artifact.sha256,
         "size_bytes": artifact.size_bytes,
+        "source_artifact_refs": [
+            _artifact_reference_to_dict(reference)
+            for reference in sorted(
+                artifact.source_artifact_refs,
+                key=lambda item: (
+                    item.role.value,
+                    item.artifact_id,
+                    item.sha256,
+                ),
+            )
+        ],
         "source_fingerprint": artifact.source_fingerprint,
     }
 
@@ -428,6 +526,7 @@ def _artifact_from_dict(value: Any, path: str) -> ArtifactEvidence:
     data = _mapping(value, path)
     keys = (
         "artifact_id",
+        "role",
         "path",
         "media_type",
         "sha256",
@@ -436,10 +535,15 @@ def _artifact_from_dict(value: Any, path: str) -> ArtifactEvidence:
         "contract_fingerprint",
         "source_fingerprint",
         "input_fingerprint",
+        "source_artifact_refs",
     )
     _exact_keys(data, path=path, required=keys)
+    source_artifact_refs = data["source_artifact_refs"]
+    if not isinstance(source_artifact_refs, list):
+        raise SerializationError(f"{path}.source_artifact_refs must be an array")
     return ArtifactEvidence(
         artifact_id=_string(data["artifact_id"], f"{path}.artifact_id"),
+        role=_enum(ArtifactRole, data["role"], f"{path}.role"),
         path=_string(data["path"], f"{path}.path"),
         media_type=_string(data["media_type"], f"{path}.media_type"),
         sha256=_string(data["sha256"], f"{path}.sha256"),
@@ -454,12 +558,29 @@ def _artifact_from_dict(value: Any, path: str) -> ArtifactEvidence:
         input_fingerprint=_string(
             data["input_fingerprint"], f"{path}.input_fingerprint"
         ),
+        source_artifact_refs=tuple(
+            _artifact_reference_from_dict(
+                reference,
+                f"{path}.source_artifact_refs[{index}]",
+            )
+            for index, reference in enumerate(source_artifact_refs)
+        ),
     )
 
 
 def _visual_to_dict(evidence: VisualEvidence) -> dict[str, Any]:
     return {
-        "artifact_id": evidence.artifact_id,
+        "artifact_refs": [
+            _artifact_reference_to_dict(reference)
+            for reference in sorted(
+                evidence.artifact_refs,
+                key=lambda item: (
+                    item.role.value,
+                    item.artifact_id,
+                    item.sha256,
+                ),
+            )
+        ],
         "channel": evidence.channel.value,
         "created_at": _datetime_text(evidence.created_at),
         "evidence_id": evidence.evidence_id,
@@ -482,13 +603,16 @@ def _visual_from_dict(value: Any, path: str) -> VisualEvidence:
         "locator",
         "purpose",
         "created_at",
-        "artifact_id",
+        "artifact_refs",
         "renderer",
         "inspected_by_agent",
         "read_only",
         "reason",
     )
     _exact_keys(data, path=path, required=keys)
+    artifact_refs = data["artifact_refs"]
+    if not isinstance(artifact_refs, list):
+        raise SerializationError(f"{path}.artifact_refs must be an array")
     return VisualEvidence(
         evidence_id=_string(data["evidence_id"], f"{path}.evidence_id"),
         channel=_enum(EvidenceChannel, data["channel"], f"{path}.channel"),
@@ -496,7 +620,13 @@ def _visual_from_dict(value: Any, path: str) -> VisualEvidence:
         locator=_string(data["locator"], f"{path}.locator"),
         purpose=_string(data["purpose"], f"{path}.purpose"),
         created_at=_parse_datetime(data["created_at"], f"{path}.created_at"),
-        artifact_id=_optional_string(data["artifact_id"], f"{path}.artifact_id"),
+        artifact_refs=tuple(
+            _artifact_reference_from_dict(
+                reference,
+                f"{path}.artifact_refs[{index}]",
+            )
+            for index, reference in enumerate(artifact_refs)
+        ),
         renderer=_string(data["renderer"], f"{path}.renderer"),
         inspected_by_agent=_boolean(
             data["inspected_by_agent"], f"{path}.inspected_by_agent"

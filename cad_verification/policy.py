@@ -84,10 +84,20 @@ class EvidenceScope(StringEnum):
     EXPORTED_ARTIFACT = "exported_artifact"
 
 
+class ArtifactRole(StringEnum):
+    STEP = "step"
+    TOPOLOGY_SIDECAR = "topology_sidecar"
+    RENDER_IMAGE = "render_image"
+    DIAGNOSTICS = "diagnostics"
+    OTHER = "other"
+
+
 @dataclass(frozen=True)
 class ProfilePolicy:
     description: str
     includes: tuple[VerificationProfile, ...]
+    required_check_kinds: tuple[CheckKind, ...] = ()
+    required_evidence_groups: tuple[tuple[EvidenceChannel, ...], ...] = ()
 
 
 @dataclass(frozen=True)
@@ -96,7 +106,7 @@ class EvidencePolicy:
     meaning: str
     allowed_scopes: tuple[EvidenceScope, ...]
     measurable_authority: bool = False
-    requires_artifact: bool = False
+    required_artifact_roles: tuple[ArtifactRole, ...] = ()
     requires_reason: bool = False
     requires_agent_inspection: bool = False
     requires_read_only: bool = False
@@ -108,6 +118,13 @@ class CheckPolicy:
     minimum_profile: VerificationProfile
     allowed_channels: tuple[EvidenceChannel, ...]
     requires_artifact_reference: bool = False
+
+
+@dataclass(frozen=True)
+class ArtifactPolicy:
+    description: str
+    allowed_media_types: tuple[str, ...]
+    required_source_roles: tuple[ArtifactRole, ...] = ()
 
 
 PROFILE_ORDER: tuple[VerificationProfile, ...] = (
@@ -135,6 +152,17 @@ PROFILE_POLICIES: Mapping[VerificationProfile, ProfilePolicy] = MappingProxyType
                 VerificationProfile.FIT,
                 VerificationProfile.RELEASE,
             ),
+            required_check_kinds=(
+                CheckKind.ROUND_TRIP,
+                CheckKind.VISUAL_REVIEW,
+            ),
+            required_evidence_groups=(
+                (EvidenceChannel.VIEWER,),
+                (
+                    EvidenceChannel.SNAPSHOT,
+                    EvidenceChannel.FOCUSED_RENDERER,
+                ),
+            ),
         ),
     }
 )
@@ -158,14 +186,21 @@ EVIDENCE_POLICIES: Mapping[EvidenceChannel, EvidencePolicy] = MappingProxyType(
             EvidenceTier.HUMAN_INTERACTIVE,
             "Read-only Text-to-CAD Viewer for interactive human review.",
             (EvidenceScope.EXPORTED_ARTIFACT,),
-            requires_artifact=True,
+            required_artifact_roles=(
+                ArtifactRole.STEP,
+                ArtifactRole.TOPOLOGY_SIDECAR,
+            ),
             requires_read_only=True,
         ),
         EvidenceChannel.SNAPSHOT: EvidencePolicy(
             EvidenceTier.AGENT_REVIEW,
             "Text-to-CAD Snapshot of the exact exported STEP for agent review.",
             (EvidenceScope.EXPORTED_ARTIFACT,),
-            requires_artifact=True,
+            required_artifact_roles=(
+                ArtifactRole.STEP,
+                ArtifactRole.TOPOLOGY_SIDECAR,
+                ArtifactRole.RENDER_IMAGE,
+            ),
             requires_agent_inspection=True,
         ),
         EvidenceChannel.MCP_RENDER_VIEW: EvidencePolicy(
@@ -179,7 +214,10 @@ EVIDENCE_POLICIES: Mapping[EvidenceChannel, EvidencePolicy] = MappingProxyType(
             "Coordinated production fallback when Snapshot cannot answer the "
             "visual question.",
             (EvidenceScope.EXPORTED_ARTIFACT,),
-            requires_artifact=True,
+            required_artifact_roles=(
+                ArtifactRole.STEP,
+                ArtifactRole.RENDER_IMAGE,
+            ),
             requires_reason=True,
             requires_agent_inspection=True,
         ),
@@ -188,9 +226,41 @@ EVIDENCE_POLICIES: Mapping[EvidenceChannel, EvidencePolicy] = MappingProxyType(
             "Exceptional Viewer-behavior test when artifact-native channels "
             "are insufficient.",
             (EvidenceScope.EXPORTED_ARTIFACT,),
-            requires_artifact=True,
+            required_artifact_roles=(
+                ArtifactRole.STEP,
+                ArtifactRole.TOPOLOGY_SIDECAR,
+                ArtifactRole.RENDER_IMAGE,
+            ),
             requires_reason=True,
             requires_agent_inspection=True,
+        ),
+    }
+)
+
+
+ARTIFACT_POLICIES: Mapping[ArtifactRole, ArtifactPolicy] = MappingProxyType(
+    {
+        ArtifactRole.STEP: ArtifactPolicy(
+            "Exported STEP/STP geometry.",
+            ("model/step", "application/step", "model/vnd.step"),
+        ),
+        ArtifactRole.TOPOLOGY_SIDECAR: ArtifactPolicy(
+            "Topology sidecar for the exact exported STEP.",
+            ("application/json",),
+            required_source_roles=(ArtifactRole.STEP,),
+        ),
+        ArtifactRole.RENDER_IMAGE: ArtifactPolicy(
+            "Snapshot, focused render, or exceptional browser image.",
+            ("image/png", "image/jpeg"),
+            required_source_roles=(ArtifactRole.STEP,),
+        ),
+        ArtifactRole.DIAGNOSTICS: ArtifactPolicy(
+            "Machine-readable diagnostic output.",
+            ("application/json",),
+        ),
+        ArtifactRole.OTHER: ArtifactPolicy(
+            "Explicitly classified artifact without a constrained media type.",
+            (),
         ),
     }
 )
@@ -286,6 +356,8 @@ def _assert_catalogs_complete() -> None:
         raise RuntimeError("EVIDENCE_POLICIES must cover every evidence channel")
     if set(CHECK_POLICIES) != set(CheckKind):
         raise RuntimeError("CHECK_POLICIES must cover every check kind")
+    if set(ARTIFACT_POLICIES) != set(ArtifactRole):
+        raise RuntimeError("ARTIFACT_POLICIES must cover every artifact role")
 
 
 _assert_catalogs_complete()

@@ -7,6 +7,7 @@ from datetime import datetime
 from typing import TypeAlias
 
 from .policy import (
+    ArtifactRole,
     CheckKind,
     EvidenceChannel,
     EvidenceScope,
@@ -19,7 +20,7 @@ from .policy import (
 )
 
 
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2
 Scalar: TypeAlias = bool | int | float | str
 
 
@@ -91,13 +92,28 @@ class ActualValue:
 
 
 @dataclass(frozen=True)
+class ArtifactReference:
+    artifact_id: str
+    role: ArtifactRole
+    sha256: str
+
+
+@dataclass(frozen=True)
+class VisualEvidenceReference:
+    evidence_id: str
+
+
+EvidenceReference: TypeAlias = ArtifactReference | VisualEvidenceReference
+
+
+@dataclass(frozen=True)
 class RequirementResult:
     requirement_id: str
     status: ResultStatus
     actual: ActualValue | None
     evidence_channel: EvidenceChannel
     diagnostic: str
-    evidence_refs: tuple[str, ...] = ()
+    evidence_refs: tuple[EvidenceReference, ...] = ()
 
     @property
     def evidence_tier(self) -> EvidenceTier:
@@ -125,6 +141,7 @@ class ToolchainIdentity:
 @dataclass(frozen=True)
 class ArtifactEvidence:
     artifact_id: str
+    role: ArtifactRole
     path: str
     media_type: str
     sha256: str
@@ -133,6 +150,7 @@ class ArtifactEvidence:
     contract_fingerprint: str
     source_fingerprint: str
     input_fingerprint: str
+    source_artifact_refs: tuple[ArtifactReference, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -152,7 +170,7 @@ class VisualEvidence:
     purpose: str
     created_at: datetime
     renderer: str
-    artifact_id: str | None = None
+    artifact_refs: tuple[ArtifactReference, ...] = ()
     inspected_by_agent: bool = False
     read_only: bool = False
     reason: str | None = None

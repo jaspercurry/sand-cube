@@ -8,8 +8,10 @@ from typing import Iterable
 from .model import (
     ActualValue,
     DesignContract,
+    EvidenceReference,
     Requirement,
     RequirementResult,
+    ReviewPacket,
 )
 from .policy import (
     EvidenceChannel,
@@ -18,6 +20,7 @@ from .policy import (
     VerificationProfile,
     included_costs,
 )
+from .protocols import ArtifactProbe
 
 
 def requirements_for_profile(
@@ -77,7 +80,7 @@ def assess(
     *,
     evidence_channel: EvidenceChannel,
     diagnostic: str,
-    evidence_refs: tuple[str, ...] = (),
+    evidence_refs: tuple[EvidenceReference, ...] = (),
 ) -> RequirementResult:
     """Create a PASS/FAIL result without executing the underlying check."""
 
@@ -127,7 +130,7 @@ def aggregate_status(
     return ResultStatus.PASS
 
 
-def profile_status(
+def _profile_results_status(
     contract: DesignContract,
     profile: VerificationProfile,
     results: Iterable[RequirementResult],
@@ -145,4 +148,27 @@ def profile_status(
     return aggregate_status(
         selected,
         missing_requirements=observed_ids != expected_ids,
+    )
+
+
+def review_packet_status(
+    contract: DesignContract,
+    packet: ReviewPacket,
+    *,
+    artifact_probe: ArtifactProbe | None = None,
+) -> ResultStatus:
+    """Return FAIL for invalid packets, else aggregate requirement status."""
+
+    from .validation import validate_review_packet
+
+    if validate_review_packet(
+        packet,
+        contract,
+        artifact_probe=artifact_probe,
+    ):
+        return ResultStatus.FAIL
+    return _profile_results_status(
+        contract,
+        packet.profile,
+        packet.results,
     )

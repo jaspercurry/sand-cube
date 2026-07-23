@@ -1,22 +1,25 @@
 from __future__ import annotations
 
 from dataclasses import replace
+from datetime import timedelta
 import json
 import unittest
 
 from cad_verification import (
     ActualValue,
     ArtifactObservation,
+    ArtifactReference,
+    ArtifactRole,
     EvidenceChannel,
     EvidenceScope,
     ResultStatus,
     SerializationError,
     Unit,
-    VerificationProfile,
-    profile_status,
+    VisualEvidenceReference,
     review_packet_from_json,
     review_packet_to_dict,
     review_packet_to_json,
+    review_packet_status,
     unverified,
     validate_review_packet,
 )
@@ -46,14 +49,20 @@ class CadVerificationReviewPacketTest(unittest.TestCase):
             )
         }
 
+    def matching_observations(self) -> dict[str, ArtifactObservation]:
+        return {
+            artifact.path: ArtifactObservation(
+                exists=True,
+                sha256=artifact.sha256,
+                size_bytes=artifact.size_bytes,
+            )
+            for artifact in self.packet.artifacts
+        }
+
     def test_synthetic_release_packet_is_valid_and_passes(self) -> None:
         self.assertEqual(validate_review_packet(self.packet, self.contract), ())
         self.assertEqual(
-            profile_status(
-                self.contract,
-                VerificationProfile.RELEASE,
-                self.packet.results,
-            ),
+            review_packet_status(self.contract, self.packet),
             ResultStatus.PASS,
         )
 
@@ -90,17 +99,13 @@ class CadVerificationReviewPacketTest(unittest.TestCase):
         with self.assertRaisesRegex(SerializationError, "channel policy"):
             review_packet_from_json(json.dumps(data), contract=self.contract)
 
-    def test_missing_result_is_reported_and_profile_remains_unverified(self) -> None:
+    def test_missing_result_is_rejected_and_never_passes(self) -> None:
         packet = replace(self.packet, results=self.packet.results[:-1])
 
         self.assertIn("result.missing", self.issue_codes(packet))
         self.assertEqual(
-            profile_status(
-                self.contract,
-                VerificationProfile.RELEASE,
-                packet.results,
-            ),
-            ResultStatus.UNVERIFIED,
+            review_packet_status(self.contract, packet),
+            ResultStatus.FAIL,
         )
 
     def test_explicit_unverified_result_is_valid_but_never_passes(self) -> None:
@@ -110,11 +115,7 @@ class CadVerificationReviewPacketTest(unittest.TestCase):
 
         self.assertEqual(validate_review_packet(packet, self.contract), ())
         self.assertEqual(
-            profile_status(
-                self.contract,
-                VerificationProfile.RELEASE,
-                packet.results,
-            ),
+            review_packet_status(self.contract, packet),
             ResultStatus.UNVERIFIED,
         )
 
@@ -123,7 +124,7 @@ class CadVerificationReviewPacketTest(unittest.TestCase):
         results[0] = replace(
             results[0],
             evidence_channel=EvidenceChannel.SNAPSHOT,
-            evidence_refs=("snapshot.joint-section",),
+            evidence_refs=(VisualEvidenceReference("snapshot.joint-section"),),
         )
         packet = replace(self.packet, results=tuple(results))
 
@@ -187,6 +188,124 @@ class CadVerificationReviewPacketTest(unittest.TestCase):
 
         self.assertIn("artifact.stale_provenance", self.issue_codes(packet))
 
+    def test_evidence_is_bound_to_exact_artifact_hash(self) -> None:
+        regenerated_step = replace(
+            self.packet.artifacts[0],
+            sha256="a" * 64,
+        )
+        packet = replace(
+            self.packet,
+            artifacts=(regenerated_step, *self.packet.artifacts[1:]),
+        )
+
+        self.assertIn(
+            "evidence.artifact_hash_mismatch",
+            self.issue_codes(packet),
+        )
+        self.assertEqual(
+            review_packet_status(self.contract, packet),
+            ResultStatus.FAIL,
+        )
+
+    def test_derived_artifacts_bind_to_the_exact_step_hash(self) -> None:
+        sidecar = self.packet.artifacts[1]
+        stale_step_reference = replace(
+            sidecar.source_artifact_refs[0],
+            sha256="0" * 64,
+        )
+        stale_sidecar = replace(
+            sidecar,
+            source_artifact_refs=(stale_step_reference,),
+        )
+        packet = replace(
+            self.packet,
+            artifacts=(
+                self.packet.artifacts[0],
+                stale_sidecar,
+                self.packet.artifacts[2],
+            ),
+        )
+
+        self.assertIn(
+            "evidence.artifact_hash_mismatch",
+            self.issue_codes(packet),
+        )
+
+    def test_derived_artifacts_require_their_step_source(self) -> None:
+        sidecar = replace(
+            self.packet.artifacts[1],
+            source_artifact_refs=(),
+        )
+        packet = replace(
+            self.packet,
+            artifacts=(
+                self.packet.artifacts[0],
+                sidecar,
+                self.packet.artifacts[2],
+            ),
+        )
+
+        self.assertIn("artifact.source_role_missing", self.issue_codes(packet))
+
+    def test_artifact_role_rejects_wrong_media_type(self) -> None:
+        png_step = replace(self.packet.artifacts[0], media_type="image/png")
+        packet = replace(
+            self.packet,
+            artifacts=(png_step, *self.packet.artifacts[1:]),
+        )
+
+        self.assertIn("artifact.media_type_mismatch", self.issue_codes(packet))
+
+    def test_visual_channels_require_their_artifact_roles(self) -> None:
+        viewer, snapshot = self.packet.visual_evidence
+        viewer_without_sidecar = replace(
+            viewer,
+            artifact_refs=tuple(
+                reference
+                for reference in viewer.artifact_refs
+                if reference.role is not ArtifactRole.TOPOLOGY_SIDECAR
+            ),
+        )
+        packet = replace(
+            self.packet,
+            visual_evidence=(viewer_without_sidecar, snapshot),
+        )
+
+        self.assertIn("visual.artifact_role_missing", self.issue_codes(packet))
+
+    def test_release_requires_viewer_and_agent_render_channels(self) -> None:
+        viewer, snapshot = self.packet.visual_evidence
+        cases = {
+            "viewer": replace(self.packet, visual_evidence=(snapshot,)),
+            "agent_render": replace(self.packet, visual_evidence=(viewer,)),
+        }
+        for label, packet in cases.items():
+            with self.subTest(missing=label):
+                self.assertIn(
+                    "profile.evidence_channel_missing",
+                    self.issue_codes(packet),
+                )
+                self.assertEqual(
+                    review_packet_status(self.contract, packet),
+                    ResultStatus.FAIL,
+                )
+
+    def test_existing_hash_valid_artifacts_may_predate_review_job(self) -> None:
+        old_artifacts = tuple(
+            replace(
+                artifact,
+                created_at=self.packet.job_metrics.started_at - timedelta(days=1),
+            )
+            for artifact in self.packet.artifacts
+        )
+        packet = replace(self.packet, artifacts=old_artifacts)
+
+        self.assertEqual(validate_review_packet(packet, self.contract), ())
+        self.assertEqual(
+            review_packet_status(self.contract, packet),
+            ResultStatus.PASS,
+        )
+
     def test_artifact_probe_catches_missing_hash_and_size_evidence(self) -> None:
         artifact = self.packet.artifacts[0]
         cases = {
@@ -213,20 +332,21 @@ class CadVerificationReviewPacketTest(unittest.TestCase):
         }
         for label, (observation, expected_code) in cases.items():
             with self.subTest(label=label):
-                probe = FakeArtifactProbe({artifact.path: observation})
+                observations = self.matching_observations()
+                observations[artifact.path] = observation
+                probe = FakeArtifactProbe(observations)
                 self.assertIn(expected_code, self.issue_codes(self.packet, probe=probe))
+                self.assertEqual(
+                    review_packet_status(
+                        self.contract,
+                        self.packet,
+                        artifact_probe=probe,
+                    ),
+                    ResultStatus.FAIL,
+                )
 
     def test_matching_artifact_probe_is_accepted(self) -> None:
-        artifact = self.packet.artifacts[0]
-        probe = FakeArtifactProbe(
-            {
-                artifact.path: ArtifactObservation(
-                    exists=True,
-                    sha256=artifact.sha256,
-                    size_bytes=artifact.size_bytes,
-                )
-            }
-        )
+        probe = FakeArtifactProbe(self.matching_observations())
 
         self.assertEqual(
             validate_review_packet(
@@ -236,16 +356,33 @@ class CadVerificationReviewPacketTest(unittest.TestCase):
             ),
             (),
         )
+        self.assertEqual(
+            review_packet_status(
+                self.contract,
+                self.packet,
+                artifact_probe=probe,
+            ),
+            ResultStatus.PASS,
+        )
 
     def test_status_and_evidence_references_must_match_claims(self) -> None:
         results = list(self.packet.results)
         results[0] = replace(results[0], status=ResultStatus.FAIL)
-        results[2] = replace(results[2], evidence_refs=("artifact.unknown",))
+        results[2] = replace(
+            results[2],
+            evidence_refs=(
+                ArtifactReference(
+                    "artifact.unknown",
+                    ArtifactRole.STEP,
+                    "0" * 64,
+                ),
+            ),
+        )
         packet = replace(self.packet, results=tuple(results))
 
         codes = self.issue_codes(packet)
         self.assertIn("result.status_mismatch", codes)
-        self.assertIn("result.evidence_unknown", codes)
+        self.assertIn("evidence.artifact_unknown", codes)
         self.assertIn("result.artifact_evidence_missing", codes)
 
     def test_result_units_must_match_the_contract(self) -> None:
@@ -270,6 +407,24 @@ class CadVerificationReviewPacketTest(unittest.TestCase):
         codes = self.issue_codes(packet)
         self.assertIn("job.elapsed_invalid", codes)
         self.assertIn("job.orphans_invalid", codes)
+
+    def test_failed_or_unclean_job_cannot_pass_release(self) -> None:
+        metrics = replace(
+            self.packet.job_metrics,
+            exit_code=1,
+            cleanup_completed=False,
+            orphan_processes=3,
+        )
+        packet = replace(self.packet, job_metrics=metrics)
+
+        codes = self.issue_codes(packet)
+        self.assertIn("job.failed", codes)
+        self.assertIn("job.cleanup_incomplete", codes)
+        self.assertIn("job.orphans_present", codes)
+        self.assertEqual(
+            review_packet_status(self.contract, packet),
+            ResultStatus.FAIL,
+        )
 
 
 if __name__ == "__main__":
