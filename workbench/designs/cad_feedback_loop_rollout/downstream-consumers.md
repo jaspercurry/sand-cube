@@ -26,7 +26,8 @@ cutaway files are the current static-review sources.
 
 - `experiments/sand_cube_190x210_header_port/generate_sand_cube_190x210_header_port.py`
   imports the generator module as its geometry base and consumes the generated
-  `diagnostics.json`.
+  `diagnostics.json`. Its inherited Viewer declarations were removed because
+  production no longer generates presentation artifacts.
 - The catalog points `exp-190x210-single-oval-port` at the production
   generator.
 - The canonical working-set bass-reflex source manifest fingerprints the
@@ -41,7 +42,8 @@ the named STEP files:
 
 - `...parabolic_side_g1_conformal_full_system/...py` imports `base` and
   `cutaway`; it replaces the cutaway enclosure surface while retaining the
-  inherited internal and hardware solids.
+  inherited internal and hardware solids. It retains its own cutaway Viewer
+  generation but no longer declares a nonexistent inherited exterior Viewer.
 - `...parabolic_side_g1_printable_bucket/...py` imports `base`, `assembly`, and
   `cutaway` to replace the enclosure with printable bucket/baffle parts.
 - `...parabolic_side_g1_hooked_gasketed_baffle/...py` imports `base`,

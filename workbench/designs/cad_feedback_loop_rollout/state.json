@@ -29,9 +29,9 @@
           "size_bytes": 8992
         }
       ],
-      "recorded_at": "2026-07-23T21:50:07.890412Z",
+      "recorded_at": "2026-07-23T22:07:41.745906Z",
       "stage": "fast_passed",
-      "summary": "Revision 4 binds the unchanged nine-STEP candidate and passes fast checks"
+      "summary": "Revision 5 binds the unchanged nine-STEP candidate and passes fast checks"
     },
     {
       "files": [
@@ -60,42 +60,42 @@
           "size_bytes": 1371
         }
       ],
-      "recorded_at": "2026-07-23T21:50:23.006008Z",
+      "recorded_at": "2026-07-23T22:07:41.830966Z",
       "stage": "visual_accepted",
-      "summary": "Exact candidate static review, Snapshot, and acceptance lineage revalidated for revision 4"
+      "summary": "Revision 5 records exact static review, Snapshot, accepted PNG, and candidate binding for release revalidation"
     },
     {
       "files": [
         {
           "path": "build/sand_cube_190x210_single_oval_port/verification/fit-cold-evidence.json",
           "role": "fit_passed_evidence",
-          "sha256": "dd6b0261ca98ce26a78719e20b55d89667a372bd5be09e1f0269edf05302a08d",
+          "sha256": "2ba244416449db957f4ac91ab5bc43b25db9c01d70b91926211aa18683d405c2",
           "size_bytes": 15911
         },
         {
           "path": "build/sand_cube_190x210_single_oval_port/verification/fit-warm-evidence.json",
           "role": "fit_passed_evidence",
-          "sha256": "39f85ca3f5665ffce7b1016b378b22d1bcff39ce10893962011a35a0e1674cf3",
+          "sha256": "3d88f1d0471a922059bbb77a6e95218a077033c8d93b12093afd6bc8f1980bfd",
           "size_bytes": 15886
         },
         {
           "path": "build/sand_cube_190x210_single_oval_port/verification/fit-invalidated-evidence.json",
           "role": "fit_passed_evidence",
-          "sha256": "752556821c5bd923a5aef5607a525752b6ceee2a1d350dbfcffa3badc497e32a",
+          "sha256": "5cb5e12436dbf544d442a768a1f8b9c66be9d4f63bcb096b6d2c87d1689e7f3c",
           "size_bytes": 15911
         }
       ],
-      "recorded_at": "2026-07-23T21:54:07.477606Z",
+      "recorded_at": "2026-07-23T22:11:32.994053Z",
       "stage": "fit_passed",
-      "summary": "Revision 4 fit topology/contact checks passed with verified warm hit and controlled source invalidation"
+      "summary": "Revision 5 fit checks passed with verified warm reuse and controlled identity invalidation"
     },
     {
       "files": [
         {
           "path": "build/sand_cube_190x210_single_oval_port/verification/release-evidence.json",
           "role": "release_passed_evidence",
-          "sha256": "b9a7e8811fe3cc815fdf147909c5931afc87b56805f1a0e2833b962947de941f",
-          "size_bytes": 21363
+          "sha256": "6128c788aea10ed1228c92508f9d2c22240e2eec7c19c11aa3956dfcc7ee5525",
+          "size_bytes": 21365
         },
         {
           "path": "build/sand_cube_190x210_single_oval_port/verification/baseline-comparison.json",
@@ -110,17 +110,17 @@
           "size_bytes": 998
         }
       ],
-      "recorded_at": "2026-07-23T21:56:57.807813Z",
+      "recorded_at": "2026-07-23T22:14:17.299753Z",
       "stage": "release_passed",
-      "summary": "Revision 4 forced uncached release passed with exact visual lineage, timestamp-only STEP drift, and isolated review failure"
+      "summary": "Revision 5 rejected unforced release, revalidated current sidecar/review/Snapshot lineage, and passed forced uncached release with unchanged STEP evidence"
     }
   ],
   "iteration_id": "cad-feedback-loop-rollout",
   "model_id": "exp-190x210-single-oval-port",
-  "next_action": "Run full verification, commit implementation, and request mandatory independent diff review",
+  "next_action": "Run final full checks, commit review fixes and evidence, then request exact amended-diff re-review",
   "objective": "Separate production STEP export from review generation and exercise staged hash-bound verification/cache rollout without geometry changes",
-  "open_question": "Does independent architecture review find any unresolved rollout or release-safety defect?",
-  "revision": 4,
+  "open_question": "Does final independent re-review find any unresolved actionable defect?",
+  "revision": 5,
   "schema_version": 1,
   "sources": [
     {
@@ -132,20 +132,32 @@
     {
       "path": "experiments/sand_cube_190x210_single_oval_port/verification.py",
       "role": "source",
-      "sha256": "a58c4b127db2c666cb5e960da56e0bbb4326682bda830d0fb63ee0ca3bf44f02",
-      "size_bytes": 13646
+      "sha256": "40b9e313c9866c0f0ad9d0670ccc1e911ef480662166207e53f35842c521af6c",
+      "size_bytes": 16515
     },
     {
       "path": "experiments/sand_cube_190x210_single_oval_port/verify_sand_cube_190x210_single_oval_port.py",
       "role": "source",
-      "sha256": "1ccee3bb68a0dc84511546e6369aad312dbe678e1a77de4cfbacbc0cb75feda0",
-      "size_bytes": 16691
+      "sha256": "b55b04aededa961c6150fd554bb591aa8a66f2110b13b6c142891af5c4af1471",
+      "size_bytes": 17627
     },
     {
       "path": "experiments/sand_cube_190x210_single_oval_port/review_sand_cube_190x210_single_oval_port.py",
       "role": "source",
       "sha256": "a511ddf06b45826ba87a414fb4c425cee46967d8e41a989879c8b22008f509a8",
       "size_bytes": 6350
+    },
+    {
+      "path": "experiments/sand_cube_190x210_header_port/generate_sand_cube_190x210_header_port.py",
+      "role": "source",
+      "sha256": "f6a71fe1c0aca1151dace7fde51ec8f612c24f7a4a09c87067555a0ec6f43e4b",
+      "size_bytes": 21774
+    },
+    {
+      "path": "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_conformal_full_system/generate_sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_conformal_full_system.py",
+      "role": "source",
+      "sha256": "38afb782f6c0d8d6341005f6d2d89e66786bdad57c88d5da1af5c598639d40a7",
+      "size_bytes": 26131
     },
     {
       "path": "scripts/text_to_cad_artifacts.py",
@@ -167,5 +179,5 @@
     }
   ],
   "stage": "release_passed",
-  "updated_at": "2026-07-23T21:56:57.807813Z"
+  "updated_at": "2026-07-23T22:14:17.299753Z"
 }

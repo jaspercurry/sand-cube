@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 import subprocess
 import sys
+from types import SimpleNamespace
 
 import pytest
 
@@ -17,6 +18,9 @@ from experiments.sand_cube_190x210_single_oval_port.verification import (
     bind_candidate,
     design_contract,
     validate_visual_acceptance,
+)
+from experiments.sand_cube_190x210_single_oval_port import (
+    verify_sand_cube_190x210_single_oval_port as rollout_verifier,
 )
 from scripts.check_cad_entrypoints import (
     _module_requires_cad,
@@ -153,6 +157,24 @@ def test_cutaway_remains_a_required_lineage_output() -> None:
     for relative in consumers:
         assert cutaway in (ROOT / relative).read_text(encoding="utf-8")
 
+    header_source = (
+        ROOT
+        / "experiments/sand_cube_190x210_header_port/"
+        "generate_sand_cube_190x210_header_port.py"
+    ).read_text(encoding="utf-8")
+    conformal_source = (ROOT / consumers[0]).read_text(encoding="utf-8")
+    assert '"exterior_viewer"' not in header_source
+    assert '"cutaway_viewer"' not in header_source
+    assert '"exterior_viewer"' not in conformal_source
+    assert '"cutaway_viewer"' in conformal_source
+
+
+def test_programmatic_release_requires_forced_uncached_regeneration() -> None:
+    args = SimpleNamespace(profile="release", force=False)
+
+    with pytest.raises(ValueError, match="forced, uncached"):
+        rollout_verifier.run(args)
+
 
 def test_visual_acceptance_is_bound_to_candidate_and_review_lineage(
     tmp_path: Path,
@@ -177,16 +199,39 @@ def test_visual_acceptance_is_bound_to_candidate_and_review_lineage(
         return hashlib.sha256(path.read_bytes()).hexdigest()
 
     static_review = {
+        "schema_version": 1,
+        "job_id": "review-job",
+        "review_target": (
+            "experiments/sand_cube_190x210_single_oval_port/"
+            "review_sand_cube_190x210_single_oval_port.py"
+        ),
         "step": {"path": step_path, "sha256": digest(step)},
-        "sidecar": {"path": sidecar_path, "sha256": digest(sidecar)},
+        "sidecar": {
+            "path": sidecar_path,
+            "sha256": digest(sidecar),
+            "size_bytes": sidecar.stat().st_size,
+            "kind": "assembly",
+            "verified_cache_key": "verified-cache-key",
+        },
+        "renderer": {
+            "name": "repository static OCP viewer",
+            "artifact_import_count": 1,
+            "tessellation_count": 1,
+        },
     }
     static_review_file = tmp_path / static_review_path
     static_review_file.write_text(json.dumps(static_review), encoding="utf-8")
     snapshot_provenance = {
+        "schema_version": 1,
+        "job_id": "snapshot-job",
+        "target": "scripts/text_to_cad_artifacts.py",
         "sources": [
             {"kind": "step", "path": step_path, "sha256": digest(step)},
             {"kind": "sidecar", "path": sidecar_path, "sha256": digest(sidecar)},
-        ]
+        ],
+        "outputs": [
+            {"path": snapshot_path, "sha256": digest(snapshot)},
+        ],
     }
     snapshot_provenance_file = tmp_path / snapshot_provenance_path
     snapshot_provenance_file.write_text(
@@ -196,6 +241,7 @@ def test_visual_acceptance_is_bound_to_candidate_and_review_lineage(
     acceptance = {
         "accepted": True,
         "candidate_id": "candidate-a",
+        "channel": "snapshot",
         "measurable_claims_from_pixels": [],
         "snapshot": {"path": snapshot_path, "sha256": digest(snapshot)},
         "snapshot_provenance": {
@@ -229,16 +275,18 @@ def test_visual_acceptance_is_bound_to_candidate_and_review_lineage(
         ],
     }
 
-    assert validate_visual_acceptance(
+    binding = validate_visual_acceptance(
         candidate,
         evidence,
         repo_root=tmp_path,
-    ) == (
+    )
+    assert binding.evidence_refs == (
         acceptance_path,
         snapshot_path,
         snapshot_provenance_path,
         static_review_path,
     )
+    assert binding.sidecar_cache_key == "verified-cache-key"
     candidate["candidate_id"] = "candidate-b"
     with pytest.raises(ValueError, match="different candidate"):
         validate_visual_acceptance(candidate, evidence, repo_root=tmp_path)

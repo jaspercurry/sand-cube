@@ -66,6 +66,7 @@ from experiments.sand_cube_190x210_single_oval_port.verification import (
     validate_candidate,
     validate_visual_acceptance,
 )
+from scripts.text_to_cad_artifacts import verify_cached_sidecar
 
 
 PRODUCER_VERSION = "1"
@@ -360,6 +361,8 @@ def _require_workflow_gate(profile: VerificationProfile, state_path: Path):
 
 def run(args: argparse.Namespace) -> dict[str, Any]:
     profile = VerificationProfile(args.profile)
+    if profile is VerificationProfile.RELEASE and not args.force:
+        raise ValueError("release verification requires forced, uncached regeneration")
     state_path = _repo_path(args.workflow_state)
     state = _require_workflow_gate(profile, state_path)
     contract = design_contract()
@@ -367,6 +370,40 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
     candidate_path = _repo_path(args.candidate, must_exist=profile is not VerificationProfile.FAST)
     if profile is VerificationProfile.FAST:
         candidate = bind_candidate()
+    else:
+        candidate = _load_json(candidate_path)
+        validate_candidate(candidate)
+
+    visual_evidence = tuple(
+        (identity.path, identity.sha256)
+        for evidence in state.evidence
+        if evidence.stage is WorkflowStage.VISUAL_ACCEPTED
+        for identity in evidence.files
+    )
+    visual_refs = tuple(path for path, _sha256 in visual_evidence)
+    if profile is VerificationProfile.RELEASE:
+        binding = validate_visual_acceptance(candidate, visual_evidence)
+        current_sidecar = verify_cached_sidecar(
+            ROOT,
+            ROOT / binding.step_path,
+            ROOT / binding.sidecar_path,
+            binding.sidecar_kind,
+        )
+        if (
+            current_sidecar.step_path != binding.step_path
+            or current_sidecar.step_sha256 != binding.step_sha256
+            or current_sidecar.sidecar_path != binding.sidecar_path
+            or current_sidecar.sidecar_sha256 != binding.sidecar_sha256
+            or current_sidecar.sidecar_size_bytes != binding.sidecar_size_bytes
+            or current_sidecar.kind != binding.sidecar_kind
+            or current_sidecar.cache_key != binding.sidecar_cache_key
+        ):
+            raise ValueError(
+                "visual acceptance does not match the current verified sidecar"
+            )
+        visual_refs = binding.evidence_refs
+
+    if profile is VerificationProfile.FAST:
         staged_candidate = job_output_path(candidate_path)
         _write_json(staged_candidate, candidate)
         cache_info = {
@@ -377,8 +414,6 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         measurements = None
         measurement_seconds = 0.0
     else:
-        candidate = _load_json(candidate_path)
-        validate_candidate(candidate)
         identity_source = (
             _repo_path(args.identity_source) if args.identity_source else None
         )
@@ -420,17 +455,6 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
                 "key": published.key,
             }
 
-    visual_evidence = tuple(
-        (identity.path, identity.sha256)
-        for evidence in state.evidence
-        if evidence.stage is WorkflowStage.VISUAL_ACCEPTED
-        for identity in evidence.files
-    )
-    visual_refs = (
-        validate_visual_acceptance(candidate, visual_evidence)
-        if profile is VerificationProfile.RELEASE
-        else tuple(path for path, _sha256 in visual_evidence)
-    )
     results = _evaluate(profile, candidate, measurements, visual_refs)
     status = profile_status(contract, profile, results)
     if status is not ResultStatus.PASS:
@@ -480,11 +504,8 @@ def _parser() -> argparse.ArgumentParser:
 
 def main() -> None:
     args = _parser().parse_args()
-    profile = VerificationProfile(args.profile)
-    if profile is VerificationProfile.RELEASE and not args.force:
-        raise SystemExit("release verification requires --force")
     if args.out is None:
-        args.out = OUT / "verification" / f"{profile.value}-evidence.json"
+        args.out = OUT / "verification" / f"{args.profile}-evidence.json"
     print(json.dumps(run(args), indent=2, sort_keys=True))
 
 
