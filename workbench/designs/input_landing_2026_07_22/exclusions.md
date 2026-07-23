@@ -75,3 +75,9 @@ All ignored `build/` output remains excluded except the thirteen exact files
 listed as `selected-promote` in `intake_manifest.csv`. No `__pycache__`,
 virtual environment, Snapshot, GLB, PNG, log, or general build subtree is
 included.
+
+The disposable external helper
+`/private/tmp/capture_deleted_face_plate_candidate.py` and the ignored build
+STEP it referenced are also excluded. The one recovery script that dynamically
+referred to them is retained only as a byte-exact chronological record and is
+explicitly non-runnable provenance.
