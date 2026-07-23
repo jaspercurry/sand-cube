@@ -1,20 +1,23 @@
 {
   "schema_version": 1,
-  "record_id": "atomic-characterization-refactor.phase-a",
-  "recorded_at": "2026-07-23T04:20:00Z",
-  "authority": "This file is the authoritative Phase A atom and evidence description. Generated Markdown files are projections.",
+  "record_id": "atomic-characterization-refactor.phase-b",
+  "recorded_at": "2026-07-23T10:10:00Z",
+  "authority": "This file is the authoritative characterization, atom, and refactor-evidence description. Generated Markdown files are projections.",
   "scope": {
-    "phase": "A",
-    "mode": "read-only atomic characterization",
-    "geometry_source_edits": false,
+    "phase": "B",
+    "mode": "geometry-preserving atomic refactor",
+    "geometry_source_edits": true,
     "geometry_synthesis": false,
-    "phase_b_authorized": false,
-    "checkpoint_required": true
+    "phase_b_authorized": true,
+    "checkpoint_required": false,
+    "checkpoint_pause_overridden_by_user": true
   },
   "repository_state": {
     "worktree": "/Users/jaspercurry/.codex/worktrees/8b9b/CAD - Enclosure",
     "head": "905ef31a0bea348b6805a2ef215c75b5a9592168",
     "base_branch": "codex/atomic-characterization-base",
+    "working_branch": "codex/atomic-characterization-refactor",
+    "phase_a_checkpoint_commit": "df1f105",
     "input_landing_commit": "2c94314b8cee90c3733991d48143375227a7d6b8",
     "required_main_ancestor": "ea5539f3372e1bad5ad05eba85f4bd9a53e8c868",
     "brief_sha256": "7cb5fad7514df1670ba9fd017cce0d44369564018515e3b4ec5be2c55d4bb96e",
@@ -51,6 +54,158 @@
       "inner_skin": 2.0
     },
     "conflict": "Repository-level legacy contract and params.py describe a 203 mm, 3/12/3 enclosure. Those values are not silently shared with this 190x210 family."
+  },
+  "phase_b_pilot": {
+    "atom_id": "family.coordinate_contract",
+    "status": "complete",
+    "authorization": [
+      "The user visually accepted the hash-bound Viewer artifact and said to proceed.",
+      "The user subsequently instructed the agent to continue through checkpoints and attempt the complete saved brief."
+    ],
+    "exact_owner": "src/enclosure_family/datums.py",
+    "module_boundary": "native-CAD-free immutable metadata only: units, 190x210x190 envelope, axis polarity, center datum, and derived named planes",
+    "source_change": [
+      "Added CoordinateContract and ENCLOSURE_190X210_COORDINATES.",
+      "Made the single-oval Design consume width, depth, height, and center_y from that owner.",
+      "Replaced duplicated +10 mm Y-center expressions in existing 190x210 family consumers with Design.center_y.",
+      "Added AST/native-free regression tests and included them in the lightweight lint plan.",
+      "Did not change a Boolean, STEP, model identity, catalog entry, wall stack, seam, brace, fill path, assembly transform, or print contract."
+    ],
+    "preserved_parameters": {
+      "units": "mm",
+      "envelope_mm": [190.0, 210.0, 190.0],
+      "center_xyz_mm": [0.0, 10.0, 0.0],
+      "named_planes_mm": {
+        "left_x": -95.0,
+        "right_x": 95.0,
+        "front_y": -95.0,
+        "rear_y": 115.0,
+        "bottom_z": -95.0,
+        "top_z": 95.0
+      },
+      "directions": {
+        "left": [-1, 0, 0],
+        "right": [1, 0, 0],
+        "front": [0, -1, 0],
+        "rear": [0, 1, 0],
+        "bottom": [0, 0, -1],
+        "top": [0, 0, 1]
+      },
+      "tolerance": 0.0
+    },
+    "fast_contract": {
+      "path": "workbench/designs/atomic_characterization_refactor/coordinate_contract.json",
+      "sha256": "29c6c4dc5af9493a77209a20439eecb9c5b336fb968750db9456bd7bd143c028",
+      "fingerprint": "b90797739e76be40e5de8ddf738250dd7340e0578ed4d67fda957b2146a8724a",
+      "profile": "fast",
+      "status": "valid",
+      "selected_requirements": 8,
+      "elapsed_seconds": 0.079,
+      "peak_rss_bytes": 30720000
+    },
+    "lightweight_checks": {
+      "status": "pass",
+      "tests": 86,
+      "subtests": 19,
+      "catalog_primary_models": 10,
+      "catalog_experiments": 38,
+      "entrypoints_checked": 76,
+      "lint": "pass",
+      "elapsed_seconds": 5.086,
+      "peak_rss_bytes": 59359232
+    },
+    "native_boundary_comparison": {
+      "before": {
+        "job_id": "20260723T040911-generate-sand-cube-190x210-internal-squat-absorb-603368ef69",
+        "elapsed_seconds": 83.797,
+        "peak_rss_bytes": 1290780672,
+        "outputs": 0,
+        "failure": "ValueError: rear-ramped longitudinal top rail did not produce one valid solid: 2"
+      },
+      "after": {
+        "job_id": "20260723T100534-generate-sand-cube-190x210-internal-squat-absorb-c4d37f5ec2",
+        "elapsed_seconds": 95.849,
+        "peak_rss_bytes": 1288798208,
+        "outputs": 0,
+        "failure": "ValueError: rear-ramped longitudinal top rail did not produce one valid solid: 2"
+      },
+      "interpretation": "The metadata extraction introduced no earlier native failure and reached the exact frozen one-solid rail invariant. This is boundary-equivalence evidence, not geometry equivalence; no new STEP exists."
+    },
+    "artifact_comparison": {
+      "before_step_sha256": "eaeed68103e3110ca3e888ece90002a7f2f98a8b174fab5906e7fb0bd9350b97",
+      "after_step_sha256": null,
+      "after_step_reason": "The known owning-source rail failure still prevents export.",
+      "protected_reference_changed": false,
+      "sidecar_sha256": "609bb53774ab6301a4ad724aeb62d0a0ed7b3600c93528d9502d73d8e5dc5d4b"
+    },
+    "visual_comparison": {
+      "before": "User accepted the hash-bound near_perfect_bucket STEP in the read-only Viewer; Snapshot hashes remain recorded under baseline.review_evidence.",
+      "after": "No visual delta was generated because this atom is metadata-only and the owning geometry baseline still fails before STEP export.",
+      "claim": "The frozen reference is continuity evidence only. No old/new visual or geometric equivalence is claimed."
+    },
+    "new_file_hashes": {
+      "src/enclosure_family/__init__.py": "a592a72af8c0e6871599902d12988f564efecdc937ec66d4b5483566c44b2b23",
+      "src/enclosure_family/datums.py": "cb123ef78a42468278b9392da9728a4ab3fe66d8a62c843be5524b21f744b824",
+      "tests/test_enclosure_family_coordinate_contract.py": "cea1373a79ed6f084aadca3fed9d632c63fcca8d1c5a5a80e39fab7b351e915f"
+    },
+    "consumer_source_hashes": [
+      {
+        "path": "experiments/sand_cube_190x210_single_oval_port/generate_sand_cube_190x210_single_oval_port.py",
+        "before_sha256": "0ebe233087fb8724e89254385e5f00e8f3a197fbb3bb9e202e97874c73c3e3a8",
+        "after_sha256": "34a085b55ddbfb76384257fb332162d06856ac2848e66b733ca0658f91d7dc78"
+      },
+      {
+        "path": "experiments/sand_cube_190x210_header_port/generate_sand_cube_190x210_header_port.py",
+        "before_sha256": "c20df6ac1eb83616babdb844eb8f1f336725eed714101bebe58d7f0d98d2b5ab",
+        "after_sha256": "55ccc108da6bd7f1eeaed5ede686f2e0da1025022d37948abc01d770c70c4c7c"
+      },
+      {
+        "path": "experiments/sand_cube_190x210_serviceable_tower/generate_sand_cube_190x210_serviceable_tower.py",
+        "before_sha256": "3ef3e25ba9d1811ca32bcab4d9457beaff3a38052375619f88edb1d1e3d43a7b",
+        "after_sha256": "7ea87a4c3e785a971ca422041f3382fbe16d43d22fa2e3617569ca9e9d5f3f01"
+      },
+      {
+        "path": "experiments/sand_cube_190x210_internal_squat_absorber/generate_sand_cube_190x210_internal_squat_absorber.py",
+        "before_sha256": "b3a8fdb7276c6dcca4a6c777083cdda1c27e4e673e540c884712ff5650d888c1",
+        "after_sha256": "ab0eb1d28375936eab12791a22f618baf68e15b634425c73407f6b5f2a9d5bd9"
+      },
+      {
+        "path": "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners/generate_sand_cube_190x210_internal_squat_absorber_rear_corners.py",
+        "before_sha256": "1b2fcd344726f192b37e9081b6e41588b797a1a35e3301600ba2dbe77455307d",
+        "after_sha256": "8464d717b16157d3aadc7881c537c687484c08ece51aed093ccc2da52f60f872"
+      },
+      {
+        "path": "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_le_cleach_front_15mm_square_crop_r8/generate_sand_cube_190x210_internal_squat_absorber_rear_corners_le_cleach_front_15mm_square_crop_r8.py",
+        "before_sha256": "be7acc1b77bffee5b0b2ff92bcc283f70a670c1a488ff5dc706bbc0640b578ff",
+        "after_sha256": "3cfad3ce75d64e451b3d72f90dcc11b95bd287ddcf1d954d70c393e3171082b3"
+      },
+      {
+        "path": "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_le_cleach_front_15mm_square_crop_unified_r8/generate_sand_cube_190x210_internal_squat_absorber_rear_corners_le_cleach_front_15mm_square_crop_unified_r8.py",
+        "before_sha256": "4256e1ac9f80bf865cc2b420785c4113d2f4110bda4612333cc066fc341a18ba",
+        "after_sha256": "40a1f8e1ddb962145a289487fc30eafb19c4d20436bdf2891a030ff893d69c54"
+      },
+      {
+        "path": "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_conformal_full_system/generate_sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_conformal_full_system.py",
+        "before_sha256": "a0e4547175f895c0b62add705139690cbd0bf613f330575945df20c783eea0e7",
+        "after_sha256": "de81642204eabf1d4677921b0d26f73a3af78708bbc075c46aaf2e80cdf00e6a"
+      },
+      {
+        "path": "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_printable_bucket/generate_sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_printable_bucket.py",
+        "before_sha256": "3af310dd86097db27b19a7ee621350ada1cc215fbfb97497dba8490a2007077f",
+        "after_sha256": "d2e426fc9edace355cda8e24a54b6f435e073e4ee5bc95cc3aa8236c018799af"
+      },
+      {
+        "path": "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simplified_printable_closure/generate_sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simplified_printable_closure.py",
+        "before_sha256": "2ed7cddafdd4dd13817d124468a5dba5aede13a77553ed9ccc37b8a524928d84",
+        "after_sha256": "fcebae44dbb299723ac813f17ef391cdf62d39c180361d556aec103687ec8876"
+      }
+    ],
+    "architectural_lessons": [
+      "A pure datum owner can be extracted and tested without loading the CAD kernel.",
+      "The +10 mm Y center was a hidden family parameter, not a harmless placement literal.",
+      "Source-chain boundary comparison is useful for metadata atoms but cannot substitute for geometry equivalence.",
+      "The next geometry atom remains gated by repair of the deterministic top-rail failure."
+    ]
   },
   "construction_stages": [
     "single-oval-port base creates the monolithic shell, cavity, openings and early port geometry",
@@ -700,23 +855,23 @@
   "atoms": [
     {
       "id": "family.coordinate_contract",
-      "owner": "family candidate",
-      "owning_source": "currently duplicated across 190x210 experiment modules",
+      "owner": "shared enclosure-family layer",
+      "owning_source": "src/enclosure_family/datums.py",
       "owning_parameters": ["190x210x190 envelope", "front=-Y", "rear=+Y", "bottom=-Z", "top=+Z"],
       "dependencies": [],
       "consumers": ["all enclosure and deferred interface atoms"],
       "mating_atoms": [],
       "candidate_refs": ["R.clean_bucket", "R.bottom_ownership_assembly", "I.full_perimeter_assembly"],
-      "reproducible_baseline": "dimensions and axes measured from immutable STEP; source build blocked",
+      "reproducible_baseline": "native-free exact contract and AST tests pass; native source chain reaches the same pre-existing rail failure boundary",
       "protected_invariants": ["units mm", "front/rear polarity", "part transforms remain explicit"],
       "fit_tolerances": ["no coordinate tolerance; transforms must be exact"],
       "print_implications": ["all build directions are stated in design coordinates"],
       "conflicts": ["legacy 203 mm project parameters are a different family contract"],
-      "shareability": "yes after explicit 190x210 family parameter owner exists",
-      "readiness": "candidate first metadata-only pilot after approval; no geometry extraction until baseline repair",
-      "compatibility_class": "intended identical but ownership duplicated",
-      "comparison": "R evidence uses this frame; I future intent adopts it but has no geometry",
-      "synthesis_blocker": "no single parameter owner"
+      "shareability": "yes; one explicit 190x210 family datum owner now exists",
+      "readiness": "refactored and native-free verified; downstream geometry extraction still waits on baseline repair",
+      "compatibility_class": "identical shared metadata",
+      "comparison": "R sources consume the exact owner; I future intent adopts the same frame but still has no geometry",
+      "synthesis_blocker": "none for coordinate metadata; geometry baseline remains blocked independently"
     },
     {
       "id": "family.exterior_envelope",
@@ -1334,14 +1489,14 @@
     }
   ],
   "checkpoint": {
-    "decision": "STOP",
+    "decision": "CONTINUE_WITH_RECORDED_CHECKPOINTS",
     "phase_b_blockers": [
-      "user approval has not been given",
       "current owning Python source fails native generation before output",
       "leaf validator cannot run without the authoritative lightweight base",
       "the three removable-front contributions remain intentionally unreconciled",
       "Variant I geometry does not exist"
     ],
+    "user_direction": "The user approved the characterization, then explicitly instructed the agent not to pause at later checkpoints and to attempt the full saved brief.",
     "unresolved_source_artifact_conflicts": [
       "clean R bucket seam is STEP-derived and has wrong lower ownership",
       "hybrid assembly lower ownership predates clean seam",
@@ -1352,20 +1507,17 @@
       "current brace builder fails its own one-solid invariant",
       "legacy 203 mm 3/12/3 parameters conflict with the selected 190x210 2/3/2 family"
     ],
-    "proposed_first_pilot_atom": {
+    "first_pilot_atom": {
       "id": "family.coordinate_contract",
+      "status": "complete",
       "why": "metadata-only, exact, broadly consumed and independent of Boolean geometry",
-      "preconditions": [
-        "explicit user approval",
-        "separate decision on repairing or selecting a reproducible enclosure source baseline",
-        "no geometry source extraction until that baseline is green"
-      ],
       "acceptance": [
         "one pure parameter/datum owner",
         "no flags and no ancestor mutation",
         "native-free tests prove unchanged units/axes/transforms",
         "catalog unchanged unless an authoritative model identity is introduced"
-      ]
+      ],
+      "next_boundary": "repair the current rail failure before extracting any geometry atom"
     }
   }
 }

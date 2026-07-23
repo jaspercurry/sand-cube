@@ -365,7 +365,7 @@ def _simple_internal_tube(port_airway: Any, port_outer: Any) -> tuple[Any, Any]:
     lower_z = -base.D.height / 2.0
     lower_clip = Pos(
         0.0,
-        10.0,
+        base.D.center_y,
         (lower_z + base.D.internal_tower_bottom_z) / 2.0,
     ) * Box(300.0, 300.0, base.D.internal_tower_bottom_z - lower_z)
     enclosure_clip = base._outer_envelope() & lower_clip
@@ -382,7 +382,7 @@ def _simple_upper_displacement(port_outer: Any) -> Any:
     roof_z = base.D.height / 2.0
     clip = Pos(
         0.0,
-        10.0,
+        base.D.center_y,
         (base.D.internal_tower_bottom_z + roof_z) / 2.0,
     ) * Box(300.0, 300.0, roof_z - base.D.internal_tower_bottom_z)
     return base._primary_shape(port_outer & base._outer_envelope() & clip)
@@ -393,7 +393,7 @@ def _simple_tower(outlet_z: float) -> tuple[Any, Any, Any]:
     clip_height = outlet_z - base.D.internal_tower_bottom_z + 30.0
     clip = Pos(
         0.0,
-        10.0,
+        base.D.center_y,
         base.D.internal_tower_bottom_z + clip_height / 2.0,
     ) * Box(300.0, 300.0, clip_height)
     tower_outer = base._primary_shape(outer & clip)
@@ -477,7 +477,9 @@ def _rewrite_diagnostics(diagnostics: dict[str, Any]) -> dict[str, Any]:
     port["asymmetric_route"] = route
     rise_x, rise_y, _rise_z = route["rise_elbow_exit_xyz_mm"]
     side_acoustic_face_x = base.D.width / 2.0 - base.D.wall_stack_t
-    rear_acoustic_face_y = 10.0 + base.D.depth / 2.0 - base.D.wall_stack_t
+    rear_acoustic_face_y = (
+        base.D.center_y + base.D.depth / 2.0 - base.D.wall_stack_t
+    )
     route["packaging_clearance_mm"] = {
         "right_side_nominal": side_acoustic_face_x
         - (rise_x + base.D.outer_rx),

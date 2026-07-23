@@ -88,7 +88,7 @@ def _unified_outer(
     profile: parent.ExtendedHornProfile,
 ) -> tuple[Any, Any, dict[str, Any]]:
     """Round the body first, then fillet the entire front perimeter at once."""
-    sharp_box = Pos(0.0, 10.0, 0.0) * Box(
+    sharp_box = Pos(0.0, base.D.center_y, 0.0) * Box(
         base.D.width,
         base.D.depth,
         base.D.height,
