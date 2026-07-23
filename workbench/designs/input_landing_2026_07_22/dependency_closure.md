@@ -32,7 +32,12 @@ The conformal-system lineage reaches both of these already tracked chains:
 The exact pre-existing files and hashes are recorded as `selected-base` rows in
 `intake_manifest.csv`, including `cad_runner/entrypoint.py`,
 `cad_runner/outputs.py`, `scripts/generate_static_ocp_viewer.py`, and
-`scripts/create_bambu_oss_horn_mount_project.py`.
+`scripts/create_bambu_oss_horn_mount_project.py`. The static closure also
+includes the sibling support modules
+`experiments/sand_cube_8_5_black_hole/generate_variants.py` and
+`experiments/jmlc_square_baffle/explore_variants.py`; the former is imported
+by both selected black-hole lineage modules and the latter by the canonical
+JMLC study target.
 
 ## Runtime-source inspection
 
