@@ -71,5 +71,48 @@ configured artifact root. Summarize them without importing the CAD kernel:
 
 The report includes state and target counts, elapsed-time percentiles, time
 consumed by completed and failed work, maximum peak RSS, recent and slow
-targets, and malformed or incomplete record counts. Use `--json` for a stable
+targets, malformed or incomplete record counts, terminal success rate,
+all-time and bounded-recent failed-time share, same-target-and-command failure
+streaks, and one deterministic recommendation. Use `--json` for a stable
 machine-readable report or `--limit N` to change the recent/slow list length.
+Treat `stop-and-diagnose` as a retry stop for that exact target and command:
+isolate the failure with a cheap fixture or focused diagnostic before
+launching it again.
+
+Coordinated workers automatically retain an unhandled Python exception's type,
+message, and optional semantic phase in the job record. Diagnostic and
+validator code may use `cad_runner.phase("semantic-name")` around a costly
+boundary and raise `cad_runner.ContractRejection("stable.code", "measured
+reason")` for an expected, identified geometry rejection. A signal, resource
+kill, or external exit without an envelope remains explicitly less certain;
+the runner does not guess from log text.
+
+## Compaction-safe AI CAD iterations
+
+Keep long-lived intent in `brief.md` and measurable acceptance in `contract.md`.
+For a multi-step or expensive task, create a compact live state beside them:
+
+```bash
+.venv/bin/python scripts/cad_review.py workflow init \
+  workbench/designs/ITERATION/state.json \
+  --iteration-id ITERATION \
+  --model-id MODEL \
+  --objective "One-sentence objective" \
+  --brief workbench/designs/ITERATION/brief.md \
+  --contract workbench/designs/ITERATION/contract.md \
+  --source path/to/owning_source.py \
+  --open-question "The one question this candidate must answer" \
+  --next-action "Run the native-free fast checks"
+```
+
+After compaction or handoff, use `workflow show STATE.json`. The resulting
+resume card is the intended restart context; do not inject the long prompt
+again unless the card reports stale hashes or leaves a material ambiguity.
+
+Advance one gate at a time with `workflow advance`, supplying the expected
+current stage, next stage, exact evidence files, and updated question/action.
+Use `workflow gate --profile fit` before full fit and `--profile release` before
+release. Fit remains blocked until visual smoke is accepted, and release
+remains blocked until fit passes. After any authoritative source edit, use
+`workflow revise` with the complete source list; that increments the revision
+and invalidates the old evidence.

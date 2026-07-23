@@ -23,9 +23,13 @@ production build.
    `workbench/designs/<iteration>/brief.md`. Translate it into a concise
    `contract.md`: baseline, requested change, invariants, measurable checks,
    visual questions, reversible assumptions, and genuine blockers.
-4. Run `.venv/bin/python scripts/cad_review.py doctor` before starting Viewer
+4. For a multi-step or expensive geometry task, initialize the compact,
+   hash-bound `state.json` described in `references/iteration-loop.md`. After a
+   compaction or handoff, resume from `cad_review workflow show`; reread the
+   long brief only when the state is stale or a material ambiguity remains.
+5. Run `.venv/bin/python scripts/cad_review.py doctor` before starting Viewer
    or artifact work. Resolve safety failures; do not bypass them.
-5. Read the relevant references before changing geometry:
+6. Read the relevant references before changing geometry:
    - [iteration-loop.md](references/iteration-loop.md) for candidate and
      promotion procedure;
    - [visual-review.md](references/visual-review.md) for evidence channels and
@@ -44,6 +48,8 @@ Use the staged verification profiles before escalating native work: start with
 and require `release` for exported round-trip and visual handoff evidence. The
 single policy definition is `cad_verification/policy.py`; use
 `scripts/cad_review.py verify` rather than restating profile rules.
+For a tracked iteration, the separate workflow state requires accepted visual
+smoke evidence before fit and a fit pass before release.
 
 - **Review an existing STEP:** validate its current sidecar, start the
   read-only Viewer, create a hash-bound link, and inspect one Snapshot overview

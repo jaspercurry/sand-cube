@@ -38,3 +38,15 @@ Repository users validate and inspect these objects through
 `scripts/cad_review.py verify`. The authoritative profile/check/evidence policy
 is [`policy.py`](policy.py); CLI and repository adapters consume that policy and
 must not restate it.
+
+## Compact iteration state
+
+[`workflow.py`](workflow.py) provides a second, deliberately small model for
+live AI CAD task state. It points to the durable brief, contract, sources, and
+evidence by repository-relative path and SHA-256. It does not copy their
+geometry facts or acceptance criteria.
+
+The ordered gates are candidate, fast passed, visual accepted, fit passed,
+release passed, and independently reviewed. Source changes start a new revision
+and clear downstream evidence. `scripts/cad_review.py workflow` is the thin CLI
+for initializing, showing, gating, advancing, and revising this state.

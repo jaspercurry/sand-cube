@@ -33,6 +33,12 @@ importing Build123d, OCP, CadQuery, VTK, or related libraries.
 
 For substantial jobs report job ID, worker PID, elapsed time, current/peak RSS,
 exit status, outputs, cleanup, and absence of owned orphan processes.
+Unhandled Python failures are recorded automatically as structured worker
+failure envelopes. Around an expensive or ambiguous diagnostic boundary, use
+`cad_runner.phase("semantic-name")`; use
+`cad_runner.ContractRejection("stable.code", "measured reason")` for an
+expected geometry or evidence rejection. Do not convert native crashes into
+Python exceptions or infer a precise cause when no envelope exists.
 
 ## Viewer and artifacts
 

@@ -35,6 +35,32 @@ class CadReviewTest(unittest.TestCase):
         self.assertEqual(packet.verification_kind, "packet")
         self.assertTrue(packet.json)
 
+    def test_workflow_commands_expose_compact_state_and_expensive_gates(
+        self,
+    ) -> None:
+        show = parser().parse_args(["workflow", "show", "state.json", "--json"])
+        gate = parser().parse_args(
+            ["workflow", "gate", "state.json", "--profile", "fit"]
+        )
+        revise = parser().parse_args(
+            [
+                "workflow",
+                "revise",
+                "state.json",
+                "--source",
+                "model.py",
+                "--open-question",
+                "Does the new candidate look right?",
+                "--next-action",
+                "Run fast checks.",
+            ]
+        )
+
+        self.assertEqual(show.workflow_command, "show")
+        self.assertTrue(show.json)
+        self.assertEqual(gate.profile, "fit")
+        self.assertEqual(revise.source, [Path("model.py")])
+
     def test_project_manifest_has_serial_read_only_contract(self) -> None:
         config = load_project_config()
         self.assertEqual(config["runtime"]["concurrency_limit"], 1)

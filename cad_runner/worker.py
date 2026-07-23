@@ -11,6 +11,7 @@ from types import FunctionType, ModuleType
 from typing import Any
 
 from .outputs import REPO_ROOT_ENV, STAGE_ROOT_ENV, job_output_path
+from .telemetry import FAILURE_PATH_ENV, write_failure_envelope
 
 
 _OUTPUT_GLOBAL_NAMES = {
@@ -138,6 +139,18 @@ def _run_script(script: Path, arguments: list[str]) -> None:
         sys.setprofile(None)
 
 
+def _record_failure(error: BaseException) -> None:
+    """Never let optional telemetry replace the worker's original failure."""
+
+    failure_path = os.environ.get(FAILURE_PATH_ENV)
+    if not failure_path:
+        return
+    try:
+        write_failure_envelope(Path(failure_path), error)
+    except BaseException:
+        pass
+
+
 def main(argv: list[str] | None = None) -> int:
     arguments = list(sys.argv[1:] if argv is None else argv)
     if not arguments:
@@ -145,7 +158,15 @@ def main(argv: list[str] | None = None) -> int:
     if not os.environ.get(STAGE_ROOT_ENV) or not os.environ.get(REPO_ROOT_ENV):
         raise SystemExit("cad_runner.worker must be launched by the coordinator")
     script = Path(arguments.pop(0)).resolve()
-    _run_script(script, arguments)
+    try:
+        _run_script(script, arguments)
+    except SystemExit as error:
+        if error.code not in (None, 0):
+            _record_failure(error)
+        raise
+    except BaseException as error:
+        _record_failure(error)
+        raise
     return 0
 
 

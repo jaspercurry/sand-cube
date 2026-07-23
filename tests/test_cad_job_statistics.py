@@ -94,6 +94,13 @@ def test_statistics_cover_states_names_timing_memory_and_targets(
         "name": "enclosure",
         "state": "failed",
     }
+    assert statistics.health.terminal_outcomes == 3
+    assert statistics.health.terminal_success_rate == 2 / 3
+    assert statistics.health.failed_time_fraction == 1 / 3
+    assert statistics.health.recent_outcomes == 3
+    assert statistics.health.recent_success_rate == 2 / 3
+    assert statistics.health.recent_failed_time_fraction == 1 / 3
+    assert statistics.health.assessment == "tighten-feedback-loop"
     assert [target["job_id"] for target in statistics.recent_targets] == [
         "running",
         "three",
@@ -105,6 +112,7 @@ def test_statistics_cover_states_names_timing_memory_and_targets(
     assert "Time consumed: completed 40.00s | failed 20.00s" in (
         render_job_statistics(statistics)
     )
+    assert "failed-time share 33.3%" in render_job_statistics(statistics)
 
 
 def test_malformed_and_incomplete_records_are_reported_without_aborting(
@@ -141,4 +149,131 @@ def test_missing_records_directory_returns_an_empty_report(tmp_path: Path) -> No
     assert statistics.total_files == 0
     assert statistics.valid_records == 0
     assert statistics.elapsed_percentiles_seconds["p95"] is None
+    assert statistics.health.assessment == "insufficient-data"
     assert "Recent targets:\n  none" in render_job_statistics(statistics)
+
+
+def test_repeated_recent_failures_stop_retries_and_retain_diagnostics(
+    tmp_path: Path,
+) -> None:
+    records = tmp_path / "cad-jobs"
+    records.mkdir()
+    for index, timestamp in enumerate(
+        ("2026-07-21T10:00:00Z", "2026-07-22T10:00:00Z"),
+        start=1,
+    ):
+        _write(
+            records,
+            f"failure-{index}.json",
+            {
+                "job_id": f"failure-{index}",
+                "name": "full-fit",
+                "state": "failed",
+                "elapsed_seconds": 120 * index,
+                "peak_rss_bytes": 300,
+                "finished_at": timestamp,
+                "failure_kind": "worker_exit",
+                "failure_message": f"worker failed at phase {index}",
+                "failure_details": {
+                    "exception_type": "builtins.AttributeError",
+                    "phase": "overlap-check",
+                },
+                "command": ["python", "validator.py", "--fit"],
+            },
+        )
+
+    statistics = collect_job_statistics(records)
+    repeated = statistics.health.repeated_failures
+
+    assert statistics.health.assessment == "stop-and-diagnose"
+    assert len(repeated) == 1
+    assert repeated[0] == {
+        "name": "full-fit",
+        "command": ["python", "validator.py", "--fit"],
+        "streak": 2,
+        "failed_seconds": 360,
+        "latest_job_id": "failure-2",
+        "latest_failure_kind": "worker_exit",
+        "latest_failure_message": "worker failed at phase 2",
+        "latest_failure_details": {
+            "exception_type": "builtins.AttributeError",
+            "phase": "overlap-check",
+        },
+    }
+    assert statistics.recent_targets[0]["failure_kind"] == "worker_exit"
+    assert statistics.recent_targets[0]["command"] == [
+        "python",
+        "validator.py",
+        "--fit",
+    ]
+    assert "Stop before another heavy retry of the same target and command" in (
+        statistics.health.recommendation
+    )
+
+
+def test_same_name_with_different_commands_is_not_a_repeat_streak(
+    tmp_path: Path,
+) -> None:
+    records = tmp_path / "cad-jobs"
+    records.mkdir()
+    for index, argument in enumerate(("candidate-a", "candidate-b"), start=1):
+        _write(
+            records,
+            f"failure-{index}.json",
+            {
+                "job_id": f"failure-{index}",
+                "name": "fit",
+                "state": "failed",
+                "elapsed_seconds": 10,
+                "peak_rss_bytes": 100,
+                "finished_at": f"2026-07-2{index}T10:00:00Z",
+                "command": ["python", "validator.py", argument],
+            },
+        )
+
+    statistics = collect_job_statistics(records)
+
+    assert statistics.health.repeated_failures == ()
+    assert statistics.health.assessment == "tighten-feedback-loop"
+
+
+def test_old_failures_age_out_of_the_recent_health_window(
+    tmp_path: Path,
+) -> None:
+    records = tmp_path / "cad-jobs"
+    records.mkdir()
+    for index in range(2):
+        _write(
+            records,
+            f"old-failure-{index}.json",
+            {
+                "job_id": f"old-failure-{index}",
+                "name": "fit",
+                "state": "failed",
+                "elapsed_seconds": 100,
+                "peak_rss_bytes": 100,
+                "finished_at": f"2026-07-0{index + 1}T10:00:00Z",
+                "command": ["python", "validator.py", "--fit"],
+            },
+        )
+    for index in range(12):
+        _write(
+            records,
+            f"recent-success-{index}.json",
+            {
+                "job_id": f"recent-success-{index}",
+                "name": f"candidate-{index}",
+                "state": "completed",
+                "elapsed_seconds": 10,
+                "peak_rss_bytes": 100,
+                "finished_at": f"2026-07-{index + 10:02d}T10:00:00Z",
+                "command": ["python", "candidate.py", str(index)],
+            },
+        )
+
+    statistics = collect_job_statistics(records)
+
+    assert statistics.health.failed_time_fraction == 200 / 320
+    assert statistics.health.recent_failed_time_fraction == 0
+    assert statistics.health.repeated_failures == ()
+    assert statistics.health.assessment == "healthy"
