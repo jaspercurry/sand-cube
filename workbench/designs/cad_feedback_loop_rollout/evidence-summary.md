@@ -56,13 +56,24 @@ Every successful job reports its workspace removed, its owned process group
 reaped, and no remaining owned PIDs. The all-nine release topology/import stage
 is the exposed slow stage. No arbitrary performance threshold was introduced.
 
+After the first independent review, the source-bound revision 5 superseded the
+revision 4 fit/release evidence:
+
+| Job | Purpose | Elapsed | Peak RSS | Result |
+| --- | --- | ---: | ---: | --- |
+| `20260723T220731-single-oval-port-fast-r5-c7d8089616` | reviewed fast binding | 0.513 s | 180,224 B | same candidate |
+| `20260723T220746-single-oval-port-fit-cold-r5-852442cff7` | reviewed cold fit | 91.380 s | 600,752,128 B | 90.553 s measurement; cache publish |
+| `20260723T220935-single-oval-port-fit-warm-r5-b12f7ac18d` | reviewed warm fit | 0.511 s | 32,768 B | 0 s measurement; verified cache hit |
+| `20260723T220953-single-oval-port-fit-invalidated-r5-9046a7b885` | reviewed controlled invalidation | 90.400 s | 603,570,176 B | 89.554 s measurement; new key |
+| `20260723T221148-single-oval-port-release-forced-r5-b86651b74d` | reviewed forced release | 131.523 s | 723,288,064 B | 130.390 s measurement; strict visual/sidecar lineage; cache bypass |
+
 The final fit cold/warm cache key is
-`73f2876c70d56a275659ef9c602493a1a718b2183563dbe400a17f2c608176fc`.
-Changing the controlled identity from `controlled-source-v2` to
-`controlled-source-v3` produced cache key
-`2fe8253f81a45500aba6553fe4cbd4c7bf4839c179ab3efca096c86aaa107fb1`.
-The forced release key was
-`678479dde818eb81aa7462f8599720664a76ddbc1f467e1e1a63df1a80d72223`,
+`9df8587a2e5fa81f9ade42ca69fc8d2c2162ed61467bc5331de751a756d38ddf`.
+Changing the controlled identity from `controlled-source-v3` to
+`controlled-source-v4` produced cache key
+`2131a392e6e135f4ae40e461070c93518f87eeba4217e248ccf81bbc687dde50`.
+The final forced release key was
+`ca5dc3783157a44119169bc02cc47a7906def6897123360cc9fe5a3606d37289`,
 with status `forced_regeneration`, not `hit`.
 
 ## Expected and deliberately unsuccessful jobs
@@ -73,6 +84,7 @@ with status `forced_regeneration`, not `hit`.
 | `20260723T213524-text-to-cad-artifacts-f6565cdc30` | 2.033 s | Chromium was denied by the macOS sandbox; rerun with approved GUI isolation | 0 outputs; clean |
 | `20260723T214317-single-oval-port-review-deliberate-failure-bc8516f4c7` | 4.568 s | diagnostics JSON deliberately supplied instead of a verified GLB | 0 outputs; production STEP and prior review preserved; clean |
 | `20260723T214716-geometry-checks-native-final-9fbb89a9da` | 0.509 s | runner was mistakenly given an interpreter command instead of a Python entrypoint | 0 outputs; corrected job passed; clean |
+| `20260723T221141-single-oval-port-release-unforced-rejected-r5-341f322b03` | 0.508 s | release deliberately invoked without `--force` | rejected before cache access; 0 outputs; clean |
 
 The deliberate review failure left the hardware STEP at
 `8f51fed279909389be6497c94b14c030963ef8ed8d0987dc7897d6de42501443`
@@ -93,7 +105,8 @@ evidence.
 ## Test and policy commands
 
 - Pinned-environment doctor with the read-only Text-to-CAD overlay: passed.
-- Full lightweight suite after the rollout: 169 tests and 19 subtests passed,
+- Full lightweight suite after independent-review fixes: 170 tests and 19
+  subtests passed,
   model catalog passed, 57 CAD entrypoints passed, and Ruff passed.
 - Focused rollout, geometry-check, cache, workflow, runner, and telemetry set:
   96 tests passed before the final visual-lineage addition; the rollout file
@@ -105,3 +118,28 @@ evidence.
 Two focused-test attempts named nonexistent test files and collected no tests;
 the corrected focused command is the 96-test result above. These were command
 selection errors, not product failures.
+
+## First independent review and dispositions
+
+The independent reviewer inspected base
+`7f2ee318b7aedbb3cb86a5cec16b49f30c28c5b3` through implementation commit
+`633ec5ab404d0c33080d74db4bce0dc36a0f43f7`.
+
+1. Programmatic `run()` could request release without force and restore cache.
+   Fixed by enforcing forced, uncached release at the start of `run()` and by
+   adding both a native-free API behavior test and an expected supervised
+   unforced-release rejection.
+2. Visual lineage trusted declarative provenance without revalidating the
+   sidecar cache or the accepted PNG strongly enough. Fixed by requiring
+   producer/job identities, renderer one-import/one-tessellation counts,
+   Snapshot output-to-PNG binding, and exact candidate/STEP/sidecar fields;
+   release now calls the owning `verify_cached_sidecar()` API and compares its
+   verified key, kind, hashes, size, and paths before native measurement.
+3. Header-port and conformal-full-system descendants declared inherited Viewer
+   outputs that no longer exist. Removed only those stale diagnostic
+   declarations, retained the conformal generator's own cutaway Viewer, added
+   both descendants to the compact workflow source hashes, and expanded the
+   downstream regression test.
+
+No geometry, STEP export, PR #2, active removable-baffle, or tongue-and-groove
+source was changed while addressing the review.

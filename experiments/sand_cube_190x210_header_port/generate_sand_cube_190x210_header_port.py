@@ -564,10 +564,6 @@ def _rewrite_diagnostics(diagnostics: dict[str, Any]) -> dict[str, Any]:
         ),
     ]
     diagnostics["files"]["diagnostics"] = str(OUT / "diagnostics.json")
-    diagnostics["files"]["exterior_viewer"] = str(OUT / "viewer" / "index.html")
-    diagnostics["files"]["cutaway_viewer"] = str(
-        OUT / "cutaway_viewer" / "index.html"
-    )
     return diagnostics
 
 

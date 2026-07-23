@@ -36,3 +36,14 @@
 - 2026-07-23: A deliberately invalid review sidecar failed with zero published
   outputs after 4.568 seconds while preserving the successful production STEP
   and prior review provenance exactly.
+- 2026-07-23: First independent review found three actionable release/process
+  issues: programmatic release could omit force, visual evidence did not call
+  the owning sidecar verifier, and two downstream diagnostics declared removed
+  inherited Viewers. All three were fixed without geometry edits.
+- 2026-07-23: Revision 5 rejected an unforced release in 0.508 seconds with no
+  outputs, then passed a 131.523-second forced release only after checking the
+  current sidecar cache key/kind, review producer and import counts, Snapshot
+  source/output lineage, exact accepted PNG, and exact candidate STEP.
+- 2026-07-23: Revision 5 final checks passed 170 tests and 19 subtests, model
+  catalog validation, 57 CAD entrypoint checks, Ruff, pinned-environment
+  doctor, and workflow-state hash validation.

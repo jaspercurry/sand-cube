@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 import hashlib
 import json
 from pathlib import Path
@@ -74,6 +75,23 @@ FIT_INTERSECTION_PAIRS = (
         "sand_cube_190x210_single_oval_port_horn.step",
     ),
 )
+REVIEW_TARGET = (
+    "experiments/sand_cube_190x210_single_oval_port/"
+    "review_sand_cube_190x210_single_oval_port.py"
+)
+SNAPSHOT_TARGET = "scripts/text_to_cad_artifacts.py"
+
+
+@dataclass(frozen=True)
+class VisualAcceptanceBinding:
+    evidence_refs: tuple[str, ...]
+    step_path: str
+    step_sha256: str
+    sidecar_path: str
+    sidecar_sha256: str
+    sidecar_size_bytes: int
+    sidecar_kind: str
+    sidecar_cache_key: str
 
 
 def _sha256_file(path: Path) -> str:
@@ -186,7 +204,7 @@ def validate_visual_acceptance(
     evidence_files: Iterable[tuple[str, str]],
     *,
     repo_root: Path = ROOT,
-) -> tuple[str, ...]:
+) -> VisualAcceptanceBinding:
     """Bind accepted visual evidence to the exact current candidate and STEP."""
 
     repo_root = repo_root.resolve(strict=True)
@@ -205,6 +223,8 @@ def validate_visual_acceptance(
         raise ValueError("visual acceptance record must be a JSON object")
     if acceptance.get("accepted") is not True:
         raise ValueError("visual acceptance record is not accepted")
+    if acceptance.get("channel") != "snapshot":
+        raise ValueError("visual acceptance did not use the Snapshot channel")
     if acceptance.get("candidate_id") != candidate.get("candidate_id"):
         raise ValueError("visual acceptance belongs to a different candidate")
     if acceptance.get("measurable_claims_from_pixels") != []:
@@ -240,6 +260,21 @@ def validate_visual_acceptance(
         for output in candidate["outputs"]
         if output["name"].endswith("_hardware_check.step")
     )
+    if static_review.get("schema_version") != 1:
+        raise ValueError("static review provenance schema is unsupported")
+    if (
+        not isinstance(static_review.get("job_id"), str)
+        or not static_review["job_id"]
+        or static_review.get("review_target") != REVIEW_TARGET
+    ):
+        raise ValueError("static review producer/job identity is invalid")
+    renderer = static_review.get("renderer")
+    if not isinstance(renderer, dict) or (
+        renderer.get("name") != "repository static OCP viewer"
+        or renderer.get("artifact_import_count") != 1
+        or renderer.get("tessellation_count") != 1
+    ):
+        raise ValueError("static review renderer identity/counts are invalid")
     review_step = static_review.get("step")
     if not isinstance(review_step, dict) or (
         review_step.get("path") != hardware["path"]
@@ -247,8 +282,23 @@ def validate_visual_acceptance(
     ):
         raise ValueError("static review does not bind the candidate hardware STEP")
     review_sidecar = static_review.get("sidecar")
-    if not isinstance(review_sidecar, dict):
+    if not isinstance(review_sidecar, dict) or (
+        not isinstance(review_sidecar.get("path"), str)
+        or not isinstance(review_sidecar.get("sha256"), str)
+        or not isinstance(review_sidecar.get("size_bytes"), int)
+        or review_sidecar.get("kind") not in {"part", "assembly"}
+        or not isinstance(review_sidecar.get("verified_cache_key"), str)
+        or not review_sidecar["verified_cache_key"]
+    ):
         raise ValueError("static review has no verified sidecar identity")
+    if snapshot_provenance.get("schema_version") != 1:
+        raise ValueError("Snapshot provenance schema is unsupported")
+    if (
+        not isinstance(snapshot_provenance.get("job_id"), str)
+        or not snapshot_provenance["job_id"]
+        or snapshot_provenance.get("target") != SNAPSHOT_TARGET
+    ):
+        raise ValueError("Snapshot producer/job identity is invalid")
     snapshot_sources = snapshot_provenance.get("sources")
     if not isinstance(snapshot_sources, list):
         raise ValueError("Snapshot provenance has no source identities")
@@ -269,7 +319,24 @@ def validate_visual_acceptance(
         or snapshot_sidecar.get("sha256") != review_sidecar.get("sha256")
     ):
         raise ValueError("Snapshot does not bind the verified review sidecar")
-    return (acceptance_path, *referenced_paths)
+    snapshot_outputs = snapshot_provenance.get("outputs")
+    if not isinstance(snapshot_outputs, list) or not any(
+        isinstance(output, dict)
+        and output.get("path") == referenced_paths[0]
+        and output.get("sha256") == evidence[referenced_paths[0]]
+        for output in snapshot_outputs
+    ):
+        raise ValueError("Snapshot provenance does not bind the accepted PNG")
+    return VisualAcceptanceBinding(
+        evidence_refs=(acceptance_path, *referenced_paths),
+        step_path=hardware["path"],
+        step_sha256=hardware["sha256"],
+        sidecar_path=review_sidecar["path"],
+        sidecar_sha256=review_sidecar["sha256"],
+        sidecar_size_bytes=review_sidecar["size_bytes"],
+        sidecar_kind=review_sidecar["kind"],
+        sidecar_cache_key=review_sidecar["verified_cache_key"],
+    )
 
 
 def _requirement(

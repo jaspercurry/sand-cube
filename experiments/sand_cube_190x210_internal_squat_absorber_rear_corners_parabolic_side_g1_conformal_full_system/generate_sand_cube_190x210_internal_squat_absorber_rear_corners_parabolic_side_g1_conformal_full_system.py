@@ -700,7 +700,6 @@ def generate() -> dict[str, Any]:
                 OUT / "parabolic_g1_conformal_full_detail_base.step"
             ),
             "diagnostics": str(OUT / "diagnostics.json"),
-            "exterior_viewer": str(OUT / "viewer" / "index.html"),
             "cutaway_viewer": str(OUT / "cutaway_viewer" / "index.html"),
         }
     )
