@@ -76,7 +76,7 @@ def _viewer_template_config() -> dict[str, Any]:
     return config
 
 
-def _model_payload(step_path: Path) -> dict[str, Any]:
+def model_payload(step_path: Path) -> dict[str, Any]:
     shape = import_step(step_path)
     name = step_path.stem.replace("-", "_").replace(" ", "_")
     instances, shapes, config, count, _mapping, extracted_materials = _tessellate(
@@ -126,7 +126,7 @@ def _model_payload(step_path: Path) -> dict[str, Any]:
     }
 
 
-def _render_viewer(payload: dict[str, Any], out_dir: Path) -> None:
+def render_viewer(payload: dict[str, Any], out_dir: Path) -> None:
     import ocp_vscode
 
     package_dir = Path(ocp_vscode.__file__).resolve().parent
@@ -203,8 +203,8 @@ def main() -> None:
         raise SystemExit(f"STEP file does not exist: {step_path}")
     out_dir = job_output_path(args.out.expanduser().resolve())
     out_dir.mkdir(parents=True, exist_ok=True)
-    payload = _model_payload(step_path)
-    _render_viewer(payload, out_dir)
+    payload = model_payload(step_path)
+    render_viewer(payload, out_dir)
     print(f"Static OCP viewer: {out_dir / 'viewer' / 'index.html'}")
     print(f"Model data: {out_dir / 'model-data.js'}")
 

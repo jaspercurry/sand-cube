@@ -103,8 +103,22 @@ Run:
 .venv/bin/python experiments/sand_cube_190x210_single_oval_port/generate_sand_cube_190x210_single_oval_port.py
 ```
 
-Generated STEP files, diagnostics, and static viewers are written under
-`build/sand_cube_190x210_single_oval_port/`. The cutaway export includes the
-enclosure, both tube pieces, woofer, GX16 connector, horn, and DE250. A
-standalone exact horn STEP is exported as
+Generated STEP files and round-trip diagnostics are written under
+`build/sand_cube_190x210_single_oval_port/`. Production does not generate
+Viewer or preview artifacts. The cutaway export is retained as downstream
+lineage input and includes the enclosure, both tube pieces, woofer, GX16
+connector, horn, and DE250. A standalone exact horn STEP is exported as
 `sand_cube_190x210_single_oval_port_horn.step`.
+
+After production succeeds, generate the verified sidecar and static review as
+separate coordinated jobs:
+
+```sh
+.venv/bin/python scripts/cad_review.py sidecar \
+  build/sand_cube_190x210_single_oval_port/sand_cube_190x210_single_oval_port_hardware_check.step \
+  --kind assembly
+.venv/bin/python \
+  experiments/sand_cube_190x210_single_oval_port/review_sand_cube_190x210_single_oval_port.py \
+  --step build/sand_cube_190x210_single_oval_port/sand_cube_190x210_single_oval_port_hardware_check.step \
+  --kind assembly
+```
