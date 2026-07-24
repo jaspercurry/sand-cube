@@ -38,8 +38,6 @@ from build123d import (
     Compound,
     GeomType,
     Pos,
-    Unit,
-    export_step,
     import_step,
 )
 from OCP.BRepClass3d import BRepClass3d_SolidClassifier
@@ -63,6 +61,10 @@ from src.enclosure_family.variant_r.inputs import (  # noqa: E402
 from src.enclosure_family.variant_r.provenance import (  # noqa: E402
     sha256_file,
     verify_producer_attestation,
+)
+from src.enclosure_family.variant_r.export import (  # noqa: E402
+    publish_step_round_trip,
+    stabilize_single_solid,
 )
 
 
@@ -97,24 +99,11 @@ def _patch_seam():
 
 
 def _round_trip(step_path: Path, solid) -> dict:
-    published = job_output_path(step_path)
-    published.parent.mkdir(parents=True, exist_ok=True)
-    export_step(solid, published, unit=Unit.MM, write_pcurves=True)
-    imported = import_step(published)
-    result = {
-        "source_solid_count": len(solid.solids()),
-        "imported_solid_count": len(imported.solids()),
-        "all_imported_solids_valid": all(
-            s.is_valid for s in imported.solids()
-        ),
-    }
-    if result != {
-        "source_solid_count": 1,
-        "imported_solid_count": 1,
-        "all_imported_solids_valid": True,
-    }:
-        raise ValueError(f"STEP round trip failed: {step_path.name}: {result}")
-    return result
+    return publish_step_round_trip(
+        step_path,
+        solid,
+        require_single_solid=True,
+    )
 
 
 def _seam_band_volumes():
@@ -347,14 +336,10 @@ def _export_sections(reference: dict, hybrid: dict) -> dict:
     audit_dir.mkdir(parents=True, exist_ok=True)
 
     def stabilized(shape, label: str):
-        path = audit_dir / f"{label}.step"
-        export_step(shape, path, unit=Unit.MM, write_pcurves=True)
-        result = import_step(path)
-        path.unlink()
-        solids = result.solids()
-        if len(solids) != 1 or not solids[0].is_valid:
-            raise ValueError(f"{label} section input failed STEP stabilization")
-        return solids[0]
+        return stabilize_single_solid(
+            shape,
+            audit_dir / f"{label}.step",
+        )
 
     assembled_reference = Compound(
         children=[
@@ -436,17 +421,11 @@ def _export_sections(reference: dict, hybrid: dict) -> dict:
     for filename, (shape, clip) in specs.items():
         section = _section(shape, clip, feature=filename)
         path = OUT / filename
-        published = job_output_path(path)
-        published.parent.mkdir(parents=True, exist_ok=True)
-        export_step(section, published, unit=Unit.MM, write_pcurves=True)
-        imported = import_step(published)
-        if not imported.solids() or not all(s.is_valid for s in imported.solids()):
-            raise ValueError(f"{filename} failed its STEP round trip")
-        checks[filename] = {
-            "source_solid_count": len(section.solids()),
-            "imported_solid_count": len(imported.solids()),
-            "all_imported_solids_valid": True,
-        }
+        checks[filename] = publish_step_round_trip(
+            path,
+            section,
+            require_single_solid=False,
+        )
     return checks
 
 
