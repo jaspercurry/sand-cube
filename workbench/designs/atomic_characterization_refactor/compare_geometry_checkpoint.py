@@ -86,6 +86,10 @@ def _sha256(path: Path) -> str:
 
 def _normalized_diagnostics(path: Path) -> dict[str, Any]:
     record = json.loads(path.read_text())
+    record.pop("scope", None)
+    record["validation_contract"] = (
+        "accepted Variant R deterministic geometry and interface invariants"
+    )
     current_input = record.pop("authoritative_base_input", None)
     authoritative = Path(record["authoritative_base_step"])
     if current_input is None:

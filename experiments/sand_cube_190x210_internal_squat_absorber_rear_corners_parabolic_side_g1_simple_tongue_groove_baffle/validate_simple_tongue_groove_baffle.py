@@ -1,7 +1,7 @@
-"""Standalone geometry validation for Variant A (no full-cascade viewers).
+"""Standalone geometry validation for accepted Variant R.
 
 Adapts the closure's own ``generate_bucket_front_transition_candidate.py``
-pattern: load the authoritative full-detail base solid, drive the Variant A
+pattern: load the authoritative full-detail base solid, drive the Variant R
 hooks directly, and assert every geometry invariant.  This deliberately avoids
 the shared cascade's inherited-assembly preview cutaway, which fails on this
 machine's OCCT for the UNCHANGED baseline too (see the run report).
@@ -52,6 +52,7 @@ if str(EXPERIMENT) not in sys.path:
 
 import generate_sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle as model  # noqa: E402
 from src.enclosure_family.variant_r.artifacts import (  # noqa: E402
+    VARIANT_R_ARTIFACTS,
     VARIANT_R_ARTIFACTS_BY_ID,
 )
 from src.enclosure_family.variant_r.inputs import (  # noqa: E402
@@ -61,6 +62,7 @@ from src.enclosure_family.variant_r.inputs import (  # noqa: E402
 from src.enclosure_family.variant_r.provenance import (  # noqa: E402
     sha256_file,
     verify_producer_attestation,
+    write_release_attestation,
 )
 from src.enclosure_family.variant_r.export import (  # noqa: E402
     publish_step_round_trip,
@@ -75,6 +77,11 @@ BUCKET_STEP = OUT / VARIANT_R_ARTIFACTS_BY_ID["bucket"].filename
 BAFFLE_STEP = OUT / VARIANT_R_ARTIFACTS_BY_ID["baffle"].filename
 DIAGNOSTICS_PATH = (
     OUT / VARIANT_R_ARTIFACTS_BY_ID["validation_diagnostics"].filename
+)
+RELEASE_ARTIFACT_FILENAMES = tuple(
+    artifact.filename
+    for artifact in VARIANT_R_ARTIFACTS
+    if artifact.kind in {"part", "protected_section", "diagnostics"}
 )
 
 
@@ -689,7 +696,7 @@ def main() -> None:
         and model.single._perimeter_wire is model._AUTHORITATIVE_PERIMETER_WIRE
     )
     if not isolation_restored:
-        raise ValueError("Variant A seam patches were not restored")
+        raise ValueError("Variant R seam patches were not restored")
 
     # --- 2nd in-process build (light): re-apply the patches and rebuild the
     #     seam primitives; identical volumes prove the save/restore cycle is
@@ -735,7 +742,7 @@ def main() -> None:
     }
 
     diagnostics = {
-        "scope": "Variant A Stage 1 hybrid-seam standalone validation",
+        "scope": "accepted Variant R hybrid-seam standalone validation",
         "authoritative_base_step": str(AUTHORITATIVE_BASE_STEP),
         "authoritative_base_input": base_identity,
         "stage_flags": {
@@ -806,7 +813,30 @@ def main() -> None:
     diagnostics_path = job_output_path(DIAGNOSTICS_PATH)
     diagnostics_path.parent.mkdir(parents=True, exist_ok=True)
     diagnostics_path.write_text(json.dumps(diagnostics, indent=2) + "\n")
+    release_attestation = write_release_attestation(
+        repo_root=ROOT,
+        output_directory=diagnostics_path.parent,
+        release_entrypoint=Path(__file__),
+        authoritative_base_input=base_identity,
+        artifact_filenames=RELEASE_ARTIFACT_FILENAMES,
+    )
     print(json.dumps(diagnostics, indent=2))
+    print(
+        json.dumps(
+            {
+                "release_attestation": {
+                    "cad_job_id": release_attestation["cad_job_id"],
+                    "loaded_sources": release_attestation[
+                        "runtime_dependency_closure"
+                    ]["complete_loaded_repo_source_count"],
+                    "artifacts": len(
+                        release_attestation["release_artifacts"]
+                    ),
+                }
+            },
+            indent=2,
+        )
+    )
 
 
 if __name__ == "__main__":

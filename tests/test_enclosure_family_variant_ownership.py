@@ -25,6 +25,7 @@ from src.enclosure_family.variant_r import (
 )
 from src.enclosure_family.variant_r.inputs import (
     HISTORICAL_ACCEPTED_BASE_DATA_SHA256,
+    RELEASE_ATTESTATION_FILENAME,
     authoritative_base_step,
     producer_attestation_path,
 )
@@ -36,6 +37,7 @@ from src.enclosure_family.variant_r.historical_capture import (
 )
 from src.enclosure_family.variant_r.provenance import (
     verify_producer_attestation,
+    write_release_attestation,
 )
 
 
@@ -101,6 +103,7 @@ def test_variant_r_artifact_and_verification_contracts_are_complete() -> None:
         "hybrid_top_seam",
         "validation_diagnostics",
         "producer_attestation",
+        "release_attestation",
     }
     assert by_id["bucket"].filename == "simple_tongue_groove_bucket.step"
     assert by_id["baffle"].filename == "simple_tongue_groove_baffle.step"
@@ -203,6 +206,63 @@ def test_variant_r_input_attestation_rejects_a_changed_base(
             base_step=base,
             attestation_path=attestation,
         )
+
+
+def test_variant_r_release_attestation_binds_loaded_sources_and_artifacts(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    release_entrypoint = tmp_path / "validator.py"
+    release_entrypoint.write_text("# release\n")
+    output = tmp_path / "stage"
+    output.mkdir()
+    (output / "bucket.step").write_bytes(b"bucket")
+    sources = tuple(
+        {
+            "path": f"experiments/stage-{index}/generate.py",
+            "sha256": f"{index:064x}",
+            "bytes": 1,
+            "role": "geometry_or_parameter_dependency",
+        }
+        for index in range(19)
+    )
+    monkeypatch.setattr(
+        "src.enclosure_family.variant_r.provenance._git_identity",
+        lambda _root: {
+            "head": "candidate",
+            "branch": "codex/test",
+            "tracked_source_dirty": False,
+        },
+    )
+    monkeypatch.setattr(
+        "src.enclosure_family.variant_r.provenance."
+        "collect_loaded_repo_sources",
+        lambda *_args, **_kwargs: sources,
+    )
+    monkeypatch.setattr(
+        "src.enclosure_family.variant_r.provenance._package_version",
+        lambda distribution: distribution,
+    )
+    monkeypatch.setenv("CAD_JOB_ID", "release-job")
+    payload = write_release_attestation(
+        repo_root=tmp_path,
+        output_directory=output,
+        release_entrypoint=release_entrypoint,
+        authoritative_base_input={"sha256": "base"},
+        artifact_filenames=("bucket.step",),
+    )
+    assert payload["attestation_kind"] == "variant_r_coordinated_release"
+    assert payload["git"]["head"] == "candidate"
+    assert payload["runtime_dependency_closure"][
+        "complete_loaded_repo_source_count"
+    ] == 19
+    assert payload["runtime_dependency_closure"][
+        "loaded_generator_stage_count"
+    ] == 19
+    assert payload["release_artifacts"][0]["sha256"] == hashlib.sha256(
+        b"bucket"
+    ).hexdigest()
+    assert (output / RELEASE_ATTESTATION_FILENAME).is_file()
 
 
 def test_accepted_step_header_canonicalization_changes_only_header(
@@ -342,6 +402,16 @@ def test_variant_r_generator_has_no_flag_driven_retention_architecture() -> None
     assert "BUILD_BOTTOM_SCREWS" not in source
     assert "_add_top_tongue_groove" not in source
     assert "_add_bottom_screws" not in source
+
+
+def test_strict_adapter_canonicalizes_descriptive_scope_label() -> None:
+    adapter = (
+        ROOT
+        / "workbench/designs/atomic_characterization_refactor/"
+        "compare_geometry_checkpoint.py"
+    ).read_text()
+    assert 'record.pop("scope", None)' in adapter
+    assert "accepted Variant R deterministic geometry" in adapter
 
 
 def test_variant_r_catalog_points_to_owned_source_and_thin_entrypoint() -> None:

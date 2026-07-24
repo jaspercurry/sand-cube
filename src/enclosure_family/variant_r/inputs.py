@@ -16,6 +16,7 @@ AUTHORITATIVE_BASE_FILENAME: Final = (
     "sand_cube_190x210_single_oval_port_base.step"
 )
 PRODUCER_ATTESTATION_FILENAME: Final = "variant_r_producer_attestation.json"
+RELEASE_ATTESTATION_FILENAME: Final = "variant_r_release_attestation.json"
 
 # This identity belongs to the historical accepted Stage 1 input.  It remains
 # here only so old diagnostics can be audited without requiring the ignored
