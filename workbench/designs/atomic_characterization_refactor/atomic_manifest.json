@@ -35,7 +35,7 @@
     }
   },
   "current_refactor_execution": {
-    "status": "BASELINE_EQUIVALENT; ATOMIC EXTRACTION ACTIVE",
+    "status": "ATOM 03 EQUIVALENT; PRODUCER PROVENANCE ACTIVE",
     "authority_note": "This overlay records current combined-base operations. Earlier baseline, checkpoint, pilot, and exploratory records below remain immutable history and must not be interpreted as current blockers.",
     "exact_base": "c25cddb3eeafe6f6dff3b551be4ceb53d5aee9ce",
     "working_branch": "codex/enclosure-atomic-refactor-implementation",
@@ -46,7 +46,7 @@
     },
     "current_source": {
       "path": "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle/generate_sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle.py",
-      "sha256": "1198eb00c447149a6d0b1f8ab79601de575919c2506bf350c40e4ebdfacbbc2c"
+      "sha256": "d67d011f3a1be1bf563786befb1af09fe74e4438e061abf670f0f3aef7cc0e62"
     },
     "authoritative_base_input_sha256": "441cc122c0383da257b16e80c4b424096f33b267cc95cab9d1278fb05a43a784",
     "generation": {
@@ -106,11 +106,31 @@
         "max_added_material_mm3": 0.0,
         "geometry_changed": false,
         "variant_i_coupling": false
+      },
+      {
+        "id": "R.model_artifact_verification_and_entrypoint_boundaries",
+        "owners": [
+          "src/enclosure_family/variant_r/model.py",
+          "src/enclosure_family/variant_r/artifacts.py",
+          "src/enclosure_family/variant_r/verification.py",
+          "scripts/generate_variant_r.py"
+        ],
+        "candidate_generation_job": "20260724T023918-atomic-refactor-atom-03-geometry-06d4fd8a26",
+        "geometry_checkpoint_job": "20260724T030459-atomic-refactor-atom-03-strict-equivalence-e9021d779e",
+        "equivalent": true,
+        "max_removed_material_mm3": 0.0,
+        "max_added_material_mm3": 0.0,
+        "geometry_changed": false,
+        "disabled_retention_alternatives_removed": true,
+        "retention_geometry": "absent",
+        "variant_i_coupling": false
       }
     ],
-    "current_blockers": [],
+    "current_blockers": [
+      "Final acceptance still requires a current authoritative producer record for the ignored pre-split base STEP and a complete live geometry dependency closure."
+    ],
     "protected_imperfection": "The accepted current flat-bottom missing-material relationship is baseline behavior. Do not repair or reconcile it in this refactor.",
-    "next_atom": "Remove disabled retention flags/code, add the thin cataloged entrypoint and explicit model/verification/export boundaries"
+    "next_atom": "Bind the pre-split base to its cataloged producer, attest the complete runtime dependency closure, extract verification/export adapters and correct stale current-status projections"
   },
   "evidence_defaults": {
     "units": "millimeters",

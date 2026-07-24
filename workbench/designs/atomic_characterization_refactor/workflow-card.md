@@ -10,15 +10,22 @@
   flat-bottom closure, including its known imperfect/missing-material
   relationship. Establish only an explicit independent future Variant I
   interface; create no Variant I geometry.
-- Next atom: remove disabled retention flags/code and add the explicit model,
-  verification/export boundaries, and thin cataloged Variant R entrypoint.
-- Last equivalence evidence: Atom 02 generation job
-  `20260724T012509-atomic-refactor-atom-02-geometry-dcc2d21bcb` and strict
-  job `20260724T015015-atomic-refactor-atom-02-strict-equivalence-68898b111a`.
+- Next atom: bind the exact pre-split base STEP to the cataloged producer,
+  publish a complete runtime source-dependency attestation, extract the
+  remaining measurement/export adapters, and correct stale current-status
+  projections without changing geometry.
+- Last equivalence evidence: Atom 03 generation job
+  `20260724T023918-atomic-refactor-atom-03-geometry-06d4fd8a26` and strict
+  job
+  `20260724T030459-atomic-refactor-atom-03-strict-equivalence-e9021d779e`.
   Both complete parts and all six protected sections have zero removed/added
   material, matching topology/bounds/volume/area/center of mass, zero overlap,
   and unchanged normalized STEP-round-trip diagnostics.
-- Current blocker: none. The Phase-A rail blocker is historical; commit
+- Current blocker: final acceptance requires a current authoritative-producer
+  record for the ignored base STEP and a complete live dependency closure.
+  Atom 03 itself is equivalent: native-free checks pass (197 tests and 19
+  subtests, 87 entrypoints, catalog and scoped lint), and the strict native
+  gate found zero material delta. The Phase-A rail blocker is historical; commit
   `e715300` repaired it before the current base. Stop only on a fresh,
   unexplained geometry/evidence mismatch.
 - Resume: read this card, `atomic_manifest.json`, and current `git status` /

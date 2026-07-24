@@ -1,0 +1,33 @@
+"""Native-CAD-free identity and ownership map for the accepted Variant R."""
+
+from __future__ import annotations
+
+from dataclasses import dataclass
+from typing import Final, Literal
+
+
+@dataclass(frozen=True, slots=True)
+class VariantRModel:
+    """Stable model identity without importing geometry or experiment code."""
+
+    model_id: Literal["development-190x210-tongue-groove"] = (
+        "development-190x210-tongue-groove"
+    )
+    variant_id: Literal["variant_r"] = "variant_r"
+    status: Literal["accepted_refactor_baseline"] = "accepted_refactor_baseline"
+    assembly_owner: str = "src.enclosure_family.variant_r.assembly"
+    seam_owner: str = "src.enclosure_family.variant_r.seam"
+    bottom_material_owner: str = (
+        "src.enclosure_family.variant_r.bottom_ownership"
+    )
+    parameter_owner: str = "src.enclosure_family.variant_r.parameters"
+    artifact_owner: str = "src.enclosure_family.variant_r.artifacts"
+    verification_owner: str = "src.enclosure_family.variant_r.verification"
+    retention_geometry: Literal["absent"] = "absent"
+    known_geometry_boundary: str = (
+        "preserve the accepted imperfect flat-bottom and missing-material "
+        "relationship exactly until a separately authorized geometry task"
+    )
+
+
+VARIANT_R_MODEL: Final = VariantRModel()

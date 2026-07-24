@@ -17,15 +17,15 @@
     {
       "files": [
         {
-          "path": "workbench/designs/atomic_characterization_refactor/atom-02-fast-evidence.json",
+          "path": "workbench/designs/atomic_characterization_refactor/atom-03-fast-evidence.json",
           "role": "fast_passed_evidence",
-          "sha256": "0e9b8c095228d3432e0230b0cfc44d4375ce9717a8fb9fdf4b0365e89e360880",
-          "size_bytes": 1335
+          "sha256": "421e12161b845eb2651ed9e3e45d543878ef88b89e8f56cbd5a327424d4e2256",
+          "size_bytes": 1318
         }
       ],
-      "recorded_at": "2026-07-24T01:25:03.350759Z",
+      "recorded_at": "2026-07-24T03:44:46.217946Z",
       "stage": "fast_passed",
-      "summary": "Variant R seam, lower-material, and joint composition owners are explicit and experiment-free; the legacy foundation is dependency-injected."
+      "summary": "Atom 03 removes disabled retention architecture and adds explicit native-free model, artifact, verification and entrypoint ownership; all lightweight checks pass."
     },
     {
       "files": [
@@ -36,39 +36,39 @@
           "size_bytes": 6815
         }
       ],
-      "recorded_at": "2026-07-24T01:25:03.432096Z",
+      "recorded_at": "2026-07-24T03:44:53.759071Z",
       "stage": "visual_accepted",
-      "summary": "The accepted isometric and baffle Snapshots remain the protected before-Atom-02 visual reference."
+      "summary": "Previously inspected accepted isometric and isolated-baffle Snapshots remain continuity evidence only; strict material equivalence, not pixels, binds Atom 03 geometry."
     },
     {
       "files": [
         {
-          "path": "workbench/designs/atomic_characterization_refactor/atom-02-equivalence-evidence.json",
+          "path": "workbench/designs/atomic_characterization_refactor/atom-03-equivalence-evidence.json",
           "role": "fit_passed_evidence",
-          "sha256": "50772d43c7a7a7379fd58e8c0eaf32b39c7a8e9be3566b259783bff6485bc348",
-          "size_bytes": 3870
+          "sha256": "4b773a1aae91ec845c63d42a8dc8bb9adc9c9d586a2725b18c5ffaea9d63be48",
+          "size_bytes": 3436
         }
       ],
-      "recorded_at": "2026-07-24T02:27:26.812976Z",
+      "recorded_at": "2026-07-24T03:45:00.328705Z",
       "stage": "fit_passed",
-      "summary": "Atom 02 strictly preserves both full parts and all six protected sections with zero bidirectional material delta, matching topology/mass properties, zero overlap, and passing round trips."
+      "summary": "Atom 03 strictly preserves both complete parts and all six protected sections with zero bidirectional material delta, exact topology/mass properties, zero overlap and matching normalized round-trip diagnostics."
     }
   ],
   "iteration_id": "atomic-characterization-refactor",
   "model_id": "development-190x210-tongue-groove",
-  "next_action": "Remove disabled retention code and add explicit model, verification/export, and thin entrypoint boundaries.",
+  "next_action": "Implement the producer/dependency attestation and remaining verification/export adapters, then run the forced uncached final producer.",
   "objective": "Refactor the accepted current Variant R enclosure and baffle into explicit atomic owners without changing geometry, while reserving an independent future Variant I boundary.",
-  "open_question": "Can disabled retention code and the legacy entrypoint be reduced without changing the accepted artifact?",
-  "revision": 4,
+  "open_question": "Can the final producer bind its pre-split base and complete loaded source closure in a clean output staging area?",
+  "revision": 5,
   "schema_version": 1,
   "sources": [
     {
       "path": "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle/generate_sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle.py",
       "role": "source",
-      "sha256": "1198eb00c447149a6d0b1f8ab79601de575919c2506bf350c40e4ebdfacbbc2c",
-      "size_bytes": 41468
+      "sha256": "d67d011f3a1be1bf563786befb1af09fe74e4438e061abf670f0f3aef7cc0e62",
+      "size_bytes": 20714
     }
   ],
   "stage": "fit_passed",
-  "updated_at": "2026-07-24T02:27:26.812976Z"
+  "updated_at": "2026-07-24T03:45:00.328705Z"
 }

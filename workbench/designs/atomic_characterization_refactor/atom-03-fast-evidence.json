@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "atom_id": "R.model_artifact_verification_and_entrypoint_boundaries",
+  "status": "pass",
+  "candidate_source": {
+    "path": "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle/generate_sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle.py",
+    "sha256": "d67d011f3a1be1bf563786befb1af09fe74e4438e061abf670f0f3aef7cc0e62"
+  },
+  "lightweight_checks": {
+    "elapsed_seconds": 5.898,
+    "tests_passed": 197,
+    "subtests_passed": 19,
+    "catalog_models": 10,
+    "experiment_families": 38,
+    "cad_entrypoints_checked": 87,
+    "scoped_lint": "pass"
+  },
+  "architecture": {
+    "model_owner": "src/enclosure_family/variant_r/model.py",
+    "artifact_owner": "src/enclosure_family/variant_r/artifacts.py",
+    "verification_owner": "src/enclosure_family/variant_r/verification.py",
+    "cataloged_entrypoint": "scripts/generate_variant_r.py",
+    "legacy_runtime_binding": "src/enclosure_family/legacy_runtime.py",
+    "retention_geometry": "absent",
+    "disabled_retention_flags_removed": true,
+    "disabled_hinge_and_screw_geometry_removed": true,
+    "variant_i_geometry_created": false,
+    "variant_i_coupling": false,
+    "new_owner_experiment_imports": false
+  }
+}

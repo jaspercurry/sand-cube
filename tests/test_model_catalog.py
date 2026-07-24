@@ -23,7 +23,18 @@ class ModelCatalogTest(unittest.TestCase):
 
         development = records["development-190x210-tongue-groove"]
         self.assertEqual(development["status"], "development")
-        self.assertIn("simple_tongue_groove_baffle", development["source"])
+        self.assertEqual(
+            development["source"],
+            "src/enclosure_family/variant_r/model.py",
+        )
+        self.assertIn(
+            "simple_tongue_groove_baffle",
+            development["implementation"],
+        )
+        self.assertEqual(
+            development["entrypoint"],
+            "scripts/generate_variant_r.py",
+        )
 
     def test_missing_experiment_record_is_a_failure(self) -> None:
         catalog = copy.deepcopy(load_catalog())
