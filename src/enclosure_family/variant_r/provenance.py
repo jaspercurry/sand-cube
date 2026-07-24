@@ -25,6 +25,10 @@ from .inputs import (
     PRODUCER_ATTESTATION_FILENAME,
     PRODUCER_ENTRYPOINT,
 )
+from .historical_capture import (
+    GEOMETRY_SOURCE_COMMIT,
+    capture_overlay_sha256,
+)
 
 
 ATTESTATION_SCHEMA_VERSION: Final = 1
@@ -38,6 +42,17 @@ def sha256_file(path: Path) -> str:
         for block in iter(lambda: stream.read(1024 * 1024), b""):
             digest.update(block)
     return digest.hexdigest()
+
+
+def step_data_section_sha256(path: Path) -> str:
+    """Hash the complete ISO-10303 DATA payload, excluding export metadata."""
+
+    data = path.read_bytes()
+    marker = b"DATA;"
+    offset = data.find(marker)
+    if offset < 0:
+        raise ValueError(f"STEP DATA section is missing: {path}")
+    return hashlib.sha256(data[offset:]).hexdigest()
 
 
 def _repo_python_source(path: Path, repo_root: Path) -> Path | None:
@@ -142,6 +157,9 @@ def write_producer_attestation(
     repo_root: Path,
     output_directory: Path,
     producer_entrypoint: Path,
+    historical_sources: Iterable[dict[str, Any]],
+    geometry_source_commit: str,
+    capture_overlay_sha256: str,
 ) -> dict[str, Any]:
     """Write the exact source/tool/base identity of a completed producer run."""
 
@@ -153,20 +171,33 @@ def write_producer_attestation(
             "The authoritative Variant R producer did not emit its base input: "
             f"{base_step}"
         )
-    sources = collect_loaded_repo_sources(
+    git_identity = _git_identity(root)
+    current_sources = collect_loaded_repo_sources(
         root,
-        explicit_sources=(producer_entrypoint, PRODUCER_ENTRYPOINT),
+        explicit_sources=(
+            producer_entrypoint,
+            PRODUCER_ENTRYPOINT,
+            Path("scripts/run_historical_variant_r_base_capture.py"),
+        ),
     )
-    geometry_sources = tuple(
-        record
-        for record in sources
-        if record["role"] == "geometry_or_parameter_dependency"
+    current_sources = tuple(
+        {**record, "revision": git_identity["head"]}
+        for record in current_sources
+    )
+    historical_sources = tuple(
+        {**record, "revision": geometry_source_commit}
+        for record in historical_sources
     )
     experiment_stages = tuple(
         record
-        for record in geometry_sources
+        for record in historical_sources
         if record["path"].startswith("experiments/")
         and Path(record["path"]).name.startswith("generate")
+    )
+    geometry_sources = tuple(
+        record
+        for record in historical_sources
+        if record["role"] == "geometry_or_parameter_dependency"
     )
     if len(experiment_stages) < 19:
         raise RuntimeError(
@@ -190,12 +221,20 @@ def write_producer_attestation(
         "cad_job_id": os.environ.get("CAD_JOB_ID"),
         "producer_entrypoint": PRODUCER_ENTRYPOINT.as_posix(),
         "producer_mode": (
-            "base-only capture of the accepted front-fill/solid-rear "
-            "compatibility foundation with the coherent brace dependency "
-            "bound explicitly; downstream assembly previews and unrelated "
+            "immutable Git source archive plus capture-only overlay at the "
+            "accepted base construction boundary; unrelated preview and "
             "component exports are excluded"
         ),
-        "git": _git_identity(root),
+        "git": git_identity,
+        "historical_geometry_producer": {
+            "source_commit": geometry_source_commit,
+            "capture_overlay_sha256": capture_overlay_sha256,
+            "capture_effect": (
+                "export the untouched base immediately after build_base "
+                "returns, verify one-solid STEP round trip, and exit before "
+                "unrelated preview generation"
+            ),
+        },
         "toolchain": {
             "python": platform.python_version(),
             "build123d": _package_version("build123d"),
@@ -205,18 +244,25 @@ def write_producer_attestation(
             "path": base_relative,
             "filename": base_step.name,
             "sha256": sha256_file(base_step),
+            "step_data_section_sha256": step_data_section_sha256(base_step),
             "bytes": base_step.stat().st_size,
             "publication": "cad_runner_atomic_job_output",
         },
         "runtime_dependency_closure": {
             "method": (
-                "all repository Python sources present in sys.modules after "
-                "the successful producer completed, plus the explicit entrypoint"
+                "all historical repository Python sources present in the "
+                "capture child sys.modules at the accepted base boundary, "
+                "plus all current orchestrator sources loaded by its parent "
+                "CAD worker and both explicit entrypoints"
             ),
-            "complete_loaded_repo_source_count": len(sources),
+            "complete_loaded_repo_source_count": (
+                len(historical_sources) + len(current_sources)
+            ),
             "geometry_or_parameter_source_count": len(geometry_sources),
             "loaded_generator_stage_count": len(experiment_stages),
-            "sources": sources,
+            "historical_sources": historical_sources,
+            "current_orchestrator_sources": current_sources,
+            "sources": (*historical_sources, *current_sources),
         },
     }
     attestation = output / PRODUCER_ATTESTATION_FILENAME
@@ -278,5 +324,15 @@ def verify_producer_attestation(
         raise ValueError(
             "Variant R authoritative input was not produced from a clean "
             f"tracked source state: {attestation_path}"
+        )
+    historical = payload.get("historical_geometry_producer", {})
+    if (
+        historical.get("source_commit") != GEOMETRY_SOURCE_COMMIT
+        or historical.get("capture_overlay_sha256")
+        != capture_overlay_sha256()
+    ):
+        raise ValueError(
+            "Variant R base was not produced by the accepted immutable "
+            f"historical recipe: {attestation_path}"
         )
     return payload

@@ -27,6 +27,11 @@ from src.enclosure_family.variant_r.inputs import (
     authoritative_base_step,
     producer_attestation_path,
 )
+from src.enclosure_family.variant_r.historical_capture import (
+    GEOMETRY_SOURCE_COMMIT,
+    HISTORICAL_ROOT_GENERATOR,
+    capture_overlay_sha256,
+)
 from src.enclosure_family.variant_r.provenance import (
     verify_producer_attestation,
 )
@@ -148,6 +153,10 @@ def test_variant_r_input_attestation_rejects_a_changed_base(
             "loaded_generator_stage_count": 19,
             "sources": sources,
         },
+        "historical_geometry_producer": {
+            "source_commit": GEOMETRY_SOURCE_COMMIT,
+            "capture_overlay_sha256": capture_overlay_sha256(),
+        },
     }
     attestation = tmp_path / PRODUCER_ATTESTATION_FILENAME
     attestation.write_text(json.dumps(payload))
@@ -194,6 +203,7 @@ def test_variant_i_boundary_is_independent_and_has_no_geometry() -> None:
         "src/enclosure_family/legacy_runtime.py",
         "src/enclosure_family/variant_r/artifacts.py",
         "src/enclosure_family/variant_r/foundation.py",
+        "src/enclosure_family/variant_r/historical_capture.py",
         "src/enclosure_family/variant_r/inputs.py",
         "src/enclosure_family/variant_r/model.py",
         "src/enclosure_family/variant_r/parameters.py",
@@ -283,5 +293,11 @@ def test_variant_r_catalog_points_to_owned_source_and_thin_entrypoint() -> None:
     assert 'entrypoint = "scripts/generate_variant_r.py"' in catalog
     entrypoint = (ROOT / "scripts/generate_variant_r.py").read_text()
     assert "def main()" in entrypoint
-    assert "generate_authoritative_base_input" in entrypoint
+    assert "GEOMETRY_SOURCE_COMMIT" in entrypoint
+    assert "run_historical_variant_r_base_capture.py" in entrypoint
+    assert (
+        HISTORICAL_ROOT_GENERATOR.as_posix()
+        .endswith("generate_sand_cube_190x210_single_oval_port.py")
+    )
+    assert len(capture_overlay_sha256()) == 64
     assert "build123d" not in entrypoint
