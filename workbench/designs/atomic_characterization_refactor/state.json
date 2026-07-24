@@ -58,11 +58,11 @@
         {
           "path": "workbench/designs/atomic_characterization_refactor/final-acceptance-evidence.json",
           "role": "release_passed_evidence",
-          "sha256": "840bf4b28e8fb5b43247b3db72f11de1fa0f8d92614635b8b029b880e9dc2d0b",
-          "size_bytes": 27508
+          "sha256": "3d0400689cf488128e27f88bd7b9596af352a4ae691d64fc22aad10cebd95a21",
+          "size_bytes": 28533
         }
       ],
-      "recorded_at": "2026-07-24T12:01:29Z",
+      "recorded_at": "2026-07-24T12:02:50Z",
       "stage": "release_passed",
       "summary": "Final restored release, strict equivalence, lightweight checks and exact inspected visual evidence pass; independent adversarial review remains."
     }
@@ -72,7 +72,7 @@
   "next_action": "Commit the candidate evidence, run independent adversarial review, fix materially actionable findings, rerun proportional checks and obtain final no-unresolved-findings disposition.",
   "objective": "Refactor the accepted current Variant R enclosure and baffle into explicit atomic owners without changing geometry, while reserving an independent future Variant I boundary.",
   "open_question": "Does the independent adversarial reviewer find any unresolved actionable issue in the exact base-to-candidate diff?",
-  "revision": 7,
+  "revision": 8,
   "schema_version": 1,
   "sources": [
     {
@@ -83,5 +83,5 @@
     }
   ],
   "stage": "release_passed",
-  "updated_at": "2026-07-24T12:01:29Z"
+  "updated_at": "2026-07-24T12:02:50Z"
 }

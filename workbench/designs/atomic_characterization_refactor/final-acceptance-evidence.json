@@ -529,7 +529,11 @@
     "legacy_runtime_isolation": {
       "shared_upstream_generators_restored": true,
       "two_build_seam_fingerprints_identical": true,
-      "second_restore_ok": true
+      "second_restore_ok": true,
+      "scoped_binding_unit_test": "test_legacy_runtime_binding_is_scoped_and_exactly_restored passed in job 20260724T115821-atomic-refactor-review-fixes-lightweight-3f0e3043be",
+      "in_process_serialization": "src/enclosure_family/legacy_runtime.py uses one RLock around apply/use/restore and fails if any identity is not restored",
+      "production_process_isolation": "the active validator must pass ensure_coordinated before native imports and .cad-project/project.toml sets concurrency_limit = 1",
+      "strict_equivalence_coverage": "job 20260724T105504-atomic-refactor-landing-strict-a9945e2f37 passed matching diagnostics and exact geometry while the release diagnostics independently confirmed both restoration cycles"
     },
     "retention_geometry": "absent",
     "variant_i_geometry": "absent",
@@ -620,5 +624,6 @@
     "Variant I has an independent future ownership interface but no geometry, producer, validator, artifact or print proof",
     "horn, tube, resonator, bracket, electronics, fasteners, hinge mechanics and support-aware bracing remain outside this refactor"
   ],
+  "separately_scoped_architecture_follow_up": "replace the visible serialized compatibility bindings and inherited duplicate constants with explicit dependency injection across the historical cascade; this is a non-geometry architecture rewrite explicitly excluded by the landing directive",
   "next_geometry_task": "correct the flat-bottom/missing-material relationship in a separately authorized geometry-change iteration, using this refactored architecture and fresh before/after evidence"
 }
