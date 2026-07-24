@@ -1,9 +1,10 @@
 # Proposed module tree and ownership
 
-Status: partially implemented. `src/enclosure_family/datums.py` now owns the
-verified coordinate-contract pilot; every other module below remains proposed.
-The atom facts and readiness states remain authoritative in
-`atomic_manifest.json`.
+Status: implementation active. `src/enclosure_family/datums.py` owns the
+verified coordinate contract, and the current combined-base Variant R geometry
+has passed the full equivalence gate. The module tree below is the extraction
+target; `atomic_manifest.json` plus its `current_refactor_execution` overlay
+remain authoritative.
 
 ```text
 src/enclosure_family/
@@ -84,23 +85,16 @@ Each variant eventually needs:
 - coordinated fit/section checks; and
 - release-only STEP round-trip plus Viewer/Snapshot evidence.
 
-## Proposed first pilot
+## Current extraction order
 
-`family.coordinate_contract` is the recommended first pilot because it is
-metadata-only, exact and broadly consumed. It can consolidate units, axis
-polarity and named planes without touching a Boolean.
+1. Native-free Variant R parameters and explicit print contracts, with a
+   future-only Variant I ownership interface.
+2. Variant R perimeter/seam and lower-material ownership builders.
+3. Independent Variant R composition, verification/export adapters, and thin
+   cataloged entrypoint.
 
-Preconditions:
-
-1. explicit user approval to pass the checkpoint;
-2. a deliberate decision to repair the current source baseline or select a
-   different reproducible Python owner; and
-3. no geometry extraction until that baseline is green.
-
-The next geometry pilot should be chosen only after the baseline decision.
-`R.front_bulkhead_gasket_support` is a useful later candidate because it has a
-clear owner and strong section invariants, but it is currently blocked by the
-ancestor build failure.
+Each atom retains the current accepted output exactly. Variant I remains an
+independent interface boundary with no fabricated geometry.
 
 ## Pilot result
 

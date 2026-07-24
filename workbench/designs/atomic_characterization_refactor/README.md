@@ -1,6 +1,7 @@
 # Atomic characterization/refactor
 
-Status: **Phase B in progress; first metadata atom complete.**
+Status: **Phase B implementation in progress; current Variant R baseline
+reproduced.**
 
 The user accepted the Phase A visual evidence and authorized Phase B. The
 metadata-only `family.coordinate_contract` pilot is complete. The user then
@@ -15,6 +16,8 @@ been created, and no deferred component has been integrated.
 - `feedback.md` — chronological work log
 - `atomic_manifest.json` — authoritative input, atom, evidence and checkpoint
   description
+- `workflow-card.md` — concise resume state for the current implementation
+- `current-baseline-evidence.json` — durable current-base fit/equivalence facts
 - `render_phase_a_reports.py` — deterministic Markdown projection
 - `coordinate_contract.json` — staged verification contract for the first atom
 
@@ -34,11 +37,14 @@ been created, and no deferred component has been integrated.
 
 ## Current geometry boundary
 
-The current owning lightweight source does not reproduce a baseline. Its
-before/after controlled native runs both fail because the rear-ramped
-longitudinal top rail produces two solids rather than one. The coordinate
-extraction introduced no earlier failure, but the dependent leaf validator
-still cannot run.
+The failed rail reproduction recorded during the earlier Phase B pilot is
+historical. Commits through `789cf7f` repaired that deterministic failure and
+established the current flat-bottom Variant R closure. On exact combined base
+`c25cddb`, the active Python source and validator reproduce the accepted bucket,
+baffle, and six protected sections with zero bidirectional material difference
+at `1e-5 mm³`, matching topology and mass properties, zero overlap, and passing
+STEP round-trips.
 
-The next work item is to repair that deterministic source baseline before
-extracting a geometry atom.
+The accepted geometry intentionally includes the known imperfect flat-bottom
+missing-material relationship. This refactor must preserve it; correcting that
+relationship is the next geometry-change task after the architecture work.

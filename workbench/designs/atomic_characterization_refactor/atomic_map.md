@@ -4,6 +4,8 @@
 
 Authority: `atomic_manifest.json`.
 
+Current execution overlay: **BASELINE_EQUIVALENT; ATOMIC EXTRACTION ACTIVE**. Rows retain historical characterization; the overlay supersedes old operational blocker wording.
+
 | Semantic ID | Owner | Current owner/source | Dependencies | Mates | Baseline | Shareability | Readiness | Conflicts |
 |---|---|---|---|---|---|---|---|---|
 | family.coordinate_contract | shared enclosure-family layer | src/enclosure_family/datums.py | — | — | native-free exact contract and AST tests pass; native source chain reaches the same pre-existing rail failure boundary | yes; one explicit 190x210 family datum owner now exists | refactored and native-free verified; downstream geometry extraction still waits on baseline repair | legacy 203 mm project parameters are a different family contract |

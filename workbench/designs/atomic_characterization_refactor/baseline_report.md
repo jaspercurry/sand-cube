@@ -2,7 +2,25 @@
 
 # Reproducible baseline report
 
-Checkpoint status: **BLOCKED: owning Python source does not reproduce an accepted baseline**.
+Current checkpoint status: **BASELINE_EQUIVALENT; ATOMIC EXTRACTION ACTIVE**.
+
+## Current combined-base reproduction
+
+- Exact base: `c25cddb3eeafe6f6dff3b551be4ceb53d5aee9ce`
+- Current source: `experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle/generate_sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle.py`
+- Source SHA-256: `6d8072eb32a1e86b54528fe80144155d0fc2b9d0996bdc76a8168c06e4c91f0c`
+- Generation job: `20260723T231130-atomic-refactor-current-baseline-correct-input-593db9d217`; 1482.206 s; 1400373248 bytes peak RSS
+- Equivalence job: `20260723T234005-atomic-refactor-baseline-equivalence-008f589a51`; 2111.745 s; 2492252160 bytes peak RSS
+- Full parts/protected sections: 8; all equivalent: yes
+- Maximum removed/added material: 0.0 / 0.0 mm³
+- Bucket/baffle overlap: 0.0 mm³
+- STEP round-trip: pass
+
+The accepted current flat-bottom missing-material relationship is baseline behavior. Do not repair or reconcile it in this refactor.
+
+## Historical Phase A / early Phase B baseline record
+
+Historical checkpoint status: **BLOCKED: owning Python source does not reproduce an accepted baseline**.
 
 ## Native source reproduction
 

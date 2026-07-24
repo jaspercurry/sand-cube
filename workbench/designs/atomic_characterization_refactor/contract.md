@@ -1,7 +1,7 @@
 # Atomic characterization/refactor contract
 
-Status: Phase B stopped at a material equivalence blocker; first metadata atom
-complete.
+Status: Phase B implementation active on a reproduced, hash-bound current
+Variant R baseline.
 
 The verbatim governing request is `brief.md`. Its required SHA-256 is
 `7cb5fad7514df1670ba9fd017cce0d44369564018515e3b4ec5be2c55d4bb96e`.
@@ -53,23 +53,24 @@ validity/topology, transforms, fit/clearance, volume/center of mass and STEP
 round-trip evidence. A matching hash is useful provenance but not geometric
 proof; matching bounds alone are insufficient.
 
-At this checkpoint the gate is not met. The current lightweight owner fails
-before export because its top longitudinal rail produces two solids. The leaf
-validator therefore cannot run.
+The earlier coordinate-contract pilot correctly recorded a rail failure on its
+then-current source boundary. That evidence remains historical. The combined
+base used for this implementation includes the later deterministic rail repair
+and current flat-bottom closure.
 
-The metadata-only `family.coordinate_contract` is exempt from the geometry
-reproduction gate: exact native-free tests prove its units, dimensions, datum
-planes, and axis polarity. A controlled post-refactor native run reaches the
-same pre-existing rail failure boundary with no earlier regression. No geometry
-atom may be extracted until that baseline is repaired.
+On exact base `c25cddb3eeafe6f6dff3b551be4ceb53d5aee9ce`, current-source
+generation and a strict independent evidence adapter reproduce both complete
+parts and all six protected sections with zero bidirectional material
+difference at `1e-5 mm³`, matching validity/topology, bounds, volume, surface
+area and center of mass. Bucket/baffle overlap is zero and normalized
+STEP-round-trip diagnostics match. `current-baseline-evidence.json` is the
+durable summary; the full report under `build/` remains derived.
 
-An exploratory, uncommitted rail repair was used only to inspect the next
-boundary. It exposed a material discrepancy between the authoritative
-left/right/top seam and the flat-bottom hybrid: a 4 mm local comparison cube
-contained `0.40496478224918064 mm³` of reference-only bucket material and no
-hybrid-only material. Restoring that material would reconcile selected
-references and is therefore later model synthesis, not an equivalence refactor.
-All exploratory source edits were reverted.
+The earlier exploratory comparison exposed a material discrepancy between the
+authoritative left/right/top seam and the flat-bottom hybrid. Subsequent product
+work deliberately accepted the current imperfect flat-bottom relationship as
+the sole baseline for this refactor. Restoring that material would change the
+current product geometry and remains explicitly deferred.
 
 ## Printability boundary
 
