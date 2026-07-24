@@ -1,105 +1,81 @@
-# Proposed module tree and ownership
+# Implemented module tree and ownership
 
-Status: implementation active. `src/enclosure_family/datums.py` owns the
-verified coordinate contract, and the current combined-base Variant R geometry
-has passed the full equivalence gate. The module tree below is the extraction
-target; `atomic_manifest.json` plus its `current_refactor_execution` overlay
-remain authoritative.
+Status: implementation complete pending final forced release, visual review and
+independent adversarial review. The accepted current Variant R geometry remains
+the sole baseline; no Variant I or corrected flat-bottom geometry exists.
 
 ```text
 src/enclosure_family/
-├── parameters.py
-├── datums.py
-├── primitives.py
-├── measurements.py
-├── validation.py
-├── print_contracts.py
+├── datums.py                  # family coordinate contract
+├── legacy_runtime.py          # serialized, exactly restored legacy binding
+├── print_contracts.py         # shared print-contract schema only
 ├── variant_r/
-│   ├── parameters.py
-│   ├── service_opening.py
-│   ├── seam.py
-│   ├── bottom_ownership.py
-│   ├── gasket.py
-│   ├── bucket.py
-│   ├── baffle.py
-│   ├── assembly.py
-│   ├── validate.py
-│   └── export.py
+│   ├── parameters.py          # Variant R dimensions/tolerances
+│   ├── print_contracts.py     # bucket and baffle print metadata
+│   ├── seam.py                # sculpted L/R/T plus flat-bottom perimeter
+│   ├── bottom_ownership.py    # accepted lower material transfer/splice
+│   ├── foundation.py          # explicit legacy foundation dependency bundle
+│   ├── assembly.py            # independent Variant R composition owner
+│   ├── inputs.py              # authoritative generated-input contract
+│   ├── historical_capture.py  # immutable accepted-base capture recipe
+│   ├── provenance.py          # producer/source/tool/artifact attestation
+│   ├── measurements.py        # deterministic native geometry facts
+│   ├── equivalence.py         # native-free numerical acceptance predicates
+│   ├── export.py              # STEP publication and round-trip adapter
+│   ├── artifacts.py           # required output identities
+│   ├── verification.py        # evidence dimensions and tolerances
+│   └── model.py               # one explicit owner per Variant R boundary
 └── variant_i/
-    ├── parameters.py
-    ├── integral_body.py
-    ├── open_bottom.py
-    ├── hatch_interface.py
-    ├── assembly.py
-    ├── validate.py
-    └── export.py
+    └── interface.py           # independent future-only boundary; no geometry
+
+scripts/
+├── generate_variant_r.py      # thin coordinated immutable-base producer
+└── run_historical_variant_r_base_capture.py
 ```
 
-Thin cataloged entrypoints would call the two independent `assembly.py`
-owners. They would not import one another and would not share a flag-driven
-generator.
+The active geometry leaf is retained as a compatibility adapter while the
+accepted construction foundation is reproduced from exact commit `789cf7f`.
+It no longer owns parameters, seam policy, lower material composition,
+retention alternatives, evidence policy or artifact publication. Its remaining
+deep ancestry is contained behind the explicit immutable foundation producer
+and `VariantRFoundation`; new owners import no experiment module.
 
-## Family boundary
+## Family and variant boundaries
 
-The family layer may own units, named datums, explicitly accepted 190x210
-dimensions, pure exterior/profile primitives, neutral measurements and
-validation predicates, and print-orientation metadata. Geometry enters this
-layer only after a semantic and numerical equivalence proof across variants.
+The family layer owns only the proven 190x210 coordinate semantics and neutral
+print-contract schema. It does not merge this design's 2/3/2 wall stack with
+the repository's unrelated 203 mm 3/12/3 legacy contract.
 
-The current 2/3/2 wall stack must not be merged with legacy 203 mm 3/12/3
-parameters by name. Fill routing and braces require shared upstream primitives
-plus explicit variant terminations/composition; they are not presently proven
-as identical complete features.
+Variant R independently owns the accepted removable-baffle composition,
+including the current imperfect flat-bottom/missing-material relationship.
+Retention geometry is explicitly absent. No flag-driven alternate Variant R/I
+generator remains.
 
-## Variant R boundary
+Variant I owns only a future interface contract for a monolithic front,
+open-bottom body and future hatch owner. Calling its geometry owner raises
+`NotImplementedError`; it imports no Variant R module and cannot route future
+geometry through the removable-baffle implementation.
 
-Variant R owns the service cut, front bulkhead/gasket support, sculpted
-left/right/top seam, lower material ownership, separate baffle, gasket
-relationship, future hinge/fastener interfaces and both print contracts. Its
-bucket and baffle validator must measure complementary occupancy, gap/overlap,
-corner seal, fill clearance, driver opening, protected sections and independent
-STEP round-trips.
+## Verification and publication boundaries
 
-## Variant I boundary
+Builders return shapes and deterministic build metadata. Measurement consumes
+shapes without publication. Native-free equivalence policy consumes measurement
+records. The workbench comparison scripts are evidence adapters only. STEP
+publication and reimport live in `variant_r/export.py`; model entrypoints remain
+thin and resource-coordinated. `.cad-project/models.toml` remains the sole model
+catalog.
 
-Variant I owns one monolithic front/body composition, the open bottom, future
-hatch boundary and open-bottom-down print contract. It branches from a neutral
-body before any removable partition. No removable gap, land, nut slot,
-fastener, hinge or service-opening builder may be imported and then suppressed.
+The authoritative foundation producer publishes only the base STEP and its
+attestation. A clean checkout obtains the exact accepted input by archiving the
+immutable geometry commit, applying the committed capture-only overlay at the
+accepted build boundary, verifying the complete STEP DATA payload, and
+canonicalizing only the accepted `FILE_NAME` timestamp. The real job time stays
+in the attestation. The committed source-closure projection records every
+loaded dependency rather than relying on an ignored `build/` artifact.
 
-## Verification and evidence boundary
+## Deferred geometry work
 
-Geometry builders return shapes and deterministic metadata. Measurement and
-validation are pure consumers. Export is a separate adapter. Entry points are
-thin and safe to import. `.cad-project/models.toml` remains the only model
-registry.
-
-Each variant eventually needs:
-
-- one independent model identity and owner;
-- one parameter source;
-- one generator/entrypoint;
-- one validator;
-- one output root;
-- fast analytic checks;
-- coordinated fit/section checks; and
-- release-only STEP round-trip plus Viewer/Snapshot evidence.
-
-## Current extraction order
-
-1. Native-free Variant R parameters and explicit print contracts, with a
-   future-only Variant I ownership interface.
-2. Variant R perimeter/seam and lower-material ownership builders.
-3. Independent Variant R composition, verification/export adapters, and thin
-   cataloged entrypoint.
-
-Each atom retains the current accepted output exactly. Variant I remains an
-independent interface boundary with no fabricated geometry.
-
-## Pilot result
-
-The family coordinate contract now has one native-free immutable owner for
-units, the 190x210x190 envelope, the +10 mm Y center, named planes, and axis
-polarity. Existing 190x210 source consumers use that datum owner. The extraction
-did not add a model, generator, Boolean, or variant flag, so the catalog remains
-unchanged.
+The next geometry task is narrowly scoped: correct the accepted flat-bottom
+missing-material relationship using this architecture, with fresh product
+authority and its own before/after evidence. Horn, tube, resonator, bracket,
+electronics, supports, hatch, hinge and fastener work remain separate.

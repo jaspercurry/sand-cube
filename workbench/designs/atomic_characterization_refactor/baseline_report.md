@@ -2,15 +2,15 @@
 
 # Reproducible baseline report
 
-Current checkpoint status: **BASELINE_EQUIVALENT; ATOMIC EXTRACTION ACTIVE**.
+Current checkpoint status: **ATOM 06 EQUIVALENT; PORTABLE PRODUCER AND ADAPTER OWNERSHIP ACTIVE**.
 
 ## Current combined-base reproduction
 
 - Exact base: `c25cddb3eeafe6f6dff3b551be4ceb53d5aee9ce`
 - Current source: `experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle/generate_sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle.py`
-- Source SHA-256: `1198eb00c447149a6d0b1f8ab79601de575919c2506bf350c40e4ebdfacbbc2c`
-- Generation job: `20260723T231130-atomic-refactor-current-baseline-correct-input-593db9d217`; 1482.206 s; 1400373248 bytes peak RSS
-- Equivalence job: `20260723T234005-atomic-refactor-baseline-equivalence-008f589a51`; 2111.745 s; 2492252160 bytes peak RSS
+- Source SHA-256: `d67d011f3a1be1bf563786befb1af09fe74e4438e061abf670f0f3aef7cc0e62`
+- Generation job: `20260724T055819-atomic-refactor-atom-04-byte-identical-geometry-8764c19346`; 1498.687 s; 1401372672 bytes peak RSS
+- Equivalence job: `20260724T062345-atomic-refactor-atom-04-byte-identical-strict-97ee20c79b`; 2093.563 s; 2458206208 bytes peak RSS
 - Full parts/protected sections: 8; all equivalent: yes
 - Maximum removed/added material: 0.0 / 0.0 mm³
 - Bucket/baffle overlap: 0.0 mm³
@@ -20,7 +20,7 @@ The accepted current flat-bottom missing-material relationship is baseline behav
 
 ## Historical Phase A / early Phase B baseline record
 
-Historical checkpoint status: **BLOCKED: owning Python source does not reproduce an accepted baseline**.
+Historical checkpoint status: **HISTORICAL BLOCKED: owning Python source did not reproduce an accepted baseline at that checkpoint**.
 
 ## Native source reproduction
 
@@ -59,4 +59,4 @@ This is a source-boundary failure. The immutable STEP references remain evidence
 - Snapshot outputs: path: build/workbench/atomic_characterization_refactor/near_perfect_bucket/snapshot-isometric_20260723T042632Z.png<br>sha256: 314fcc48133ab2db2eb16a3a62d1a3570433e938f7cefc31f757d4082ab8e139<br>path: build/workbench/atomic_characterization_refactor/near_perfect_bucket/snapshot-center-section_20260723T042632Z.png<br>sha256: 5fed09fe71a51b34eb4776b87a86819736c70a57791d2f4703d6ba47bc232eb1
 - Viewer record: `build/workbench/atomic_characterization_refactor/near_perfect_bucket/viewer-record.json`
 
-A matching bounding box is not treated as equivalence. No current-source STEP exists, so semantic old/new comparison and STEP round-trip equivalence are blocked.
+A matching bounding box is not treated as equivalence. The sentence above is the preserved historical record; the current combined-base overlay at the top supplies the accepted semantic and STEP round-trip proof.

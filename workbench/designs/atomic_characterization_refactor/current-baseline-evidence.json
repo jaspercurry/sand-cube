@@ -10,33 +10,40 @@
   },
   "source": {
     "path": "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle/generate_sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle.py",
-    "sha256": "6d8072eb32a1e86b54528fe80144155d0fc2b9d0996bdc76a8168c06e4c91f0c"
+    "sha256": "d67d011f3a1be1bf563786befb1af09fe74e4438e061abf670f0f3aef7cc0e62"
   },
   "validator": {
     "path": "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle/validate_simple_tongue_groove_baffle.py",
-    "sha256": "13e0dc227c64cfaa555e0a709ba7220c373319c5289f23bd3769aee871e7ddef"
+    "sha256": "947c02b451f1a36ed05622c7b79a8751ea48311887bf6f555420b3363e1ceb74"
   },
   "authoritative_base_input": {
-    "path": "build/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_lightweight_coherent_closure/sand_cube_190x210_single_oval_port_base.step",
-    "sha256": "441cc122c0383da257b16e80c4b424096f33b267cc95cab9d1278fb05a43a784"
+    "path": "build/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle/sand_cube_190x210_single_oval_port_base.step",
+    "sha256": "441cc122c0383da257b16e80c4b424096f33b267cc95cab9d1278fb05a43a784",
+    "step_data_section_sha256": "70e59fc0af103d742578567164a15c9ecb89532b550f15231be898c699b91c03",
+    "producer_entrypoint": "scripts/generate_variant_r.py",
+    "producer_job_id": "20260724T055629-atomic-refactor-atom-04-byte-identical-producer-aba03913c5",
+    "producer_attestation_sha256": "108ed05d114329748ac9dedc9c36e7c9f0a5f62ce2770448c3149a0fae9818f5",
+    "complete_loaded_repo_source_count": 57,
+    "loaded_generator_stage_count": 33,
+    "clean_checkout_reproducible": true
   },
   "generation": {
-    "job_id": "20260723T231130-atomic-refactor-current-baseline-correct-input-593db9d217",
-    "elapsed_seconds": 1482.206,
-    "peak_rss_bytes": 1400373248,
+    "job_id": "20260724T055819-atomic-refactor-atom-04-byte-identical-geometry-8764c19346",
+    "elapsed_seconds": 1498.687,
+    "peak_rss_bytes": 1401372672,
     "outputs": 10,
     "cleanup_complete": true,
-    "bucket_sha256": "28fd38ea7e1e1ee09e192d95f4b81b74e5ced7c3d960d8973ec2f79a9e98cbc5",
-    "baffle_sha256": "f91e0da2c57b56ad77010b85e3f7be79cf0176f59bc7b8da82af7d9c9b97c788",
-    "diagnostics_sha256": "086e73b9c9898b3c8bee79576e32e875f2e4ecf59da61f946a30e0b59ea7dd74"
+    "bucket_sha256": "8983d8b7c6f959fc257817afb6d57b2d2bf279918899d45ff9d266d1b66db222",
+    "baffle_sha256": "c7b7015c84fb9f7435bdcf3218d1abac515130ef44e7ab1e0c9adc80dc5f50a9",
+    "diagnostics_sha256": "e229542653226e5d1392f582a7281309a460dec031a64b4e99137a136cf0dd78"
   },
   "equivalence": {
-    "job_id": "20260723T234005-atomic-refactor-baseline-equivalence-008f589a51",
-    "elapsed_seconds": 2111.745,
-    "peak_rss_bytes": 2492252160,
+    "job_id": "20260724T062345-atomic-refactor-atom-04-byte-identical-strict-97ee20c79b",
+    "elapsed_seconds": 2093.563,
+    "peak_rss_bytes": 2458206208,
     "cleanup_complete": true,
-    "derived_report": "build/workbench/atomic_characterization_refactor/current-baseline/equivalence.json",
-    "derived_report_sha256": "6727ff1a79795d23fc9f05234f2732ee6c77c09ca275502a9d0d1f1e79161984",
+    "derived_report": "build/workbench/atomic_characterization_refactor/atom-04/strict-equivalence.json",
+    "derived_report_sha256": "4602f94f8e8db32707557b28df0a340a3d4fb2f9e1aea15248777523eb753d10",
     "normalized_diagnostics_equal": true,
     "bucket_baffle_intersection_mm3": 0.0,
     "full_parts_and_protected_sections_compared": 8,

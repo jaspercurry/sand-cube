@@ -4,7 +4,7 @@
 
 Authority: `atomic_manifest.json`.
 
-Current execution overlay: **BASELINE_EQUIVALENT; ATOMIC EXTRACTION ACTIVE**. Rows retain historical characterization; the overlay supersedes old operational blocker wording.
+Current execution overlay: **ATOM 06 EQUIVALENT; PORTABLE PRODUCER AND ADAPTER OWNERSHIP ACTIVE**. Rows retain historical characterization; the overlay supersedes old operational blocker wording.
 
 | Semantic ID | Owner | Current owner/source | Dependencies | Mates | Baseline | Shareability | Readiness | Conflicts |
 |---|---|---|---|---|---|---|---|---|

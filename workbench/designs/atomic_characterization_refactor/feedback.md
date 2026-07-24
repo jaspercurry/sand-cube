@@ -338,3 +338,61 @@ authoritative structured facts are in `atomic_manifest.json`.
   portable base-input, job-record and full-dependency provenance. Those gaps
   are now explicit final-acceptance work; no absent historic record is treated
   as current evidence.
+
+## 2026-07-24 — atom 04: portable foundation and complete provenance
+
+- Several plausible current-source foundation reconstructions were rejected
+  because their topology or volume differed from the accepted input. The
+  rejected attempts remain in `build/cad-jobs`; no candidate was normalized
+  into acceptance.
+- A capture-only run at immutable geometry commit `789cf7f` exported the
+  untouched base immediately after its accepted construction boundary.
+  Independent job
+  `20260724T042646-historical-789-base-equivalence-d5f150a2ff` proved its
+  complete STEP DATA section, topology, bounds, volume, surface area and center
+  of mass equal to the accepted historical input. The generic OCCT symmetric
+  difference was unstable for separately imported coincident copies and is
+  recorded as unusable rather than reported as zero.
+- The cataloged producer now archives that exact commit, applies the committed
+  hash-bound overlay, and publishes only the base plus attestation through one
+  supervised worker. Job
+  `20260724T055629-atomic-refactor-atom-04-byte-identical-producer-aba03913c5`
+  completed in 89.458 seconds at 1,297,514,496 bytes peak RSS.
+- The generated STEP DATA was exact but its initial current export timestamp
+  caused three tiny downstream diagnostic differences. Strict job
+  `20260724T051716-atomic-refactor-atom-04-strict-equivalence-652ce28c58`
+  rejected them. No tolerance was widened.
+- The producer now verifies the full DATA payload and canonicalizes only the
+  accepted STEP `FILE_NAME` timestamp, retaining the real job time separately
+  in its attestation. The result is byte-identical at
+  `441cc122c0383da257b16e80c4b424096f33b267cc95cab9d1278fb05a43a784`.
+- The attestation binds 57 actually loaded repository sources, including 35
+  geometry/parameter sources and all 33 loaded generator stages, to exact
+  revisions and hashes. This replaces the historical nine-script fingerprint.
+- Full validator job
+  `20260724T055819-atomic-refactor-atom-04-byte-identical-geometry-8764c19346`
+  completed in 1498.687 seconds at 1,401,372,672 bytes peak RSS. Strict job
+  `20260724T062345-atomic-refactor-atom-04-byte-identical-strict-97ee20c79b`
+  completed in 2093.563 seconds at 2,458,206,208 bytes peak RSS. Both complete
+  parts and all six sections matched every deterministic measurement with zero
+  removed/added material and zero-volume mating contact.
+
+## 2026-07-24 — atom 05: deterministic measurement ownership
+
+- Moved native topology/mass/material/intersection measurement serialization
+  into `variant_r/measurements.py` and native-free acceptance predicates into
+  `variant_r/equivalence.py`. Workbench scripts are now evidence adapters only.
+- Geometry builders, the immutable producer, toolchain, settings and all
+  current artifacts were unchanged, so the immediately preceding strict
+  checkpoint is a verified geometry cache hit. Lightweight checks passed 208
+  tests and 19 subtests, 89 entrypoints, catalog and lint.
+
+## 2026-07-24 — atom 06: STEP export ownership
+
+- Moved coordinated STEP publication, settings, reimport and intermediate
+  stabilization into `variant_r/export.py`. The validator no longer owns
+  duplicated STEP round-trip logic.
+- No builder, parameter, transform or artifact contract changed. Lightweight
+  checks passed 209 tests and 19 subtests, 89 entrypoints, catalog and lint.
+  The final forced release will exercise the moved measurement and export
+  adapters together before visual review.

@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "atom_id": "R.portable_foundation_producer_and_complete_provenance",
+  "status": "pass",
+  "exact_base": "c25cddb3eeafe6f6dff3b551be4ceb53d5aee9ce",
+  "geometry_source_commit": "789cf7fb4f63d9567585198c47bc3b5b122e070f",
+  "excluded_pr2_commit": {
+    "commit": "5f5bbf3c2aca0f55f35ae734c8dc0c6004897f75",
+    "is_ancestor": false
+  },
+  "authoritative_base": {
+    "producer_entrypoint": "scripts/generate_variant_r.py",
+    "producer_job_id": "20260724T055629-atomic-refactor-atom-04-byte-identical-producer-aba03913c5",
+    "producer_elapsed_seconds": 89.458,
+    "producer_peak_rss_bytes": 1297514496,
+    "sha256": "441cc122c0383da257b16e80c4b424096f33b267cc95cab9d1278fb05a43a784",
+    "step_data_section_sha256": "70e59fc0af103d742578567164a15c9ecb89532b550f15231be898c699b91c03",
+    "producer_attestation_sha256": "108ed05d114329748ac9dedc9c36e7c9f0a5f62ce2770448c3149a0fae9818f5",
+    "byte_identical_to_historical_accepted_input": true,
+    "complete_loaded_repo_source_count": 57,
+    "geometry_or_parameter_source_count": 35,
+    "loaded_generator_stage_count": 33
+  },
+  "candidate_generation": {
+    "job_id": "20260724T055819-atomic-refactor-atom-04-byte-identical-geometry-8764c19346",
+    "elapsed_seconds": 1498.687,
+    "peak_rss_bytes": 1401372672,
+    "outputs": 10,
+    "cleanup_complete": true,
+    "warnings": []
+  },
+  "strict_equivalence": {
+    "job_id": "20260724T062345-atomic-refactor-atom-04-byte-identical-strict-97ee20c79b",
+    "elapsed_seconds": 2093.563,
+    "peak_rss_bytes": 2458206208,
+    "derived_report_sha256": "4602f94f8e8db32707557b28df0a340a3d4fb2f9e1aea15248777523eb753d10",
+    "complete_parts_and_protected_sections": 8,
+    "all_equivalent": true,
+    "max_removed_material_mm3": 0.0,
+    "max_added_material_mm3": 0.0,
+    "normalized_diagnostics_equal": true,
+    "bucket_baffle_intersection_mm3": 0.0,
+    "step_round_trip": "pass for both complete parts and all six protected sections",
+    "tolerances": {
+      "length_mm": 0.000001,
+      "volume_mm3": 0.00001,
+      "surface_area_mm2": 0.00001,
+      "center_of_mass_mm": 0.0000001,
+      "diagnostic_numeric": 0.000000001
+    }
+  },
+  "candidate_artifacts": {
+    "simple_tongue_groove_bucket.step": "8983d8b7c6f959fc257817afb6d57b2d2bf279918899d45ff9d266d1b66db222",
+    "simple_tongue_groove_baffle.step": "c7b7015c84fb9f7435bdcf3218d1abac515130ef44e7ab1e0c9adc80dc5f50a9",
+    "authoritative_side_seam_section.step": "d65776243edb41342100b932932349f6bf8b97f0b70057e53116113020a36385",
+    "authoritative_top_seam_section.step": "307b9030762e5ad28e29a3b4e947e61c3837303ff1f912a177d6eece387765de",
+    "hybrid_bottom_corner_transition_section.step": "7ee2828285e87c15cbf5e4a3752f100a3c1f5640427bf572b5327d803e76eab7",
+    "hybrid_flat_bottom_section.step": "d2b1eae2e735c486d9f3a91b4cb459d45693b35c53c37e2285a95ec96ea29b19",
+    "hybrid_side_seam_section.step": "ee3a504039e59c298287d4c00b1417e581d3acc2e2cdf13c6a0407f8b954fc6c",
+    "hybrid_top_seam_section.step": "41efb3ae73a76802391b9c6b65428f7b0ebb5008f15b73805f07ec38fdcfc693",
+    "validation_diagnostics.json": "e229542653226e5d1392f582a7281309a460dec031a64b4e99137a136cf0dd78"
+  },
+  "rejected_checkpoint": {
+    "job_id": "20260724T051716-atomic-refactor-atom-04-strict-equivalence-652ce28c58",
+    "reason": "new STEP header serialization caused three small downstream diagnostic differences; no tolerance was widened",
+    "resolved_by": "verify identical DATA then deterministically reproduce only the accepted STEP FILE_NAME timestamp while separately retaining the true producer time"
+  }
+}

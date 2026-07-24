@@ -35,7 +35,7 @@
     }
   },
   "current_refactor_execution": {
-    "status": "ATOM 03 EQUIVALENT; PRODUCER PROVENANCE ACTIVE",
+    "status": "ATOM 06 EQUIVALENT; PORTABLE PRODUCER AND ADAPTER OWNERSHIP ACTIVE",
     "authority_note": "This overlay records current combined-base operations. Earlier baseline, checkpoint, pilot, and exploratory records below remain immutable history and must not be interpreted as current blockers.",
     "exact_base": "c25cddb3eeafe6f6dff3b551be4ceb53d5aee9ce",
     "working_branch": "codex/enclosure-atomic-refactor-implementation",
@@ -48,21 +48,57 @@
       "path": "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle/generate_sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle.py",
       "sha256": "d67d011f3a1be1bf563786befb1af09fe74e4438e061abf670f0f3aef7cc0e62"
     },
+    "inventory_overrides": {
+      "R.active_source": {
+        "path": "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle/generate_sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle.py",
+        "sha256": "d67d011f3a1be1bf563786befb1af09fe74e4438e061abf670f0f3aef7cc0e62",
+        "freshness": "current geometry leaf on the combined refactor base",
+        "gets_right": "delegates explicit Variant R seam/bottom composition with serialized legacy containment; retention alternatives are absent",
+        "unresolved": "historical deep ancestry remains only behind the immutable foundation producer; the accepted flat-bottom missing-material relationship is intentionally unchanged"
+      },
+      "R.validator": {
+        "path": "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle/validate_simple_tongue_groove_baffle.py",
+        "sha256": "947c02b451f1a36ed05622c7b79a8751ea48311887bf6f555420b3363e1ceb74",
+        "freshness": "current and runnable after the cataloged authoritative base producer",
+        "gets_right": "checks complete part retention, protected seam occupancy, flat-bottom behavior, print contract, input attestation, validity, mating contact and STEP round trips",
+        "unresolved": "physical print behavior remains unverified; geometry correction is deferred"
+      },
+      "I.pre_split_source": {
+        "freshness": "historical source at immutable commit 789cf7f; reproducible only as the accepted Variant R foundation through the capture recipe",
+        "gets_right": "identifies the accepted pre-split foundation boundary used by the current portable Variant R producer",
+        "unresolved": "not an independent Variant I owner; no integral-front/open-bottom/hatch geometry exists"
+      }
+    },
     "authoritative_base_input_sha256": "441cc122c0383da257b16e80c4b424096f33b267cc95cab9d1278fb05a43a784",
+    "authoritative_base_input_data_sha256": "70e59fc0af103d742578567164a15c9ecb89532b550f15231be898c699b91c03",
+    "authoritative_base_producer": {
+      "entrypoint": "scripts/generate_variant_r.py",
+      "job_id": "20260724T055629-atomic-refactor-atom-04-byte-identical-producer-aba03913c5",
+      "elapsed_seconds": 89.458,
+      "peak_rss_bytes": 1297514496,
+      "attestation_sha256": "108ed05d114329748ac9dedc9c36e7c9f0a5f62ce2770448c3149a0fae9818f5",
+      "source_closure_record": "variant-r-producer-source-closure.json",
+      "complete_loaded_repo_source_count": 57,
+      "geometry_or_parameter_source_count": 35,
+      "loaded_generator_stage_count": 33,
+      "geometry_source_commit": "789cf7fb4f63d9567585198c47bc3b5b122e070f",
+      "capture_overlay_sha256": "6b24e0c7b027dacee328329f5edc34285ba2423cd1b00e8f1367630082628608",
+      "clean_checkout_reproduction": "git archive the exact geometry commit, apply the committed capture-only overlay, export immediately at the accepted base boundary, verify the DATA payload, and canonicalize only the accepted STEP FILE_NAME timestamp"
+    },
     "generation": {
-      "job_id": "20260723T231130-atomic-refactor-current-baseline-correct-input-593db9d217",
-      "elapsed_seconds": 1482.206,
-      "peak_rss_bytes": 1400373248,
+      "job_id": "20260724T055819-atomic-refactor-atom-04-byte-identical-geometry-8764c19346",
+      "elapsed_seconds": 1498.687,
+      "peak_rss_bytes": 1401372672,
       "outputs": 10,
-      "bucket_sha256": "28fd38ea7e1e1ee09e192d95f4b81b74e5ced7c3d960d8973ec2f79a9e98cbc5",
-      "baffle_sha256": "f91e0da2c57b56ad77010b85e3f7be79cf0176f59bc7b8da82af7d9c9b97c788",
-      "diagnostics_sha256": "086e73b9c9898b3c8bee79576e32e875f2e4ecf59da61f946a30e0b59ea7dd74"
+      "bucket_sha256": "8983d8b7c6f959fc257817afb6d57b2d2bf279918899d45ff9d266d1b66db222",
+      "baffle_sha256": "c7b7015c84fb9f7435bdcf3218d1abac515130ef44e7ab1e0c9adc80dc5f50a9",
+      "diagnostics_sha256": "e229542653226e5d1392f582a7281309a460dec031a64b4e99137a136cf0dd78"
     },
     "equivalence": {
-      "job_id": "20260723T234005-atomic-refactor-baseline-equivalence-008f589a51",
-      "elapsed_seconds": 2111.745,
-      "peak_rss_bytes": 2492252160,
-      "derived_report_sha256": "6727ff1a79795d23fc9f05234f2732ee6c77c09ca275502a9d0d1f1e79161984",
+      "job_id": "20260724T062345-atomic-refactor-atom-04-byte-identical-strict-97ee20c79b",
+      "elapsed_seconds": 2093.563,
+      "peak_rss_bytes": 2458206208,
+      "derived_report_sha256": "4602f94f8e8db32707557b28df0a340a3d4fb2f9e1aea15248777523eb753d10",
       "full_parts_and_protected_sections": 8,
       "all_equivalent": true,
       "max_removed_material_mm3": 0.0,
@@ -124,13 +160,56 @@
         "disabled_retention_alternatives_removed": true,
         "retention_geometry": "absent",
         "variant_i_coupling": false
+      },
+      {
+        "id": "R.portable_foundation_producer_and_complete_provenance",
+        "owners": [
+          "src/enclosure_family/variant_r/inputs.py",
+          "src/enclosure_family/variant_r/historical_capture.py",
+          "src/enclosure_family/variant_r/provenance.py",
+          "scripts/generate_variant_r.py",
+          "scripts/run_historical_variant_r_base_capture.py"
+        ],
+        "candidate_generation_job": "20260724T055819-atomic-refactor-atom-04-byte-identical-geometry-8764c19346",
+        "geometry_checkpoint_job": "20260724T062345-atomic-refactor-atom-04-byte-identical-strict-97ee20c79b",
+        "equivalent": true,
+        "authoritative_base_byte_identical": true,
+        "complete_loaded_repo_source_count": 57,
+        "loaded_generator_stage_count": 33,
+        "max_removed_material_mm3": 0.0,
+        "max_added_material_mm3": 0.0,
+        "geometry_changed": false,
+        "variant_i_coupling": false
+      },
+      {
+        "id": "R.deterministic_measurement_and_equivalence_ownership",
+        "owners": [
+          "src/enclosure_family/variant_r/measurements.py",
+          "src/enclosure_family/variant_r/equivalence.py"
+        ],
+        "reused_geometry_checkpoint_job": "20260724T062345-atomic-refactor-atom-04-byte-identical-strict-97ee20c79b",
+        "cache_basis": "geometry source, producer, toolchain, settings and all eight artifact identities unchanged; only the evidence adapter ownership moved",
+        "lightweight_checks": "208 tests and 19 subtests; 89 entrypoints; catalog and lint pass",
+        "equivalent": true,
+        "geometry_changed": false,
+        "variant_i_coupling": false
+      },
+      {
+        "id": "R.step_export_and_round_trip_ownership",
+        "owners": [
+          "src/enclosure_family/variant_r/export.py"
+        ],
+        "reused_geometry_checkpoint_job": "20260724T062345-atomic-refactor-atom-04-byte-identical-strict-97ee20c79b",
+        "cache_basis": "geometry builders and all current generated artifact identities unchanged; final forced release must exercise the moved adapter",
+        "lightweight_checks": "209 tests and 19 subtests; 89 entrypoints; catalog and lint pass",
+        "equivalent": true,
+        "geometry_changed": false,
+        "variant_i_coupling": false
       }
     ],
-    "current_blockers": [
-      "Final acceptance still requires a current authoritative producer record for the ignored pre-split base STEP and a complete live geometry dependency closure."
-    ],
+    "current_blockers": [],
     "protected_imperfection": "The accepted current flat-bottom missing-material relationship is baseline behavior. Do not repair or reconcile it in this refactor.",
-    "next_atom": "Bind the pre-split base to its cataloged producer, attest the complete runtime dependency closure, extract verification/export adapters and correct stale current-status projections"
+    "next_atom": "Finish the forced release and visual evidence, then run the mandatory independent adversarial review"
   },
   "evidence_defaults": {
     "units": "millimeters",
@@ -504,9 +583,9 @@
       "sha256": "f3f07e1323a32d58404822a860d82e341ff07b4e8025f5889730d5efa4112298",
       "catalog": "validator of development-190x210-tongue-groove",
       "role": "programmatic fit/section validator",
-      "freshness": "current but not runnable without generated authoritative base",
+      "freshness": "historical checkpoint: then-current validator was not runnable without a generated authoritative base",
       "gets_right": "checks part complement, protected seam occupancy, bottom support, validity and STEP round-trip",
-      "unresolved": "baseline prerequisite is absent because source generation fails"
+      "unresolved": "historical checkpoint only: its baseline prerequisite was absent; superseded by current_refactor_execution.inventory_overrides"
     },
     {
       "id": "R.handoff",
@@ -857,7 +936,8 @@
     }
   ],
   "baseline": {
-    "status": "BLOCKED: owning Python source does not reproduce an accepted baseline",
+    "record_scope": "historical Phase A / early Phase B checkpoint; superseded operationally by current_refactor_execution",
+    "status": "HISTORICAL BLOCKED: owning Python source did not reproduce an accepted baseline at that checkpoint",
     "source_path": "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_lightweight_coherent_closure/generate_sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_lightweight_coherent_closure.py",
     "source_sha256": "0f318a52cf4148d2f2367a18176867acfad76e5a6827d77ca42e5395ce43ba2a",
     "job_id": "20260723T040911-generate-sand-cube-190x210-internal-squat-absorb-603368ef69",

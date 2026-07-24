@@ -41,8 +41,14 @@ def _write(name: str, title: str, body: list[str]) -> None:
 
 
 def render_inventory(data: dict[str, Any]) -> None:
+    current = data.get("current_refactor_execution", {})
+    overrides = current.get("inventory_overrides", {})
     body = [
         "Authority: `atomic_manifest.json`. Paths are repository-relative.",
+        "",
+        "Historical selected-input rows are preserved in the manifest. Current "
+        "combined-base source/validator identities below apply the explicit "
+        "`current_refactor_execution.inventory_overrides` overlay.",
         "",
         "## Selected inputs",
         "",
@@ -50,6 +56,7 @@ def render_inventory(data: dict[str, Any]) -> None:
         "|---|---|---|---|---|---|---|---|",
     ]
     for item in data["selected_inputs"]:
+        item = {**item, **overrides.get(item["id"], {})}
         body.append(
             "| "
             + " | ".join(
@@ -303,9 +310,10 @@ def render_baseline(data: dict[str, Any]) -> None:
             f"- Snapshot outputs: {_cell(baseline['review_evidence']['snapshot_outputs'])}",
             f"- Viewer record: `{baseline['review_evidence']['viewer_record']}`",
             "",
-            "A matching bounding box is not treated as equivalence. No current-source "
-            "STEP exists, so semantic old/new comparison and STEP round-trip "
-            "equivalence are blocked.",
+            "A matching bounding box is not treated as equivalence. The sentence "
+            "above is the preserved historical record; the current combined-base "
+            "overlay at the top supplies the accepted semantic and STEP round-trip "
+            "proof.",
         ]
     )
     _write("baseline_report.md", "Reproducible baseline report", body)
