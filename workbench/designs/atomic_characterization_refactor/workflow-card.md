@@ -10,8 +10,9 @@
   flat-bottom closure, including its known imperfect/missing-material
   relationship. Establish only an explicit independent future Variant I
   interface; create no Variant I geometry.
-- Next atom: commit the native measurement/equivalence ownership extraction,
-  then extract STEP export/round-trip ownership without changing builders.
+- Next atom: commit STEP publication/round-trip ownership, then reconcile the
+  manifest, architecture, generated reports, feedback log, and final compact
+  acceptance record before the forced release/visual checkpoint.
 - Last equivalence evidence: immutable producer job
   `20260724T055629-atomic-refactor-atom-04-byte-identical-producer-aba03913c5`,
   full validator job

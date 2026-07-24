@@ -83,8 +83,9 @@ def test_variant_r_model_has_one_explicit_owner_per_boundary() -> None:
             model.provenance_owner,
             model.measurement_owner,
             model.verification_owner,
+            model.export_owner,
         }
-    ) == 9
+    ) == 10
 
 
 def test_variant_r_artifact_and_verification_contracts_are_complete() -> None:
@@ -303,6 +304,7 @@ def test_variant_i_interface_does_not_import_variant_r() -> None:
     [
         "src/enclosure_family/variant_r/assembly.py",
         "src/enclosure_family/variant_r/bottom_ownership.py",
+        "src/enclosure_family/variant_r/export.py",
         "src/enclosure_family/variant_r/measurements.py",
         "src/enclosure_family/variant_r/seam.py",
         "src/enclosure_family/variant_r/model.py",

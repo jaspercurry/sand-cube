@@ -26,6 +26,7 @@ class VariantRModel:
     provenance_owner: str = "src.enclosure_family.variant_r.provenance"
     measurement_owner: str = "src.enclosure_family.variant_r.measurements"
     verification_owner: str = "src.enclosure_family.variant_r.verification"
+    export_owner: str = "src.enclosure_family.variant_r.export"
     retention_geometry: Literal["absent"] = "absent"
     known_geometry_boundary: str = (
         "preserve the accepted imperfect flat-bottom and missing-material "
