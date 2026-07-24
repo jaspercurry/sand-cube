@@ -48,6 +48,10 @@ deep ancestry and visible serialized temporary bindings are contained behind
 the explicit immutable foundation producer and `VariantRFoundation`; new owners
 import no experiment module. Removing that inherited binding mechanism requires
 a separate cascade rewrite and is not represented as complete in this landing.
+For the landed compatibility path, one in-process `RLock` surrounds
+apply/use/restore, restoration is identity-checked and unit-tested, the release
+diagnostics prove two identical build fingerprints with two successful
+restorations, and coordinated production is limited to one CAD worker.
 
 ## Family and variant boundaries
 

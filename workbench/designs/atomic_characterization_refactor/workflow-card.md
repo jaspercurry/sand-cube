@@ -44,6 +44,11 @@
   attestation has been supplied.
 - Current blocker: none. The mandatory independent adversarial review is the
   remaining acceptance gate.
+- Known landing limitation: the historical compatibility leaf retains visible
+  serialized temporary bindings. They are guarded by one `RLock`, verified to
+  restore exact identities twice with identical seam fingerprints, covered by
+  strict equivalence and a unit test, and production is coordinated at
+  concurrency limit 1. Removing them is a separate cascade rewrite.
 - Next atom: commit the reconciled candidate evidence, run the independent
   exact base-to-candidate review, fix only actionable findings that materially
   affect this refactor, rerun proportional checks, and obtain explicit
