@@ -95,6 +95,7 @@ def _release_projection(
         "release_entrypoint": record["release_entrypoint"],
         "release_mode": record["release_mode"],
         "git": record["git"],
+        "evidence_collection": record["evidence_collection"],
         "toolchain": record["toolchain"],
         "authoritative_base_input": record["authoritative_base_input"],
         "release_artifacts": artifacts,

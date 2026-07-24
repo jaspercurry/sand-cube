@@ -9,8 +9,8 @@ Current checkpoint status: **FINAL FORCED RELEASE EQUIVALENT; VISUAL EVIDENCE IN
 - Exact base: `c25cddb3eeafe6f6dff3b551be4ceb53d5aee9ce`
 - Current source: `experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle/generate_sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle.py`
 - Source SHA-256: `d67d011f3a1be1bf563786befb1af09fe74e4438e061abf670f0f3aef7cc0e62`
-- Generation job: `20260724T071935-atomic-refactor-final-release-5a33762429`; 1471.811 s; 1382973440 bytes peak RSS
-- Equivalence job: `20260724T074434-atomic-refactor-final-strict-0e704345d5`; 2069.819 s; 2446458880 bytes peak RSS
+- Generation job: `20260724T102722-atomic-refactor-landing-restored-release-52bd80460c`; 1493.266 s; 1403142144 bytes peak RSS
+- Equivalence job: `20260724T105504-atomic-refactor-landing-strict-a9945e2f37`; 2113.045 s; 2430173184 bytes peak RSS
 - Full parts/protected sections: 8; all equivalent: yes
 - Maximum removed/added material: 0.0 / 0.0 mm³
 - Bucket/baffle overlap: 0.0 mm³

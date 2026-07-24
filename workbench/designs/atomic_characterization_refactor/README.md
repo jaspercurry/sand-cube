@@ -1,7 +1,7 @@
 # Atomic characterization/refactor
 
-Status: **Phase B implementation complete; amended release provenance is
-captured and strict final acceptance is in progress.**
+Status: **Phase B implementation, strict final acceptance, and exact visual
+review are complete; independent adversarial review is pending.**
 
 The user accepted the Phase A visual evidence and authorized Phase B. The
 metadata-only `family.coordinate_contract` pilot is complete. The user then
@@ -58,12 +58,14 @@ applies one hash-bound capture-only overlay at the accepted construction
 boundary, verifies the complete STEP DATA section, reproduces the accepted
 file serialization, and publishes both the base and a current attestation
 through `cad_runner`. The latest producer binds 57 loaded repository sources,
-including all 33 loaded generator stages. The latest release-generation
-checkpoint independently binds its clean commit, nine model artifacts, 62
-loaded repository sources, 58 geometry/parameter sources and all 33 loaded
-generator stages. Committed closure projections preserve that exact checkpoint
-without treating ignored `build/` files as current; final acceptance still
-requires strict geometry equivalence.
+including all 33 loaded generator stages. Release evidence is collected only
+after geometry in a separate observational job, preserving the exact accepted
+validator execution path. It binds clean release commit `d114d79`, nine model
+artifacts, 62 loaded repository sources, 58 geometry/parameter sources and all
+33 loaded generator stages. The final strict job passes both complete parts and
+six protected sections with zero bidirectional material delta and unchanged
+diagnostics. Committed closure projections preserve those exact facts without
+treating ignored `build/` files as current.
 
 The active architecture has explicit owners for datums, pure parameters,
 print contracts, Variant R seam/bottom composition, the independent future

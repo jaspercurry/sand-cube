@@ -4,7 +4,8 @@
   "status": "candidate_pass_pending_independent_adversarial_review",
   "identity": {
     "exact_base_commit": "c25cddb3eeafe6f6dff3b551be4ceb53d5aee9ce",
-    "geometry_and_release_source_commit": "5a076262d109ce11d0ce43df6b5410be8764779b",
+    "geometry_and_release_source_commit": "d114d7907d5a3fc678d6ca7ac74b0d975c56b2a2",
+    "evidence_adapter_commit": "388593216e5af2476b36ef9bcc0b1e849c11b61e",
     "working_branch": "codex/enclosure-atomic-refactor-implementation",
     "model_id": "development-190x210-tongue-groove",
     "catalog": ".cad-project/models.toml",
@@ -82,6 +83,30 @@
     {
       "commit": "5a076262d109ce11d0ce43df6b5410be8764779b",
       "subject": "docs: reconcile current Variant R acceptance evidence"
+    },
+    {
+      "commit": "58051fae2620633773633bbe289a0ed2efdbe97f",
+      "subject": "docs: bind final Variant R acceptance evidence"
+    },
+    {
+      "commit": "a99ada6266369a854d58f0556021338881345cec",
+      "subject": "refactor: attest complete Variant R release closure"
+    },
+    {
+      "commit": "9f694b94d7674d3557cc663bc3c12bf82e8e2513",
+      "subject": "docs: bind amended Variant R release provenance"
+    },
+    {
+      "commit": "c69661a374f8b7d60ab6c381e684c779e2eb6ae3",
+      "subject": "fix: defer Variant R release provenance collection"
+    },
+    {
+      "commit": "d114d7907d5a3fc678d6ca7ac74b0d975c56b2a2",
+      "subject": "fix: isolate Variant R release evidence from geometry"
+    },
+    {
+      "commit": "388593216e5af2476b36ef9bcc0b1e849c11b61e",
+      "subject": "fix: distinguish release and evidence provenance"
     }
   ],
   "toolchain": {
@@ -95,51 +120,61 @@
   },
   "authoritative_input": {
     "producer_entrypoint": "scripts/generate_variant_r.py",
-    "producer_job_id": "20260724T071800-atomic-refactor-final-producer-fa1def52ae",
-    "elapsed_seconds": 88.419,
-    "peak_rss_bytes": 1235189760,
+    "producer_job_id": "20260724T083757-atomic-refactor-final2-producer-5f287edf8b",
+    "elapsed_seconds": 87.912,
+    "peak_rss_bytes": 1181417472,
     "attempts": 1,
     "warnings": [],
     "cleanup_complete": true,
     "base_step_sha256": "441cc122c0383da257b16e80c4b424096f33b267cc95cab9d1278fb05a43a784",
     "base_step_data_section_sha256": "70e59fc0af103d742578567164a15c9ecb89532b550f15231be898c699b91c03",
-    "producer_attestation_sha256": "0d2ae5c45e9d866f8ed56fdded044b7682996fbb9a3523dc56771e70823c1136",
+    "producer_attestation_sha256": "41f7da9312343859b082a2ca502da777d6714295f788d5196356e667946c81e7",
     "source_closure_record": "variant-r-producer-source-closure.json",
-    "source_closure_record_sha256": "e87fe35c7a43769a71a0a1f21b8671048ebf51fd11297eccbcb4b4b0d0adddfe",
+    "source_closure_record_sha256": "8106d427f616a6adff2d10d25c9b7ea4b9b41904c85040e1ec2164c40da49882",
     "complete_loaded_repo_source_count": 57,
     "geometry_or_parameter_source_count": 35,
     "loaded_generator_stage_count": 33,
     "clean_checkout_method": "archive immutable geometry commit 789cf7fb4f63d9567585198c47bc3b5b122e070f, apply capture-only overlay 6b24e0c7b027dacee328329f5edc34285ba2423cd1b00e8f1367630082628608 at the accepted base boundary, export and verify the full DATA section, then canonicalize only the accepted FILE_NAME timestamp while retaining the actual run time in the attestation"
   },
   "release": {
-    "job_id": "20260724T071935-atomic-refactor-final-release-5a33762429",
-    "elapsed_seconds": 1471.811,
-    "peak_rss_bytes": 1382973440,
+    "job_id": "20260724T102722-atomic-refactor-landing-restored-release-52bd80460c",
+    "source_commit": "d114d7907d5a3fc678d6ca7ac74b0d975c56b2a2",
+    "elapsed_seconds": 1493.266,
+    "peak_rss_bytes": 1403142144,
     "attempts": 1,
     "output_count": 10,
     "warnings": [],
     "cleanup_complete": true,
     "artifact_sha256": {
-      "simple_tongue_groove_bucket.step": "d3cb808b5dcec90241ec00ba7b195cea27b94fa81cdd99729a5b6440461673da",
-      "simple_tongue_groove_baffle.step": "051653a63bf5114d987d646c1de7e5cc239e07aa6d19eed80c94bfb5e8b35853",
-      "authoritative_side_seam_section.step": "58976eb76b810263604de048b62776e594d6331d3999dadc802927d7d9b6b405",
-      "authoritative_top_seam_section.step": "16e1f1c06efe9373adc24b81b64a9ac14231e84a964b099c605e53f025ffe8d3",
-      "hybrid_bottom_corner_transition_section.step": "9f2ec82746d37ad2198b212f542605f5789a0a71744ff770c069d6c8c3590eff",
-      "hybrid_flat_bottom_section.step": "b0a5e5fe9c77c9a19dc172381c9f6926478fa1695ef8f7089ebb62cc8a167433",
-      "hybrid_side_seam_section.step": "fe7c2475d183d3160206410ffb6ba4aa22a33eb86e49ab44d306f2da8590fa24",
-      "hybrid_top_seam_section.step": "3ecbbf49e6c3fecb280a7be9705ddf61577a69c3ae9955e5d172ebd90d0b9e2e",
-      "validation_diagnostics.json": "591b3c65e7b962d8b35a73e0721d9dd9036e8b907f76a85468697b17b0dbbd76"
-    }
+      "simple_tongue_groove_bucket.step": "0819df604de6e1c0de7fd43cbfb523112ccf22a209ee2d864bf9e0fd64728c49",
+      "simple_tongue_groove_baffle.step": "622065592b3bcd246d1c229d75a9b24740db7b8abe1765a37154ed9e10319fd0",
+      "authoritative_side_seam_section.step": "e53784eb0e79b2e8274a250778dbc1eb405c55c5599444fba2f2ba21b3d5e268",
+      "authoritative_top_seam_section.step": "1ea72a92966bfc4079038b07ca93d76ad21482156aecf0db7ab24606cb0cd2e8",
+      "hybrid_bottom_corner_transition_section.step": "40a4ee805ed8162d32059b01cd836759a6a9a3fd9fae21683b26e8d5bf8d34ee",
+      "hybrid_flat_bottom_section.step": "34360f00a4c70899d33ebfcd5280aee2eb405cd4314ced1a01eafdc8578bc5b5",
+      "hybrid_side_seam_section.step": "5c27b93b1561d13d5ea75ebac83493b25b7f9d2ef8a11edb78fe0d82b3946e1f",
+      "hybrid_top_seam_section.step": "f89e08791ab78e6b27206fc1a3a55e400ce034a900f989d3fd7c2a2da8d8fe95",
+      "validation_diagnostics.json": "f8dbefc9191eef3b62eeca066fd12c515c5f46a0d2dad9b9588e93241056219e"
+    },
+    "attestation_job_id": "20260724T105416-atomic-refactor-landing-release-attestation-fina-e1f028f156",
+    "attestation_evidence_commit": "388593216e5af2476b36ef9bcc0b1e849c11b61e",
+    "attestation_sha256": "05b388a7ed5369a6a31b6d1013eda02cc05e877add0942d40fff2ddb0d0fa5d6",
+    "source_closure_record": "variant-r-release-source-closure.json",
+    "source_closure_record_sha256": "2990f90b737d567f77092c68e551790f99ddcf201e61f1e45c0195404f288c7e",
+    "model_artifact_count": 9,
+    "complete_loaded_repo_source_count": 62,
+    "geometry_or_parameter_source_count": 58,
+    "loaded_generator_stage_count": 33
   },
   "strict_equivalence": {
-    "job_id": "20260724T074434-atomic-refactor-final-strict-0e704345d5",
-    "elapsed_seconds": 2069.819,
-    "peak_rss_bytes": 2446458880,
+    "job_id": "20260724T105504-atomic-refactor-landing-strict-a9945e2f37",
+    "elapsed_seconds": 2113.045,
+    "peak_rss_bytes": 2430173184,
     "attempts": 1,
     "warnings": [],
     "cleanup_complete": true,
-    "report": "build/workbench/atomic_characterization_refactor/final/strict-equivalence.json",
-    "report_sha256": "245276011ab4a5cbc3397f250c5d61d54c5b4420138bd138f22b86fc5d8cc4a1",
+    "report": "build/workbench/atomic_characterization_refactor/landing/strict-equivalence.json",
+    "report_sha256": "2cc8b236ce40502642cade4c0d04a57a86792eec530992d3eba84891cf3fe645",
     "passed": true,
     "normalized_diagnostics_equal": true,
     "bucket_baffle_intersection_mm3": 0.0,
@@ -157,7 +192,7 @@
     "parts_and_protected_sections": [
       {
         "artifact": "simple_tongue_groove_bucket.step",
-        "candidate_sha256": "d3cb808b5dcec90241ec00ba7b195cea27b94fa81cdd99729a5b6440461673da",
+        "candidate_sha256": "0819df604de6e1c0de7fd43cbfb523112ccf22a209ee2d864bf9e0fd64728c49",
         "equivalent": true,
         "valid": true,
         "positive_solid_count": 1,
@@ -184,7 +219,7 @@
       },
       {
         "artifact": "simple_tongue_groove_baffle.step",
-        "candidate_sha256": "051653a63bf5114d987d646c1de7e5cc239e07aa6d19eed80c94bfb5e8b35853",
+        "candidate_sha256": "622065592b3bcd246d1c229d75a9b24740db7b8abe1765a37154ed9e10319fd0",
         "equivalent": true,
         "valid": true,
         "positive_solid_count": 1,
@@ -211,7 +246,7 @@
       },
       {
         "artifact": "authoritative_side_seam_section.step",
-        "candidate_sha256": "58976eb76b810263604de048b62776e594d6331d3999dadc802927d7d9b6b405",
+        "candidate_sha256": "e53784eb0e79b2e8274a250778dbc1eb405c55c5599444fba2f2ba21b3d5e268",
         "equivalent": true,
         "valid": true,
         "positive_solid_count": 3,
@@ -238,7 +273,7 @@
       },
       {
         "artifact": "authoritative_top_seam_section.step",
-        "candidate_sha256": "16e1f1c06efe9373adc24b81b64a9ac14231e84a964b099c605e53f025ffe8d3",
+        "candidate_sha256": "1ea72a92966bfc4079038b07ca93d76ad21482156aecf0db7ab24606cb0cd2e8",
         "equivalent": true,
         "valid": true,
         "positive_solid_count": 2,
@@ -265,7 +300,7 @@
       },
       {
         "artifact": "hybrid_bottom_corner_transition_section.step",
-        "candidate_sha256": "9f2ec82746d37ad2198b212f542605f5789a0a71744ff770c069d6c8c3590eff",
+        "candidate_sha256": "40a4ee805ed8162d32059b01cd836759a6a9a3fd9fae21683b26e8d5bf8d34ee",
         "equivalent": true,
         "valid": true,
         "positive_solid_count": 2,
@@ -292,7 +327,7 @@
       },
       {
         "artifact": "hybrid_flat_bottom_section.step",
-        "candidate_sha256": "b0a5e5fe9c77c9a19dc172381c9f6926478fa1695ef8f7089ebb62cc8a167433",
+        "candidate_sha256": "34360f00a4c70899d33ebfcd5280aee2eb405cd4314ced1a01eafdc8578bc5b5",
         "equivalent": true,
         "valid": true,
         "positive_solid_count": 2,
@@ -319,7 +354,7 @@
       },
       {
         "artifact": "hybrid_side_seam_section.step",
-        "candidate_sha256": "fe7c2475d183d3160206410ffb6ba4aa22a33eb86e49ab44d306f2da8590fa24",
+        "candidate_sha256": "5c27b93b1561d13d5ea75ebac83493b25b7f9d2ef8a11edb78fe0d82b3946e1f",
         "equivalent": true,
         "valid": true,
         "positive_solid_count": 3,
@@ -346,7 +381,7 @@
       },
       {
         "artifact": "hybrid_top_seam_section.step",
-        "candidate_sha256": "3ecbbf49e6c3fecb280a7be9705ddf61577a69c3ae9955e5d172ebd90d0b9e2e",
+        "candidate_sha256": "f89e08791ab78e6b27206fc1a3a55e400ce034a900f989d3fd7c2a2da8d8fe95",
         "equivalent": true,
         "valid": true,
         "positive_solid_count": 2,
@@ -374,7 +409,7 @@
     ]
   },
   "contract_invariants": {
-    "diagnostics_sha256": "591b3c65e7b962d8b35a73e0721d9dd9036e8b907f76a85468697b17b0dbbd76",
+    "diagnostics_sha256": "f8dbefc9191eef3b62eeca066fd12c515c5f46a0d2dad9b9588e93241056219e",
     "authoritative_base_step_data_section_sha256": "70e59fc0af103d742578567164a15c9ecb89532b550f15231be898c699b91c03",
     "stage_flags": {
       "BUILD_TOP_HINGE": false,
@@ -513,46 +548,47 @@
     }
   },
   "fast_checks": {
-    "job_id": "20260724T081949-atomic-refactor-final-lightweight-26832f42e1",
-    "elapsed_seconds": 6.112,
-    "peak_rss_bytes": 21659648,
-    "tests_passed": 209,
+    "job_id": "20260724T114341-atomic-refactor-landing-final-lightweight-a08026447e",
+    "elapsed_seconds": 6.117,
+    "peak_rss_bytes": 21757952,
+    "tests_passed": 212,
     "subtests_passed": 19,
     "catalog_primary_models": 10,
     "catalog_experiment_families": 38,
-    "cad_entrypoints_checked": 89,
+    "cad_entrypoints_checked": 91,
     "lint": "pass",
     "warnings": [],
     "cleanup_complete": true
   },
   "visual_evidence": {
     "review_assembly": {
-      "producer_job_id": "20260724T082056-atomic-refactor-final-review-assembly-ac5c8ca527",
-      "step_sha256": "cfd4ad3b239be2749208408355a03d6664b637ef69564a3bd4267ca6a982ec12",
-      "sidecar_job_id": "20260724T082106-text-to-cad-artifacts-9f8b4acb3a",
-      "sidecar_sha256": "94c143c9bed1665dbc89965896dd6521ca6632c64cc8c0ae18d83e9f4cfd54bd"
+      "producer_job_id": "20260724T113117-atomic-refactor-landing-review-assembly-2522dc3ed1",
+      "step_sha256": "a1211ad078100f61ac66d158003ac5cbb1b01775aea829f05761f050c7e96684",
+      "attestation_sha256": "30387b5bb64e24ee285f882d83f13411557ee1501f288ee7b145847102d1b271",
+      "sidecar_job_id": "20260724T113152-atomic-refactor-landing-sidecar-91cd8b552e",
+      "sidecar_sha256": "5914ddf73a3fbdd683c2ab9c1eb947a1244288c68bd33635cd91e581cb9a5639"
     },
     "viewer": {
-      "recorded_at": "2026-07-24T08:22:19.929392+00:00",
+      "recorded_at": "2026-07-24T11:32:40.901432+00:00",
       "viewer_version": "0.3.9",
       "backend": "local-fs",
       "step_artifact_generation_available": false,
-      "url": "http://127.0.0.1:4178/?dir=%2FUsers%2Fjaspercurry%2F.codex%2Fworktrees%2F5caf%2FCAD+-+Enclosure%2Fbuild%2Fworkbench%2Fatomic_characterization_refactor%2Ffinal&file=variant_r_review_assembly.step"
+      "url": "http://127.0.0.1:4178/?dir=%2FUsers%2Fjaspercurry%2F.codex%2Fworktrees%2F5caf%2FCAD+-+Enclosure%2Fbuild%2Fworkbench%2Fatomic_characterization_refactor%2Flanding&file=variant-r-review.step"
     },
     "snapshot": {
-      "job_id": "20260724T082321-text-to-cad-artifacts-bf297483aa",
-      "elapsed_seconds": 3.617,
-      "peak_rss_bytes": 1521238016,
-      "provenance_sha256": "7f1162aad8b206e2f2ba3bf0631bb5b25d09be851b6c3ac945ca740b49a9ece6",
+      "job_id": "20260724T113322-atomic-refactor-landing-snapshot-292020a205",
+      "elapsed_seconds": 3.625,
+      "peak_rss_bytes": 1528430592,
+      "provenance_sha256": "e61f1958f659986061fe071c3a04bf0428e80d6dc55ff77b6c22cb838ac0e27f",
       "overview_sha256": "9150298aca8a3ed8752708f338d65d2e4271ef67ddde1e2a26177ea3ef33620d",
       "bottom_detail_sha256": "73b5eeb409448abe554091c644fce963db483cc7725eaf2964e1478c3bb0f987"
     },
     "agent_attestation": {
       "reviewed_by": "Codex implementation owner /root",
-      "reviewed_at_utc": "2026-07-24T08:28:15Z",
+      "reviewed_at_utc": "2026-07-24T11:34:00Z",
       "review_method": "direct inspection of the exact Snapshot PNG outputs rendered from the hash-bound review STEP and sidecar; no browser automation",
       "overview_observation": "the assembled Variant R envelope, removable front, driver opening, port and visible perimeter seam are present with no visibly detached or misplaced body",
-      "bottom_observation": "the preserved imperfect lower/front contour is visible and no body is visibly detached or misplaced",
+      "bottom_observation": "the preserved imperfect lower/front contour is visible and no body is visibly detached or misplaced; both Snapshot hashes are byte-identical to the prior inspected continuity images",
       "measurement_disclaimer": "visual observations do not establish dimensions, clearance, overlap, validity or printability; those claims come only from deterministic geometry evidence",
       "human_attestation": "not supplied; the Viewer link is provided for optional human inspection"
     }
