@@ -130,9 +130,9 @@
   ],
   "iteration_id": "cad-feedback-loop-rollout",
   "model_id": "exp-190x210-single-oval-port",
-  "next_action": "Keep branch unmerged and present it for a coordinator-requested draft process PR when authorized",
-  "objective": "Separate production STEP export from review generation and exercise staged hash-bound verification/cache rollout without geometry changes",
-  "open_question": "None; residual risks are recorded and non-actionable for this contained rollout",
+  "next_action": "Do not use this archived ledger as a live gate; begin a new revision for new work",
+  "objective": "Historical rollout snapshot: separate production STEP export from review generation and exercise staged hash-bound verification/cache rollout without geometry changes",
+  "open_question": "Historical record only; derived build evidence is intentionally absent from clean checkouts",
   "revision": 5,
   "schema_version": 1,
   "sources": [

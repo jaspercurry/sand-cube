@@ -50,3 +50,13 @@
 - 2026-07-23: The same independent reviewer inspected the exact amended diff at
   `7afb9168eef12100560e5e2b3e3465daa6026025`, reran 82 focused tests and all
   policy checks, and reported no actionable findings.
+- 2026-07-24: The reviewed six-commit rollout was replayed without conflict on
+  current `origin/main` base
+  `143c799bd1463589fd90bc69cfb58370ac487b39`. The 190 mm Le Cleac'h horn
+  subtree and model catalog remained byte-identical to that base, PR #2 was
+  absent, and the combined lightweight suite passed.
+- 2026-07-24: Main-integration review found that `state.json` still presented
+  the original worktree's ignored `build/` evidence as a live final-stage
+  ledger. It was renamed `historical-state.json`, its resume fields now say
+  explicitly that clean checkouts do not contain the derived evidence, and no
+  generated artifact was committed.

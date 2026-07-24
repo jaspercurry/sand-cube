@@ -112,7 +112,12 @@ evidence.
   96 tests passed before the final visual-lineage addition; the rollout file
   then passed 7 tests and Ruff, and the final full suite included that test.
 - Native reusable geometry fixture entrypoint through `cad_runner`: passed.
-- Exact workflow-state hash validation: current through `release_passed`.
+- In the original supervised rollout worktree, exact workflow-state hash
+  validation was current through `release_passed`. The committed ledger is now
+  named `historical-state.json`: its hash-bound `build/` evidence remains
+  intentionally uncommitted and therefore absent from a clean checkout. Start
+  a new live revision for future work rather than treating that historical
+  snapshot as a current gate.
 - `git diff --check`: passed before final review preparation.
 
 Two focused-test attempts named nonexistent test files and collected no tests;
