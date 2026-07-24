@@ -10,12 +10,12 @@
   flat-bottom closure, including its known imperfect/missing-material
   relationship. Establish only an explicit independent future Variant I
   interface; create no Variant I geometry.
-- Next atom: commit the explicit coherent-brace dependency in the narrowed
-  base-only producer and run it from a clean source state. Require its base STEP
-  and complete loaded-source attestation before the standalone validator can
-  run. Compare that produced base with the historical accepted input before
-  accepting candidate geometry. After that, extract the remaining
-  measurement/export adapters and correct stale current-status projections.
+- Next atom: commit and run the immutable `789cf7f` base producer recipe from
+  a clean current source state. It must archive that exact Git tree, apply the
+  committed capture-only overlay, publish the base through the current
+  `cad_runner` job, and attest the historical child plus current orchestrator
+  source closures. Compare that output with the historical accepted input
+  before the standalone validator can run.
 - Last equivalence evidence: Atom 03 generation job
   `20260724T023918-atomic-refactor-atom-03-geometry-06d4fd8a26` and strict
   job
@@ -35,7 +35,16 @@
   194 faces and 1,307,808.9213077368 mm³, while that wrong candidate has 230
   faces and 1,154,161.763662898 mm³. The producer now passes the exact
   coherent-brace builder explicitly instead of relying on the inherited
-  runtime patch; it has not rerun. Atom 03 itself is equivalent:
+  runtime patch. That current-source recomposition was also rejected: it
+  remained 13,379.9953175602 mm³ short. A capture-only overlay at exact
+  geometry commit `789cf7f` then produced STEP
+  `46b0cde6306050b413923f1ca8a4b6b65c823e497fd63be7dd638b95701e75a4`;
+  job `20260724T042646-historical-789-base-equivalence-d5f150a2ff`
+  proved its full ISO-10303 DATA section byte-identical to historical accepted
+  hash `441cc122...` and all topology/mass properties exact. The generic OCCT
+  symmetric difference was unstable for the separately imported coincident
+  copies and remains recorded, not hidden. The clean immutable producer recipe
+  is implemented but not yet rerun. Atom 03 itself is equivalent:
   native-free checks pass (197 tests and 19 subtests, 87 entrypoints, catalog
   and scoped lint), and the strict native gate found zero material delta. The
   Phase-A rail blocker is historical; commit `e715300` repaired it before the

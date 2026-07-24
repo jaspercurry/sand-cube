@@ -2823,58 +2823,6 @@ def _cutaway(
     )
 
 
-def generate_authoritative_base_input(
-    output_directory: Path,
-    *,
-    base_builder: Any,
-) -> dict[str, Any]:
-    """Publish only the full-detail enclosure input consumed by Variant R.
-
-    This is the authoritative producer boundary for downstream enclosure
-    variants.  It intentionally skips the single-oval-port assembly previews
-    and component exports, none of which contribute material to this base.
-    """
-
-    output_directory.mkdir(parents=True, exist_ok=True)
-    _, provisional_brace_clearance = _path_solids(
-        185.0,
-        outer_extra=D.brace_port_clearance,
-    )
-    _, provisional_install_clearance = _path_solids(
-        185.0,
-        outer_extra=D.tube_install_clearance,
-    )
-    base = base_builder(
-        provisional_brace_clearance,
-        provisional_install_clearance,
-    )
-    path = output_directory / "sand_cube_190x210_single_oval_port_base.step"
-    export_step(base, path, unit=Unit.MM, write_pcurves=True)
-    imported = import_step(path)
-    result = {
-        "path": str(path),
-        "source_solid_count": len(base.solids()),
-        "imported_solid_count": len(imported.solids()),
-        "all_source_solids_valid": all(
-            solid.is_valid for solid in base.solids()
-        ),
-        "all_imported_solids_valid": all(
-            solid.is_valid for solid in imported.solids()
-        ),
-    }
-    if result != {
-        "path": str(path),
-        "source_solid_count": 1,
-        "imported_solid_count": 1,
-        "all_source_solids_valid": True,
-        "all_imported_solids_valid": True,
-    }:
-        raise ValueError(
-            f"Authoritative Variant R base STEP round trip failed: {result}"
-        )
-    return result
-
-
 def generate() -> dict[str, Any]:
     OUT.mkdir(parents=True, exist_ok=True)
     provisional_airway, provisional_outer = _path_solids(185.0)
