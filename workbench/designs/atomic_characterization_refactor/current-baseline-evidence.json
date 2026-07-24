@@ -10,40 +10,33 @@
   },
   "source": {
     "path": "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle/generate_sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle.py",
-    "sha256": "d67d011f3a1be1bf563786befb1af09fe74e4438e061abf670f0f3aef7cc0e62"
+    "sha256": "6d8072eb32a1e86b54528fe80144155d0fc2b9d0996bdc76a8168c06e4c91f0c"
   },
   "validator": {
     "path": "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle/validate_simple_tongue_groove_baffle.py",
-    "sha256": "947c02b451f1a36ed05622c7b79a8751ea48311887bf6f555420b3363e1ceb74"
+    "sha256": "13e0dc227c64cfaa555e0a709ba7220c373319c5289f23bd3769aee871e7ddef"
   },
   "authoritative_base_input": {
-    "path": "build/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle/sand_cube_190x210_single_oval_port_base.step",
-    "sha256": "441cc122c0383da257b16e80c4b424096f33b267cc95cab9d1278fb05a43a784",
-    "step_data_section_sha256": "70e59fc0af103d742578567164a15c9ecb89532b550f15231be898c699b91c03",
-    "producer_entrypoint": "scripts/generate_variant_r.py",
-    "producer_job_id": "20260724T071800-atomic-refactor-final-producer-fa1def52ae",
-    "producer_attestation_sha256": "0d2ae5c45e9d866f8ed56fdded044b7682996fbb9a3523dc56771e70823c1136",
-    "complete_loaded_repo_source_count": 57,
-    "loaded_generator_stage_count": 33,
-    "clean_checkout_reproducible": true
+    "path": "build/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_lightweight_coherent_closure/sand_cube_190x210_single_oval_port_base.step",
+    "sha256": "441cc122c0383da257b16e80c4b424096f33b267cc95cab9d1278fb05a43a784"
   },
   "generation": {
-    "job_id": "20260724T071935-atomic-refactor-final-release-5a33762429",
-    "elapsed_seconds": 1471.811,
-    "peak_rss_bytes": 1382973440,
+    "job_id": "20260723T231130-atomic-refactor-current-baseline-correct-input-593db9d217",
+    "elapsed_seconds": 1482.206,
+    "peak_rss_bytes": 1400373248,
     "outputs": 10,
     "cleanup_complete": true,
-    "bucket_sha256": "d3cb808b5dcec90241ec00ba7b195cea27b94fa81cdd99729a5b6440461673da",
-    "baffle_sha256": "051653a63bf5114d987d646c1de7e5cc239e07aa6d19eed80c94bfb5e8b35853",
-    "diagnostics_sha256": "591b3c65e7b962d8b35a73e0721d9dd9036e8b907f76a85468697b17b0dbbd76"
+    "bucket_sha256": "28fd38ea7e1e1ee09e192d95f4b81b74e5ced7c3d960d8973ec2f79a9e98cbc5",
+    "baffle_sha256": "f91e0da2c57b56ad77010b85e3f7be79cf0176f59bc7b8da82af7d9c9b97c788",
+    "diagnostics_sha256": "086e73b9c9898b3c8bee79576e32e875f2e4ecf59da61f946a30e0b59ea7dd74"
   },
   "equivalence": {
-    "job_id": "20260724T074434-atomic-refactor-final-strict-0e704345d5",
-    "elapsed_seconds": 2069.819,
-    "peak_rss_bytes": 2446458880,
+    "job_id": "20260723T234005-atomic-refactor-baseline-equivalence-008f589a51",
+    "elapsed_seconds": 2111.745,
+    "peak_rss_bytes": 2492252160,
     "cleanup_complete": true,
-    "derived_report": "build/workbench/atomic_characterization_refactor/final/strict-equivalence.json",
-    "derived_report_sha256": "245276011ab4a5cbc3397f250c5d61d54c5b4420138bd138f22b86fc5d8cc4a1",
+    "derived_report": "build/workbench/atomic_characterization_refactor/current-baseline/equivalence.json",
+    "derived_report_sha256": "6727ff1a79795d23fc9f05234f2732ee6c77c09ca275502a9d0d1f1e79161984",
     "normalized_diagnostics_equal": true,
     "bucket_baffle_intersection_mm3": 0.0,
     "full_parts_and_protected_sections_compared": 8,

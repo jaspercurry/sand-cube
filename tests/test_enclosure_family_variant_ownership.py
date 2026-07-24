@@ -249,6 +249,10 @@ def test_variant_r_release_attestation_binds_loaded_sources_and_artifacts(
         release_entrypoint=release_entrypoint,
         authoritative_base_input={"sha256": "base"},
         artifact_filenames=("bucket.step",),
+        release_job_identity={
+            "job_id": "release-job",
+            "job_record": {"sha256": "1" * 64},
+        },
     )
     assert payload["attestation_kind"] == "variant_r_coordinated_release"
     assert payload["git"]["head"] == "candidate"
@@ -261,6 +265,7 @@ def test_variant_r_release_attestation_binds_loaded_sources_and_artifacts(
     assert payload["release_artifacts"][0]["sha256"] == hashlib.sha256(
         b"bucket"
     ).hexdigest()
+    assert payload["release_job"]["job_record"]["sha256"] == "1" * 64
     assert (output / RELEASE_ATTESTATION_FILENAME).is_file()
 
 

@@ -1,9 +1,9 @@
 """Post-geometry release evidence for Variant R.
 
-The active validator imports this module only after every native geometry,
-validation, export, and STEP round-trip operation has completed.  Keeping
-release-only names and allocations here makes provenance observational with
-respect to the serialized legacy geometry path.
+A separate coordinated evidence job imports this module only after the release
+geometry job has completed. Keeping release-only names and allocations here
+makes provenance observational with respect to the serialized legacy geometry
+path.
 """
 
 from __future__ import annotations
@@ -41,6 +41,7 @@ def write_release_attestation(
     attestation_output: Path | None = None,
     evidence_entrypoint: Path | None = None,
     release_git_identity: dict[str, Any] | None = None,
+    release_job_identity: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Bind a completed coordinated release to its sources and artifacts."""
 
@@ -52,8 +53,16 @@ def write_release_attestation(
             "Variant R release attestation requires a clean tracked source state"
         )
     release_git = release_git_identity or evidence_git_identity
-    if release_git.get("tracked_source_dirty"):
+    if release_git.get("tracked_source_dirty") is True:
         raise RuntimeError("Variant R release was not produced from clean source")
+    if (
+        release_git_identity is not None
+        and release_git.get("dependency_source_bytes_match_commit") is not True
+    ):
+        raise RuntimeError(
+            "Variant R release dependencies were not verified at the "
+            "asserted release commit"
+        )
     release_source = release_entrypoint.resolve()
     if runtime_sources is None:
         sources = collect_loaded_repo_sources(
@@ -134,6 +143,7 @@ def write_release_attestation(
             "unrelated runtime caches excluded"
         ),
         "git": release_git,
+        "release_job": release_job_identity,
         "toolchain": {
             "python": platform.python_version(),
             "build123d": _package_version("build123d"),
