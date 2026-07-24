@@ -19,13 +19,11 @@ from cad_runner.entrypoint import ensure_coordinated as _ensure_cad_coordinated
 
 _ensure_cad_coordinated(__name__, __file__, _CAD_SAFETY_ROOT)
 
-import json
 import os
 from pathlib import Path
 import subprocess
 import sys
 import tarfile
-import tempfile
 
 from cad_runner.outputs import job_output_path  # noqa: E402
 from src.enclosure_family.variant_r.historical_capture import (  # noqa: E402
@@ -38,9 +36,6 @@ from src.enclosure_family.variant_r.historical_capture import (  # noqa: E402
 from src.enclosure_family.variant_r.inputs import (  # noqa: E402
     AUTHORITATIVE_BASE_FILENAME,
     model_output_directory,
-)
-from src.enclosure_family.variant_r.provenance import (  # noqa: E402
-    write_producer_attestation,
 )
 
 
@@ -76,54 +71,50 @@ def _extract_historical_source(destination: Path) -> None:
 def main() -> None:
     """Produce the exact accepted base from its immutable source revision."""
 
+    parent_stage = Path(os.environ["CAD_JOB_STAGE_ROOT"]).resolve()
     output_directory = job_output_path(
         model_output_directory(_CAD_SAFETY_ROOT)
     )
     output_directory.mkdir(parents=True, exist_ok=True)
     base_step = output_directory / AUTHORITATIVE_BASE_FILENAME
-    with tempfile.TemporaryDirectory(
-        prefix="variant-r-historical-producer-"
-    ) as temporary:
-        temporary_root = Path(temporary)
-        historical_root = temporary_root / "repo"
-        historical_root.mkdir()
-        _extract_historical_source(historical_root)
-        apply_capture_overlay(historical_root)
-        closure_path = temporary_root / "loaded-source-closure.json"
-        historical_stage = temporary_root / "historical-stage"
-        historical_stage.mkdir()
-        environment = os.environ.copy()
-        environment[CAPTURE_OUTPUT_ENV] = str(base_step)
-        environment["CAD_JOB_REPO_ROOT"] = str(historical_root)
-        environment["CAD_JOB_STAGE_ROOT"] = str(historical_stage)
-        subprocess.run(
-            (
-                sys.executable,
-                str(
-                    _CAD_SAFETY_ROOT
-                    / "scripts"
-                    / "run_historical_variant_r_base_capture.py"
-                ),
-                "--historical-root",
-                str(historical_root),
-                "--historical-entrypoint",
-                str(historical_root / HISTORICAL_VARIANT_R_GENERATOR),
-                "--closure-out",
-                str(closure_path),
-            ),
-            cwd=historical_root,
-            env=environment,
-            check=True,
-        )
-        closure = json.loads(closure_path.read_text(encoding="utf-8"))
-    write_producer_attestation(
-        repo_root=_CAD_SAFETY_ROOT,
-        output_directory=output_directory,
-        producer_entrypoint=_CadSafetyPath(__file__),
-        historical_sources=closure["sources"],
-        geometry_source_commit=GEOMETRY_SOURCE_COMMIT,
-        capture_overlay_sha256=capture_overlay_sha256(),
+    historical_workspace = parent_stage.parent / "historical-producer"
+    historical_workspace.mkdir()
+    historical_root = historical_workspace / "repo"
+    historical_root.mkdir()
+    _extract_historical_source(historical_root)
+    apply_capture_overlay(historical_root)
+    historical_stage = historical_workspace / "stage"
+    historical_stage.mkdir()
+    environment = os.environ.copy()
+    environment[CAPTURE_OUTPUT_ENV] = str(base_step)
+    environment["CAD_JOB_REPO_ROOT"] = str(historical_root)
+    environment["CAD_JOB_STAGE_ROOT"] = str(historical_stage)
+    arguments = (
+        sys.executable,
+        str(
+            _CAD_SAFETY_ROOT
+            / "scripts"
+            / "run_historical_variant_r_base_capture.py"
+        ),
+        "--historical-root",
+        str(historical_root),
+        "--historical-entrypoint",
+        str(historical_root / HISTORICAL_VARIANT_R_GENERATOR),
+        "--current-root",
+        str(_CAD_SAFETY_ROOT),
+        "--current-entrypoint",
+        str(Path(__file__).resolve()),
+        "--output-directory",
+        str(output_directory),
+        "--parent-stage-root",
+        str(parent_stage),
+        "--geometry-source-commit",
+        GEOMETRY_SOURCE_COMMIT,
+        "--capture-overlay-sha256",
+        capture_overlay_sha256(),
     )
+    os.chdir(historical_root)
+    os.execve(sys.executable, arguments, environment)
 
 
 if __name__ == "__main__":
