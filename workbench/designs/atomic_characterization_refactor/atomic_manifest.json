@@ -228,8 +228,11 @@
       "bucket_sha256": "0819df604de6e1c0de7fd43cbfb523112ccf22a209ee2d864bf9e0fd64728c49",
       "baffle_sha256": "622065592b3bcd246d1c229d75a9b24740db7b8abe1765a37154ed9e10319fd0",
       "diagnostics_sha256": "f8dbefc9191eef3b62eeca066fd12c515c5f46a0d2dad9b9588e93241056219e",
-      "release_attestation_sha256": "05b388a7ed5369a6a31b6d1013eda02cc05e877add0942d40fff2ddb0d0fa5d6",
-      "release_source_closure_record_sha256": "2990f90b737d567f77092c68e551790f99ddcf201e61f1e45c0195404f288c7e"
+      "release_attestation_sha256": "7ea684fe77da63209ff8ab42c4e826e1f020162aa75e0ca08b5095598cbc43eb",
+      "release_source_closure_record_sha256": "03267fcc345f794e7bd71101a4b04a00bc3f6bdc040e2d7977143b24c506dcb6",
+      "release_job_record_sha256": "ca4ba25aad74f40ea0ddd0259c9eeac88204dfcf62d254b6d7d1d40741b48463",
+      "release_dependency_bytes_verified_at_commit": true,
+      "release_whole_tree_cleanliness_recorded": false
     },
     "equivalence": {
       "job_id": "20260724T105504-atomic-refactor-landing-strict-a9945e2f37",
@@ -339,7 +342,7 @@
         "final_generation_job": "20260724T102722-atomic-refactor-landing-restored-release-52bd80460c",
         "final_geometry_checkpoint_job": "20260724T105504-atomic-refactor-landing-strict-a9945e2f37",
         "final_strict_report_sha256": "2cc8b236ce40502642cade4c0d04a57a86792eec530992d3eba84891cf3fe645",
-        "lightweight_checks": "212 tests and 19 subtests; 91 entrypoints; catalog and lint pass in job 20260724T114341-atomic-refactor-landing-final-lightweight-a08026447e",
+        "lightweight_checks": "212 tests and 19 subtests; 91 entrypoints; catalog and lint pass in job 20260724T115821-atomic-refactor-review-fixes-lightweight-3f0e3043be",
         "equivalent": true,
         "geometry_changed": false,
         "variant_i_coupling": false

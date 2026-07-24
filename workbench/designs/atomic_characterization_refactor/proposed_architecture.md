@@ -44,8 +44,10 @@ The active geometry leaf is retained as a compatibility adapter while the
 accepted construction foundation is reproduced from exact commit `789cf7f`.
 It no longer owns parameters, seam policy, lower material composition,
 retention alternatives, evidence policy or artifact publication. Its remaining
-deep ancestry is contained behind the explicit immutable foundation producer
-and `VariantRFoundation`; new owners import no experiment module.
+deep ancestry and visible serialized temporary bindings are contained behind
+the explicit immutable foundation producer and `VariantRFoundation`; new owners
+import no experiment module. Removing that inherited binding mechanism requires
+a separate cascade rewrite and is not represented as complete in this landing.
 
 ## Family and variant boundaries
 
@@ -80,8 +82,10 @@ canonicalizing only the accepted `FILE_NAME` timestamp. The real job time stays
 in the attestation. Release evidence runs after geometry in a separate
 coordinated process so evidence allocation cannot perturb the serialized legacy
 build. Separate committed producer and release closure projections record every
-loaded dependency, the clean release commit and all nine model artifact hashes
-rather than relying on ignored `build/` artifacts.
+loaded dependency, the exact release commit and job JSON, and all nine model
+artifact hashes rather than relying on ignored `build/` artifacts. The release
+job predates whole-tree-state recording, so the projection truthfully verifies
+every dependency byte at the commit without claiming an unrecorded clean tree.
 
 ## Deferred geometry work
 

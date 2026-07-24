@@ -21,8 +21,8 @@ been created, and no deferred component has been integrated.
 - `variant-r-producer-source-closure.json` — committed projection of the exact
   authoritative-input producer, toolchain and complete live source closure
 - `variant-r-release-source-closure.json` — committed projection of the exact
-  clean release commit, nine bound model artifacts and all loaded release
-  dependencies
+  release commit, release-job JSON, nine bound model artifacts and all loaded
+  release dependencies
 - `final-acceptance-evidence.json` — compact final jobs, measurements, hashes,
   visual provenance and review disposition
 - `render_phase_a_reports.py` — deterministic Markdown projection
@@ -60,10 +60,13 @@ file serialization, and publishes both the base and a current attestation
 through `cad_runner`. The latest producer binds 57 loaded repository sources,
 including all 33 loaded generator stages. Release evidence is collected only
 after geometry in a separate observational job, preserving the exact accepted
-validator execution path. It binds clean release commit `d114d79`, nine model
-artifacts, 62 loaded repository sources, 58 geometry/parameter sources and all
-33 loaded generator stages. The final strict job passes both complete parts and
-six protected sections with zero bidirectional material delta and unchanged
+validator execution path. It binds release commit `d114d79`, the exact release
+job record, nine model artifacts, 62 loaded repository sources, 58
+geometry/parameter sources and all 33 loaded generator stages. Every dependency
+byte is verified at that commit. The historical release job did not itself
+record whole-tree cleanliness, and the committed record says so instead of
+inventing that claim. The final strict job passes both complete parts and six
+protected sections with zero bidirectional material delta and unchanged
 diagnostics. Committed closure projections preserve those exact facts without
 treating ignored `build/` files as current.
 

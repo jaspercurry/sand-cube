@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "recorded_at": "2026-07-24T11:43:48Z",
+  "recorded_at": "2026-07-24T11:58:29Z",
   "base_commit": "c25cddb3eeafe6f6dff3b551be4ceb53d5aee9ce",
   "geometry_lineage_commit": "789cf7fb4f63d9567585198c47bc3b5b122e070f",
   "excluded_commit": {
@@ -28,7 +28,7 @@
     "doctor": "pass",
     "catalog": "pass: 10 primary models, 38 experiment families",
     "canonical_checksums": "historical Phase A check; current producer/release closures supersede the 30-path selection",
-    "lightweight": "pass: job 20260724T114341-atomic-refactor-landing-final-lightweight-a08026447e; 212 tests, 19 subtests, 91 CAD entrypoints, catalog, lint; 6.117 s; 21757952 bytes peak RSS",
+    "lightweight": "pass: job 20260724T115821-atomic-refactor-review-fixes-lightweight-3f0e3043be; 212 tests, 19 subtests, 91 CAD entrypoints, catalog, lint; 6.609 s; 21807104 bytes peak RSS",
     "working_tree_clean_before_workflow_records": true
   },
   "native_input": {
