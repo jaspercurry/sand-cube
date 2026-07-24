@@ -1,0 +1,74 @@
+{
+  "authority": [
+    {
+      "path": "workbench/designs/atomic_characterization_refactor/brief.md",
+      "role": "brief",
+      "sha256": "7cb5fad7514df1670ba9fd017cce0d44369564018515e3b4ec5be2c55d4bb96e",
+      "size_bytes": 26075
+    },
+    {
+      "path": "workbench/designs/atomic_characterization_refactor/contract.md",
+      "role": "contract",
+      "sha256": "7e2f0cc8a7f57e3d357e8becc3c209336c49ba8ba268c187a09f68718f471227",
+      "size_bytes": 4449
+    }
+  ],
+  "evidence": [
+    {
+      "files": [
+        {
+          "path": "workbench/designs/atomic_characterization_refactor/current-fast-checks.json",
+          "role": "fast_passed_evidence",
+          "sha256": "97c174711fdc45cdb40cb349941f137c6bf2a2a541a65976b7969f23703069b1",
+          "size_bytes": 2419
+        }
+      ],
+      "recorded_at": "2026-07-24T00:19:17.755817Z",
+      "stage": "fast_passed",
+      "summary": "Current combined-base doctor, catalog, canonical checksum, lightweight, entrypoint, and lint checks pass; the old rail blocker is not current."
+    },
+    {
+      "files": [
+        {
+          "path": "workbench/designs/variant_r_flat_bottom_synthesis/evidence_manifest.json",
+          "role": "visual_accepted_evidence",
+          "sha256": "b9fd07fe575d88cd2edd59535374de314f389aa543c35c3f404bb40d4d01ee8f",
+          "size_bytes": 6815
+        }
+      ],
+      "recorded_at": "2026-07-24T00:19:17.836093Z",
+      "stage": "visual_accepted",
+      "summary": "Inspected the exact source-bound accepted isometric and isolated baffle Snapshots; the imperfect flat-bottom relationship is the protected baseline."
+    },
+    {
+      "files": [
+        {
+          "path": "workbench/designs/atomic_characterization_refactor/current-baseline-evidence.json",
+          "role": "fit_passed_evidence",
+          "sha256": "49fde0df6ac7fd7b266b4ce41f53d4e9b52f40f2e2fe935f493d4dd0ea586972",
+          "size_bytes": 4010
+        }
+      ],
+      "recorded_at": "2026-07-24T00:19:17.920235Z",
+      "stage": "fit_passed",
+      "summary": "Current combined-base Variant R bucket, baffle, and six protected sections reproduce the accepted geometry with zero bidirectional material delta and zero overlap."
+    }
+  ],
+  "iteration_id": "atomic-characterization-refactor",
+  "model_id": "development-190x210-tongue-groove",
+  "next_action": "Extract the native-free Variant R parameter and print-contract boundary plus the independent future Variant I interface.",
+  "objective": "Refactor the accepted current Variant R enclosure and baffle into explicit atomic owners without changing geometry, while reserving an independent future Variant I boundary.",
+  "open_question": "Can each ownership extraction preserve this exact accepted geometry and remove hidden coupling without creating Variant I geometry?",
+  "revision": 2,
+  "schema_version": 1,
+  "sources": [
+    {
+      "path": "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle/generate_sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle.py",
+      "role": "source",
+      "sha256": "6d8072eb32a1e86b54528fe80144155d0fc2b9d0996bdc76a8168c06e4c91f0c",
+      "size_bytes": 46015
+    }
+  ],
+  "stage": "fit_passed",
+  "updated_at": "2026-07-24T00:19:17.920235Z"
+}

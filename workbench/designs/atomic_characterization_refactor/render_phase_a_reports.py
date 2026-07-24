@@ -123,8 +123,19 @@ def render_inventory(data: dict[str, Any]) -> None:
 
 
 def render_atoms(data: dict[str, Any]) -> None:
+    current = data.get("current_refactor_execution")
     body = [
         "Authority: `atomic_manifest.json`.",
+        *(
+            [
+                "",
+                f"Current execution overlay: **{_cell(current['status'])}**. "
+                "Rows retain historical characterization; the overlay supersedes "
+                "old operational blocker wording.",
+            ]
+            if current
+            else []
+        ),
         "",
         "| Semantic ID | Owner | Current owner/source | Dependencies | Mates | Baseline | Shareability | Readiness | Conflicts |",
         "|---|---|---|---|---|---|---|---|---|",
@@ -159,9 +170,20 @@ def render_atoms(data: dict[str, Any]) -> None:
 
 
 def render_compatibility(data: dict[str, Any]) -> None:
+    current = data.get("current_refactor_execution")
     body = [
         "Authority: the `compatibility_class` and `comparison` fields for each "
         "atom in `atomic_manifest.json`.",
+        *(
+            [
+                "",
+                f"Current execution overlay: **{_cell(current['status'])}**. "
+                "Historical source-readiness statements remain provenance, not "
+                "the current geometry gate.",
+            ]
+            if current
+            else []
+        ),
         "",
         "| Atom | Classification | Variant comparison | Later-synthesis blocker |",
         "|---|---|---|---|",
@@ -203,8 +225,42 @@ def render_dependencies(data: dict[str, Any]) -> None:
 
 def render_baseline(data: dict[str, Any]) -> None:
     baseline = data["baseline"]
+    current = data.get("current_refactor_execution")
     body = [
-        f"Checkpoint status: **{_cell(baseline['status'])}**.",
+        *(
+            [
+                f"Current checkpoint status: **{_cell(current['status'])}**.",
+                "",
+                "## Current combined-base reproduction",
+                "",
+                f"- Exact base: `{current['exact_base']}`",
+                f"- Current source: `{current['current_source']['path']}`",
+                f"- Source SHA-256: `{current['current_source']['sha256']}`",
+                f"- Generation job: `{current['generation']['job_id']}`; "
+                f"{current['generation']['elapsed_seconds']} s; "
+                f"{current['generation']['peak_rss_bytes']} bytes peak RSS",
+                f"- Equivalence job: `{current['equivalence']['job_id']}`; "
+                f"{current['equivalence']['elapsed_seconds']} s; "
+                f"{current['equivalence']['peak_rss_bytes']} bytes peak RSS",
+                f"- Full parts/protected sections: "
+                f"{current['equivalence']['full_parts_and_protected_sections']}; "
+                f"all equivalent: {_cell(current['equivalence']['all_equivalent'])}",
+                f"- Maximum removed/added material: "
+                f"{current['equivalence']['max_removed_material_mm3']} / "
+                f"{current['equivalence']['max_added_material_mm3']} mm³",
+                f"- Bucket/baffle overlap: "
+                f"{current['equivalence']['bucket_baffle_overlap_mm3']} mm³",
+                f"- STEP round-trip: {current['equivalence']['step_round_trip']}",
+                "",
+                current["protected_imperfection"],
+                "",
+                "## Historical Phase A / early Phase B baseline record",
+                "",
+            ]
+            if current
+            else []
+        ),
+        f"Historical checkpoint status: **{_cell(baseline['status'])}**.",
         "",
         "## Native source reproduction",
         "",

@@ -231,3 +231,33 @@ authoritative structured facts are in `atomic_manifest.json`.
 - Every exploratory source, viewer-adapter, alias, and validator edit was
   reverted. The committed coordinate-contract pilot remains the only Phase B
   source change.
+
+## 2026-07-23 — current combined-base baseline reproduced
+
+- Started from exact combined base
+  `c25cddb3eeafe6f6dff3b551be4ceb53d5aee9ce`; current geometry lineage
+  `789cf7fb4f63d9567585198c47bc3b5b122e070f` is present and paused PR #2
+  commit `5f5bbf3c2aca0f55f35ae734c8dc0c6004897f75` is not an ancestor.
+- Reused the pinned repository environment with Build123d 0.11.1 and OCP
+  7.9.3.1. Doctor, catalog, all 30 canonical checksums, 174 lightweight tests,
+  19 subtests, 84 CAD entrypoint checks, and lint passed without upgrades.
+- Rejected job
+  `20260723T224424-atomic-refactor-current-baseline-23a4a564a4` after its
+  named base STEP was proven to be stale dirty-primary output. It differed from
+  the accepted base by `4.6407331752 mm³`; no result from that job is baseline
+  evidence.
+- Correct-input job
+  `20260723T231130-atomic-refactor-current-baseline-correct-input-593db9d217`
+  used exact accepted base hash `441cc122...`, completed in 1482.206 seconds at
+  1,400,373,248 bytes peak RSS, published ten outputs, and cleaned up without
+  warnings or owned processes.
+- Strict comparison job
+  `20260723T234005-atomic-refactor-baseline-equivalence-008f589a51`
+  completed in 2111.745 seconds at 2,492,252,160 bytes peak RSS. Both full
+  solids and all six protected sections had matching topology/bounds/volume/
+  area/center of mass and zero removed or added material at `1e-5 mm³`.
+  Bucket/baffle overlap was zero and normalized validator/STEP-round-trip
+  diagnostics matched exactly.
+- The historical rail/equivalence blocker is therefore not current. The
+  accepted flat-bottom missing-material relationship remains baseline behavior
+  and will not be repaired during this refactor.

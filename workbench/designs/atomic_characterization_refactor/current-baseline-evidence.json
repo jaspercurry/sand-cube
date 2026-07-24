@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-07-23",
+  "status": "pass",
+  "base_commit": "c25cddb3eeafe6f6dff3b551be4ceb53d5aee9ce",
+  "geometry_lineage_commit": "789cf7fb4f63d9567585198c47bc3b5b122e070f",
+  "excluded_commit": {
+    "commit": "5f5bbf3c2aca0f55f35ae734c8dc0c6004897f75",
+    "is_ancestor": false
+  },
+  "source": {
+    "path": "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle/generate_sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle.py",
+    "sha256": "6d8072eb32a1e86b54528fe80144155d0fc2b9d0996bdc76a8168c06e4c91f0c"
+  },
+  "validator": {
+    "path": "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle/validate_simple_tongue_groove_baffle.py",
+    "sha256": "13e0dc227c64cfaa555e0a709ba7220c373319c5289f23bd3769aee871e7ddef"
+  },
+  "authoritative_base_input": {
+    "path": "build/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_lightweight_coherent_closure/sand_cube_190x210_single_oval_port_base.step",
+    "sha256": "441cc122c0383da257b16e80c4b424096f33b267cc95cab9d1278fb05a43a784"
+  },
+  "generation": {
+    "job_id": "20260723T231130-atomic-refactor-current-baseline-correct-input-593db9d217",
+    "elapsed_seconds": 1482.206,
+    "peak_rss_bytes": 1400373248,
+    "outputs": 10,
+    "cleanup_complete": true,
+    "bucket_sha256": "28fd38ea7e1e1ee09e192d95f4b81b74e5ced7c3d960d8973ec2f79a9e98cbc5",
+    "baffle_sha256": "f91e0da2c57b56ad77010b85e3f7be79cf0176f59bc7b8da82af7d9c9b97c788",
+    "diagnostics_sha256": "086e73b9c9898b3c8bee79576e32e875f2e4ecf59da61f946a30e0b59ea7dd74"
+  },
+  "equivalence": {
+    "job_id": "20260723T234005-atomic-refactor-baseline-equivalence-008f589a51",
+    "elapsed_seconds": 2111.745,
+    "peak_rss_bytes": 2492252160,
+    "cleanup_complete": true,
+    "derived_report": "build/workbench/atomic_characterization_refactor/current-baseline/equivalence.json",
+    "derived_report_sha256": "6727ff1a79795d23fc9f05234f2732ee6c77c09ca275502a9d0d1f1e79161984",
+    "normalized_diagnostics_equal": true,
+    "bucket_baffle_intersection_mm3": 0.0,
+    "full_parts_and_protected_sections_compared": 8,
+    "all_equivalent": true,
+    "max_removed_material_mm3": 0.0,
+    "max_added_material_mm3": 0.0,
+    "tolerances": {
+      "length_mm": 0.000001,
+      "volume_mm3": 0.00001,
+      "surface_area_mm2": 0.00001,
+      "center_of_mass_mm": 0.0000001,
+      "diagnostic_numeric": 0.000000001
+    },
+    "bucket": {
+      "valid": true,
+      "solid_count": 1,
+      "faces": 278,
+      "edges": 812,
+      "boundary_edges": 0,
+      "non_manifold_edges": 1,
+      "volume_mm3": 1104803.2217097448,
+      "center_of_mass_mm": [
+        -14.92700023452539,
+        36.51459295344781,
+        -7.473090581884291
+      ]
+    },
+    "baffle": {
+      "valid": true,
+      "solid_count": 1,
+      "faces": 103,
+      "edges": 282,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "volume_mm3": 222294.67306945327,
+      "center_of_mass_mm": [
+        -0.09004531461358915,
+        -85.65403891203374,
+        1.7971085533089008
+      ]
+    },
+    "step_round_trip": "pass for bucket, baffle, and all six validator sections; normalized validator diagnostics match the accepted reference"
+  },
+  "rejected_input_run": {
+    "job_id": "20260723T224424-atomic-refactor-current-baseline-23a4a564a4",
+    "input_sha256": "c2c63ddb7a303f5c50c10d48c4c77e5046e377b39b5bc1e61e1b997a85b1774c",
+    "reason": "stale dirty-primary artifact; rejected after a 4.6407331752 mm3 source-base volume mismatch"
+  },
+  "interpretation": "The historical rail/equivalence blocker is not current on the combined base. The current Python source reproduces the accepted flat-bottom Variant R geometry exactly within the recorded semantic tolerances. Its known imperfect missing-material relationship is baseline behavior and remains out of scope for this refactor."
+}

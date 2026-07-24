@@ -4,6 +4,8 @@
 
 Authority: the `compatibility_class` and `comparison` fields for each atom in `atomic_manifest.json`.
 
+Current execution overlay: **BASELINE_EQUIVALENT; ATOMIC EXTRACTION ACTIVE**. Historical source-readiness statements remain provenance, not the current geometry gate.
+
 | Atom | Classification | Variant comparison | Later-synthesis blocker |
 |---|---|---|---|
 | family.coordinate_contract | identical shared metadata | R sources consume the exact owner; I future intent adopts the same frame but still has no geometry | none for coordinate metadata; geometry baseline remains blocked independently |
