@@ -22,6 +22,9 @@ from typing import Any, Final
 
 from .inputs import (
     AUTHORITATIVE_BASE_FILENAME,
+    HISTORICAL_ACCEPTED_BASE_DATA_SHA256,
+    HISTORICAL_ACCEPTED_BASE_SHA256,
+    HISTORICAL_ACCEPTED_STEP_TIMESTAMP,
     PRODUCER_ATTESTATION_FILENAME,
     PRODUCER_ENTRYPOINT,
 )
@@ -222,8 +225,9 @@ def write_producer_attestation(
         "producer_entrypoint": PRODUCER_ENTRYPOINT.as_posix(),
         "producer_mode": (
             "immutable Git source archive plus capture-only overlay at the "
-            "accepted base construction boundary; unrelated preview and "
-            "component exports are excluded"
+            "accepted base construction boundary; deterministic accepted "
+            "STEP header serialization; unrelated preview and component "
+            "exports are excluded"
         ),
         "git": git_identity,
         "historical_geometry_producer": {
@@ -234,6 +238,21 @@ def write_producer_attestation(
                 "returns, verify one-solid STEP round trip, and exit before "
                 "unrelated preview generation"
             ),
+            "step_header_canonicalization": {
+                "effect": (
+                    "replace only the STEP FILE_NAME export timestamp with "
+                    "the accepted artifact timestamp after verifying the "
+                    "complete DATA payload; created_at_utc above records the "
+                    "actual producer-run time"
+                ),
+                "canonical_file_name_timestamp": (
+                    HISTORICAL_ACCEPTED_STEP_TIMESTAMP
+                ),
+                "accepted_file_sha256": HISTORICAL_ACCEPTED_BASE_SHA256,
+                "accepted_step_data_section_sha256": (
+                    HISTORICAL_ACCEPTED_BASE_DATA_SHA256
+                ),
+            },
         },
         "toolchain": {
             "python": platform.python_version(),
@@ -303,6 +322,9 @@ def verify_producer_attestation(
     if (
         identity.get("filename") != AUTHORITATIVE_BASE_FILENAME
         or identity.get("sha256") != actual_hash
+        or actual_hash != HISTORICAL_ACCEPTED_BASE_SHA256
+        or identity.get("step_data_section_sha256")
+        != HISTORICAL_ACCEPTED_BASE_DATA_SHA256
         or identity.get("bytes") != base_step.stat().st_size
     ):
         raise ValueError(
@@ -326,10 +348,17 @@ def verify_producer_attestation(
             f"tracked source state: {attestation_path}"
         )
     historical = payload.get("historical_geometry_producer", {})
+    canonicalization = historical.get("step_header_canonicalization", {})
     if (
         historical.get("source_commit") != GEOMETRY_SOURCE_COMMIT
         or historical.get("capture_overlay_sha256")
         != capture_overlay_sha256()
+        or canonicalization.get("canonical_file_name_timestamp")
+        != HISTORICAL_ACCEPTED_STEP_TIMESTAMP
+        or canonicalization.get("accepted_file_sha256")
+        != HISTORICAL_ACCEPTED_BASE_SHA256
+        or canonicalization.get("accepted_step_data_section_sha256")
+        != HISTORICAL_ACCEPTED_BASE_DATA_SHA256
     ):
         raise ValueError(
             "Variant R base was not produced by the accepted immutable "

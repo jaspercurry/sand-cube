@@ -25,6 +25,12 @@ from pathlib import Path
 import runpy
 import sys
 
+from src.enclosure_family.variant_r.historical_capture import (  # noqa: E402
+    canonicalize_accepted_step_header,
+)
+from src.enclosure_family.variant_r.inputs import (  # noqa: E402
+    AUTHORITATIVE_BASE_FILENAME,
+)
 from src.enclosure_family.variant_r.provenance import (  # noqa: E402
     collect_loaded_repo_sources,
     write_producer_attestation,
@@ -75,6 +81,10 @@ def main() -> None:
             args.parent_stage_root.resolve()
         )
         if exit_code in (None, 0):
+            canonicalize_accepted_step_header(
+                args.output_directory.resolve()
+                / AUTHORITATIVE_BASE_FILENAME
+            )
             write_producer_attestation(
                 repo_root=current_root,
                 output_directory=args.output_directory.resolve(),
