@@ -31,6 +31,7 @@ from src.enclosure_family.variant_r.inputs import (
 from src.enclosure_family.variant_r.historical_capture import (
     GEOMETRY_SOURCE_COMMIT,
     HISTORICAL_ROOT_GENERATOR,
+    canonicalize_accepted_step_header,
     capture_overlay_sha256,
 )
 from src.enclosure_family.variant_r.provenance import (
@@ -132,9 +133,21 @@ def test_variant_r_input_contract_points_to_cataloged_producer() -> None:
 
 def test_variant_r_input_attestation_rejects_a_changed_base(
     tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     base = tmp_path / AUTHORITATIVE_BASE_FILENAME
     base.write_bytes(b"accepted")
+    accepted_sha256 = hashlib.sha256(b"accepted").hexdigest()
+    monkeypatch.setattr(
+        "src.enclosure_family.variant_r.provenance."
+        "HISTORICAL_ACCEPTED_BASE_SHA256",
+        accepted_sha256,
+    )
+    monkeypatch.setattr(
+        "src.enclosure_family.variant_r.provenance."
+        "HISTORICAL_ACCEPTED_BASE_DATA_SHA256",
+        "data-hash",
+    )
     sources = [
         {
             "path": f"experiments/stage-{index}/generate.py",
@@ -151,7 +164,8 @@ def test_variant_r_input_attestation_rejects_a_changed_base(
         "git": {"tracked_source_dirty": False},
         "authoritative_base_input": {
             "filename": AUTHORITATIVE_BASE_FILENAME,
-            "sha256": hashlib.sha256(b"accepted").hexdigest(),
+            "sha256": accepted_sha256,
+            "step_data_section_sha256": "data-hash",
             "bytes": len(b"accepted"),
         },
         "runtime_dependency_closure": {
@@ -161,6 +175,13 @@ def test_variant_r_input_attestation_rejects_a_changed_base(
         "historical_geometry_producer": {
             "source_commit": GEOMETRY_SOURCE_COMMIT,
             "capture_overlay_sha256": capture_overlay_sha256(),
+            "step_header_canonicalization": {
+                "canonical_file_name_timestamp": (
+                    "2026-07-23T06:49:24"
+                ),
+                "accepted_file_sha256": accepted_sha256,
+                "accepted_step_data_section_sha256": "data-hash",
+            },
         },
     }
     attestation = tmp_path / PRODUCER_ATTESTATION_FILENAME
@@ -180,6 +201,32 @@ def test_variant_r_input_attestation_rejects_a_changed_base(
             base_step=base,
             attestation_path=attestation,
         )
+
+
+def test_accepted_step_header_canonicalization_changes_only_header(
+    tmp_path: Path,
+) -> None:
+    step = tmp_path / AUTHORITATIVE_BASE_FILENAME
+    generated = (
+        b"ISO-10303-21;\nHEADER;\n"
+        b"FILE_NAME('Open CASCADE Shape Model','2026-07-24T00:45:39',"
+        b"('Author'),('Open CASCADE'),'processor','build123d','Unknown');\n"
+        b"ENDSEC;\nDATA;\n#1 = TEST();\nENDSEC;\nEND-ISO-10303-21;\n"
+    )
+    accepted = generated.replace(
+        b"2026-07-24T00:45:39",
+        b"2026-07-23T06:49:24",
+    )
+    step.write_bytes(generated)
+    result = canonicalize_accepted_step_header(
+        step,
+        expected_sha256=hashlib.sha256(accepted).hexdigest(),
+        expected_data_sha256=hashlib.sha256(
+            accepted[accepted.index(b"DATA;") :]
+        ).hexdigest(),
+    )
+    assert step.read_bytes() == accepted
+    assert result["canonical_file_name_timestamp"] == "2026-07-23T06:49:24"
 
 
 def test_legacy_runtime_binding_is_scoped_and_exactly_restored() -> None:

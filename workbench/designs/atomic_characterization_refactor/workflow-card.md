@@ -10,9 +10,10 @@
   flat-bottom closure, including its known imperfect/missing-material
   relationship. Establish only an explicit independent future Variant I
   interface; create no Variant I geometry.
-- Next atom: commit the STEP DATA-section diagnostic identity, rerun the
-  immutable producer from that clean source state, and execute the standalone
-  Variant R validator plus the strict full-part/protected-section comparison.
+- Next atom: commit the accepted STEP header canonicalization, rerun the
+  immutable producer from that clean source state, confirm its output is
+  byte-identical to the historical accepted input, then rerun the standalone
+  Variant R validator and strict full-part/protected-section comparison.
 - Last equivalence evidence: immutable producer job
   `20260724T043741-atomic-refactor-atom-04-immutable-producer-6606929bc5`
   and base-equivalence job
@@ -22,7 +23,16 @@
   mass to the historical accepted input. Its attestation binds 57 loaded
   repository sources, including all 33 loaded generator stages, to exact
   commits and hashes. The raw STEP hash differs only in export metadata.
-- Current blocker: none. Historical rejected diagnostics remain preserved:
+- Current blocker: the first strict Atom 04 comparison job
+  `20260724T051716-atomic-refactor-atom-04-strict-equivalence-652ce28c58`
+  rejected three tiny downstream diagnostic differences after rebuilding from
+  the DATA-identical but newly timestamped STEP: bucket volume differed by
+  `0.0003549875 mm³`, Y span by `0.0000003974 mm`, and rear Y difference by
+  `0.0000003973 mm`. No tolerance was widened. The producer now canonicalizes
+  only the generated STEP `FILE_NAME` timestamp to the accepted serialization
+  after exact DATA verification, while the attestation retains the real job
+  creation time. Rerun from clean committed source before accepting it.
+  Earlier historical rejected diagnostics also remain preserved:
   the first full-cascade producer attempt
   `20260724T035352-atomic-refactor-atom-04-authoritative-producer-0a43bf5466`
   failed safely before publication because its unrelated cutaway preview
