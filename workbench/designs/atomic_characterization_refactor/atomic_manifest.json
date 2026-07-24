@@ -352,6 +352,15 @@
     "known_compatibility_limitation": "The accepted leaf and standalone validator retain visible serialized temporary bindings into the historical cascade. One RLock, exact restoration checks, two-build deterministic diagnostics, strict equivalence, coordinated entrypoint enforcement and concurrency_limit=1 bound the current risk. Replacing the mechanism is a separately scoped cascade rewrite, not completed here.",
     "protected_imperfection": "The accepted current flat-bottom missing-material relationship is baseline behavior. Do not repair or reconcile it in this refactor.",
     "final_acceptance_record": "final-acceptance-evidence.json",
+    "independent_review": {
+      "record": "independent-review.md",
+      "reviewed_candidate_commit": "e1c22b75ec20a86bf576490f224c2b6bea919f92",
+      "blockers": 0,
+      "should_fix": 0,
+      "nits": 0,
+      "unresolved_actionable_findings": 0,
+      "disposition": "ready to land within the agreed no-geometry-change scope"
+    },
     "visual_evidence": {
       "viewer_artifact_sha256": "a1211ad078100f61ac66d158003ac5cbb1b01775aea829f05761f050c7e96684",
       "sidecar_sha256": "5914ddf73a3fbdd683c2ab9c1eb947a1244288c68bd33635cd91e581cb9a5639",

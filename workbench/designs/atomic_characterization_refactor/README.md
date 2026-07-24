@@ -1,7 +1,8 @@
 # Atomic characterization/refactor
 
-Status: **Phase B implementation, strict final acceptance, and exact visual
-review are complete; independent adversarial review is pending.**
+Status: **Phase B implementation, strict final acceptance, exact visual review,
+and independent adversarial re-review are complete with no unresolved
+actionable findings in the agreed landing scope.**
 
 The user accepted the Phase A visual evidence and authorized Phase B. The
 metadata-only `family.coordinate_contract` pilot is complete. The user then
@@ -25,6 +26,8 @@ been created, and no deferred component has been integrated.
   release dependencies
 - `final-acceptance-evidence.json` — compact final jobs, measurements, hashes,
   visual provenance and review disposition
+- `independent-review.md` — initial findings, amendments, and final
+  no-unresolved-findings disposition
 - `render_phase_a_reports.py` — deterministic Markdown projection
 - `coordinate_contract.json` — staged verification contract for the first atom
 

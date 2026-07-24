@@ -473,3 +473,20 @@ authoritative structured facts are in `atomic_manifest.json`.
   inspected overview `9150298...` and bottom detail `73b5eeb...`, byte-identical
   to the prior continuity images. The bottom imperfection remains intentionally
   preserved. No human visual attestation has been supplied.
+
+## 2026-07-24 — independent adversarial landing review
+
+- Initial read-only review of exact base `c25cddb...` to candidate `f91b85d...`
+  reported one compatibility-architecture Blocker, two evidence Should-fix
+  findings, and one documentation Nit.
+- Commit `9d5fef5` restored the immutable baseline record and made release
+  evidence independently verify the exact job JSON, coordinated validator, all
+  nine artifacts, and all 62 dependency bytes at release commit `d114d79`.
+  Commits `a52e4e4` and `e1c22b7` bound those facts and documented the
+  serialized compatibility limitation, its safety evidence, and its separate
+  follow-up scope.
+- The same reviewer re-reviewed exact base `c25cddb...` to amended candidate
+  `e1c22b7...` under the binding landing ruling. Final result: zero Blockers,
+  zero Should-fix findings, zero Nits, and no unresolved actionable findings.
+  It found no evidence that the serialized path is unsafe in production or
+  geometry-nondeterministic and confirmed paused PR #2 remains absent.

@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "record_kind": "variant_r_geometry_preserving_atomic_refactor_acceptance",
-  "status": "candidate_pass_pending_independent_adversarial_review",
+  "status": "ready_no_unresolved_actionable_findings_within_landing_scope",
   "identity": {
     "exact_base_commit": "c25cddb3eeafe6f6dff3b551be4ceb53d5aee9ce",
     "geometry_and_release_source_commit": "d114d7907d5a3fc678d6ca7ac74b0d975c56b2a2",
@@ -115,6 +115,14 @@
     {
       "commit": "9d5fef53073efcfb2e91baed27829c0644f5682f",
       "subject": "fix: verify observational release provenance"
+    },
+    {
+      "commit": "a52e4e425fdbe0f1fbcf4a4e86a40f6f0468e313",
+      "subject": "docs: bind reviewed release provenance"
+    },
+    {
+      "commit": "e1c22b75ec20a86bf576490f224c2b6bea919f92",
+      "subject": "docs: record compatibility landing boundary"
     }
   ],
   "toolchain": {
@@ -609,11 +617,39 @@
     }
   },
   "independent_review": {
-    "status": "pending",
-    "candidate_commit": null,
-    "reviewer": null,
-    "findings": [],
-    "final_disposition": null
+    "status": "complete_no_unresolved_actionable_findings_within_landing_scope",
+    "initial_candidate_commit": "f91b85df767d8d3d7d199262b63d37f3ae54323c",
+    "amended_candidate_commit": "e1c22b75ec20a86bf576490f224c2b6bea919f92",
+    "reviewer": "/root/adversarial_review",
+    "record": "independent-review.md",
+    "initial_findings": [
+      {
+        "classification": "Blocker",
+        "finding": "visible serialized compatibility bindings did not satisfy the aspirational no-monkeypatching target",
+        "resolution": "accepted as a bounded compatibility limitation under the explicit landing ruling after restoration, isolation, determinism, equivalence and single-worker evidence; separate cascade rewrite recorded"
+      },
+      {
+        "classification": "Should-fix",
+        "finding": "current baseline record mixed base and candidate identities",
+        "resolution": "restored byte-for-byte to the historical base record in 9d5fef5"
+      },
+      {
+        "classification": "Should-fix",
+        "finding": "release provenance accepted caller assertions",
+        "resolution": "release job JSON, coordinated entrypoint, nine outputs and all 62 dependency bytes are independently verified in 9d5fef5 and bound by a52e4e4"
+      },
+      {
+        "classification": "Nit",
+        "finding": "release provenance docstring described the superseded path",
+        "resolution": "corrected in 9d5fef5"
+      }
+    ],
+    "final_counts": {
+      "blockers": 0,
+      "should_fix": 0,
+      "nits": 0
+    },
+    "final_disposition": "ready to land within the stated no-geometry-change scope; no unresolved actionable findings"
   },
   "remaining_risks": [
     "the accepted current flat-bottom/missing-material relationship is intentionally preserved and remains a known geometry defect",
