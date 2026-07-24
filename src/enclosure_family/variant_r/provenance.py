@@ -186,6 +186,10 @@ def write_producer_attestation(
         "created_at_utc": datetime.now(UTC).isoformat().replace("+00:00", "Z"),
         "cad_job_id": os.environ.get("CAD_JOB_ID"),
         "producer_entrypoint": PRODUCER_ENTRYPOINT.as_posix(),
+        "producer_mode": (
+            "single-oval-port authoritative base-only builder; downstream "
+            "assembly previews and unrelated component exports are excluded"
+        ),
         "git": _git_identity(root),
         "toolchain": {
             "python": platform.python_version(),

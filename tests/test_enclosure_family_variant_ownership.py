@@ -282,4 +282,5 @@ def test_variant_r_catalog_points_to_owned_source_and_thin_entrypoint() -> None:
     assert 'entrypoint = "scripts/generate_variant_r.py"' in catalog
     entrypoint = (ROOT / "scripts/generate_variant_r.py").read_text()
     assert "def main()" in entrypoint
+    assert "generate_authoritative_base_input" in entrypoint
     assert "build123d" not in entrypoint
