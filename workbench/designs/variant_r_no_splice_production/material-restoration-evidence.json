@@ -1,0 +1,96 @@
+{
+  "schema_version": 1,
+  "status": "blocked_pending_user_authority",
+  "production_validator_changed": false,
+  "full_release_retried": false,
+  "strict_release_failure": {
+    "job_id": "20260724T161354-variant-r-no-splice-production-release-b894fffaa7",
+    "elapsed_seconds": 426.223,
+    "peak_rss_bytes": 1067827200,
+    "published_output_count": 0,
+    "first_mismatch": {
+      "section": "top_x_-45",
+      "part": "bucket",
+      "section_sample_count": 1248,
+      "section_material_mismatch_count": 2,
+      "center_mm": [
+        -45.0,
+        -71.75,
+        86.25
+      ],
+      "reference_only_mm3": 0.03512473055594756,
+      "candidate_only_mm3": 0.0
+    }
+  },
+  "continuous_donor_diagnosis": {
+    "job_id": "20260724T162256-variant-r-continuous-donor-seam-diagnostic-022a92b52f",
+    "elapsed_seconds": 1159.784,
+    "peak_rss_bytes": 932544512,
+    "diagnostic_sha256": "7de8614b4861ef2109f00409d4d65ac863a59ec8d5c25322f8dc54c1842c3fc8",
+    "baffle_material_mismatch_count": 0,
+    "bucket_reference_only_material_mismatch_count": 12,
+    "bucket_candidate_only_material_mismatch_count": 0,
+    "distribution": "two mirrored samples in each of top_x_-45, top_x_+45, left_z_-55, left_z_+55, right_z_-55 and right_z_+55"
+  },
+  "protected_perimeter_geometry": {
+    "job_id": "20260724T164344-variant-r-perimeter-edge-equivalence-742fbc43b7",
+    "elapsed_seconds": 25.724,
+    "peak_rss_bytes": 533938176,
+    "diagnostic_sha256": "03b1b1dc628ee2920b2a088a574ccd142d878acb4206f116bb7e6cc93f959c53",
+    "offset_count": 3,
+    "retained_edge_count_per_offset": 10,
+    "maximum_bidirectional_sampled_deviation_mm": 1.4254156828833717e-14,
+    "maximum_length_difference_mm": 0.0
+  },
+  "exact_natural_component_restoration": {
+    "job_id": "20260724T165249-variant-r-bucket-material-restoration-feasibilit-043d6d71ec",
+    "elapsed_seconds": 244.548,
+    "peak_rss_bytes": 1354760192,
+    "diagnostic_sha256": "4f5ba20f7b04e036406961008bea5eaaf38715fdd11b8aa6e3503479f43ee04e",
+    "reference_only_component_count": 4,
+    "components_wholly_above_bottom_tangency": 2,
+    "selected_volume_mm3": 42.313110088405736,
+    "result_solid_count": 0,
+    "feasible": false
+  },
+  "overlap_bridged_localized_restoration": {
+    "job_id": "20260724T165914-variant-r-overlap-bridged-bucket-restoration-1fc56104f5",
+    "elapsed_seconds": 1250.31,
+    "peak_rss_bytes": 1302429696,
+    "diagnostic_sha256": "f174bd7192c635aed4412b8db9427909eb6f0be231ee81a6112617fcc9b224ba",
+    "one_valid_bucket_solid": true,
+    "strict_lrt_material_identity": true,
+    "old_splice_height_edge_count": 0,
+    "unrelated_full_width_lower_apron_edge_count": 0,
+    "bucket_baffle_overlap_mm3": 0.0,
+    "bucket_gasket_overlap_mm3": 0.0,
+    "candidate_material_removed_mm3": 0.0,
+    "maximum_bidirectional_protected_surface_deviation_mm": 1.4210854715202004e-14,
+    "candidate_topology": {
+      "faces": 244,
+      "edges": 706,
+      "vertices": 465
+    },
+    "restored_topology": {
+      "faces": 257,
+      "edges": 738,
+      "vertices": 484
+    },
+    "feasible": false,
+    "rejection": "introduced 13 faces, 32 edges and 19 vertices before boundary visibility could be accepted"
+  },
+  "fresh_process_reproduction": {
+    "job_id": "20260724T172200-variant-r-bucket-restoration-boundary-location-e8249cebf3",
+    "elapsed_seconds": 243.959,
+    "peak_rss_bytes": 1280049152,
+    "published_output_count": 0,
+    "result": "localized patch restoration did not produce one valid solid",
+    "feasible": false
+  },
+  "disposition": {
+    "production_candidate": "not release-accepted",
+    "original_strict_validator": "preserved unchanged",
+    "localized_restoration": "rejected as topology-changing and non-reproducible",
+    "next_action": "obtain user authority before changing the material-preservation contract or pursuing a broader geometry redesign"
+  }
+}

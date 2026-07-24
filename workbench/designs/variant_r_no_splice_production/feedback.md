@@ -125,3 +125,55 @@
   sub-sole band is `0.35532330335 mm`, matching the validated specification.
   Production audit metadata now uses vertex topology for this measurement;
   trim geometry is unchanged.
+
+## 2026-07-24 — strict release failure and preserved validator
+
+- The first coordinated full release job
+  `20260724T161354-variant-r-no-splice-production-release-b894fffaa7`
+  failed closed after `426.223 s` at `1,067,827,200` bytes peak RSS and
+  published no outputs. The unchanged strict seam-material validator found two
+  reference-only bucket samples in `top_x_-45`; the first is
+  `0.03512473055594756 mm³` at `[-45, -71.75, 86.25]`.
+- Focused job
+  `20260724T162256-variant-r-continuous-donor-seam-diagnostic-022a92b52f`
+  completed in `1159.784 s` at `932,544,512` bytes peak RSS. It found zero
+  baffle material mismatches and exactly twelve mirrored, reference-only bucket
+  samples across the top and side sections. The candidate adds no material at
+  those samples. Diagnostic SHA-256 is
+  `7de8614b4861ef2109f00409d4d65ac863a59ec8d5c25322f8dc54c1842c3fc8`.
+- The retained L/R/T perimeter curves themselves are unchanged: job
+  `20260724T164344-variant-r-perimeter-edge-equivalence-742fbc43b7`
+  matched all ten retained edges at each of three offsets with maximum
+  bidirectional sampled deviation `1.4254156828833717e-14 mm` and zero length
+  difference. That evidence does not authorize normalizing the unrelated
+  bucket material loss, so the production validator remains unchanged.
+
+## 2026-07-24 — exact bucket-material restoration feasibility block
+
+- The exact reference-only difference has four natural components. Only two,
+  totaling `42.313110088405736 mm³`, lie wholly above the existing bottom
+  tangency. Fusing those natural components into the donor produced zero valid
+  solids; no cleaning, healing, splitter removal or tolerance widening was
+  attempted.
+- A second focused experiment used three localized reference ownership regions
+  with only already-shared material as overlap bridges. One run restored all
+  strict L/R/T material samples, stayed one valid solid, retained zero old
+  splice/lower-apron edges, preserved zero overlap, removed no candidate
+  material and changed protected surfaces by at most
+  `1.4210854715202004e-14 mm`.
+- That result was not topology-safe: bucket topology changed from
+  `244/706/465` faces/edges/vertices to `257/738/484`. A fresh-process boundary
+  localization rebuild then failed to produce one valid solid at all. The
+  construction is therefore both boundary-creating and non-reproducible; it is
+  not suitable for production ownership.
+- Evidence jobs:
+  `20260724T165249-variant-r-bucket-material-restoration-feasibilit-043d6d71ec`
+  (`244.548 s`, `1,354,760,192` bytes peak),
+  `20260724T165914-variant-r-overlap-bridged-bucket-restoration-1fc56104f5`
+  (`1250.31 s`, `1,302,429,696` bytes peak), and
+  `20260724T172200-variant-r-bucket-restoration-boundary-location-e8249cebf3`
+  (`243.959 s`, `1,280,049,152` bytes peak).
+- Disposition: stop before another full release or Viewer publication. The
+  candidate is not production-accepted, the strict validator is preserved,
+  and user authority is required either to alter the material-preservation
+  contract or to authorize a broader geometry redesign.
