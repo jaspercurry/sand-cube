@@ -261,3 +261,30 @@ authoritative structured facts are in `atomic_manifest.json`.
 - The historical rail/equivalence blocker is therefore not current. The
   accepted flat-bottom missing-material relationship remains baseline behavior
   and will not be repaired during this refactor.
+
+## 2026-07-23 — atom 01: parameter, print-contract and Variant I boundaries
+
+- Added one native-free immutable Variant R parameter owner and replaced leaf
+  literals/aliases for the active seam, bottom-ownership, fit and verification
+  values.
+- Added explicit rear-face-down bucket and +Z/brim baffle print metadata. These
+  are print policies, not physical-print claims.
+- Added an independent future Variant I boundary with open-bottom-down metadata
+  and an explicit `NotImplementedError` geometry gate. It imports no Variant R
+  module and creates no shape.
+- Focused tests passed 12 cases. The complete lightweight suite passed 182
+  tests, 19 subtests, catalog, 85 entrypoint checks, and lint.
+- Candidate generation job
+  `20260724T002420-atomic-refactor-atom-01-parameters-abc939b859`
+  completed in 1475.821 seconds at 1,395,212,288 bytes peak RSS and published
+  ten outputs with clean cleanup.
+- Proportional geometry job
+  `20260724T004959-atomic-refactor-atom-01-metrics-711d720604`
+  completed in 1713.56 seconds at 1,090,289,664 bytes peak RSS. Validity,
+  topology, bounds, volume, area and center of mass matched for both complete
+  parts and all six protected sections; bucket/baffle overlap remained zero
+  and normalized STEP-round-trip diagnostics matched.
+- The release-grade baseline's strict bidirectional material result remains
+  zero removed/added material. Atom 01 changed no native builder or interface,
+  so its fresh proportional checkpoint intentionally did not repeat those
+  expensive material Booleans.

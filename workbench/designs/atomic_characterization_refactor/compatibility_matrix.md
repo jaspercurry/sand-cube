@@ -27,7 +27,7 @@ Current execution overlay: **BASELINE_EQUIVALENT; ATOMIC EXTRACTION ACTIVE**. Hi
 | family.support_sensitive_transitions | ambiguous ownership | R orientations characterized; I geometry absent | slicer/material limits and source geometry unavailable |
 | R.bucket_print_contract | intentionally variant-specific | different from I open-bottom-down | bed-face and support contract need verification |
 | R.baffle_print_contract | intentionally variant-specific | no separate baffle in I | stable seating footprint acceptance missing |
-| I.integral_front | deferred geometry | semantic opposite of R front opening | no geometry or independent owner |
+| I.integral_front | deferred geometry | semantic opposite of R front opening | independent owner boundary exists; geometry remains deliberately absent |
 | I.open_bottom | deferred geometry | R retains closed bottom and uses rear bed face | bottom architecture intentionally deferred |
 | I.hatch_interface | deferred geometry | no R analogue | product decision and geometry absent |
 | I.print_contract | deferred geometry | different orientation and access from R | Variant I geometry absent |

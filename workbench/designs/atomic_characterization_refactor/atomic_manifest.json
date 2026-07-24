@@ -46,7 +46,7 @@
     },
     "current_source": {
       "path": "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle/generate_sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle.py",
-      "sha256": "6d8072eb32a1e86b54528fe80144155d0fc2b9d0996bdc76a8168c06e4c91f0c"
+      "sha256": "d7470c2f044d02e13e0b7ae298347ad33c587d7469a86050607c0183cdb2a386"
     },
     "authoritative_base_input_sha256": "441cc122c0383da257b16e80c4b424096f33b267cc95cab9d1278fb05a43a784",
     "generation": {
@@ -77,9 +77,24 @@
         "center_of_mass_mm": 0.0000001
       }
     },
+    "completed_atoms": [
+      {
+        "id": "R.parameters_print_contracts_and_I.boundary",
+        "owners": [
+          "src/enclosure_family/variant_r/parameters.py",
+          "src/enclosure_family/variant_r/print_contracts.py",
+          "src/enclosure_family/variant_i/interface.py"
+        ],
+        "candidate_generation_job": "20260724T002420-atomic-refactor-atom-01-parameters-abc939b859",
+        "geometry_checkpoint_job": "20260724T004959-atomic-refactor-atom-01-metrics-711d720604",
+        "equivalent": true,
+        "geometry_changed": false,
+        "variant_i_geometry_created": false
+      }
+    ],
     "current_blockers": [],
     "protected_imperfection": "The accepted current flat-bottom missing-material relationship is baseline behavior. Do not repair or reconcile it in this refactor.",
-    "next_atom": "Variant R native-free parameters and print contracts; future-only independent Variant I interface"
+    "next_atom": "Variant R seam and bottom-material ownership builders with an explicit legacy-foundation adapter"
   },
   "evidence_defaults": {
     "units": "millimeters",
@@ -1322,19 +1337,19 @@
     {
       "id": "R.bucket_print_contract",
       "owner": "Variant R",
-      "owning_source": "future Variant R owner; current printable_bucket only partially describes transforms",
+      "owning_source": "src/enclosure_family/variant_r/print_contracts.py",
       "owning_parameters": ["rear face at Y=+115", "build direction -Y in design coordinates"],
       "dependencies": ["family.rear_face", "family.support_sensitive_transitions", "R.front_service_opening"],
       "consumers": [],
       "mating_atoms": [],
       "candidate_refs": ["R.clean_bucket"],
-      "reproducible_baseline": "rear face exists in STEP; seating footprint/flatness not frozen",
+      "reproducible_baseline": "explicit rear-face-down metadata matches the accepted current artifact; physical seating footprint/flatness remains unverified",
       "protected_invariants": ["rear-face-down orientation", "open front remains accessible", "no trapped support"],
       "fit_tolerances": ["bed flatness and brim clearance not specified"],
       "print_implications": ["bucket grows from rear toward front; late front collar/rails can become unsupported"],
-      "conflicts": ["current source lacks first-class print metadata"],
+      "conflicts": ["physical print and slicer behavior remain unverified"],
       "shareability": "no",
-      "readiness": "characterized, not implemented",
+      "readiness": "implemented metadata; physical print unverified",
       "compatibility_class": "intentionally variant-specific",
       "comparison": "different from I open-bottom-down",
       "synthesis_blocker": "bed-face and support contract need verification"
@@ -1342,19 +1357,19 @@
     {
       "id": "R.baffle_print_contract",
       "owner": "Variant R",
-      "owning_source": "future Variant R owner",
+      "owning_source": "src/enclosure_family/variant_r/print_contracts.py",
       "owning_parameters": ["bottom edge at Z minimum", "build direction +Z", "brim required"],
       "dependencies": ["R.flat_baffle_print_edge", "family.support_sensitive_transitions"],
       "consumers": [],
       "mating_atoms": [],
       "candidate_refs": ["R.flat_bottom_baffle"],
-      "reproducible_baseline": "orientation intent documented; bed footprint not measured",
+      "reproducible_baseline": "explicit +Z/brim metadata and Z=-91.5 mm bed edge match the accepted current artifact; physical footprint not measured",
       "protected_invariants": ["vertical orientation", "flat full-width edge", "appearance/strength layer intent"],
       "fit_tolerances": ["minimum seating width and brim envelope absent"],
       "print_implications": ["tall slender 190 mm part; adhesion and fairing overhang risk"],
-      "conflicts": ["documented contribution is stronger than current programmatic bed-face evidence"],
+      "conflicts": ["physical adhesion and slicer behavior remain unverified"],
       "shareability": "no",
-      "readiness": "characterized, blocked for synthesis",
+      "readiness": "implemented metadata; physical print unverified",
       "compatibility_class": "intentionally variant-specific",
       "comparison": "no separate baffle in I",
       "synthesis_blocker": "stable seating footprint acceptance missing"
@@ -1362,7 +1377,7 @@
     {
       "id": "I.integral_front",
       "owner": "Variant I",
-      "owning_source": "future independent owner branching from full_base before removable split",
+      "owning_source": "src/enclosure_family/variant_i/interface.py declares the future independent boundary; geometry intentionally absent",
       "owning_parameters": ["continuous front exterior", "shared driver interface if later proven"],
       "dependencies": ["family.exterior_shell", "family.driver_interface", "family.fill_blisters_passages"],
       "consumers": ["I.open_bottom", "I.print_contract"],
@@ -1377,12 +1392,12 @@
       "readiness": "future geometry",
       "compatibility_class": "deferred geometry",
       "comparison": "semantic opposite of R front opening",
-      "synthesis_blocker": "no geometry or independent owner"
+      "synthesis_blocker": "independent owner boundary exists; geometry remains deliberately absent"
     },
     {
       "id": "I.open_bottom",
       "owner": "Variant I",
-      "owning_source": "future Variant I owner",
+      "owning_source": "src/enclosure_family/variant_i/interface.py declares future ownership only",
       "owning_parameters": ["bottom plane Z=-95 candidate datum"],
       "dependencies": ["I.integral_front", "family.inner_wall_sand_void"],
       "consumers": ["I.hatch_interface", "I.print_contract"],
@@ -1402,7 +1417,7 @@
     {
       "id": "I.hatch_interface",
       "owner": "Variant I",
-      "owning_source": "future Variant I owner",
+      "owning_source": "src/enclosure_family/variant_i/interface.py declares future ownership only",
       "owning_parameters": [],
       "dependencies": ["I.open_bottom"],
       "consumers": [],
@@ -1422,19 +1437,19 @@
     {
       "id": "I.print_contract",
       "owner": "Variant I",
-      "owning_source": "future Variant I owner",
+      "owning_source": "src/enclosure_family/variant_i/interface.py",
       "owning_parameters": ["open-bottom plane at Z minimum", "build direction +Z"],
       "dependencies": ["I.open_bottom", "family.support_sensitive_transitions"],
       "consumers": [],
       "mating_atoms": [],
       "candidate_refs": [],
-      "reproducible_baseline": "none",
+      "reproducible_baseline": "future metadata only; no geometry baseline claimed",
       "protected_invariants": ["upright open-bottom-down", "support-removal path remains open"],
       "fit_tolerances": ["bed footprint and support limits not defined"],
       "print_implications": ["front fairing, braces and top closure must grow from supported geometry"],
       "conflicts": ["historic references are closed-bottom removable assemblies"],
       "shareability": "no",
-      "readiness": "future metadata",
+      "readiness": "implemented future metadata; geometry absent",
       "compatibility_class": "deferred geometry",
       "comparison": "different orientation and access from R",
       "synthesis_blocker": "Variant I geometry absent"

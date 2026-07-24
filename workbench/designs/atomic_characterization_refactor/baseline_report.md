@@ -8,7 +8,7 @@ Current checkpoint status: **BASELINE_EQUIVALENT; ATOMIC EXTRACTION ACTIVE**.
 
 - Exact base: `c25cddb3eeafe6f6dff3b551be4ceb53d5aee9ce`
 - Current source: `experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle/generate_sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle.py`
-- Source SHA-256: `6d8072eb32a1e86b54528fe80144155d0fc2b9d0996bdc76a8168c06e4c91f0c`
+- Source SHA-256: `d7470c2f044d02e13e0b7ae298347ad33c587d7469a86050607c0183cdb2a386`
 - Generation job: `20260723T231130-atomic-refactor-current-baseline-correct-input-593db9d217`; 1482.206 s; 1400373248 bytes peak RSS
 - Equivalence job: `20260723T234005-atomic-refactor-baseline-equivalence-008f589a51`; 2111.745 s; 2492252160 bytes peak RSS
 - Full parts/protected sections: 8; all equivalent: yes

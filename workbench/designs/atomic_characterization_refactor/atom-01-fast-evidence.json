@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "atom_id": "R.parameters_print_contracts_and_I.boundary",
+  "status": "pass",
+  "before_source_sha256": "6d8072eb32a1e86b54528fe80144155d0fc2b9d0996bdc76a8168c06e4c91f0c",
+  "candidate_source_sha256": "d7470c2f044d02e13e0b7ae298347ad33c587d7469a86050607c0183cdb2a386",
+  "native_cad_free_modules": {
+    "src/enclosure_family/variant_r/parameters.py": "d63f76428d8a4f7125858ea9047916b70d872ba8c4d90c3a79e692b0874a95a7",
+    "src/enclosure_family/variant_r/print_contracts.py": "bfb45ebda68827b2c4adf763fc2e8b33df91c7e17e418097c85333392817e39e",
+    "src/enclosure_family/variant_i/interface.py": "655614ec92ff44f529df60f3b139e6dd753fbab7055139176a0f650c79ae6d26"
+  },
+  "exact_parameter_checks": {
+    "gasket_closed_gap_mm": 1.0,
+    "path_half_size_mm": 88.125,
+    "path_bottom_corner_tangency_mm": 73.0,
+    "seal_land_width_mm": 6.75,
+    "gasket_width_mm": 5.0,
+    "gasket_edge_margin_mm": 0.875,
+    "baffle_print_bed_z_mm": -91.5,
+    "bottom_synthesis_max_z_mm": -80.0,
+    "bottom_synthesis_overlap_mm": 0.2,
+    "bottom_print_root_overlap_mm": 0.2
+  },
+  "checks": {
+    "focused_tests": "pass: 12",
+    "lightweight": "pass: 182 tests, 19 subtests",
+    "catalog": "pass: 10 primary models, 38 experiment families",
+    "entrypoints": "pass: 85",
+    "lint": "pass"
+  },
+  "variant_separation": {
+    "variant_r_owner": "src/enclosure_family/variant_r",
+    "variant_i_owner": "src/enclosure_family/variant_i",
+    "variant_i_geometry": "absent by explicit NotImplementedError boundary",
+    "variant_i_imports_variant_r": false
+  }
+}
