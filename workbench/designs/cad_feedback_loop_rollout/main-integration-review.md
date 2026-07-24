@@ -34,3 +34,17 @@ supervised rollout worktree. No derived `build/` artifact was committed.
 
 The amended base-to-head diff must receive a final read-only re-review before
 the branch is pushed to main.
+
+## Final re-review
+
+The independent reviewer inspected the exact amended diff from
+`143c799bd1463589fd90bc69cfb58370ac487b39` through
+`e89242452ce3` and reported:
+
+**No unresolved actionable findings.**
+
+The reviewer reconfirmed that the historical ledger parses correctly, its
+clean-checkout invalidity is deliberate and accurately documented, the horn
+subtree and model catalog remain byte-identical to the current-main base, PR #2
+is absent, no derived `build/` files entered, all native-free checks pass, and
+the worktree is clean.
