@@ -1,9 +1,9 @@
 # Implemented module tree and ownership
 
 Status: implementation, final strict acceptance, exact visual evidence and
-independent adversarial re-review complete. The accepted current Variant R
-geometry remains the sole baseline; no Variant I or corrected flat-bottom
-geometry exists.
+independent adversarial re-review complete. A separately authorized post-
+refactor Variant R correction now owns the accepted no-splice flat bottom;
+Variant I still has no geometry.
 
 ```text
 src/enclosure_family/
@@ -14,7 +14,7 @@ src/enclosure_family/
 │   ├── parameters.py          # Variant R dimensions/tolerances
 │   ├── print_contracts.py     # bucket and baffle print metadata
 │   ├── seam.py                # sculpted L/R/T plus flat-bottom perimeter
-│   ├── bottom_ownership.py    # accepted lower material transfer/splice
+│   ├── bottom_ownership.py    # baffle-only planar sole trim; historical helpers inactive
 │   ├── foundation.py          # explicit legacy foundation dependency bundle
 │   ├── assembly.py            # independent Variant R composition owner
 │   ├── inputs.py              # authoritative generated-input contract
@@ -59,10 +59,12 @@ The family layer owns only the proven 190x210 coordinate semantics and neutral
 print-contract schema. It does not merge this design's 2/3/2 wall stack with
 the repository's unrelated 203 mm 3/12/3 legacy contract.
 
-Variant R independently owns the accepted removable-baffle composition,
-including the current imperfect flat-bottom/missing-material relationship.
-Retention geometry is explicitly absent. No flag-driven alternate Variant R/I
-generator remains.
+Variant R independently owns the accepted removable-baffle composition. The
+continuous exact-edge donor owns bucket, gasket and visible baffle apron; only
+the baffle sub-sole is trimmed. The exact twelve internal bucket-only
+micro-omissions are a fail-closed authorized geometry delta, not equivalence or
+tolerance widening. Retention geometry is explicitly absent. No flag-driven
+alternate Variant R/I generator remains.
 
 Variant I owns only a future interface contract for a monolithic front,
 open-bottom body and future hatch owner. Calling its geometry owner raises
@@ -91,9 +93,10 @@ artifact hashes rather than relying on ignored `build/` artifacts. The release
 job predates whole-tree-state recording, so the projection truthfully verifies
 every dependency byte at the commit without claiming an unrecorded clean tree.
 
-## Deferred geometry work
+## Post-refactor geometry status
 
-The next geometry task is narrowly scoped: correct the accepted flat-bottom
-missing-material relationship using this architecture, with fresh product
-authority and its own before/after evidence. Horn, tube, resonator, bracket,
+The narrowly scoped flat-bottom correction is complete in
+`workbench/designs/variant_r_no_splice_production/`. Historical no-geometry-
+change refactor evidence remains intact and is superseded only for the current
+Variant R bottom-ownership boundary. Horn, tube, resonator, bracket,
 electronics, supports, hatch, hinge and fastener work remain separate.

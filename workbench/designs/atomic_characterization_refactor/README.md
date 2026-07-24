@@ -79,6 +79,10 @@ Variant I interface, generated input/provenance, deterministic measurements,
 native-free equivalence policy, STEP export/round-trip, artifacts, verification
 and thin entrypoints. Variant I has no geometry and imports no Variant R owner.
 
-The accepted geometry intentionally includes the known imperfect flat-bottom
-missing-material relationship. This refactor must preserve it; correcting that
-relationship is the next geometry-change task after the architecture work.
+The refactor's accepted geometry intentionally preserved its historical flat-
+bottom relationship. A separate, explicitly authorized production iteration
+has since replaced the whole-part splice with the continuous exact-edge donor
+and a baffle-only sole trim. Its exact twelve internal bucket-only
+micro-omissions are recorded fail-closed in
+`workbench/designs/variant_r_no_splice_production/`; the refactor evidence here
+remains the immutable pre-correction baseline.

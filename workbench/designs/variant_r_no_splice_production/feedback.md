@@ -196,3 +196,35 @@
 - `origin/main` remains exactly
   `5ec998069b790d648a011d04a2dadb6dc1d8b9e3`; no integration rebase or merge is
   required before the authorized release run.
+
+## 2026-07-24 — accepted production release and publication
+
+- The single authorized full release job
+  `20260724T174726-variant-r-no-splice-authorized-production-releas-9f64591b8e`
+  passed in one attempt after `1594.716 s` at `1,202,077,696` bytes peak RSS,
+  published twelve outputs atomically and completed clean teardown.
+- The exact bucket-only signature is `12/12` reference-only records totaling
+  `0.3032817572227236 mm³` over their 1 mm sample cubes, with exactly
+  `0.0 mm³` candidate-added material. Baffle and centre-section material
+  mismatch counts are zero.
+- All ten retained L/R/T edges at offsets `0`, `-2.5` and `+2.5 mm` match with
+  maximum bidirectional sampled deviation
+  `1.4254156828833717e-14 mm` and zero length difference.
+- Source and STEP-round-trip topology is bucket `244/706/465` and baffle
+  `91/257/169`; both have zero old-splice and unrelated lower-apron edges.
+  Every part is one valid solid, the assembly is three valid solids, all
+  pairwise overlap is zero, gasket/bottom support is `1.0`, the bottom seal is
+  one component, and the sole remains one planar face at `Z=-91.495 mm`.
+- Final assembly STEP SHA-256 is
+  `0f04b4abf96d67ecd66a196f325c1cd1c6a1e5d2a9114adc73812961ec347185`;
+  current sidecar SHA-256 is
+  `e28ea39b695652ffe98a29cfb0941e595213e569123500d50595e3bc18974cad`.
+- The corrected final Snapshot pair was inspected. Smooth SHA-256 is
+  `31ed20b5712358cf1e0c992c26d6cfdffbf9e4f0c30e13e0bd6113c5023819f6`;
+  edge-overlay SHA-256 is
+  `7d7554c776d2954e0acf46669e16672de7b4379a713997b358cbc69100ca0b38`.
+  The former line is absent on the lower baffle and bucket side; intended
+  recess and sculpted seam geometry remain.
+- The exact final artifact is published through the pinned read-only Viewer;
+  the server reports dynamic local root, generation disabled and Viewer
+  version `0.3.9`.

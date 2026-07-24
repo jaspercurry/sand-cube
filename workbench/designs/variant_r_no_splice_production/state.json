@@ -52,13 +52,26 @@
       "recorded_at": "2026-07-24T17:47:02.183833Z",
       "stage": "fit_passed",
       "summary": "User explicitly approved the unchanged fit result; geometry source and candidate artifact are unchanged."
+    },
+    {
+      "files": [
+        {
+          "path": "workbench/designs/variant_r_no_splice_production/release-evidence.json",
+          "role": "release_passed_evidence",
+          "sha256": "889db1e26ed413f7ead510556abef3f0abb25c1a284f51b04990acf53aedff1e",
+          "size_bytes": 2926
+        }
+      ],
+      "recorded_at": "2026-07-24T18:20:33.835177Z",
+      "stage": "release_passed",
+      "summary": "One authorized production release passed the exact twelve-point bucket-only signature, retained L/R/T edge geometry, all existing checks, round-trip, and atomic publication."
     }
   ],
   "iteration_id": "variant-r-no-splice-production",
   "model_id": "development-190x210-tongue-groove",
-  "next_action": "Run exactly one coordinated full release validator.",
+  "next_action": "Commit final evidence, integrate the completed branch to origin/main, and push.",
   "objective": "Promote and verify the validated Variant R no-splice construction through production owners and publish an exact read-only review artifact.",
-  "open_question": "Does one full production release reproduce the exact authorized signature and all release/round-trip checks?",
+  "open_question": "User review of the exact read-only Viewer artifact is now available; no production blocker remains.",
   "revision": 3,
   "schema_version": 1,
   "sources": [
@@ -69,6 +82,6 @@
       "size_bytes": 41898
     }
   ],
-  "stage": "fit_passed",
-  "updated_at": "2026-07-24T17:47:02.183833Z"
+  "stage": "release_passed",
+  "updated_at": "2026-07-24T18:20:33.835177Z"
 }

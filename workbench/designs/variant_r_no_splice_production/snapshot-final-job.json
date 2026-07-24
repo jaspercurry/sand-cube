@@ -1,0 +1,57 @@
+{
+  "provenanceOutput": "build/workbench/variant_r_no_splice_production/final-review/snapshot-provenance.json",
+  "jobs": [
+    {
+      "input": "build/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle/simple_tongue_groove_review_assembly.step",
+      "mode": "view",
+      "display": {
+        "mode": "rendered",
+        "projection": "orthographic"
+      },
+      "outputs": [
+        {
+          "path": "build/workbench/variant_r_no_splice_production/final-review/final-smooth.png",
+          "camera": {
+            "position": [240.0, -360.0, 40.0],
+            "target": [0.0, -90.0, -76.0],
+            "up": [0.0, 0.0, 1.0],
+            "zoom": 1.45
+          }
+        }
+      ],
+      "render": {
+        "padding": 0.06,
+        "sizeProfile": "diagnostic",
+        "viewLabels": false
+      }
+    },
+    {
+      "input": "build/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle/simple_tongue_groove_review_assembly.step",
+      "mode": "view",
+      "display": {
+        "mode": "solid",
+        "projection": "orthographic",
+        "edges": {
+          "enabled": true,
+          "color": "#1b2430"
+        }
+      },
+      "outputs": [
+        {
+          "path": "build/workbench/variant_r_no_splice_production/final-review/final-edge-overlay.png",
+          "camera": {
+            "position": [240.0, -360.0, 40.0],
+            "target": [0.0, -90.0, -76.0],
+            "up": [0.0, 0.0, 1.0],
+            "zoom": 1.45
+          }
+        }
+      ],
+      "render": {
+        "padding": 0.06,
+        "sizeProfile": "diagnostic",
+        "viewLabels": false
+      }
+    }
+  ]
+}

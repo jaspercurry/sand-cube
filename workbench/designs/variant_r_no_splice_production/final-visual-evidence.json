@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "profile": "final-visual-publication",
+  "result": "accepted",
+  "snapshot": {
+    "job_id": "20260724T181614-text-to-cad-artifacts-b3865ec0d0",
+    "elapsed_seconds": 5.15,
+    "peak_rss_bytes": 1937522688,
+    "smooth_path": "build/workbench/variant_r_no_splice_production/final-review/final-smooth_20260724T181614Z.png",
+    "smooth_sha256": "31ed20b5712358cf1e0c992c26d6cfdffbf9e4f0c30e13e0bd6113c5023819f6",
+    "edge_overlay_path": "build/workbench/variant_r_no_splice_production/final-review/final-edge-overlay_20260724T181614Z.png",
+    "edge_overlay_sha256": "7d7554c776d2954e0acf46669e16672de7b4379a713997b358cbc69100ca0b38",
+    "provenance_sha256": "f6043bc8c066273e64f4f08312515be6b5e5b2a36f8a9795da69bd12ba0e15cf"
+  },
+  "inspection": {
+    "agent_inspected_both_exact_images": true,
+    "old_full_width_lower_apron_line_visible": false,
+    "old_line_continues_onto_bucket_side": false,
+    "lower_apron_and_side_continuous": true,
+    "intended_driver_recess_present": true,
+    "intended_sculpted_parting_seam_present": true,
+    "detached_or_misplaced_body_visible": false
+  },
+  "viewer": {
+    "record": "workbench/designs/variant_r_no_splice_production/viewer-record.json",
+    "read_only": true,
+    "step_artifact_generation_available": false,
+    "url": "http://127.0.0.1:4178/?dir=%2FUsers%2Fjaspercurry%2F.codex%2Fworktrees%2Fe2d4%2FCAD+-+Enclosure%2Fbuild%2Fsand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle&file=simple_tongue_groove_review_assembly.step",
+    "assembly_step_sha256": "0f04b4abf96d67ecd66a196f325c1cd1c6a1e5d2a9114adc73812961ec347185",
+    "assembly_sidecar_sha256": "e28ea39b695652ffe98a29cfb0941e595213e569123500d50595e3bc18974cad"
+  }
+}

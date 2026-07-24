@@ -1,0 +1,96 @@
+{
+  "schema_version": 1,
+  "profile": "release",
+  "revision": 3,
+  "result": "pass",
+  "release_source_commit": "9f44555",
+  "job": {
+    "job_id": "20260724T174726-variant-r-no-splice-authorized-production-releas-9f64591b8e",
+    "attempts": 1,
+    "elapsed_seconds": 1594.716,
+    "peak_rss_bytes": 1202077696,
+    "clean_teardown": true,
+    "published_output_count": 12,
+    "diagnostics_sha256": "35d2e65b48caa5b5afa71d790011e0eee8ec637d554c901191ac55289c0d099f"
+  },
+  "geometry": {
+    "single_valid_solid_per_part": true,
+    "assembly_valid_solid_count": 3,
+    "topology": {
+      "bucket_faces_edges_vertices": [
+        244,
+        706,
+        465
+      ],
+      "baffle_faces_edges_vertices": [
+        91,
+        257,
+        169
+      ],
+      "source_and_round_trip_equal": true
+    },
+    "old_splice_height_edge_count": {
+      "bucket": 0,
+      "baffle": 0
+    },
+    "unrelated_full_width_lower_apron_edge_count": {
+      "bucket": 0,
+      "baffle": 0
+    },
+    "pairwise_overlap_mm3": {
+      "bucket_baffle": 0.0,
+      "gasket_bucket": 0.0,
+      "gasket_baffle": 0.0
+    },
+    "gasket_support_ratio": {
+      "bucket": 1.0,
+      "baffle": 1.0
+    },
+    "bottom_land_support_ratio": {
+      "bucket": 1.0,
+      "baffle": 1.0
+    },
+    "bottom_seal_connected_component_count": 1,
+    "sole": {
+      "z_mm": -91.49500000000002,
+      "planar_face_count": 1,
+      "width_mm": 187.0264802158104,
+      "depth_mm": 17.556411375566057,
+      "area_mm2": 2280.0060332270587
+    }
+  },
+  "authorized_internal_bucket_delta": {
+    "reference_only_point_count": 12,
+    "expected_point_count": 12,
+    "reference_only_sample_cube_material_mm3": 0.3032817572227236,
+    "candidate_added_material_mm3": 0.0,
+    "baffle_material_mismatch_count": 0,
+    "centre_section_material_mismatch_count": 0,
+    "volume_attestation_tolerance_mm3": 0.000001
+  },
+  "retained_lrt_edge_geometry": {
+    "offsets_mm": [
+      0.0,
+      -2.5,
+      2.5
+    ],
+    "retained_edge_count_per_offset": 10,
+    "maximum_bidirectional_sampled_deviation_mm": 1.4254156828833717e-14,
+    "maximum_length_difference_mm": 0.0,
+    "acceptance_tolerance_mm": 1e-09
+  },
+  "step_round_trip": {
+    "bucket": "1 valid solid -> 1 valid solid",
+    "baffle": "1 valid solid -> 1 valid solid",
+    "gasket": "1 valid solid -> 1 valid solid",
+    "assembly": "3 valid solids -> 3 valid solids",
+    "protected_sections": "pass"
+  },
+  "artifacts": {
+    "bucket_step_sha256": "7ac00586df7d67a19c5ebaf82c2bccf4069141ea024a7fedc2e85bf6350db5ee",
+    "baffle_step_sha256": "d8da00edcb94654d33b81076d27759bd2fa1049b75493154e26411d5fba30535",
+    "gasket_step_sha256": "264a672f53f4beead973f50c8fe6691c492524c1fd229a78da6467b7414ea597",
+    "assembly_step_sha256": "0f04b4abf96d67ecd66a196f325c1cd1c6a1e5d2a9114adc73812961ec347185",
+    "assembly_sidecar_sha256": "e28ea39b695652ffe98a29cfb0941e595213e569123500d50595e3bc18974cad"
+  }
+}

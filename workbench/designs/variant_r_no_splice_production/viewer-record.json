@@ -1,0 +1,23 @@
+{
+  "artifacts": [
+    {
+      "path": "build/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle/simple_tongue_groove_review_assembly.step",
+      "sha256": "0f04b4abf96d67ecd66a196f325c1cd1c6a1e5d2a9114adc73812961ec347185"
+    },
+    {
+      "path": "build/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle/.simple_tongue_groove_review_assembly.step.glb",
+      "sha256": "e28ea39b695652ffe98a29cfb0941e595213e569123500d50595e3bc18974cad"
+    }
+  ],
+  "record_id": "viewer-record.simple-tongue-groove-review-assembly",
+  "recorded_at": "2026-07-24T18:17:33.327236+00:00",
+  "schema_version": 1,
+  "server": {
+    "app": "cad-viewer",
+    "backend": "local-fs",
+    "dynamicRoot": true,
+    "stepArtifactGenerationAvailable": false,
+    "viewerVersion": "0.3.9"
+  },
+  "url": "http://127.0.0.1:4178/?dir=%2FUsers%2Fjaspercurry%2F.codex%2Fworktrees%2Fe2d4%2FCAD+-+Enclosure%2Fbuild%2Fsand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle&file=simple_tongue_groove_review_assembly.step"
+}

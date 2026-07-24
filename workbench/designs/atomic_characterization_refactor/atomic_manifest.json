@@ -372,6 +372,56 @@
     },
     "next_atom": "Commit the final evidence candidate, run the mandatory independent adversarial review, address every actionable finding, and obtain explicit no-unresolved-findings re-review"
   },
+  "post_refactor_geometry_correction": {
+    "status": "ACCEPTED VARIANT R NO-SPLICE PRODUCTION",
+    "supersession_boundary": "This record supersedes only current Variant R seam/bottom ownership and validation facts. The current_refactor_execution record above remains immutable history for the no-geometry-change refactor baseline.",
+    "iteration": "workbench/designs/variant_r_no_splice_production",
+    "release_source_commit": "9f44555",
+    "ownership_path": [
+      "src/enclosure_family/variant_r/foundation.py exposes the continuous exact-edge flat-bottom donor",
+      "src/enclosure_family/variant_r/assembly.py consumes donor bucket, gasket and visible baffle apron directly",
+      "src/enclosure_family/variant_r/bottom_ownership.py trims only baffle sub-sole material at the parameter-owned Z=-91.495 mm plane",
+      "historical whole-part splice and lower-material-transfer helpers are inactive and unimported by the production composer"
+    ],
+    "geometry_delta": {
+      "old_whole_part_splice_removed": true,
+      "old_splice_height_edge_count": {
+        "bucket": 0,
+        "baffle": 0
+      },
+      "unrelated_full_width_lower_apron_edge_count": {
+        "bucket": 0,
+        "baffle": 0
+      },
+      "authorized_reference_only_internal_bucket_sample_count": 12,
+      "authorized_reference_only_sample_cube_material_mm3": 0.3032817572227236,
+      "candidate_added_material_mm3": 0.0,
+      "baffle_material_mismatch_count": 0,
+      "centre_section_material_mismatch_count": 0,
+      "retained_lrt_edge_maximum_deviation_mm": 1.4254156828833717e-14,
+      "retained_lrt_edge_maximum_length_difference_mm": 0.0,
+      "restoration_or_healing_promoted": false
+    },
+    "release": {
+      "job_id": "20260724T174726-variant-r-no-splice-authorized-production-releas-9f64591b8e",
+      "elapsed_seconds": 1594.716,
+      "peak_rss_bytes": 1202077696,
+      "attempts": 1,
+      "diagnostics_sha256": "35d2e65b48caa5b5afa71d790011e0eee8ec637d554c901191ac55289c0d099f",
+      "single_valid_solid_per_part": true,
+      "assembly_valid_solid_count": 3,
+      "pairwise_overlap_mm3": 0.0,
+      "step_round_trip": "pass"
+    },
+    "publication": {
+      "assembly_step_sha256": "0f04b4abf96d67ecd66a196f325c1cd1c6a1e5d2a9114adc73812961ec347185",
+      "assembly_sidecar_sha256": "e28ea39b695652ffe98a29cfb0941e595213e569123500d50595e3bc18974cad",
+      "snapshot_smooth_sha256": "31ed20b5712358cf1e0c992c26d6cfdffbf9e4f0c30e13e0bd6113c5023819f6",
+      "snapshot_edge_overlay_sha256": "7d7554c776d2954e0acf46669e16672de7b4379a713997b358cbc69100ca0b38",
+      "viewer_record": "workbench/designs/variant_r_no_splice_production/viewer-record.json",
+      "viewer_read_only": true
+    }
+  },
   "evidence_defaults": {
     "units": "millimeters",
     "sidecar_sha256": null,

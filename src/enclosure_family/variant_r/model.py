@@ -14,8 +14,8 @@ class VariantRModel:
         "development-190x210-tongue-groove"
     )
     variant_id: Literal["variant_r"] = "variant_r"
-    status: Literal["no_splice_release_authorized"] = (
-        "no_splice_release_authorized"
+    status: Literal["accepted_no_splice_production"] = (
+        "accepted_no_splice_production"
     )
     assembly_owner: str = "src.enclosure_family.variant_r.assembly"
     seam_owner: str = "src.enclosure_family.variant_r.seam"
