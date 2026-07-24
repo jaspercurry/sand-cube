@@ -1,0 +1,32 @@
+{
+  "provenanceOutput": "build/workbench/variant_r_no_splice_production/review/snapshot-smoke-provenance.json",
+  "jobs": [
+    {
+      "input": "build/workbench/variant_r_no_splice_production/candidate/production_candidate_assembly.step",
+      "mode": "view",
+      "display": {
+        "mode": "solid",
+        "projection": "orthographic",
+        "edges": {
+          "color": "#1b2430"
+        }
+      },
+      "outputs": [
+        {
+          "path": "build/workbench/variant_r_no_splice_production/review/candidate-edge-smoke.png",
+          "camera": {
+            "position": [240.0, -360.0, 40.0],
+            "target": [0.0, -90.0, -76.0],
+            "up": [0.0, 0.0, 1.0],
+            "zoom": 1.45
+          }
+        }
+      ],
+      "render": {
+        "padding": 0.06,
+        "sizeProfile": "diagnostic",
+        "viewLabels": false
+      }
+    }
+  ]
+}

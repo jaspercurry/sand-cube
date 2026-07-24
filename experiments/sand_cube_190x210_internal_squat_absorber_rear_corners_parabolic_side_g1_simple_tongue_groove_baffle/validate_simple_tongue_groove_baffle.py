@@ -73,6 +73,8 @@ AUTHORITATIVE_BASE_ATTESTATION = producer_attestation_path(ROOT)
 OUT = model.OUT
 BUCKET_STEP = OUT / VARIANT_R_ARTIFACTS_BY_ID["bucket"].filename
 BAFFLE_STEP = OUT / VARIANT_R_ARTIFACTS_BY_ID["baffle"].filename
+GASKET_STEP = OUT / "simple_tongue_groove_gasket.step"
+ASSEMBLY_STEP = OUT / "simple_tongue_groove_review_assembly.step"
 DIAGNOSTICS_PATH = (
     OUT / VARIANT_R_ARTIFACTS_BY_ID["validation_diagnostics"].filename
 )
@@ -104,6 +106,98 @@ def _round_trip(step_path: Path, solid) -> dict:
         solid,
         require_single_solid=True,
     )
+
+
+def _assembly_round_trip(step_path: Path, assembly) -> dict:
+    result = publish_step_round_trip(
+        step_path,
+        assembly,
+        require_single_solid=False,
+    )
+    if (
+        result["source_solid_count"] != 3
+        or result["imported_solid_count"] != 3
+    ):
+        raise ValueError(f"Variant R assembly is not three solids: {result}")
+    return result
+
+
+def _no_splice_topology_audit(shape, *, part_name: str) -> dict:
+    """Reject the old splice and unrelated lower-apron construction edges."""
+
+    lower_edges = []
+    for edge in shape.edges():
+        bounds = edge.bounding_box()
+        if (
+            bounds.size.X >= 20.0
+            and bounds.size.Z <= 0.02
+            and bounds.max.Z <= -70.0
+        ):
+            center = edge.position_at(0.5)
+            lower_edges.append(
+                {
+                    "center_mm": [center.X, center.Y, center.Z],
+                    "bounds_min_mm": [
+                        bounds.min.X,
+                        bounds.min.Y,
+                        bounds.min.Z,
+                    ],
+                    "bounds_max_mm": [
+                        bounds.max.X,
+                        bounds.max.Y,
+                        bounds.max.Z,
+                    ],
+                    "bounds_size_mm": [
+                        bounds.size.X,
+                        bounds.size.Y,
+                        bounds.size.Z,
+                    ],
+                    "length_mm": edge.length,
+                }
+            )
+    old_splice_edges = [
+        record
+        for record in lower_edges
+        if (
+            abs(record["center_mm"][2] + 80.1) <= 0.15
+            and record["bounds_min_mm"][1] < -80.0
+        )
+    ]
+    unrelated_lower_apron_edges = [
+        record
+        for record in lower_edges
+        if (
+            record["bounds_min_mm"][1] < -80.0
+            and record["bounds_size_mm"][0] >= 40.0
+            and record["center_mm"][2]
+            > model.BAFFLE_PLANAR_SOLE_Z_MM + 0.05
+        )
+    ]
+    result = {
+        "part": part_name,
+        "face_count": len(shape.faces()),
+        "edge_count": len(shape.edges()),
+        "vertex_count": len(shape.vertices()),
+        "old_splice_height_edge_count": len(old_splice_edges),
+        "unrelated_full_width_lower_apron_edge_count": len(
+            unrelated_lower_apron_edges
+        ),
+        "old_splice_height_edges": old_splice_edges,
+        "unrelated_full_width_lower_apron_edges": (
+            unrelated_lower_apron_edges
+        ),
+    }
+    if old_splice_edges or unrelated_lower_apron_edges:
+        raise ValueError(f"{part_name} retains an unwanted lower edge: {result}")
+    if (
+        part_name == "baffle"
+        and (result["face_count"], result["edge_count"]) != (91, 257)
+    ):
+        raise ValueError(
+            "Production baffle topology differs from the validated no-splice "
+            f"candidate expectation 91/257: {result}"
+        )
+    return result
 
 
 def _seam_band_volumes():
@@ -585,9 +679,9 @@ def _baffle_print_contact_audit(baffle) -> dict:
         raise ValueError(f"Baffle has no planar face at bed Z={bed_z}")
     largest = max(contacts, key=lambda record: record["x_span_mm"])
     if (
-        abs(bed_z - model.BAFFLE_PRINT_BED_Z_MM) > tolerance
-        or largest["x_span_mm"] < 187.0
-        or largest["area_mm2"] < 2200.0
+        abs(bed_z - model.BAFFLE_PLANAR_SOLE_Z_MM) > 1e-6
+        or largest["x_span_mm"] < 187.020979 - 0.001
+        or largest["area_mm2"] < 2277.950023 - 0.001
     ):
         raise ValueError(
             "Baffle print contact misses the full-width plane contract: "
@@ -713,16 +807,55 @@ def main() -> None:
 
     bucket = common["bucket"]
     baffle = common["baffle"]
+    gasket = common["gasket"]
 
     # --- single valid solid after every boolean ---------------------------
-    for name, solid in (("bucket", bucket), ("baffle", baffle)):
+    for name, solid in (
+        ("bucket", bucket),
+        ("baffle", baffle),
+        ("gasket", gasket),
+    ):
         solids = solid.solids()
         if len(solids) != 1 or not solid.is_valid:
             raise ValueError(f"{name} is not one valid solid: n={len(solids)}")
 
     # --- STEP export/import solid-count match + all valid -----------------
+    topology = {
+        "source_bucket": _no_splice_topology_audit(
+            bucket,
+            part_name="bucket",
+        ),
+        "source_baffle": _no_splice_topology_audit(
+            baffle,
+            part_name="baffle",
+        ),
+    }
     bucket_round_trip = _round_trip(BUCKET_STEP, bucket)
     baffle_round_trip = _round_trip(BAFFLE_STEP, baffle)
+    gasket_round_trip = _round_trip(GASKET_STEP, gasket)
+    assembly_round_trip = _assembly_round_trip(
+        ASSEMBLY_STEP,
+        Compound(children=[bucket, baffle, gasket]),
+    )
+    topology.update(
+        {
+            "round_trip_bucket": _no_splice_topology_audit(
+                import_step(job_output_path(BUCKET_STEP)),
+                part_name="bucket",
+            ),
+            "round_trip_baffle": _no_splice_topology_audit(
+                import_step(job_output_path(BAFFLE_STEP)),
+                part_name="baffle",
+            ),
+        }
+    )
+    pairwise_overlap = {
+        "bucket_baffle_mm3": _shape_volume(bucket.intersect(baffle)),
+        "gasket_bucket_mm3": _shape_volume(gasket.intersect(bucket)),
+        "gasket_baffle_mm3": _shape_volume(gasket.intersect(baffle)),
+    }
+    if max(pairwise_overlap.values()) > 0.001:
+        raise ValueError(f"Variant R parts overlap: {pairwise_overlap}")
 
     joint = dict(model._JOINT_AUDIT)
     fill = dict(model._FILL_AUDIT)
@@ -745,10 +878,15 @@ def main() -> None:
         "compression_knob_mm": model.GASKET_CLOSED_GAP_MM,
         "shoulder_y_mm": joint["shoulder_y_mm"],
         "baffle_bed_y_mm": joint["baffle_bed_y_mm"],
-        "single_solid": {"bucket": True, "baffle": True},
+        "single_solid": {"bucket": True, "baffle": True, "gasket": True},
         "enclosure_body_retention": enclosure_body,
         "bucket_step_roundtrip": bucket_round_trip,
         "baffle_step_roundtrip": baffle_round_trip,
+        "gasket_step_roundtrip": gasket_round_trip,
+        "assembly_step_roundtrip": assembly_round_trip,
+        "no_splice_topology": topology,
+        "bottom_ownership": common["bottom_synthesis"],
+        "pairwise_overlap": pairwise_overlap,
         "gasket_bucket_support_ratio_after_all_features": joint[
             "gasket_bucket_support_ratio"
         ],

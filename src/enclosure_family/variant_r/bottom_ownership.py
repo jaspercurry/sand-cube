@@ -1,4 +1,4 @@
-"""Variant R lower-band splice and accepted print-edge material ownership."""
+"""Variant R planar-sole and historical lower-material operations."""
 
 from __future__ import annotations
 
@@ -10,6 +10,65 @@ from .parameters import VARIANT_R_PARAMETERS, VariantRParameters
 
 
 SingleSolid = Callable[..., Solid]
+
+
+def trim_baffle_to_planar_sole(
+    baffle: Solid,
+    *,
+    single_solid: SingleSolid,
+    parameters: VariantRParameters = VARIANT_R_PARAMETERS,
+) -> tuple[Solid, dict[str, float | bool | str]]:
+    """Discard only donor material below the production planar sole.
+
+    This is the active Variant R bottom-ownership operation.  It performs one
+    exact half-space intersection and deliberately does not request cleaning,
+    same-domain unification, splitter removal, healing, or tolerance changes.
+    """
+
+    bounds = baffle.bounding_box()
+    sole_z_mm = parameters.baffle_planar_sole_z_mm
+    if not bounds.min.Z < sole_z_mm < bounds.max.Z:
+        raise ValueError(
+            "Variant R sole plane does not cross the donor baffle: "
+            f"bounds=[{bounds.min.Z}, {bounds.max.Z}], sole={sole_z_mm}"
+        )
+    margin_mm = 1.0
+    retained_height_mm = bounds.max.Z + margin_mm - sole_z_mm
+    retained_half_space = Pos(
+        (bounds.min.X + bounds.max.X) / 2.0,
+        (bounds.min.Y + bounds.max.Y) / 2.0,
+        sole_z_mm + retained_height_mm / 2.0,
+    ) * Box(
+        bounds.size.X + 2.0 * margin_mm,
+        bounds.size.Y + 2.0 * margin_mm,
+        retained_height_mm,
+        align=(Align.CENTER, Align.CENTER, Align.CENTER),
+    )
+    printable_baffle = single_solid(
+        baffle & retained_half_space,
+        feature="continuous donor baffle trimmed only to the planar sole",
+    )
+    trimmed_min_z_mm = min(vertex.Z for vertex in printable_baffle.vertices())
+    if abs(trimmed_min_z_mm - sole_z_mm) > 1e-6:
+        raise ValueError(
+            "Variant R baffle did not terminate on the sole plane: "
+            f"expected={sole_z_mm}, actual={trimmed_min_z_mm}"
+        )
+    removed_volume_mm3 = baffle.volume - printable_baffle.volume
+    if removed_volume_mm3 <= 1e-9:
+        raise ValueError("Variant R sole trim removed no donor material")
+    return printable_baffle, {
+        "operation": "exact half-space intersection; discard sub-sole band",
+        "sole_z_mm": sole_z_mm,
+        "original_min_z_mm": bounds.min.Z,
+        "trimmed_min_z_mm": trimmed_min_z_mm,
+        "removed_band_max_thickness_mm": sole_z_mm - bounds.min.Z,
+        "removed_volume_mm3": removed_volume_mm3,
+        "same_domain_unification_applied": False,
+        "splitter_removal_applied": False,
+        "healing_applied": False,
+        "tolerance_widening_applied": False,
+    }
 
 
 def _clip_for_pair(
@@ -44,7 +103,7 @@ def splice_flat_bottom_band(
     single_solid: SingleSolid,
     parameters: VariantRParameters = VARIANT_R_PARAMETERS,
 ) -> Solid:
-    """Join the accepted authoritative upper solid to the donor lower band."""
+    """Historical compatibility helper; not used by active Variant R."""
 
     reference_bounds = authoritative.bounding_box()
     donor_bounds = flat_bottom_donor.bounding_box()
@@ -98,7 +157,7 @@ def transfer_baffle_below_print_plane(
     single_solid: SingleSolid,
     parameters: VariantRParameters = VARIANT_R_PARAMETERS,
 ) -> tuple[Solid, Solid, dict[str, float]]:
-    """Preserve the accepted imperfect lower print-edge material relationship."""
+    """Historical compatibility helper; not used by active Variant R."""
 
     bucket_bounds = bucket.bounding_box()
     baffle_bounds = baffle.bounding_box()

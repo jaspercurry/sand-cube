@@ -22,8 +22,8 @@ VARIANT_R_BAFFLE_PRINT_CONTRACT: Final = PrintContract(
     part_id="baffle",
     status="accepted",
     bed_contact=(
-        "flat lower edge at design-coordinate "
-        f"Z={VARIANT_R_PARAMETERS.baffle_print_bed_z_mm:g} mm"
+        "validated planar sole at design-coordinate "
+        f"Z={VARIANT_R_PARAMETERS.baffle_planar_sole_z_mm:g} mm"
     ),
     build_direction=(0, 0, 1),
     brim_assumed=True,

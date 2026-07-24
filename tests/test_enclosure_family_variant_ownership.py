@@ -53,7 +53,8 @@ def test_variant_r_parameters_preserve_current_values() -> None:
     assert params.seal_land_width_mm == 6.75
     assert params.gasket_width_mm == 5.0
     assert params.gasket_edge_margin_mm == 0.875
-    assert params.baffle_print_bed_z_mm == -91.5
+    assert params.baffle_planar_sole_z_mm == -91.495
+    assert params.baffle_print_bed_z_mm == params.baffle_planar_sole_z_mm
     assert params.bottom_synthesis_max_z_mm == -80.0
     assert params.bottom_synthesis_overlap_mm == 0.20
     assert params.bottom_print_root_overlap_mm == 0.20
@@ -73,7 +74,9 @@ def test_variant_r_model_has_one_explicit_owner_per_boundary() -> None:
     model = VARIANT_R_MODEL
     assert model.model_id == "development-190x210-tongue-groove"
     assert model.variant_id == "variant_r"
+    assert model.status == "accepted_no_splice_production"
     assert model.retention_geometry == "absent"
+    assert "sub-sole band is discarded" in model.known_geometry_boundary
     assert len(
         {
             model.assembly_owner,
@@ -88,6 +91,21 @@ def test_variant_r_model_has_one_explicit_owner_per_boundary() -> None:
             model.export_owner,
         }
     ) == 10
+
+
+def test_variant_r_active_composer_bypasses_historical_splice_and_transfer() -> None:
+    source = (
+        ROOT / "src/enclosure_family/variant_r/assembly.py"
+    ).read_text(encoding="utf-8")
+    tree = ast.parse(source)
+    calls = {
+        node.func.id
+        for node in ast.walk(tree)
+        if isinstance(node, ast.Call) and isinstance(node.func, ast.Name)
+    }
+    assert "trim_baffle_to_planar_sole" in calls
+    assert "splice_flat_bottom_band" not in calls
+    assert "transfer_baffle_below_print_plane" not in calls
 
 
 def test_variant_r_artifact_and_verification_contracts_are_complete() -> None:

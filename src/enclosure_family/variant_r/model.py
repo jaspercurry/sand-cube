@@ -14,7 +14,9 @@ class VariantRModel:
         "development-190x210-tongue-groove"
     )
     variant_id: Literal["variant_r"] = "variant_r"
-    status: Literal["accepted_refactor_baseline"] = "accepted_refactor_baseline"
+    status: Literal["accepted_no_splice_production"] = (
+        "accepted_no_splice_production"
+    )
     assembly_owner: str = "src.enclosure_family.variant_r.assembly"
     seam_owner: str = "src.enclosure_family.variant_r.seam"
     bottom_material_owner: str = (
@@ -29,8 +31,9 @@ class VariantRModel:
     export_owner: str = "src.enclosure_family.variant_r.export"
     retention_geometry: Literal["absent"] = "absent"
     known_geometry_boundary: str = (
-        "preserve the accepted imperfect flat-bottom and missing-material "
-        "relationship exactly until a separately authorized geometry task"
+        "continuous exact-edge donor owns the bucket, gasket and visible "
+        "baffle apron; only the baffle sub-sole band is discarded at the "
+        "parameter-owned planar sole"
     )
     generated_input_policy: str = (
         "the cataloged producer must emit the base STEP and a matching complete "

@@ -149,6 +149,7 @@ FINAL_FILL_PASSAGE_CLEARANCE_MM = (
 BOTTOM_SYNTHESIS_MAX_Z_MM = VARIANT_R_PARAMETERS.bottom_synthesis_max_z_mm
 BOTTOM_SYNTHESIS_OVERLAP_MM = VARIANT_R_PARAMETERS.bottom_synthesis_overlap_mm
 BAFFLE_PRINT_BED_Z_MM = VARIANT_R_PARAMETERS.baffle_print_bed_z_mm
+BAFFLE_PLANAR_SOLE_Z_MM = VARIANT_R_PARAMETERS.baffle_planar_sole_z_mm
 BOTTOM_PRINT_ROOT_OVERLAP_MM = (
     VARIANT_R_PARAMETERS.bottom_print_root_overlap_mm
 )
@@ -231,7 +232,7 @@ def _build_authoritative_joint(
     hybrid_bottom: bool,
     reference_joint: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
-    """Build the authoritative joint and splice only the flat lower band."""
+    """Build the authoritative reference or continuous exact-edge donor joint."""
     if not hybrid_bottom:
         return _AUTHORITATIVE_COMMON_JOINT(full_base)
     return build_variant_r_joint(

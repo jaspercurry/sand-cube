@@ -59,7 +59,7 @@ VARIANT_R_ARTIFACTS: Final = (
         "hybrid_flat_bottom",
         "hybrid_flat_bottom_section.step",
         "protected_section",
-        "accepted imperfect flat-bottom relationship",
+        "validated exact-edge lower joint and planar baffle sole",
     ),
     VariantRArtifact(
         "hybrid_side_seam",

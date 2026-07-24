@@ -20,6 +20,7 @@ class VariantRParameters:
     sand_cap_thickness_mm: float = 3.0
     bucket_shoulder_thickness_mm: float = 3.0
     final_fill_passage_clearance_mm: float = 0.05
+    baffle_planar_sole_z_mm: float = -91.495
     bottom_synthesis_max_z_mm: float = -80.0
     bottom_synthesis_overlap_mm: float = 0.20
     bottom_print_root_overlap_mm: float = 0.20
@@ -57,7 +58,9 @@ class VariantRParameters:
 
     @property
     def baffle_print_bed_z_mm(self) -> float:
-        return -(self.path_half_size_mm + self.seal_land_width_mm / 2.0)
+        """Compatibility name for the single production sole-plane datum."""
+
+        return self.baffle_planar_sole_z_mm
 
 
 VARIANT_R_PARAMETERS: Final = VariantRParameters()

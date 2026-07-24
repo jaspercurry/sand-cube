@@ -7,8 +7,7 @@ from typing import Any
 
 from .bottom_ownership import (
     SingleSolid,
-    splice_flat_bottom_band,
-    transfer_baffle_below_print_plane,
+    trim_baffle_to_planar_sole,
 )
 from .foundation import VariantRFoundation
 from .parameters import VARIANT_R_PARAMETERS, VariantRParameters
@@ -23,13 +22,7 @@ def build_variant_r_joint(
     reference_joint: Mapping[str, Any] | None = None,
     parameters: VariantRParameters = VARIANT_R_PARAMETERS,
 ) -> dict[str, Any]:
-    """Compose the accepted Variant R joint from explicit dependencies."""
-
-    reference = dict(
-        reference_joint
-        if reference_joint is not None
-        else foundation.build_authoritative_joint(full_base)
-    )
+    """Compose the no-splice Variant R joint from explicit dependencies."""
 
     def perimeter_wire(*, offset_mm: float, y_mm: float) -> Any:
         return build_hybrid_perimeter_wire(
@@ -46,31 +39,26 @@ def build_variant_r_joint(
         )
     )
     common = dict(donor)
-    for part_name in ("bucket", "baffle", "gasket"):
-        common[part_name] = splice_flat_bottom_band(
-            reference[part_name],
-            donor[part_name],
-            feature=f"{part_name} with synthesized flat-bottom ownership",
-            single_solid=single_solid,
-            parameters=parameters,
-        )
-    common["bucket"], common["baffle"], print_edge_audit = (
-        transfer_baffle_below_print_plane(
-            common["bucket"],
-            common["baffle"],
-            single_solid=single_solid,
-            parameters=parameters,
-        )
+    common["baffle"], sole_trim_audit = trim_baffle_to_planar_sole(
+        donor["baffle"],
+        single_solid=single_solid,
+        parameters=parameters,
     )
     common["bottom_synthesis"] = {
-        "authoritative_joint_reused_above_z_mm": (
-            parameters.bottom_synthesis_max_z_mm
+        "construction": (
+            "continuous exact-edge flat-bottom donor with baffle-only planar "
+            "sole trim"
         ),
-        "flat_bottom_donor_reused_below_z_mm": (
-            parameters.bottom_synthesis_max_z_mm
-        ),
-        "splice_overlap_mm": parameters.bottom_synthesis_overlap_mm,
-        "parts": ["bucket", "baffle", "gasket"],
-        "print_edge": print_edge_audit,
+        "foundation_output_used_directly": {
+            "bucket": True,
+            "baffle_above_sole": True,
+            "gasket": True,
+        },
+        "reference_joint_used_in_active_composition": False,
+        "reference_joint_supplied_for_validation": reference_joint is not None,
+        "whole_part_z_splice_applied": False,
+        "lower_material_transfer_to_bucket_applied": False,
+        "sub_sole_material_disposition": "discarded",
+        "sole_trim": sole_trim_audit,
     }
     return common
