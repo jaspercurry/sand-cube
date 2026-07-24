@@ -45,6 +45,7 @@ from src.enclosure_family.variant_r.verification import (  # noqa: E402
 )
 from src.enclosure_family.variant_r.inputs import (  # noqa: E402
     AUTHORITATIVE_BASE_FILENAME,
+    HISTORICAL_ACCEPTED_BASE_DATA_SHA256,
     HISTORICAL_ACCEPTED_BASE_SHA256,
 )
 
@@ -172,16 +173,16 @@ def _normalized_diagnostics(path: Path) -> dict[str, Any]:
     current_input = record.pop("authoritative_base_input", None)
     authoritative = Path(record["authoritative_base_step"])
     if current_input is None:
-        base_sha256 = HISTORICAL_ACCEPTED_BASE_SHA256
+        base_data_sha256 = HISTORICAL_ACCEPTED_BASE_DATA_SHA256
     else:
         if current_input.get("filename") != AUTHORITATIVE_BASE_FILENAME:
             raise ValueError(
                 f"unexpected Variant R base input: {current_input}"
             )
-        base_sha256 = current_input["sha256"]
+        base_data_sha256 = current_input["step_data_section_sha256"]
     record["authoritative_base_step"] = {
         "filename": authoritative.name,
-        "sha256": base_sha256,
+        "step_data_section_sha256": base_data_sha256,
     }
     return record
 
@@ -198,6 +199,7 @@ def _base_input_provenance(path: Path) -> dict[str, Any]:
         "status": "historical_hash_only_input",
         "filename": AUTHORITATIVE_BASE_FILENAME,
         "sha256": HISTORICAL_ACCEPTED_BASE_SHA256,
+        "step_data_section_sha256": HISTORICAL_ACCEPTED_BASE_DATA_SHA256,
         "portable_producer_attestation": False,
     }
 

@@ -10,20 +10,20 @@
   flat-bottom closure, including its known imperfect/missing-material
   relationship. Establish only an explicit independent future Variant I
   interface; create no Variant I geometry.
-- Next atom: commit and run the immutable `789cf7f` base producer recipe from
-  a clean current source state. It must archive that exact Git tree, apply the
-  committed capture-only overlay, publish the base through the current
-  `cad_runner` job, and attest the historical child plus current orchestrator
-  source closures. Compare that output with the historical accepted input
-  before the standalone validator can run.
-- Last equivalence evidence: Atom 03 generation job
-  `20260724T023918-atomic-refactor-atom-03-geometry-06d4fd8a26` and strict
-  job
-  `20260724T030459-atomic-refactor-atom-03-strict-equivalence-e9021d779e`.
-  Both complete parts and all six protected sections have zero removed/added
-  material, matching topology/bounds/volume/area/center of mass, zero overlap,
-  and unchanged normalized STEP-round-trip diagnostics.
-- Current blocker: the first full-cascade producer attempt
+- Next atom: commit the STEP DATA-section diagnostic identity, rerun the
+  immutable producer from that clean source state, and execute the standalone
+  Variant R validator plus the strict full-part/protected-section comparison.
+- Last equivalence evidence: immutable producer job
+  `20260724T043741-atomic-refactor-atom-04-immutable-producer-6606929bc5`
+  and base-equivalence job
+  `20260724T043926-atomic-refactor-atom-04-base-equivalence-47e6278cea`.
+  The independently regenerated 194-face foundation has an identical complete
+  ISO-10303 DATA section, topology, bounds, volume, surface area, and center of
+  mass to the historical accepted input. Its attestation binds 57 loaded
+  repository sources, including all 33 loaded generator stages, to exact
+  commits and hashes. The raw STEP hash differs only in export metadata.
+- Current blocker: none. Historical rejected diagnostics remain preserved:
+  the first full-cascade producer attempt
   `20260724T035352-atomic-refactor-atom-04-authoritative-producer-0a43bf5466`
   failed safely before publication because its unrelated cutaway preview
   received an OCCT null intersection. The base had already been constructed
@@ -43,8 +43,9 @@
   proved its full ISO-10303 DATA section byte-identical to historical accepted
   hash `441cc122...` and all topology/mass properties exact. The generic OCCT
   symmetric difference was unstable for the separately imported coincident
-  copies and remains recorded, not hidden. The clean immutable producer recipe
-  is implemented but not yet rerun. Atom 03 itself is equivalent:
+  copies and remains recorded, not hidden. The clean immutable producer now
+  passes by exact STEP DATA identity and independent semantic metrics. Atom 03
+  itself is equivalent:
   native-free checks pass (197 tests and 19 subtests, 87 entrypoints, catalog
   and scoped lint), and the strict native gate found zero material delta. The
   Phase-A rail blocker is historical; commit `e715300` repaired it before the
