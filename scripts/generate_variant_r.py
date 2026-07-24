@@ -25,17 +25,29 @@ from experiments.sand_cube_190x210_internal_squat_absorber_rear_corners_paraboli
 from src.enclosure_family.variant_r.provenance import (  # noqa: E402
     write_producer_attestation,
 )
+from src.enclosure_family.legacy_runtime import (  # noqa: E402
+    LegacyAttributeBinding,
+    bind_legacy_attributes,
+)
 
 
 def main() -> None:
     """Generate the cataloged Variant R artifact set."""
 
-    _model.base.generate_authoritative_base_input(
-        _model.OUT,
-        restored_internal_braces_builder=(
-            _model.previous._coherent_internal_braces
+    bindings = (
+        LegacyAttributeBinding(
+            _model.base,
+            "_restored_internal_braces",
+            _model.previous._coherent_internal_braces,
         ),
     )
+    with bind_legacy_attributes(bindings):
+        _model.base.generate_authoritative_base_input(
+            _model.OUT,
+            base_builder=(
+                _model.simplified.prior._solid_rear_without_fill_ports
+            ),
+        )
     write_producer_attestation(
         repo_root=_CAD_SAFETY_ROOT,
         output_directory=_model.OUT,
