@@ -35,6 +35,14 @@ from cad_runner.outputs import job_output_path  # noqa: E402
 _ensure_cad_coordinated(__name__, __file__, _CAD_SAFETY_ROOT)
 
 from build123d import CenterOf, import_step  # noqa: E402
+from src.enclosure_family.variant_r.artifacts import (  # noqa: E402
+    VARIANT_R_ARTIFACTS_BY_ID,
+    VARIANT_R_PART_ARTIFACTS,
+    VARIANT_R_PROTECTED_SECTION_ARTIFACTS,
+)
+from src.enclosure_family.variant_r.verification import (  # noqa: E402
+    VARIANT_R_VERIFICATION,
+)
 
 from cad_geometry_checks.native import (  # noqa: E402
     compare_protected_material,
@@ -44,22 +52,21 @@ from cad_geometry_checks.native import (  # noqa: E402
 
 
 PART_FILES = {
-    "bucket": "simple_tongue_groove_bucket.step",
-    "baffle": "simple_tongue_groove_baffle.step",
+    artifact.artifact_id: artifact.filename
+    for artifact in VARIANT_R_PART_ARTIFACTS
 }
-SECTION_FILES = (
-    "authoritative_side_seam_section.step",
-    "authoritative_top_seam_section.step",
-    "hybrid_bottom_corner_transition_section.step",
-    "hybrid_flat_bottom_section.step",
-    "hybrid_side_seam_section.step",
-    "hybrid_top_seam_section.step",
+SECTION_FILES = tuple(
+    artifact.filename for artifact in VARIANT_R_PROTECTED_SECTION_ARTIFACTS
 )
-DIAGNOSTICS_FILE = "validation_diagnostics.json"
-LENGTH_TOLERANCE_MM = 1e-6
-VOLUME_TOLERANCE_MM3 = 1e-5
-AREA_TOLERANCE_MM2 = 1e-5
-CENTER_TOLERANCE_MM = 1e-7
+DIAGNOSTICS_FILE = VARIANT_R_ARTIFACTS_BY_ID[
+    "validation_diagnostics"
+].filename
+LENGTH_TOLERANCE_MM = VARIANT_R_VERIFICATION.tolerances.length_mm
+VOLUME_TOLERANCE_MM3 = VARIANT_R_VERIFICATION.tolerances.volume_mm3
+AREA_TOLERANCE_MM2 = VARIANT_R_VERIFICATION.tolerances.area_mm2
+CENTER_TOLERANCE_MM = (
+    VARIANT_R_VERIFICATION.tolerances.center_of_mass_mm
+)
 
 
 def _sha256(path: Path) -> str:
@@ -180,7 +187,7 @@ def _numbers_equal(left: Any, right: Any) -> bool:
             float(left),
             float(right),
             rel_tol=0.0,
-            abs_tol=1e-9,
+            abs_tol=VARIANT_R_VERIFICATION.tolerances.diagnostic_number,
         )
     if isinstance(left, dict) and isinstance(right, dict):
         return left.keys() == right.keys() and all(
@@ -344,7 +351,9 @@ def main() -> None:
             "volume_mm3": VOLUME_TOLERANCE_MM3,
             "surface_area_mm2": AREA_TOLERANCE_MM2,
             "center_of_mass_mm": CENTER_TOLERANCE_MM,
-            "diagnostic_numeric": 1e-9,
+            "diagnostic_numeric": (
+                VARIANT_R_VERIFICATION.tolerances.diagnostic_number
+            ),
         },
         "parts_and_protected_sections": comparisons,
         "candidate_bucket_baffle_intersection": fit,

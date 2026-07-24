@@ -1,0 +1,86 @@
+{
+  "schema_version": 1,
+  "atom_id": "R.model_artifact_verification_and_entrypoint_boundaries",
+  "status": "pass",
+  "before_source_sha256": "1198eb00c447149a6d0b1f8ab79601de575919c2506bf350c40e4ebdfacbbc2c",
+  "candidate_source_sha256": "d67d011f3a1be1bf563786befb1af09fe74e4438e061abf670f0f3aef7cc0e62",
+  "candidate_generation": {
+    "job_id": "20260724T023918-atomic-refactor-atom-03-geometry-06d4fd8a26",
+    "elapsed_seconds": 1515.502,
+    "peak_rss_bytes": 1385381888,
+    "outputs": 10,
+    "cleanup_complete": true,
+    "warnings": []
+  },
+  "strict_equivalence": {
+    "job_id": "20260724T030459-atomic-refactor-atom-03-strict-equivalence-e9021d779e",
+    "elapsed_seconds": 2193.521,
+    "peak_rss_bytes": 2533801984,
+    "derived_report": "build/workbench/atomic_characterization_refactor/atom-03/strict-equivalence.json",
+    "derived_report_sha256": "703b22918b863da44886709dd3e5ea22f05304946e4798fc6e22d51399627768",
+    "full_parts_and_protected_sections": 8,
+    "all_equivalent": true,
+    "max_removed_material_mm3": 0.0,
+    "max_added_material_mm3": 0.0,
+    "normalized_validator_diagnostics_equal": true,
+    "bucket_baffle_overlap_mm3": 0.0,
+    "step_round_trip": "pass for both full parts and all six protected sections",
+    "tolerances": {
+      "length_mm": 0.000001,
+      "volume_mm3": 0.00001,
+      "surface_area_mm2": 0.00001,
+      "center_of_mass_mm": 0.0000001,
+      "diagnostic_numeric": 0.000000001
+    }
+  },
+  "candidate_artifacts": {
+    "simple_tongue_groove_bucket.step": "767de8640cb5ee0afca3dd995bac827cdbec7173254ad10d580a1e2c9f2a47f8",
+    "simple_tongue_groove_baffle.step": "c743c4be98368ca6a8d399e872b4dd2f267dcefb3e5e9045ff87d61e5394d330",
+    "authoritative_side_seam_section.step": "b8a6030d583e8708363fb7fb0298bfd0fb1095bd3892b03b3de67812ed4baf80",
+    "authoritative_top_seam_section.step": "7ad96d58f2cfe0f8f12a844841194612bf074145d75e66c1af49d03784ba9833",
+    "hybrid_bottom_corner_transition_section.step": "300c8fbfbf619ebddc1a6a34eaf323fa024254133bb9bcf743ffdc88b1f2640c",
+    "hybrid_flat_bottom_section.step": "db903ed72407dd722851b203e4c680f94dde10e7a3c12341b9a0c3376051427b",
+    "hybrid_side_seam_section.step": "b1bad2900312f0d45982c7ec6f1e21abec74cafeb3e6260f25f5dceecf029ec8",
+    "hybrid_top_seam_section.step": "abdcf17047de8a2c95b958685ddbe828b5b8ac9e0ed617acd2d9eadc4c48ed3e",
+    "validation_diagnostics.json": "086e73b9c9898b3c8bee79576e32e875f2e4ecf59da61f946a30e0b59ea7dd74"
+  },
+  "full_part_measurements": {
+    "bucket": {
+      "valid": true,
+      "solid_count": 1,
+      "faces": 278,
+      "edges": 812,
+      "boundary_edges": 0,
+      "non_manifold_edges": 1,
+      "volume_mm3": 1104803.2217097448,
+      "surface_area_mm2": 565760.6547886449,
+      "center_of_mass_mm": [
+        -14.92700023452539,
+        36.51459295344781,
+        -7.473090581884291
+      ]
+    },
+    "baffle": {
+      "valid": true,
+      "solid_count": 1,
+      "faces": 103,
+      "edges": 282,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "volume_mm3": 222294.67306945327,
+      "surface_area_mm2": 75603.4082404961,
+      "center_of_mass_mm": [
+        -0.09004531461358915,
+        -85.65403891203374,
+        1.7971085533089008
+      ]
+    }
+  },
+  "protected_sections": {
+    "count": 6,
+    "all_valid": true,
+    "all_topology_bounds_mass_properties_equal": true,
+    "all_removed_material_mm3": 0.0,
+    "all_added_material_mm3": 0.0
+  }
+}

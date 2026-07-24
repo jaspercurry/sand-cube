@@ -313,3 +313,28 @@ authoritative structured facts are in `atomic_manifest.json`.
   volume, surface area and center of mass with zero removed/added material.
   Bucket/baffle overlap remained zero and normalized STEP-round-trip
   diagnostics matched.
+
+## 2026-07-24 — atom 03: model/evidence/entrypoint ownership
+
+- Removed the disabled hinge and bottom-screw alternatives and their feature
+  flags. Retention geometry is now explicitly absent and remains a future
+  geometry task.
+- Added native-free Variant R model, artifact and verification owners, a thin
+  cataloged entrypoint, and an explicit serialized legacy-runtime binding.
+- The complete native-free suite passed 197 tests and 19 subtests in 5.898
+  seconds; catalog validation reported 10 models and 38 experiment families,
+  87 CAD entrypoints passed their safety audit, and scoped lint passed.
+- Fresh generation job
+  `20260724T023918-atomic-refactor-atom-03-geometry-06d4fd8a26`
+  completed in 1515.502 seconds at 1,385,381,888 bytes peak RSS with ten
+  outputs, no warnings and complete cleanup.
+- Strict job
+  `20260724T030459-atomic-refactor-atom-03-strict-equivalence-e9021d779e`
+  completed in 2193.521 seconds at 2,533,801,984 bytes peak RSS. Both complete
+  parts and all six protected sections match validity, topology, bounds,
+  volume, surface area and center of mass and have zero bidirectional material
+  difference. Bucket/baffle overlap is zero and normalized diagnostics match.
+- A later independent review of the historical acceptance identified missing
+  portable base-input, job-record and full-dependency provenance. Those gaps
+  are now explicit final-acceptance work; no absent historic record is treated
+  as current evidence.

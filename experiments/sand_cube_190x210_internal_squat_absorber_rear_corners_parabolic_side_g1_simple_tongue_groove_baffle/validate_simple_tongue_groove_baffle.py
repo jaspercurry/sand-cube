@@ -53,6 +53,9 @@ if str(EXPERIMENT) not in sys.path:
     sys.path.insert(0, str(EXPERIMENT))
 
 import generate_sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle as model  # noqa: E402
+from src.enclosure_family.variant_r.artifacts import (  # noqa: E402
+    VARIANT_R_ARTIFACTS_BY_ID,
+)
 
 
 AUTHORITATIVE_BASE_STEP = (
@@ -63,9 +66,11 @@ AUTHORITATIVE_BASE_STEP = (
     / "sand_cube_190x210_single_oval_port_base.step"
 )
 OUT = model.OUT
-BUCKET_STEP = OUT / "simple_tongue_groove_bucket.step"
-BAFFLE_STEP = OUT / "simple_tongue_groove_baffle.step"
-DIAGNOSTICS_PATH = OUT / "validation_diagnostics.json"
+BUCKET_STEP = OUT / VARIANT_R_ARTIFACTS_BY_ID["bucket"].filename
+BAFFLE_STEP = OUT / VARIANT_R_ARTIFACTS_BY_ID["baffle"].filename
+DIAGNOSTICS_PATH = (
+    OUT / VARIANT_R_ARTIFACTS_BY_ID["validation_diagnostics"].filename
+)
 
 
 def _patch_seam():
@@ -361,7 +366,7 @@ def _export_sections(reference: dict, hybrid: dict) -> dict:
         ]
     )
     specs = {
-        "authoritative_top_seam_section.step": (
+        VARIANT_R_ARTIFACTS_BY_ID["authoritative_top_seam"].filename: (
             assembled_reference,
             Pos(45.0, y_center, 84.0)
             * Box(
@@ -371,7 +376,7 @@ def _export_sections(reference: dict, hybrid: dict) -> dict:
                 align=(Align.CENTER, Align.CENTER, Align.CENTER),
             ),
         ),
-        "hybrid_top_seam_section.step": (
+        VARIANT_R_ARTIFACTS_BY_ID["hybrid_top_seam"].filename: (
             assembled_hybrid,
             Pos(45.0, y_center, 84.0)
             * Box(
@@ -381,7 +386,7 @@ def _export_sections(reference: dict, hybrid: dict) -> dict:
                 align=(Align.CENTER, Align.CENTER, Align.CENTER),
             ),
         ),
-        "authoritative_side_seam_section.step": (
+        VARIANT_R_ARTIFACTS_BY_ID["authoritative_side_seam"].filename: (
             assembled_reference,
             Pos(-84.0, y_center, 20.0)
             * Box(
@@ -391,7 +396,7 @@ def _export_sections(reference: dict, hybrid: dict) -> dict:
                 align=(Align.CENTER, Align.CENTER, Align.CENTER),
             ),
         ),
-        "hybrid_side_seam_section.step": (
+        VARIANT_R_ARTIFACTS_BY_ID["hybrid_side_seam"].filename: (
             assembled_hybrid,
             Pos(-84.0, y_center, 20.0)
             * Box(
@@ -401,7 +406,9 @@ def _export_sections(reference: dict, hybrid: dict) -> dict:
                 align=(Align.CENTER, Align.CENTER, Align.CENTER),
             ),
         ),
-        "hybrid_bottom_corner_transition_section.step": (
+        VARIANT_R_ARTIFACTS_BY_ID[
+            "hybrid_bottom_corner_transition"
+        ].filename: (
             assembled_hybrid,
             Pos(80.0, y_center, -80.0)
             * Box(
@@ -411,7 +418,7 @@ def _export_sections(reference: dict, hybrid: dict) -> dict:
                 align=(Align.CENTER, Align.CENTER, Align.CENTER),
             ),
         ),
-        "hybrid_flat_bottom_section.step": (
+        VARIANT_R_ARTIFACTS_BY_ID["hybrid_flat_bottom"].filename: (
             assembled_hybrid,
             Pos(0.0, y_center, -86.0)
             * Box(
@@ -732,8 +739,8 @@ def main() -> None:
         "scope": "Variant A Stage 1 hybrid-seam standalone validation",
         "authoritative_base_step": str(AUTHORITATIVE_BASE_STEP),
         "stage_flags": {
-            "BUILD_TOP_HINGE": model.BUILD_TOP_HINGE,
-            "BUILD_BOTTOM_SCREWS": model.BUILD_BOTTOM_SCREWS,
+            "BUILD_TOP_HINGE": False,
+            "BUILD_BOTTOM_SCREWS": False,
         },
         "compression_knob_mm": model.GASKET_CLOSED_GAP_MM,
         "shoulder_y_mm": joint["shoulder_y_mm"],
