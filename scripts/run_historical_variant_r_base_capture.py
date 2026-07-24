@@ -20,7 +20,6 @@ from cad_runner.entrypoint import ensure_coordinated as _ensure_cad_coordinated
 _ensure_cad_coordinated(__name__, __file__, _CAD_SAFETY_ROOT)
 
 import argparse
-import json
 import os
 from pathlib import Path
 import runpy
@@ -28,6 +27,7 @@ import sys
 
 from src.enclosure_family.variant_r.provenance import (  # noqa: E402
     collect_loaded_repo_sources,
+    write_producer_attestation,
 )
 
 
@@ -35,7 +35,12 @@ def _arguments() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("--historical-root", type=Path, required=True)
     parser.add_argument("--historical-entrypoint", type=Path, required=True)
-    parser.add_argument("--closure-out", type=Path, required=True)
+    parser.add_argument("--current-root", type=Path, required=True)
+    parser.add_argument("--current-entrypoint", type=Path, required=True)
+    parser.add_argument("--output-directory", type=Path, required=True)
+    parser.add_argument("--parent-stage-root", type=Path, required=True)
+    parser.add_argument("--geometry-source-commit", required=True)
+    parser.add_argument("--capture-overlay-sha256", required=True)
     return parser.parse_args()
 
 
@@ -48,7 +53,8 @@ def main() -> None:
     if not entrypoint.is_file():
         raise FileNotFoundError(entrypoint)
     sys.path.insert(0, str(historical_root))
-    prior_cwd = Path.cwd()
+    current_root = args.current_root.resolve()
+    prior_cwd = current_root
     exit_code: object = 0
     try:
         os.chdir(historical_root)
@@ -64,19 +70,19 @@ def main() -> None:
             historical_root,
             explicit_sources=(entrypoint,),
         )
-        args.closure_out.parent.mkdir(parents=True, exist_ok=True)
-        args.closure_out.write_text(
-            json.dumps(
-                {
-                    "child_exit_code": exit_code,
-                    "sources": records,
-                },
-                indent=2,
-                sort_keys=True,
-            )
-            + "\n",
-            encoding="utf-8",
+        os.environ["CAD_JOB_REPO_ROOT"] = str(current_root)
+        os.environ["CAD_JOB_STAGE_ROOT"] = str(
+            args.parent_stage_root.resolve()
         )
+        if exit_code in (None, 0):
+            write_producer_attestation(
+                repo_root=current_root,
+                output_directory=args.output_directory.resolve(),
+                producer_entrypoint=args.current_entrypoint.resolve(),
+                historical_sources=records,
+                geometry_source_commit=args.geometry_source_commit,
+                capture_overlay_sha256=args.capture_overlay_sha256,
+            )
 
 
 if __name__ == "__main__":
