@@ -87,6 +87,13 @@ def _release_projection(
         )
     if record.get("git", {}).get("tracked_source_dirty"):
         raise ValueError(f"{path} was not produced from clean tracked source")
+    if (
+        record.get("git", {}).get("dependency_source_bytes_match_commit")
+        is not True
+    ):
+        raise ValueError(
+            f"{path} does not verify release dependencies at its commit"
+        )
     return {
         "schema_version": 1,
         "record_kind": "variant_r_release_source_closure_projection",
@@ -95,6 +102,7 @@ def _release_projection(
         "release_entrypoint": record["release_entrypoint"],
         "release_mode": record["release_mode"],
         "git": record["git"],
+        "release_job": record["release_job"],
         "evidence_collection": record["evidence_collection"],
         "toolchain": record["toolchain"],
         "authoritative_base_input": record["authoritative_base_input"],
