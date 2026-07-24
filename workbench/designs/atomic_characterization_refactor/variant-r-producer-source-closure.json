@@ -1,34 +1,4 @@
 {
-  "schema_version": 1,
-  "record_kind": "variant_r_producer_source_closure_projection",
-  "producer_attestation": {
-    "path": "build/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle/variant_r_producer_attestation.json",
-    "sha256": "0d2ae5c45e9d866f8ed56fdded044b7682996fbb9a3523dc56771e70823c1136"
-  },
-  "cad_job_id": "20260724T071800-atomic-refactor-final-producer-fa1def52ae",
-  "producer_entrypoint": "scripts/generate_variant_r.py",
-  "producer_mode": "immutable Git source archive plus capture-only overlay at the accepted base construction boundary; deterministic accepted STEP header serialization; unrelated preview and component exports are excluded",
-  "git": {
-    "branch": "codex/enclosure-atomic-refactor-implementation",
-    "head": "5a076262d109ce11d0ce43df6b5410be8764779b",
-    "tracked_source_dirty": false
-  },
-  "historical_geometry_producer": {
-    "capture_effect": "export the untouched base immediately after build_base returns, verify one-solid STEP round trip, and exit before unrelated preview generation",
-    "capture_overlay_sha256": "6b24e0c7b027dacee328329f5edc34285ba2423cd1b00e8f1367630082628608",
-    "source_commit": "789cf7fb4f63d9567585198c47bc3b5b122e070f",
-    "step_header_canonicalization": {
-      "accepted_file_sha256": "441cc122c0383da257b16e80c4b424096f33b267cc95cab9d1278fb05a43a784",
-      "accepted_step_data_section_sha256": "70e59fc0af103d742578567164a15c9ecb89532b550f15231be898c699b91c03",
-      "canonical_file_name_timestamp": "2026-07-23T06:49:24",
-      "effect": "replace only the STEP FILE_NAME export timestamp with the accepted artifact timestamp after verifying the complete DATA payload; the producer attestation records the actual run time"
-    }
-  },
-  "toolchain": {
-    "build123d": "0.11.1",
-    "ocp": "7.9.3.1",
-    "python": "3.12.13"
-  },
   "authoritative_base_input": {
     "bytes": 5654772,
     "filename": "sand_cube_190x210_single_oval_port_base.step",
@@ -37,9 +7,413 @@
     "sha256": "441cc122c0383da257b16e80c4b424096f33b267cc95cab9d1278fb05a43a784",
     "step_data_section_sha256": "70e59fc0af103d742578567164a15c9ecb89532b550f15231be898c699b91c03"
   },
+  "cad_job_id": "20260724T083757-atomic-refactor-final2-producer-5f287edf8b",
   "closure": {
     "complete_loaded_repo_source_count": 57,
+    "current_orchestrator_sources": [
+      {
+        "bytes": 292,
+        "path": "cad_runner/__init__.py",
+        "revision": "a99ada6266369a854d58f0556021338881345cec",
+        "role": "coordinated_runtime_dependency",
+        "sha256": "1aa9f485a0a23dcbadb8df75fa8697e92803068f8f6a945617cc573406bc0d94"
+      },
+      {
+        "bytes": 2266,
+        "path": "cad_runner/entrypoint.py",
+        "revision": "a99ada6266369a854d58f0556021338881345cec",
+        "role": "coordinated_runtime_dependency",
+        "sha256": "3a711676bb3f52a051ee6eef4bd02535d7ac8c4444b6686ad3394e89516a36be"
+      },
+      {
+        "bytes": 1257,
+        "path": "cad_runner/outputs.py",
+        "revision": "a99ada6266369a854d58f0556021338881345cec",
+        "role": "coordinated_runtime_dependency",
+        "sha256": "12ae84bc5fa82970db0209c22589009b1af4fd5bbf415e5387c0a00a2843095e"
+      },
+      {
+        "bytes": 6006,
+        "path": "cad_runner/telemetry.py",
+        "revision": "a99ada6266369a854d58f0556021338881345cec",
+        "role": "coordinated_runtime_dependency",
+        "sha256": "236129be2b0c8bc9771cb6ba2dcbcce0efc5740f1c82d49e538d235d9c3180c0"
+      },
+      {
+        "bytes": 3648,
+        "path": "scripts/generate_variant_r.py",
+        "revision": "a99ada6266369a854d58f0556021338881345cec",
+        "role": "producer_entrypoint",
+        "sha256": "3f0bbb154588adff3e87d7e36f1077e1d8b319ba9559743b34b42bfd9f14ddc7"
+      },
+      {
+        "bytes": 3503,
+        "path": "scripts/run_historical_variant_r_base_capture.py",
+        "revision": "a99ada6266369a854d58f0556021338881345cec",
+        "role": "repo_runtime_dependency",
+        "sha256": "6a8e6cb699a9733f8d5956bfae7308a7c524a027b7f0d56806641fe3fca3b319"
+      },
+      {
+        "bytes": 30,
+        "path": "src/__init__.py",
+        "revision": "a99ada6266369a854d58f0556021338881345cec",
+        "role": "geometry_or_parameter_dependency",
+        "sha256": "903ea390d55a353da4907a7010e909b76a87f2fd08d689c3abec0af485f06ffd"
+      },
+      {
+        "bytes": 290,
+        "path": "src/enclosure_family/__init__.py",
+        "revision": "a99ada6266369a854d58f0556021338881345cec",
+        "role": "geometry_or_parameter_dependency",
+        "sha256": "ea3f697947e20b2c3d0ce36b9c306ea43340be6240a3d20131421de72ccae0b4"
+      },
+      {
+        "bytes": 2542,
+        "path": "src/enclosure_family/datums.py",
+        "revision": "a99ada6266369a854d58f0556021338881345cec",
+        "role": "geometry_or_parameter_dependency",
+        "sha256": "cb123ef78a42468278b9392da9728a4ab3fe66d8a62c843be5524b21f744b824"
+      },
+      {
+        "bytes": 1034,
+        "path": "src/enclosure_family/print_contracts.py",
+        "revision": "a99ada6266369a854d58f0556021338881345cec",
+        "role": "geometry_or_parameter_dependency",
+        "sha256": "b660a652f26b50f9c0cd8b440b070a0a6e2d4fde2873beb8f6c50e4a9b7edd21"
+      },
+      {
+        "bytes": 847,
+        "path": "src/enclosure_family/variant_r/__init__.py",
+        "revision": "a99ada6266369a854d58f0556021338881345cec",
+        "role": "geometry_or_parameter_dependency",
+        "sha256": "532b993351ec6dfd9f71f484a144665447adac4f82c1fb406932c36f02c6b568"
+      },
+      {
+        "bytes": 2917,
+        "path": "src/enclosure_family/variant_r/artifacts.py",
+        "revision": "a99ada6266369a854d58f0556021338881345cec",
+        "role": "geometry_or_parameter_dependency",
+        "sha256": "4075321f39ce9db9251c64a64362a56ae2c10a54e6c9bae0b867000affa1de8c"
+      },
+      {
+        "bytes": 4876,
+        "path": "src/enclosure_family/variant_r/historical_capture.py",
+        "revision": "a99ada6266369a854d58f0556021338881345cec",
+        "role": "geometry_or_parameter_dependency",
+        "sha256": "f90976449181d63775f0bce1d3bf0b09da159f2a825b803da77e4190e029b04c"
+      },
+      {
+        "bytes": 1745,
+        "path": "src/enclosure_family/variant_r/inputs.py",
+        "revision": "a99ada6266369a854d58f0556021338881345cec",
+        "role": "geometry_or_parameter_dependency",
+        "sha256": "edf393f0dc578277fdabcbde20132c16deedd71f9ebede3da231eca67b0ef7ff"
+      },
+      {
+        "bytes": 1751,
+        "path": "src/enclosure_family/variant_r/model.py",
+        "revision": "a99ada6266369a854d58f0556021338881345cec",
+        "role": "geometry_or_parameter_dependency",
+        "sha256": "a270c0e8b0990873b72b3ba2e34567c4b866b589430b8d90c86d0efabe89256e"
+      },
+      {
+        "bytes": 2383,
+        "path": "src/enclosure_family/variant_r/parameters.py",
+        "revision": "a99ada6266369a854d58f0556021338881345cec",
+        "role": "geometry_or_parameter_dependency",
+        "sha256": "d63f76428d8a4f7125858ea9047916b70d872ba8c4d90c3a79e692b0874a95a7"
+      },
+      {
+        "bytes": 909,
+        "path": "src/enclosure_family/variant_r/print_contracts.py",
+        "revision": "a99ada6266369a854d58f0556021338881345cec",
+        "role": "geometry_or_parameter_dependency",
+        "sha256": "bfb45ebda68827b2c4adf763fc2e8b33df91c7e17e418097c85333392817e39e"
+      },
+      {
+        "bytes": 16720,
+        "path": "src/enclosure_family/variant_r/provenance.py",
+        "revision": "a99ada6266369a854d58f0556021338881345cec",
+        "role": "geometry_or_parameter_dependency",
+        "sha256": "08b544de44b41341af944e070df81514394dca9116e80814d6c5598ed6268ace"
+      },
+      {
+        "bytes": 1639,
+        "path": "src/enclosure_family/variant_r/verification.py",
+        "revision": "a99ada6266369a854d58f0556021338881345cec",
+        "role": "geometry_or_parameter_dependency",
+        "sha256": "8f3c4aedb7120ee90da8f0045cff14a1828e2203f62ff191e9a805f7aef78edb"
+      },
+      {
+        "bytes": 52,
+        "path": "src/features/__init__.py",
+        "revision": "a99ada6266369a854d58f0556021338881345cec",
+        "role": "geometry_or_parameter_dependency",
+        "sha256": "bb72b1c5b32f73ec5b3ff84efe84a6f514cd62d0f6c3dcce5be7045009afe593"
+      },
+      {
+        "bytes": 30731,
+        "path": "src/features/horn.py",
+        "revision": "a99ada6266369a854d58f0556021338881345cec",
+        "role": "geometry_or_parameter_dependency",
+        "sha256": "0078a6c58f4cce4310b7d7f4e1c46043b67fb837ee0ef57874513af6789c94d8"
+      },
+      {
+        "bytes": 1508,
+        "path": "src/final_horn.py",
+        "revision": "a99ada6266369a854d58f0556021338881345cec",
+        "role": "geometry_or_parameter_dependency",
+        "sha256": "215f549cdaeed933abb0ac1b1f86def0839952b3b5dcb552ded620064c69f99a"
+      }
+    ],
     "geometry_or_parameter_source_count": 35,
+    "historical_sources": [
+      {
+        "bytes": 22017,
+        "path": "experiments/sand_cube_190x210_header_port/generate_sand_cube_190x210_header_port.py",
+        "revision": "789cf7fb4f63d9567585198c47bc3b5b122e070f",
+        "role": "geometry_or_parameter_dependency",
+        "sha256": "55ccc108da6bd7f1eeaed5ede686f2e0da1025022d37948abc01d770c70c4c7c"
+      },
+      {
+        "bytes": 20645,
+        "path": "experiments/sand_cube_190x210_internal_squat_absorber/generate_sand_cube_190x210_internal_squat_absorber.py",
+        "revision": "789cf7fb4f63d9567585198c47bc3b5b122e070f",
+        "role": "geometry_or_parameter_dependency",
+        "sha256": "ab0eb1d28375936eab12791a22f618baf68e15b634425c73407f6b5f2a9d5bd9"
+      },
+      {
+        "bytes": 18468,
+        "path": "experiments/sand_cube_190x210_internal_squat_absorber_flush/generate_sand_cube_190x210_internal_squat_absorber_flush.py",
+        "revision": "789cf7fb4f63d9567585198c47bc3b5b122e070f",
+        "role": "geometry_or_parameter_dependency",
+        "sha256": "888fe48ad804c6ac49f5805d237dd7974b686cac1bc09eeec5e8ef6d049bb474"
+      },
+      {
+        "bytes": 18745,
+        "path": "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners/generate_sand_cube_190x210_internal_squat_absorber_rear_corners.py",
+        "revision": "789cf7fb4f63d9567585198c47bc3b5b122e070f",
+        "role": "geometry_or_parameter_dependency",
+        "sha256": "8464d717b16157d3aadc7881c537c687484c08ece51aed093ccc2da52f60f872"
+      },
+      {
+        "bytes": 20857,
+        "path": "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_inverse_le_cleach_front/solve_inverse_le_cleach_front.py",
+        "revision": "789cf7fb4f63d9567585198c47bc3b5b122e070f",
+        "role": "geometry_or_parameter_dependency",
+        "sha256": "cad887516e05aaeec02344ceb468f3613a3b55f9a3e5f14d86110418281f2ef0"
+      },
+      {
+        "bytes": 23432,
+        "path": "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_le_cleach_front_15mm_g2_fairing/generate_sand_cube_190x210_internal_squat_absorber_rear_corners_le_cleach_front_15mm_g2_fairing.py",
+        "revision": "789cf7fb4f63d9567585198c47bc3b5b122e070f",
+        "role": "geometry_or_parameter_dependency",
+        "sha256": "5d7f80726b325fdacfe455174d6d57ad4677d2ef6f848e37e1054ab46b3517a7"
+      },
+      {
+        "bytes": 23517,
+        "path": "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_le_cleach_front_15mm_square_crop_r8/generate_sand_cube_190x210_internal_squat_absorber_rear_corners_le_cleach_front_15mm_square_crop_r8.py",
+        "revision": "789cf7fb4f63d9567585198c47bc3b5b122e070f",
+        "role": "geometry_or_parameter_dependency",
+        "sha256": "3cfad3ce75d64e451b3d72f90dcc11b95bd287ddcf1d954d70c393e3171082b3"
+      },
+      {
+        "bytes": 13765,
+        "path": "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_le_cleach_front_15mm_square_crop_unified_r8/generate_sand_cube_190x210_internal_squat_absorber_rear_corners_le_cleach_front_15mm_square_crop_unified_r8.py",
+        "revision": "789cf7fb4f63d9567585198c47bc3b5b122e070f",
+        "role": "geometry_or_parameter_dependency",
+        "sha256": "40a1f8e1ddb962145a289487fc30eafb19c4d20436bdf2891a030ff893d69c54"
+      },
+      {
+        "bytes": 32146,
+        "path": "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_centered_captive_nut/generate_sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_centered_captive_nut.py",
+        "revision": "789cf7fb4f63d9567585198c47bc3b5b122e070f",
+        "role": "geometry_or_parameter_dependency",
+        "sha256": "24a0809b328be514a4f2cb5fafa3d893da1b0e39a3b7025498f5a556a5acda63"
+      },
+      {
+        "bytes": 26219,
+        "path": "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_conformal_full_system/generate_sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_conformal_full_system.py",
+        "revision": "789cf7fb4f63d9567585198c47bc3b5b122e070f",
+        "role": "geometry_or_parameter_dependency",
+        "sha256": "de81642204eabf1d4677921b0d26f73a3af78708bbc075c46aaf2e80cdf00e6a"
+      },
+      {
+        "bytes": 37000,
+        "path": "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_conformal_inner_wall/generate_sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_conformal_inner_wall.py",
+        "revision": "789cf7fb4f63d9567585198c47bc3b5b122e070f",
+        "role": "geometry_or_parameter_dependency",
+        "sha256": "6d8f7acf40493122541a89bf7e0e81cc4c094c0c3846d11c48cf8ff61ff9fbb7"
+      },
+      {
+        "bytes": 33519,
+        "path": "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_dual_captive_square_nut_printable/generate_sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_dual_captive_square_nut_printable.py",
+        "revision": "789cf7fb4f63d9567585198c47bc3b5b122e070f",
+        "role": "geometry_or_parameter_dependency",
+        "sha256": "65ade227ab410e60ed394006543ebbddbfc14f0b314eaa38431357e0269c3844"
+      },
+      {
+        "bytes": 18924,
+        "path": "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_fairing/generate_sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_fairing.py",
+        "revision": "789cf7fb4f63d9567585198c47bc3b5b122e070f",
+        "role": "geometry_or_parameter_dependency",
+        "sha256": "822c1a9c24e213d372ea573ff06a50eea419c70acfe5116d8b674bb8ecb807f7"
+      },
+      {
+        "bytes": 22896,
+        "path": "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_forward_captive_square_nut/generate_sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_forward_captive_square_nut.py",
+        "revision": "789cf7fb4f63d9567585198c47bc3b5b122e070f",
+        "role": "geometry_or_parameter_dependency",
+        "sha256": "faef5c95213dd331aaefd784ee6e19514ba2594ded216aa3ecd0b17e8a751388"
+      },
+      {
+        "bytes": 37896,
+        "path": "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_front_fill_perimeter_seal/generate_sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_front_fill_perimeter_seal.py",
+        "revision": "789cf7fb4f63d9567585198c47bc3b5b122e070f",
+        "role": "geometry_or_parameter_dependency",
+        "sha256": "8df747bdc01c16cd157cf28f03cdd549ab9ccfa99530b37ed6515e33098cd936"
+      },
+      {
+        "bytes": 62305,
+        "path": "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_hooked_gasketed_baffle/generate_sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_hooked_gasketed_baffle.py",
+        "revision": "789cf7fb4f63d9567585198c47bc3b5b122e070f",
+        "role": "geometry_or_parameter_dependency",
+        "sha256": "eee63214daa54477e616defcd9c818ad572816a7e98c6ce6a788539ede9a79e4"
+      },
+      {
+        "bytes": 77238,
+        "path": "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_lightweight_coherent_closure/generate_sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_lightweight_coherent_closure.py",
+        "revision": "789cf7fb4f63d9567585198c47bc3b5b122e070f",
+        "role": "geometry_or_parameter_dependency",
+        "sha256": "0f318a52cf4148d2f2367a18176867acfad76e5a6827d77ca42e5395ce43ba2a"
+      },
+      {
+        "bytes": 44088,
+        "path": "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_nested_seam_closure_concepts/generate_sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_nested_seam_closure_concepts.py",
+        "revision": "789cf7fb4f63d9567585198c47bc3b5b122e070f",
+        "role": "geometry_or_parameter_dependency",
+        "sha256": "02e415cd5a83d61fe9c01d54153c21d8e41a293eb17e45aa6a4bc53986d97f42"
+      },
+      {
+        "bytes": 24064,
+        "path": "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_printable_bucket/generate_sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_printable_bucket.py",
+        "revision": "789cf7fb4f63d9567585198c47bc3b5b122e070f",
+        "role": "geometry_or_parameter_dependency",
+        "sha256": "d2e426fc9edace355cda8e24a54b6f435e073e4ee5bc95cc3aa8236c018799af"
+      },
+      {
+        "bytes": 46015,
+        "path": "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle/generate_sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle.py",
+        "revision": "789cf7fb4f63d9567585198c47bc3b5b122e070f",
+        "role": "geometry_or_parameter_dependency",
+        "sha256": "6d8072eb32a1e86b54528fe80144155d0fc2b9d0996bdc76a8168c06e4c91f0c"
+      },
+      {
+        "bytes": 57374,
+        "path": "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simplified_printable_closure/generate_sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simplified_printable_closure.py",
+        "revision": "789cf7fb4f63d9567585198c47bc3b5b122e070f",
+        "role": "geometry_or_parameter_dependency",
+        "sha256": "2b9cab3d030666b1a1265b92f8e027195ebd8b7398be656e81accdfd4e4a92f1"
+      },
+      {
+        "bytes": 44417,
+        "path": "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_single_land_corner_fasteners/generate_sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_single_land_corner_fasteners.py",
+        "revision": "789cf7fb4f63d9567585198c47bc3b5b122e070f",
+        "role": "geometry_or_parameter_dependency",
+        "sha256": "029ff70e4f47ade1d10b7c3e50775a90a67ece0581c0dab9ef9610a84824c6bb"
+      },
+      {
+        "bytes": 39950,
+        "path": "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_systemic_joint_recessed_fasteners/generate_sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_systemic_joint_recessed_fasteners.py",
+        "revision": "789cf7fb4f63d9567585198c47bc3b5b122e070f",
+        "role": "geometry_or_parameter_dependency",
+        "sha256": "efa5381674d56d2d4e727ffbfe3c63424c16d087661b2ad3f4d7dd297cc75c8a"
+      },
+      {
+        "bytes": 45780,
+        "path": "experiments/sand_cube_190x210_port_absorber_bucket/generate_port_absorber_bucket.py",
+        "revision": "789cf7fb4f63d9567585198c47bc3b5b122e070f",
+        "role": "geometry_or_parameter_dependency",
+        "sha256": "8bee0039aff82761f672bf7d076c4aa90b95dbaa8f8f27f2c288e4963f624528"
+      },
+      {
+        "bytes": 41431,
+        "path": "experiments/sand_cube_190x210_port_absorber_collar/generate_port_absorber_collar.py",
+        "revision": "789cf7fb4f63d9567585198c47bc3b5b122e070f",
+        "role": "geometry_or_parameter_dependency",
+        "sha256": "d571da9902059ff1ca048deea2f407c68dda6c09a3cc0853f9d6b5d53186a848"
+      },
+      {
+        "bytes": 37357,
+        "path": "experiments/sand_cube_190x210_port_absorber_slotted_bucket/generate_port_absorber_slotted_bucket.py",
+        "revision": "789cf7fb4f63d9567585198c47bc3b5b122e070f",
+        "role": "geometry_or_parameter_dependency",
+        "sha256": "8b9e8247728338c2c3486d71fd234cf8c98cd40ed7104e2646a07fda83077a8b"
+      },
+      {
+        "bytes": 30565,
+        "path": "experiments/sand_cube_190x210_port_absorber_slotted_d_squat/generate_port_absorber_slotted_d_squat.py",
+        "revision": "789cf7fb4f63d9567585198c47bc3b5b122e070f",
+        "role": "geometry_or_parameter_dependency",
+        "sha256": "9bcb1a728add4fa1b306158da1e782cf9c8441275fcf7ccc90c092a6259fbf97"
+      },
+      {
+        "bytes": 25480,
+        "path": "experiments/sand_cube_190x210_serviceable_tower/generate_sand_cube_190x210_serviceable_tower.py",
+        "revision": "789cf7fb4f63d9567585198c47bc3b5b122e070f",
+        "role": "geometry_or_parameter_dependency",
+        "sha256": "7ea87a4c3e785a971ca422041f3382fbe16d43d22fa2e3617569ca9e9d5f3f01"
+      },
+      {
+        "bytes": 144636,
+        "path": "experiments/sand_cube_190x210_single_oval_port/generate_sand_cube_190x210_single_oval_port.py",
+        "revision": "789cf7fb4f63d9567585198c47bc3b5b122e070f",
+        "role": "geometry_or_parameter_dependency",
+        "sha256": "b4b6e28c1804f8bbfea81148d439bea1ba23a85a0a3986613c1a7cdd0ddee7d2"
+      },
+      {
+        "bytes": 31069,
+        "path": "experiments/sand_cube_200_hybrid_port/generate_sand_cube_200_hybrid_port.py",
+        "revision": "789cf7fb4f63d9567585198c47bc3b5b122e070f",
+        "role": "geometry_or_parameter_dependency",
+        "sha256": "00622fb5a7bb24f961657ef2e029763819ce4b018ff6b422a731b7f5c32c9166"
+      },
+      {
+        "bytes": 52503,
+        "path": "experiments/sand_cube_200_port_tower/generate_sand_cube_200_port_tower.py",
+        "revision": "789cf7fb4f63d9567585198c47bc3b5b122e070f",
+        "role": "geometry_or_parameter_dependency",
+        "sha256": "74633ae882c7600294e52493ea25e2102d28e527ddd0decef4240c65d3cc6944"
+      },
+      {
+        "bytes": 103575,
+        "path": "experiments/sand_cube_8_5_black_hole/generate_contoured_inner_variants.py",
+        "revision": "789cf7fb4f63d9567585198c47bc3b5b122e070f",
+        "role": "geometry_or_parameter_dependency",
+        "sha256": "bfd972c136a975a2e01a52deab233af6677d778462184b92f70f29f5d08e177f"
+      },
+      {
+        "bytes": 11389,
+        "path": "experiments/sand_cube_8_5_black_hole/generate_curve_to_seat_variants.py",
+        "revision": "789cf7fb4f63d9567585198c47bc3b5b122e070f",
+        "role": "geometry_or_parameter_dependency",
+        "sha256": "5a72d1785627eaea78d3be171b47e9f3cbf05e4cf11ebff47da800b10e19b350"
+      },
+      {
+        "bytes": 22944,
+        "path": "experiments/sand_cube_8_5_black_hole/generate_variants.py",
+        "revision": "789cf7fb4f63d9567585198c47bc3b5b122e070f",
+        "role": "geometry_or_parameter_dependency",
+        "sha256": "e74d47d3adbb148e025f737448995c6b86f2c79e176d56b27e18fc6d9f42b9e7"
+      },
+      {
+        "bytes": 4149,
+        "path": "params.py",
+        "revision": "789cf7fb4f63d9567585198c47bc3b5b122e070f",
+        "role": "geometry_or_parameter_dependency",
+        "sha256": "47bfaa90eaa62652c944e2d910e3b93dd3d3a1b6b2ec8590668a8c5274c1715c"
+      }
+    ],
     "loaded_generator_stage_count": 33,
     "method": "all historical repository Python sources present in the capture child sys.modules at the accepted base boundary, plus all current orchestrator sources loaded by its parent CAD worker and both explicit entrypoints",
     "sources": [
@@ -291,157 +665,186 @@
       {
         "bytes": 292,
         "path": "cad_runner/__init__.py",
-        "revision": "5a076262d109ce11d0ce43df6b5410be8764779b",
+        "revision": "a99ada6266369a854d58f0556021338881345cec",
         "role": "coordinated_runtime_dependency",
         "sha256": "1aa9f485a0a23dcbadb8df75fa8697e92803068f8f6a945617cc573406bc0d94"
       },
       {
         "bytes": 2266,
         "path": "cad_runner/entrypoint.py",
-        "revision": "5a076262d109ce11d0ce43df6b5410be8764779b",
+        "revision": "a99ada6266369a854d58f0556021338881345cec",
         "role": "coordinated_runtime_dependency",
         "sha256": "3a711676bb3f52a051ee6eef4bd02535d7ac8c4444b6686ad3394e89516a36be"
       },
       {
         "bytes": 1257,
         "path": "cad_runner/outputs.py",
-        "revision": "5a076262d109ce11d0ce43df6b5410be8764779b",
+        "revision": "a99ada6266369a854d58f0556021338881345cec",
         "role": "coordinated_runtime_dependency",
         "sha256": "12ae84bc5fa82970db0209c22589009b1af4fd5bbf415e5387c0a00a2843095e"
       },
       {
         "bytes": 6006,
         "path": "cad_runner/telemetry.py",
-        "revision": "5a076262d109ce11d0ce43df6b5410be8764779b",
+        "revision": "a99ada6266369a854d58f0556021338881345cec",
         "role": "coordinated_runtime_dependency",
         "sha256": "236129be2b0c8bc9771cb6ba2dcbcce0efc5740f1c82d49e538d235d9c3180c0"
       },
       {
         "bytes": 3648,
         "path": "scripts/generate_variant_r.py",
-        "revision": "5a076262d109ce11d0ce43df6b5410be8764779b",
+        "revision": "a99ada6266369a854d58f0556021338881345cec",
         "role": "producer_entrypoint",
         "sha256": "3f0bbb154588adff3e87d7e36f1077e1d8b319ba9559743b34b42bfd9f14ddc7"
       },
       {
         "bytes": 3503,
         "path": "scripts/run_historical_variant_r_base_capture.py",
-        "revision": "5a076262d109ce11d0ce43df6b5410be8764779b",
+        "revision": "a99ada6266369a854d58f0556021338881345cec",
         "role": "repo_runtime_dependency",
         "sha256": "6a8e6cb699a9733f8d5956bfae7308a7c524a027b7f0d56806641fe3fca3b319"
       },
       {
         "bytes": 30,
         "path": "src/__init__.py",
-        "revision": "5a076262d109ce11d0ce43df6b5410be8764779b",
+        "revision": "a99ada6266369a854d58f0556021338881345cec",
         "role": "geometry_or_parameter_dependency",
         "sha256": "903ea390d55a353da4907a7010e909b76a87f2fd08d689c3abec0af485f06ffd"
       },
       {
         "bytes": 290,
         "path": "src/enclosure_family/__init__.py",
-        "revision": "5a076262d109ce11d0ce43df6b5410be8764779b",
+        "revision": "a99ada6266369a854d58f0556021338881345cec",
         "role": "geometry_or_parameter_dependency",
         "sha256": "ea3f697947e20b2c3d0ce36b9c306ea43340be6240a3d20131421de72ccae0b4"
       },
       {
         "bytes": 2542,
         "path": "src/enclosure_family/datums.py",
-        "revision": "5a076262d109ce11d0ce43df6b5410be8764779b",
+        "revision": "a99ada6266369a854d58f0556021338881345cec",
         "role": "geometry_or_parameter_dependency",
         "sha256": "cb123ef78a42468278b9392da9728a4ab3fe66d8a62c843be5524b21f744b824"
       },
       {
         "bytes": 1034,
         "path": "src/enclosure_family/print_contracts.py",
-        "revision": "5a076262d109ce11d0ce43df6b5410be8764779b",
+        "revision": "a99ada6266369a854d58f0556021338881345cec",
         "role": "geometry_or_parameter_dependency",
         "sha256": "b660a652f26b50f9c0cd8b440b070a0a6e2d4fde2873beb8f6c50e4a9b7edd21"
       },
       {
-        "bytes": 777,
+        "bytes": 847,
         "path": "src/enclosure_family/variant_r/__init__.py",
-        "revision": "5a076262d109ce11d0ce43df6b5410be8764779b",
+        "revision": "a99ada6266369a854d58f0556021338881345cec",
         "role": "geometry_or_parameter_dependency",
-        "sha256": "78d57b5c9b2bca651264cd6a2f617084beedb9c5201aaa1a8f1013917708b500"
+        "sha256": "532b993351ec6dfd9f71f484a144665447adac4f82c1fb406932c36f02c6b568"
       },
       {
-        "bytes": 2655,
+        "bytes": 2917,
         "path": "src/enclosure_family/variant_r/artifacts.py",
-        "revision": "5a076262d109ce11d0ce43df6b5410be8764779b",
+        "revision": "a99ada6266369a854d58f0556021338881345cec",
         "role": "geometry_or_parameter_dependency",
-        "sha256": "fd1b65cb3fb898ccb36be0592b6d12025880b59bd8462bc3e7e9fed54698029a"
+        "sha256": "4075321f39ce9db9251c64a64362a56ae2c10a54e6c9bae0b867000affa1de8c"
       },
       {
         "bytes": 4876,
         "path": "src/enclosure_family/variant_r/historical_capture.py",
-        "revision": "5a076262d109ce11d0ce43df6b5410be8764779b",
+        "revision": "a99ada6266369a854d58f0556021338881345cec",
         "role": "geometry_or_parameter_dependency",
         "sha256": "f90976449181d63775f0bce1d3bf0b09da159f2a825b803da77e4190e029b04c"
       },
       {
-        "bytes": 1670,
+        "bytes": 1745,
         "path": "src/enclosure_family/variant_r/inputs.py",
-        "revision": "5a076262d109ce11d0ce43df6b5410be8764779b",
+        "revision": "a99ada6266369a854d58f0556021338881345cec",
         "role": "geometry_or_parameter_dependency",
-        "sha256": "080e4c4584ade4bd5cb99eacd080ed4dd5fab08029b2845e37576fe61d4dc8ed"
+        "sha256": "edf393f0dc578277fdabcbde20132c16deedd71f9ebede3da231eca67b0ef7ff"
       },
       {
         "bytes": 1751,
         "path": "src/enclosure_family/variant_r/model.py",
-        "revision": "5a076262d109ce11d0ce43df6b5410be8764779b",
+        "revision": "a99ada6266369a854d58f0556021338881345cec",
         "role": "geometry_or_parameter_dependency",
         "sha256": "a270c0e8b0990873b72b3ba2e34567c4b866b589430b8d90c86d0efabe89256e"
       },
       {
         "bytes": 2383,
         "path": "src/enclosure_family/variant_r/parameters.py",
-        "revision": "5a076262d109ce11d0ce43df6b5410be8764779b",
+        "revision": "a99ada6266369a854d58f0556021338881345cec",
         "role": "geometry_or_parameter_dependency",
         "sha256": "d63f76428d8a4f7125858ea9047916b70d872ba8c4d90c3a79e692b0874a95a7"
       },
       {
         "bytes": 909,
         "path": "src/enclosure_family/variant_r/print_contracts.py",
-        "revision": "5a076262d109ce11d0ce43df6b5410be8764779b",
+        "revision": "a99ada6266369a854d58f0556021338881345cec",
         "role": "geometry_or_parameter_dependency",
         "sha256": "bfb45ebda68827b2c4adf763fc2e8b33df91c7e17e418097c85333392817e39e"
       },
       {
-        "bytes": 13172,
+        "bytes": 16720,
         "path": "src/enclosure_family/variant_r/provenance.py",
-        "revision": "5a076262d109ce11d0ce43df6b5410be8764779b",
+        "revision": "a99ada6266369a854d58f0556021338881345cec",
         "role": "geometry_or_parameter_dependency",
-        "sha256": "e9be7ee582328599109acaea3ce35aae7c18df433da69f017244cfd3851d38c1"
+        "sha256": "08b544de44b41341af944e070df81514394dca9116e80814d6c5598ed6268ace"
       },
       {
         "bytes": 1639,
         "path": "src/enclosure_family/variant_r/verification.py",
-        "revision": "5a076262d109ce11d0ce43df6b5410be8764779b",
+        "revision": "a99ada6266369a854d58f0556021338881345cec",
         "role": "geometry_or_parameter_dependency",
         "sha256": "8f3c4aedb7120ee90da8f0045cff14a1828e2203f62ff191e9a805f7aef78edb"
       },
       {
         "bytes": 52,
         "path": "src/features/__init__.py",
-        "revision": "5a076262d109ce11d0ce43df6b5410be8764779b",
+        "revision": "a99ada6266369a854d58f0556021338881345cec",
         "role": "geometry_or_parameter_dependency",
         "sha256": "bb72b1c5b32f73ec5b3ff84efe84a6f514cd62d0f6c3dcce5be7045009afe593"
       },
       {
         "bytes": 30731,
         "path": "src/features/horn.py",
-        "revision": "5a076262d109ce11d0ce43df6b5410be8764779b",
+        "revision": "a99ada6266369a854d58f0556021338881345cec",
         "role": "geometry_or_parameter_dependency",
         "sha256": "0078a6c58f4cce4310b7d7f4e1c46043b67fb837ee0ef57874513af6789c94d8"
       },
       {
         "bytes": 1508,
         "path": "src/final_horn.py",
-        "revision": "5a076262d109ce11d0ce43df6b5410be8764779b",
+        "revision": "a99ada6266369a854d58f0556021338881345cec",
         "role": "geometry_or_parameter_dependency",
         "sha256": "215f549cdaeed933abb0ac1b1f86def0839952b3b5dcb552ded620064c69f99a"
       }
     ]
+  },
+  "git": {
+    "branch": "codex/enclosure-atomic-refactor-implementation",
+    "head": "a99ada6266369a854d58f0556021338881345cec",
+    "tracked_source_dirty": false
+  },
+  "historical_geometry_producer": {
+    "capture_effect": "export the untouched base immediately after build_base returns, verify one-solid STEP round trip, and exit before unrelated preview generation",
+    "capture_overlay_sha256": "6b24e0c7b027dacee328329f5edc34285ba2423cd1b00e8f1367630082628608",
+    "source_commit": "789cf7fb4f63d9567585198c47bc3b5b122e070f",
+    "step_header_canonicalization": {
+      "accepted_file_sha256": "441cc122c0383da257b16e80c4b424096f33b267cc95cab9d1278fb05a43a784",
+      "accepted_step_data_section_sha256": "70e59fc0af103d742578567164a15c9ecb89532b550f15231be898c699b91c03",
+      "canonical_file_name_timestamp": "2026-07-23T06:49:24",
+      "effect": "replace only the STEP FILE_NAME export timestamp with the accepted artifact timestamp after verifying the complete DATA payload; created_at_utc above records the actual producer-run time"
+    }
+  },
+  "producer_attestation": {
+    "path": "build/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle/variant_r_producer_attestation.json",
+    "sha256": "41f7da9312343859b082a2ca502da777d6714295f788d5196356e667946c81e7"
+  },
+  "producer_entrypoint": "scripts/generate_variant_r.py",
+  "producer_mode": "immutable Git source archive plus capture-only overlay at the accepted base construction boundary; deterministic accepted STEP header serialization; unrelated preview and component exports are excluded",
+  "record_kind": "variant_r_producer_source_closure_projection",
+  "schema_version": 1,
+  "toolchain": {
+    "build123d": "0.11.1",
+    "ocp": "7.9.3.1",
+    "python": "3.12.13"
   }
 }

@@ -108,9 +108,11 @@ def render_inventory(data: dict[str, Any]) -> None:
             "## Historical Phase A source ancestry snapshot",
             "",
             "These 19 rows preserve the initial characterization snapshot. The "
-            "current exact producer dependency set, including every loaded "
-            "path/revision/hash, is `variant-r-producer-source-closure.json`; "
-            "the final release identity is in `final-acceptance-evidence.json`.",
+            "current exact producer and release dependency sets, including "
+            "every loaded path/revision/hash, are "
+            "`variant-r-producer-source-closure.json` and "
+            "`variant-r-release-source-closure.json`; compact final release "
+            "identity is in `final-acceptance-evidence.json`.",
             "",
             "| Order | Path | SHA-256 | Responsibility / mutation |",
             "|---:|---|---|---|",
