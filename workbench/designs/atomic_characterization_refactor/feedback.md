@@ -396,3 +396,44 @@ authoritative structured facts are in `atomic_manifest.json`.
   checks passed 209 tests and 19 subtests, 89 entrypoints, catalog and lint.
   The final forced release will exercise the moved measurement and export
   adapters together before visual review.
+
+## 2026-07-24 — forced final release and visual checkpoint
+
+- Clean producer job
+  `20260724T071800-atomic-refactor-final-producer-fa1def52ae` completed in
+  88.419 seconds at 1,235,189,760 bytes peak RSS. It reproduced accepted input
+  hash `441cc122...` byte-for-byte and published fresh attestation
+  `0d2ae5c4...`, bound to clean source commit `5a076262...` and all 57 loaded
+  repository sources (35 geometry/parameter sources; 33 loaded generator
+  stages).
+- Forced release job
+  `20260724T071935-atomic-refactor-final-release-5a33762429` completed in
+  1471.811 seconds at 1,382,973,440 bytes peak RSS and atomically published ten
+  outputs. Strict job
+  `20260724T074434-atomic-refactor-final-strict-0e704345d5` completed in
+  2069.819 seconds at 2,446,458,880 bytes peak RSS. Report `24527601...`
+  passes both complete parts and all six sections with matching deterministic
+  measurements, zero removed/added material, matching normalized diagnostics,
+  zero-volume mating contact and STEP round trips.
+- Final native-free job
+  `20260724T081949-atomic-refactor-final-lightweight-26832f42e1` completed in
+  6.112 seconds at 21,659,648 bytes peak RSS: 209 tests plus 19 subtests,
+  catalog 10/38, 89 entrypoints and lint all pass.
+- Visual review assembly job
+  `20260724T082056-atomic-refactor-final-review-assembly-ac5c8ca527` packaged
+  the exact bucket and baffle in design coordinates at hash `cfd4ad3...`.
+  Sidecar job `20260724T082106-text-to-cad-artifacts-9f8b4acb3a` produced
+  `94c143c...`. Snapshot job
+  `20260724T082321-text-to-cad-artifacts-bf297483aa` produced inspected
+  isometric `9150298...` and bottom detail `73b5eeb...`. The first Snapshot
+  attempt failed before geometry import because the clean worktree lacked its
+  pinned runtime; the second sandboxed attempt exposed the expected macOS
+  Chromium permission failure. The successful job reused the pinned runtime
+  from the primary tool checkout and ran with the required local launch
+  permission. No tool was installed or upgraded.
+- The agent inspected both direct Snapshot outputs. The overview shows the
+  expected assembled envelope, removable front, driver opening, port and
+  visible seam with no detached or misplaced body. The bottom view shows the
+  preserved imperfect lower/front contour with no detached body. These are
+  visual observations only; measurable claims remain bound to deterministic
+  evidence. No human visual attestation has been supplied.
