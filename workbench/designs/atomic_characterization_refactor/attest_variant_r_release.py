@@ -40,6 +40,8 @@ def _arguments() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("--release-dir", type=Path, required=True)
     parser.add_argument("--release-job", type=Path, required=True)
+    parser.add_argument("--release-git-head", required=True)
+    parser.add_argument("--release-git-branch", required=True)
     parser.add_argument("--out", type=Path, required=True)
     return parser.parse_args()
 
@@ -94,6 +96,13 @@ def main() -> None:
         _CAD_SAFETY_ROOT,
         explicit_sources=(_VALIDATOR,),
     )
+    evidence_path = Path(__file__).resolve()
+    runtime_sources = tuple(
+        record
+        for record in runtime_sources
+        if record["path"]
+        != evidence_path.relative_to(_CAD_SAFETY_ROOT).as_posix()
+    )
     diagnostics = json.loads(
         (release_dir / "validation_diagnostics.json").read_text()
     )
@@ -111,7 +120,12 @@ def main() -> None:
         release_job_id=release_job["job_id"],
         runtime_sources=runtime_sources,
         attestation_output=job_output_path(args.out.resolve()),
-        evidence_entrypoint=Path(__file__),
+        evidence_entrypoint=evidence_path,
+        release_git_identity={
+            "head": args.release_git_head,
+            "branch": args.release_git_branch,
+            "tracked_source_dirty": False,
+        },
     )
     print(
         json.dumps(
