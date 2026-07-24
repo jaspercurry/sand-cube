@@ -87,9 +87,9 @@
       "producer": "scripts/generate_variant_r.py",
       "validator": "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle/validate_simple_tongue_groove_baffle.py",
       "authoritative_input_sha256": "441cc122c0383da257b16e80c4b424096f33b267cc95cab9d1278fb05a43a784",
-      "producer_job_id": "20260724T071800-atomic-refactor-final-producer-fa1def52ae",
-      "release_job_id": "20260724T071935-atomic-refactor-final-release-5a33762429",
-      "strict_job_id": "20260724T074434-atomic-refactor-final-strict-0e704345d5",
+      "producer_job_id": "20260724T083757-atomic-refactor-final2-producer-5f287edf8b",
+      "release_job_id": "20260724T102722-atomic-refactor-landing-restored-release-52bd80460c",
+      "strict_job_id": "20260724T105504-atomic-refactor-landing-strict-a9945e2f37",
       "current_state": "pass; ignored build artifacts are derived and their immutable hashes, jobs, producer/source identities, measurements and attestations are committed in the source-closure and final-acceptance records"
     },
     "construction_stages_override": [
@@ -208,10 +208,10 @@
     "authoritative_base_input_data_sha256": "70e59fc0af103d742578567164a15c9ecb89532b550f15231be898c699b91c03",
     "authoritative_base_producer": {
       "entrypoint": "scripts/generate_variant_r.py",
-      "job_id": "20260724T071800-atomic-refactor-final-producer-fa1def52ae",
-      "elapsed_seconds": 88.419,
-      "peak_rss_bytes": 1235189760,
-      "attestation_sha256": "0d2ae5c45e9d866f8ed56fdded044b7682996fbb9a3523dc56771e70823c1136",
+      "job_id": "20260724T083757-atomic-refactor-final2-producer-5f287edf8b",
+      "elapsed_seconds": 87.912,
+      "peak_rss_bytes": 1181417472,
+      "attestation_sha256": "41f7da9312343859b082a2ca502da777d6714295f788d5196356e667946c81e7",
       "source_closure_record": "variant-r-producer-source-closure.json",
       "complete_loaded_repo_source_count": 57,
       "geometry_or_parameter_source_count": 35,
@@ -221,19 +221,21 @@
       "clean_checkout_reproduction": "git archive the exact geometry commit, apply the committed capture-only overlay, export immediately at the accepted base boundary, verify the DATA payload, and canonicalize only the accepted STEP FILE_NAME timestamp"
     },
     "generation": {
-      "job_id": "20260724T071935-atomic-refactor-final-release-5a33762429",
-      "elapsed_seconds": 1471.811,
-      "peak_rss_bytes": 1382973440,
+      "job_id": "20260724T102722-atomic-refactor-landing-restored-release-52bd80460c",
+      "elapsed_seconds": 1493.266,
+      "peak_rss_bytes": 1403142144,
       "outputs": 10,
-      "bucket_sha256": "d3cb808b5dcec90241ec00ba7b195cea27b94fa81cdd99729a5b6440461673da",
-      "baffle_sha256": "051653a63bf5114d987d646c1de7e5cc239e07aa6d19eed80c94bfb5e8b35853",
-      "diagnostics_sha256": "591b3c65e7b962d8b35a73e0721d9dd9036e8b907f76a85468697b17b0dbbd76"
+      "bucket_sha256": "0819df604de6e1c0de7fd43cbfb523112ccf22a209ee2d864bf9e0fd64728c49",
+      "baffle_sha256": "622065592b3bcd246d1c229d75a9b24740db7b8abe1765a37154ed9e10319fd0",
+      "diagnostics_sha256": "f8dbefc9191eef3b62eeca066fd12c515c5f46a0d2dad9b9588e93241056219e",
+      "release_attestation_sha256": "05b388a7ed5369a6a31b6d1013eda02cc05e877add0942d40fff2ddb0d0fa5d6",
+      "release_source_closure_record_sha256": "2990f90b737d567f77092c68e551790f99ddcf201e61f1e45c0195404f288c7e"
     },
     "equivalence": {
-      "job_id": "20260724T074434-atomic-refactor-final-strict-0e704345d5",
-      "elapsed_seconds": 2069.819,
-      "peak_rss_bytes": 2446458880,
-      "derived_report_sha256": "245276011ab4a5cbc3397f250c5d61d54c5b4420138bd138f22b86fc5d8cc4a1",
+      "job_id": "20260724T105504-atomic-refactor-landing-strict-a9945e2f37",
+      "elapsed_seconds": 2113.045,
+      "peak_rss_bytes": 2430173184,
+      "derived_report_sha256": "2cc8b236ce40502642cade4c0d04a57a86792eec530992d3eba84891cf3fe645",
       "full_parts_and_protected_sections": 8,
       "all_equivalent": true,
       "max_removed_material_mm3": 0.0,
@@ -334,10 +336,10 @@
         "owners": [
           "src/enclosure_family/variant_r/export.py"
         ],
-        "final_generation_job": "20260724T071935-atomic-refactor-final-release-5a33762429",
-        "final_geometry_checkpoint_job": "20260724T074434-atomic-refactor-final-strict-0e704345d5",
-        "final_strict_report_sha256": "245276011ab4a5cbc3397f250c5d61d54c5b4420138bd138f22b86fc5d8cc4a1",
-        "lightweight_checks": "209 tests and 19 subtests; 89 entrypoints; catalog and lint pass in job 20260724T081949-atomic-refactor-final-lightweight-26832f42e1",
+        "final_generation_job": "20260724T102722-atomic-refactor-landing-restored-release-52bd80460c",
+        "final_geometry_checkpoint_job": "20260724T105504-atomic-refactor-landing-strict-a9945e2f37",
+        "final_strict_report_sha256": "2cc8b236ce40502642cade4c0d04a57a86792eec530992d3eba84891cf3fe645",
+        "lightweight_checks": "212 tests and 19 subtests; 91 entrypoints; catalog and lint pass in job 20260724T114341-atomic-refactor-landing-final-lightweight-a08026447e",
         "equivalent": true,
         "geometry_changed": false,
         "variant_i_coupling": false
@@ -347,9 +349,9 @@
     "protected_imperfection": "The accepted current flat-bottom missing-material relationship is baseline behavior. Do not repair or reconcile it in this refactor.",
     "final_acceptance_record": "final-acceptance-evidence.json",
     "visual_evidence": {
-      "viewer_artifact_sha256": "cfd4ad3b239be2749208408355a03d6664b637ef69564a3bd4267ca6a982ec12",
-      "sidecar_sha256": "94c143c9bed1665dbc89965896dd6521ca6632c64cc8c0ae18d83e9f4cfd54bd",
-      "snapshot_job_id": "20260724T082321-text-to-cad-artifacts-bf297483aa",
+      "viewer_artifact_sha256": "a1211ad078100f61ac66d158003ac5cbb1b01775aea829f05761f050c7e96684",
+      "sidecar_sha256": "5914ddf73a3fbdd683c2ab9c1eb947a1244288c68bd33635cd91e581cb9a5639",
+      "snapshot_job_id": "20260724T113322-atomic-refactor-landing-snapshot-292020a205",
       "snapshot_overview_sha256": "9150298aca8a3ed8752708f338d65d2e4271ef67ddde1e2a26177ea3ef33620d",
       "snapshot_bottom_sha256": "73b5eeb409448abe554091c644fce963db483cc7725eaf2964e1478c3bb0f987",
       "agent_inspected": true,

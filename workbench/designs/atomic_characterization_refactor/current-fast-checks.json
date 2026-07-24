@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "recorded_at": "2026-07-23",
+  "recorded_at": "2026-07-24T11:43:48Z",
   "base_commit": "c25cddb3eeafe6f6dff3b551be4ceb53d5aee9ce",
   "geometry_lineage_commit": "789cf7fb4f63d9567585198c47bc3b5b122e070f",
   "excluded_commit": {
@@ -9,11 +9,11 @@
   },
   "source": {
     "path": "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle/generate_sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle.py",
-    "sha256": "6d8072eb32a1e86b54528fe80144155d0fc2b9d0996bdc76a8168c06e4c91f0c"
+    "sha256": "d67d011f3a1be1bf563786befb1af09fe74e4438e061abf670f0f3aef7cc0e62"
   },
   "validator": {
     "path": "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle/validate_simple_tongue_groove_baffle.py",
-    "sha256": "13e0dc227c64cfaa555e0a709ba7220c373319c5289f23bd3769aee871e7ddef"
+    "sha256": "947c02b451f1a36ed05622c7b79a8751ea48311887bf6f555420b3363e1ceb74"
   },
   "runtime": {
     "python_environment": "/Users/jaspercurry/Code/CAD - Enclosure/.venv",
@@ -27,14 +27,14 @@
   "checks": {
     "doctor": "pass",
     "catalog": "pass: 10 primary models, 38 experiment families",
-    "canonical_checksums": "pass: 30 of 30 selected paths",
-    "lightweight": "pass: 174 tests, 19 subtests, 84 CAD entrypoints, catalog, lint",
+    "canonical_checksums": "historical Phase A check; current producer/release closures supersede the 30-path selection",
+    "lightweight": "pass: job 20260724T114341-atomic-refactor-landing-final-lightweight-a08026447e; 212 tests, 19 subtests, 91 CAD entrypoints, catalog, lint; 6.117 s; 21757952 bytes peak RSS",
     "working_tree_clean_before_workflow_records": true
   },
   "native_input": {
-    "path": "build/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_lightweight_coherent_closure/sand_cube_190x210_single_oval_port_base.step",
+    "path": "build/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle/sand_cube_190x210_single_oval_port_base.step",
     "sha256": "441cc122c0383da257b16e80c4b424096f33b267cc95cab9d1278fb05a43a784",
-    "role": "exact hash-bound full-detail base input used by the accepted current Stage 1 build"
+    "role": "exact portable hash-bound full-detail base input used by release job 20260724T102722-atomic-refactor-landing-restored-release-52bd80460c; producer attestation 41f7da9312343859b082a2ca502da777d6714295f788d5196356e667946c81e7"
   },
   "rejected_native_input": {
     "sha256": "c2c63ddb7a303f5c50c10d48c4c77e5046e377b39b5bc1e61e1b997a85b1774c",

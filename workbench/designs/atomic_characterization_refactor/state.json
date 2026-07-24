@@ -52,14 +52,27 @@
       "recorded_at": "2026-07-24T03:45:00.328705Z",
       "stage": "fit_passed",
       "summary": "Atom 03 strictly preserves both complete parts and all six protected sections with zero bidirectional material delta, exact topology/mass properties, zero overlap and matching normalized round-trip diagnostics."
+    },
+    {
+      "files": [
+        {
+          "path": "workbench/designs/atomic_characterization_refactor/final-acceptance-evidence.json",
+          "role": "release_passed_evidence",
+          "sha256": "22027428a7b1667f34d69dd6e1e822978c4216f7db4c978751db44da7d8d54c4",
+          "size_bytes": 26486
+        }
+      ],
+      "recorded_at": "2026-07-24T11:44:32Z",
+      "stage": "release_passed",
+      "summary": "Final restored release, strict equivalence, lightweight checks and exact inspected visual evidence pass; independent adversarial review remains."
     }
   ],
   "iteration_id": "atomic-characterization-refactor",
   "model_id": "development-190x210-tongue-groove",
-  "next_action": "Implement the producer/dependency attestation and remaining verification/export adapters, then run the forced uncached final producer.",
+  "next_action": "Commit the candidate evidence, run independent adversarial review, fix materially actionable findings, rerun proportional checks and obtain final no-unresolved-findings disposition.",
   "objective": "Refactor the accepted current Variant R enclosure and baffle into explicit atomic owners without changing geometry, while reserving an independent future Variant I boundary.",
-  "open_question": "Can the final producer bind its pre-split base and complete loaded source closure in a clean output staging area?",
-  "revision": 5,
+  "open_question": "Does the independent adversarial reviewer find any unresolved actionable issue in the exact base-to-candidate diff?",
+  "revision": 6,
   "schema_version": 1,
   "sources": [
     {
@@ -69,6 +82,6 @@
       "size_bytes": 20714
     }
   ],
-  "stage": "fit_passed",
-  "updated_at": "2026-07-24T03:45:00.328705Z"
+  "stage": "release_passed",
+  "updated_at": "2026-07-24T11:44:32Z"
 }

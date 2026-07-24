@@ -1,8 +1,8 @@
 # Implemented module tree and ownership
 
-Status: implementation complete; final strict acceptance, exact visual evidence
-and independent adversarial review remain. The accepted current Variant R
-geometry remains the sole baseline; no Variant I or corrected flat-bottom
+Status: implementation, final strict acceptance and exact visual evidence
+complete; independent adversarial review remains. The accepted current Variant
+R geometry remains the sole baseline; no Variant I or corrected flat-bottom
 geometry exists.
 
 ```text
@@ -19,7 +19,8 @@ src/enclosure_family/
 │   ├── assembly.py            # independent Variant R composition owner
 │   ├── inputs.py              # authoritative generated-input contract
 │   ├── historical_capture.py  # immutable accepted-base capture recipe
-│   ├── provenance.py          # producer/source/tool/artifact attestation
+│   ├── provenance.py          # producer/source/tool attestation
+│   ├── release_provenance.py  # post-geometry release attestation writer
 │   ├── measurements.py        # deterministic native geometry facts
 │   ├── equivalence.py         # native-free numerical acceptance predicates
 │   ├── export.py              # STEP publication and round-trip adapter
@@ -34,6 +35,7 @@ scripts/
 └── run_historical_variant_r_base_capture.py
 
 workbench/designs/atomic_characterization_refactor/
+├── attest_variant_r_release.py       # observational release-source probe
 ├── package_variant_r_review.py       # attested visual assembly adapter
 └── project_variant_r_attestations.py # native-free committed audit projection
 ```
@@ -75,9 +77,11 @@ attestation. A clean checkout obtains the exact accepted input by archiving the
 immutable geometry commit, applying the committed capture-only overlay at the
 accepted build boundary, verifying the complete STEP DATA payload, and
 canonicalizing only the accepted `FILE_NAME` timestamp. The real job time stays
-in the attestation. Separate committed producer and release closure projections
-record every loaded dependency, the clean release commit and all nine model
-artifact hashes rather than relying on ignored `build/` artifacts.
+in the attestation. Release evidence runs after geometry in a separate
+coordinated process so evidence allocation cannot perturb the serialized legacy
+build. Separate committed producer and release closure projections record every
+loaded dependency, the clean release commit and all nine model artifact hashes
+rather than relying on ignored `build/` artifacts.
 
 ## Deferred geometry work
 

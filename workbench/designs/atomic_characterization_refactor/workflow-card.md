@@ -8,43 +8,43 @@
 - Current scope: geometry-preserving Variant R ownership refactor. Preserve the
   accepted imperfect flat-bottom/missing-material relationship. Variant I is
   an independent future interface only; no Variant I geometry exists.
-- Current source/evidence commit:
-  `a99ada6266369a854d58f0556021338881345cec` (clean at the amended release).
+- Current geometry/release commit:
+  `d114d7907d5a3fc678d6ca7ac74b0d975c56b2a2`; current evidence-adapter commit
+  `388593216e5af2476b36ef9bcc0b1e849c11b61e`.
 - Latest producer checkpoint: job
   `20260724T083757-atomic-refactor-final2-producer-5f287edf8b` recreated exact
   input `441cc122...` and attestation `41f7da...` in 87.912 seconds at
   1181417472 bytes peak RSS.
-- Latest release checkpoint: job
-  `20260724T083930-atomic-refactor-final2-release-a279b8b11a` passed in
-  1767.016 seconds at 1399341056 bytes peak RSS and published 11 outputs.
-  Attestation `6340ec...` binds clean commit `a99ada6`, 62 complete loaded
-  repository sources, 58 geometry/parameter sources, all 33 loaded generator
-  stages, the exact portable producer input, and nine model artifacts (bucket,
-  baffle, six protected sections and deterministic diagnostics).
-- Last completed strict equivalence evidence remains job
-  `20260724T074434-atomic-refactor-final-strict-0e704345d5`, report
-  `245276011ab4a5cbc3397f250c5d61d54c5b4420138bd138f22b86fc5d8cc4a1`.
-  Amended-release strict job
-  `20260724T090914-atomic-refactor-final2-strict-894348d891` failed closed
-  after one attempt in 2197.002 seconds at 2292236288 bytes peak RSS. The
-  candidate diagnostics differ from the accepted/proven prior releases by
-  0.0003549875 mm3 in the hybrid bucket audit and 0.0000003974 mm in rear
-  span; tolerances were not widened. The runner removed the failed staged
-  detail report, so no failed report is represented as current evidence.
-- Visual evidence state: inspected Snapshot overview `9150298...` and bottom
-  detail `73b5eeb...` are honestly bound to preceding review STEP `cfd4ad3...`
-  and sidecar `94c143c...`. They are geometry-equivalent continuity evidence,
-  not exact amended-release artifact evidence. Refresh the review assembly,
-  sidecar, Viewer record and inspected Snapshot after the amended strict pass.
-  No human visual attestation has been supplied.
-- Current blocker: `a99ada` prepared release-evidence collection before the
-  serialized legacy geometry build. Restore the previously proven pre-geometry
-  execution path and make evidence collection strictly post-geometry and
-  observational; do not change geometry or acceptance tolerances.
-- Next atom: apply and commit that minimal ordering fix; reproduce the affected
-  release and strict checkpoint; run lightweight/catalog/entrypoint/lint checks;
-  refresh exact visual evidence; reconcile committed records; then run the
-  mandatory independent base-to-candidate adversarial review and obtain explicit
+- Final release checkpoint: job
+  `20260724T102722-atomic-refactor-landing-restored-release-52bd80460c` passed
+  in 1493.266 seconds at 1403142144 bytes peak RSS. Separate observational
+  attestation job
+  `20260724T105416-atomic-refactor-landing-release-attestation-fina-e1f028f156`
+  produced `05b388a7...`, binding release commit `d114d79`, exact producer
+  input, nine model artifacts, 62 complete runtime sources, 58
+  geometry/parameter sources and all 33 loaded generator stages.
+- Final strict equivalence job
+  `20260724T105504-atomic-refactor-landing-strict-a9945e2f37` passed in
+  2113.045 seconds at 2430173184 bytes peak RSS. Report
+  `2cc8b236ce40502642cade4c0d04a57a86792eec530992d3eba84891cf3fe645`
+  proves both parts and all six protected sections equivalent with matching
+  topology/bounds/mass properties, zero removed/added material, matching
+  diagnostics, zero-volume mating contact and unchanged tolerances.
+- Final lightweight job
+  `20260724T114341-atomic-refactor-landing-final-lightweight-a08026447e`
+  passed 212 tests and 19 subtests, catalog 10/38, 91 entrypoints and lint in
+  6.117 seconds at 21757952 bytes peak RSS.
+- Exact visual evidence: review STEP `a1211ad...`, attestation `30387b5...`,
+  sidecar `5914ddf...`, read-only Viewer record `d58949c...`, and Snapshot job
+  `20260724T113322-atomic-refactor-landing-snapshot-292020a205`. The inspected
+  overview `9150298...` and bottom detail `73b5eeb...` are byte-identical to
+  the prior continuity images and now bind the final release. No human visual
+  attestation has been supplied.
+- Current blocker: none. The mandatory independent adversarial review is the
+  remaining acceptance gate.
+- Next atom: commit the reconciled candidate evidence, run the independent
+  exact base-to-candidate review, fix only actionable findings that materially
+  affect this refactor, rerun proportional checks, and obtain explicit
   no-unresolved-actionable-findings re-review.
 - Resume: read this card, `atomic_manifest.json`,
   `final-acceptance-evidence.json`, and current git state. Consult `brief.md`

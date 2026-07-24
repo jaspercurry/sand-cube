@@ -437,3 +437,37 @@ authoritative structured facts are in `atomic_manifest.json`.
   preserved imperfect lower/front contour with no detached body. These are
   visual observations only; measurable claims remain bound to deterministic
   evidence. No human visual attestation has been supplied.
+
+## 2026-07-24 — landing: observational release provenance and final gates
+
+- Amended release provenance introduced before the serialized legacy geometry
+  process changed the release diagnostics. Strict job
+  `20260724T090914-atomic-refactor-final2-strict-894348d891` failed closed; no
+  tolerance was widened and its removed staged report is not represented as
+  current evidence.
+- Commits `d114d79` and `3885932` restored the exact previously proven
+  validator/import path and moved release provenance into a separate
+  observational job. The validator and four pre-geometry Variant R modules are
+  byte-identical to their pre-regression versions.
+- Restored release job
+  `20260724T102722-atomic-refactor-landing-restored-release-52bd80460c`
+  completed in 1493.266 seconds at 1,403,142,144 bytes peak RSS. Observational
+  attestation job
+  `20260724T105416-atomic-refactor-landing-release-attestation-fina-e1f028f156`
+  binds release commit `d114d79`, nine model artifacts, the exact portable
+  input, 62 runtime sources, 58 geometry/parameter sources and all 33 generator
+  stages without entering the geometry process.
+- Strict job `20260724T105504-atomic-refactor-landing-strict-a9945e2f37`
+  passed in 2113.045 seconds at 2,430,173,184 bytes peak RSS. Report
+  `2cc8b236...` proves both parts and all six sections equivalent with zero
+  bidirectional material delta, matching diagnostics and zero-volume contact.
+- Lightweight job
+  `20260724T114341-atomic-refactor-landing-final-lightweight-a08026447e`
+  passed 212 tests plus 19 subtests, catalog 10/38, 91 entrypoints and lint in
+  6.117 seconds at 21,757,952 bytes peak RSS.
+- Exact review assembly `a1211ad...`, attestation `30387b5...`, and sidecar
+  `5914ddf...` bind the final release. Snapshot job
+  `20260724T113322-atomic-refactor-landing-snapshot-292020a205` produced
+  inspected overview `9150298...` and bottom detail `73b5eeb...`, byte-identical
+  to the prior continuity images. The bottom imperfection remains intentionally
+  preserved. No human visual attestation has been supplied.
