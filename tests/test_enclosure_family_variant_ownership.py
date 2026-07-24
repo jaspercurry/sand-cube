@@ -138,6 +138,7 @@ def test_variant_r_input_attestation_rejects_a_changed_base(
         "schema_version": 1,
         "attestation_kind": "variant_r_authoritative_producer",
         "producer_entrypoint": PRODUCER_ENTRYPOINT.as_posix(),
+        "git": {"tracked_source_dirty": False},
         "authoritative_base_input": {
             "filename": AUTHORITATIVE_BASE_FILENAME,
             "sha256": hashlib.sha256(b"accepted").hexdigest(),

@@ -10,12 +10,12 @@
   flat-bottom closure, including its known imperfect/missing-material
   relationship. Establish only an explicit independent future Variant I
   interface; create no Variant I geometry.
-- Next atom: commit the narrowed authoritative base-only producer and run it
-  from a clean source state. Require its base STEP and complete loaded-source
-  attestation before the standalone validator can run. Compare that produced
-  base with the historical accepted input before accepting candidate geometry.
-  After that, extract the remaining measurement/export adapters and correct
-  stale current-status projections.
+- Next atom: commit the explicit coherent-brace dependency in the narrowed
+  base-only producer and run it from a clean source state. Require its base STEP
+  and complete loaded-source attestation before the standalone validator can
+  run. Compare that produced base with the historical accepted input before
+  accepting candidate geometry. After that, extract the remaining
+  measurement/export adapters and correct stale current-status projections.
 - Last equivalence evidence: Atom 03 generation job
   `20260724T023918-atomic-refactor-atom-03-geometry-06d4fd8a26` and strict
   job
@@ -27,8 +27,15 @@
   `20260724T035352-atomic-refactor-atom-04-authoritative-producer-0a43bf5466`
   failed safely before publication because its unrelated cutaway preview
   received an OCCT null intersection. The base had already been constructed
-  but not exported. The producer is now narrowed to the source-owned base-only
-  builder and has not yet rerun. Atom 03 itself is equivalent:
+  but not exported. The first narrowed producer job
+  `20260724T040011-atomic-refactor-atom-04-authoritative-producer-ece1683d24`
+  succeeded, but the strict base diagnostic
+  `20260724T040247-atomic-refactor-atom-04-base-diagnostic-237b0ab821`
+  correctly rejected its direct default brace network: the accepted input has
+  194 faces and 1,307,808.9213077368 mm³, while that wrong candidate has 230
+  faces and 1,154,161.763662898 mm³. The producer now passes the exact
+  coherent-brace builder explicitly instead of relying on the inherited
+  runtime patch; it has not rerun. Atom 03 itself is equivalent:
   native-free checks pass (197 tests and 19 subtests, 87 entrypoints, catalog
   and scoped lint), and the strict native gate found zero material delta. The
   Phase-A rail blocker is historical; commit `e715300` repaired it before the

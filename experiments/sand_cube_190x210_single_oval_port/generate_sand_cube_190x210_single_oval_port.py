@@ -1984,6 +1984,7 @@ def build_base(
     *,
     include_gx16: bool = True,
     include_fill_ports: bool = True,
+    restored_internal_braces_builder: Any | None = None,
 ) -> Part:
     separated_skins = _outer_envelope() - _rectangular_cavity() - _sand_void()
     base: Any = Compound(children=[copy.copy(solid) for solid in separated_skins.solids()])
@@ -2019,7 +2020,12 @@ def build_base(
         base.clean().fix(), feature="shell with finished black-hole recess"
     )
 
-    braces = _restored_internal_braces(port_clearance)
+    braces_builder = (
+        _restored_internal_braces
+        if restored_internal_braces_builder is None
+        else restored_internal_braces_builder
+    )
+    braces = braces_builder(port_clearance)
     for brace_solid in braces.solids():
         base = base.fuse(brace_solid).clean().fix()
     base = _require_single_solid(
@@ -2825,6 +2831,8 @@ def _cutaway(
 
 def generate_authoritative_base_input(
     output_directory: Path,
+    *,
+    restored_internal_braces_builder: Any,
 ) -> dict[str, Any]:
     """Publish only the full-detail enclosure input consumed by Variant R.
 
@@ -2845,6 +2853,7 @@ def generate_authoritative_base_input(
     base = build_base(
         provisional_brace_clearance,
         provisional_install_clearance,
+        restored_internal_braces_builder=restored_internal_braces_builder,
     )
     path = output_directory / "sand_cube_190x210_single_oval_port_base.step"
     export_step(base, path, unit=Unit.MM, write_pcurves=True)

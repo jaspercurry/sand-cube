@@ -174,11 +174,14 @@ def write_producer_attestation(
             f"generator stages: {len(experiment_stages)}"
         )
 
+    stage_value = os.environ.get("CAD_JOB_STAGE_ROOT")
     try:
-        base_relative = base_step.relative_to(root).as_posix()
-    except ValueError:
-        stage_root = Path(os.environ["CAD_JOB_STAGE_ROOT"]).resolve()
+        if stage_value is None:
+            raise ValueError
+        stage_root = Path(stage_value).resolve()
         base_relative = base_step.relative_to(stage_root).as_posix()
+    except ValueError:
+        base_relative = base_step.relative_to(root).as_posix()
 
     payload = {
         "schema_version": ATTESTATION_SCHEMA_VERSION,
@@ -194,7 +197,7 @@ def write_producer_attestation(
         "toolchain": {
             "python": platform.python_version(),
             "build123d": _package_version("build123d"),
-            "ocp": _package_version("cadquery-ocp"),
+            "ocp": _package_version("cadquery-ocp-novtk"),
         },
         "authoritative_base_input": {
             "path": base_relative,
@@ -268,5 +271,10 @@ def verify_producer_attestation(
         raise ValueError(
             "Variant R producer attestation lacks the complete runtime "
             f"dependency closure: {attestation_path}"
+        )
+    if payload.get("git", {}).get("tracked_source_dirty") is not False:
+        raise ValueError(
+            "Variant R authoritative input was not produced from a clean "
+            f"tracked source state: {attestation_path}"
         )
     return payload
