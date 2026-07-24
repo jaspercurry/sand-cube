@@ -190,8 +190,10 @@ def write_producer_attestation(
         "cad_job_id": os.environ.get("CAD_JOB_ID"),
         "producer_entrypoint": PRODUCER_ENTRYPOINT.as_posix(),
         "producer_mode": (
-            "single-oval-port authoritative base-only builder; downstream "
-            "assembly previews and unrelated component exports are excluded"
+            "base-only capture of the accepted front-fill/solid-rear "
+            "compatibility foundation with the coherent brace dependency "
+            "bound explicitly; downstream assembly previews and unrelated "
+            "component exports are excluded"
         ),
         "git": _git_identity(root),
         "toolchain": {
