@@ -4,26 +4,26 @@
 
 Authority: the `compatibility_class` and `comparison` fields for each atom in `atomic_manifest.json`.
 
-Current execution overlay: **ATOM 06 EQUIVALENT; PORTABLE PRODUCER AND ADAPTER OWNERSHIP ACTIVE**. Historical source-readiness statements remain provenance, not the current geometry gate.
+Current execution overlay: **FINAL FORCED RELEASE EQUIVALENT; VISUAL EVIDENCE INSPECTED; INDEPENDENT REVIEW PENDING**. Historical source-readiness statements remain provenance, not the current geometry gate.
 
 | Atom | Classification | Variant comparison | Later-synthesis blocker |
 |---|---|---|---|
-| family.coordinate_contract | identical shared metadata | R sources consume the exact owner; I future intent adopts the same frame but still has no geometry | none for coordinate metadata; geometry baseline remains blocked independently |
-| family.exterior_envelope | intended identical but currently unproved | historic R/I references share bounds; naming/bounds alone do not prove common geometry | source baseline and explicit family owner absent |
-| family.exterior_shell | ambiguous ownership | candidate references look related but are from different closure states | no reproducible shared source |
-| family.inner_wall_sand_void | stale or unreproducible baseline | only historic diagnostics assert 2/3/2 | needs current source sections |
-| family.rear_face | intended identical geometry, different print consumer | R relies on it for printing; I treats it as exterior only | rear footprint/flatness contract not frozen |
-| R.front_service_opening | intentionally variant-specific | must be absent from I | three-reference reconciliation is later synthesis |
-| R.front_bulkhead_gasket_support | intentionally variant-specific | must not remain hidden in I | needs protected-section baseline |
+| family.coordinate_contract | identical shared metadata | R sources consume the exact owner; I future intent adopts the same frame but still has no geometry | none for coordinate metadata; Variant I geometry remains intentionally absent |
+| family.exterior_envelope | intended identical but currently unproved | Variant R is current and reproducible; Variant I has no geometry to compare | independent Variant I geometry does not exist |
+| family.exterior_shell | ambiguous ownership | no Variant I geometry exists; no shared shell is asserted | cross-variant identity cannot be proved before Variant I exists |
+| family.inner_wall_sand_void | stale or unreproducible baseline | Variant R current behavior is reproduced; Variant I termination semantics remain future work | no independent Variant I builder or termination contract |
+| family.rear_face | intended identical geometry, different print consumer | R relies on it for printing; I treats it as exterior only | physical rear-face-down bucket print is unverified |
+| R.front_service_opening | intentionally variant-specific | must be absent from I | none for the equivalence refactor |
+| R.front_bulkhead_gasket_support | intentionally variant-specific | must not remain hidden in I | none for geometry equivalence; physical validation remains |
 | R.sculpted_lrt_seam | implemented Variant R geometry | I has no front seam | none for the equivalence refactor; later geometry correction remains separate |
 | R.bottom_material_ownership | implemented Variant R geometry | not applicable to I | flat-bottom/missing-material correction explicitly deferred |
-| R.baffle_body | intentionally variant-specific | I front belongs to monolithic body | three-reference reconciliation |
-| R.flat_baffle_print_edge | STEP-only evidence | no I analogue | bed footprint acceptance missing |
-| family.driver_interface | intended identical but currently unproved | historic fronts appear related; semantic identity not established | mounting parameter owner and horn choice unsettled |
-| R.gasket_land_compression | intentionally variant-specific | must be absent from I | gasket material/compression and current source baseline absent |
-| R.corner_sealing | ambiguous ownership | I needs continuous front material, not removable corner sealing | protected section baseline unavailable |
-| family.fill_blisters_passages | intended shared primitive with variant-specific termination | R terminates around service opening; I must terminate in integral body | no pure shared builder or variant termination owner |
-| family.braces_supports | stale or unreproducible baseline | no I-specific brace composition exists | native source failure |
+| R.baffle_body | intentionally variant-specific | I front belongs to monolithic body | later geometry correction only |
+| R.flat_baffle_print_edge | STEP-only evidence | no I analogue | physical print validation and later geometry correction |
+| family.driver_interface | intended identical but currently unproved | Variant I and future horn/bracket geometry are absent and no shared owner is asserted | future independent component/interface work |
+| R.gasket_land_compression | intentionally variant-specific | must be absent from I | physical validation only |
+| R.corner_sealing | ambiguous ownership | I needs continuous front material, not removable corner sealing | physical leak validation only |
+| family.fill_blisters_passages | intended shared primitive with variant-specific termination | Variant I termination does not exist and must not route through Variant R | independent future Variant I termination |
+| family.braces_supports | stale or unreproducible baseline | the earlier rail failure is historical and was repaired before exact base c25cddb; Variant I brace/support geometry does not exist | future support-aware redesign and Variant I ownership are separately scoped |
 | family.support_sensitive_transitions | ambiguous ownership | R orientations characterized; I geometry absent | slicer/material limits and source geometry unavailable |
 | R.bucket_print_contract | intentionally variant-specific | different from I open-bottom-down | bed-face and support contract need verification |
 | R.baffle_print_contract | intentionally variant-specific | no separate baffle in I | stable seating footprint acceptance missing |

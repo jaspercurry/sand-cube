@@ -43,6 +43,7 @@ def _write(name: str, title: str, body: list[str]) -> None:
 def render_inventory(data: dict[str, Any]) -> None:
     current = data.get("current_refactor_execution", {})
     overrides = current.get("inventory_overrides", {})
+    group_overrides = current.get("inventory_group_overrides", {})
     body = [
         "Authority: `atomic_manifest.json`. Paths are repository-relative.",
         "",
@@ -91,6 +92,7 @@ def render_inventory(data: dict[str, Any]) -> None:
         ]
     )
     for prefix, group in data["inventory_groups"].items():
+        group = {**group, **group_overrides.get(prefix, {})}
         body.append(
             f"| {prefix}. | {_cell(group['parameter_ownership'])} | "
             f"{_cell(group['units_datums_axes_transforms'])} | "
@@ -103,7 +105,12 @@ def render_inventory(data: dict[str, Any]) -> None:
     body.extend(
         [
             "",
-            "## Relevant source ancestry and hidden mutation",
+            "## Historical Phase A source ancestry snapshot",
+            "",
+            "These 19 rows preserve the initial characterization snapshot. The "
+            "current exact producer dependency set, including every loaded "
+            "path/revision/hash, is `variant-r-producer-source-closure.json`; "
+            "the final release identity is in `final-acceptance-evidence.json`.",
             "",
             "| Order | Path | SHA-256 | Responsibility / mutation |",
             "|---:|---|---|---|",
@@ -121,9 +128,21 @@ def render_inventory(data: dict[str, Any]) -> None:
             "",
             f"- {_cell(data['coordinate_contract'])}",
             "",
-            f"- Construction stages: {_cell(data['construction_stages'])}",
+            "- Construction stages: "
+            + _cell(
+                current.get(
+                    "construction_stages_override",
+                    data["construction_stages"],
+                )
+            ),
             "",
-            f"- Output/validation boundary: {_cell(data['output_validation_boundary'])}",
+            "- Output/validation boundary: "
+            + _cell(
+                current.get(
+                    "output_validation_boundary_override",
+                    data["output_validation_boundary"],
+                )
+            ),
         ]
     )
     _write("inventory.md", "Authoritative input inventory", body)
@@ -131,6 +150,11 @@ def render_inventory(data: dict[str, Any]) -> None:
 
 def render_atoms(data: dict[str, Any]) -> None:
     current = data.get("current_refactor_execution")
+    overrides = (
+        current.get("atom_overrides", {})
+        if current
+        else {}
+    )
     body = [
         "Authority: `atomic_manifest.json`.",
         *(
@@ -148,6 +172,7 @@ def render_atoms(data: dict[str, Any]) -> None:
         "|---|---|---|---|---|---|---|---|---|",
     ]
     for atom in data["atoms"]:
+        atom = {**atom, **overrides.get(atom["id"], {})}
         body.append(
             "| "
             + " | ".join(
@@ -178,6 +203,11 @@ def render_atoms(data: dict[str, Any]) -> None:
 
 def render_compatibility(data: dict[str, Any]) -> None:
     current = data.get("current_refactor_execution")
+    overrides = (
+        current.get("atom_overrides", {})
+        if current
+        else {}
+    )
     body = [
         "Authority: the `compatibility_class` and `comparison` fields for each "
         "atom in `atomic_manifest.json`.",
@@ -196,6 +226,7 @@ def render_compatibility(data: dict[str, Any]) -> None:
         "|---|---|---|---|",
     ]
     for atom in data["atoms"]:
+        atom = {**atom, **overrides.get(atom["id"], {})}
         body.append(
             f"| {_cell(atom['id'])} | {_cell(atom['compatibility_class'])} | "
             f"{_cell(atom['comparison'])} | {_cell(atom.get('synthesis_blocker'))} |"

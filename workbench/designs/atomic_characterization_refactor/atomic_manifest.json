@@ -35,7 +35,7 @@
     }
   },
   "current_refactor_execution": {
-    "status": "ATOM 06 EQUIVALENT; PORTABLE PRODUCER AND ADAPTER OWNERSHIP ACTIVE",
+    "status": "FINAL FORCED RELEASE EQUIVALENT; VISUAL EVIDENCE INSPECTED; INDEPENDENT REVIEW PENDING",
     "authority_note": "This overlay records current combined-base operations. Earlier baseline, checkpoint, pilot, and exploratory records below remain immutable history and must not be interpreted as current blockers.",
     "exact_base": "c25cddb3eeafe6f6dff3b551be4ceb53d5aee9ce",
     "working_branch": "codex/enclosure-atomic-refactor-implementation",
@@ -69,14 +69,149 @@
         "unresolved": "not an independent Variant I owner; no integral-front/open-bottom/hatch geometry exists"
       }
     },
+    "inventory_group_overrides": {
+      "R": {
+        "parameter_ownership": "src/enclosure_family/variant_r/parameters.py owns current Variant R dimensions and tolerances; src/enclosure_family/datums.py owns the proven family coordinate frame",
+        "units_datums_axes_transforms": "mm; design coordinates X left/right, Y front/rear with front=-Y, Z bottom/top; all accepted artifacts are in assembly coordinates with no additional transform",
+        "construction_and_boolean_stages": "src/enclosure_family/variant_r/assembly.py owns Variant R seam/lower-material composition over an explicit VariantRFoundation; seam.py and bottom_ownership.py own the extracted geometry; the active leaf is a compatibility adapter for the serialized legacy foundation",
+        "import_ancestry_hidden_mutation": "the 33-stage historical ancestry is used only by the immutable accepted-base producer at commit 789cf7f; the active composer receives explicit foundation dependencies and legacy bindings are restored and serialized",
+        "outputs": "cataloged producer scripts/generate_variant_r.py publishes the authoritative base plus complete attestation; the current validator publishes bucket, baffle, six protected sections and diagnostics; final immutable identities are committed in final-acceptance-evidence.json",
+        "validators": "the current validator and independent comparison adapter pass full-part validity/topology/bounds/mass, six protected sections, bidirectional material difference, interface/print diagnostics and STEP round trips",
+        "downstream_consumers": "current Variant R only; driver/horn, fill, brace and later geometry correction remain separately scoped; Variant I imports no Variant R owner",
+        "confidence_uncertainty": "high for exact current source/input/job/artifact identities and deterministic equivalence; physical print, gasket, leak and acoustic behavior remain unverified"
+      }
+    },
+    "output_validation_boundary_override": {
+      "catalog_model": "development-190x210-tongue-groove",
+      "output_root": "build/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle",
+      "producer": "scripts/generate_variant_r.py",
+      "validator": "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle/validate_simple_tongue_groove_baffle.py",
+      "authoritative_input_sha256": "441cc122c0383da257b16e80c4b424096f33b267cc95cab9d1278fb05a43a784",
+      "producer_job_id": "20260724T071800-atomic-refactor-final-producer-fa1def52ae",
+      "release_job_id": "20260724T071935-atomic-refactor-final-release-5a33762429",
+      "strict_job_id": "20260724T074434-atomic-refactor-final-strict-0e704345d5",
+      "current_state": "pass; ignored build artifacts are derived and their immutable hashes, jobs, producer/source identities, measurements and attestations are committed in the source-closure and final-acceptance records"
+    },
+    "construction_stages_override": [
+      "the immutable producer reconstructs the accepted base at exact geometry commit 789cf7f and attests every loaded dependency",
+      "the current active compatibility adapter imports that attested base and supplies the explicit VariantRFoundation boundary",
+      "src/enclosure_family/variant_r/assembly.py composes the extracted seam and lower-material owners without Variant I flags",
+      "measurement, equivalence, STEP publication, provenance and evidence adapters consume geometry without owning it",
+      "the current release publishes complete parts, six protected sections, diagnostics and exact source/job/artifact identity"
+    ],
+    "atom_overrides": {
+      "family.coordinate_contract": {
+        "reproducible_baseline": "native-free coordinate contract and full current Variant R strict release pass",
+        "readiness": "implemented and verified",
+        "synthesis_blocker": "none for coordinate metadata; Variant I geometry remains intentionally absent"
+      },
+      "family.exterior_envelope": {
+        "owner": "Variant R foundation; possible family sharing remains unproved",
+        "owning_source": "immutable accepted foundation producer plus explicit Variant R composition",
+        "reproducible_baseline": "current Variant R full-part bounds/topology/mass and zero-material-delta proof pass",
+        "readiness": "verified for Variant R; do not promote to shared geometry until an independent Variant I proves identical semantics",
+        "comparison": "Variant R is current and reproducible; Variant I has no geometry to compare",
+        "synthesis_blocker": "independent Variant I geometry does not exist"
+      },
+      "family.exterior_shell": {
+        "owner": "Variant R foundation; possible family sharing remains unproved",
+        "owning_source": "immutable accepted foundation producer behind VariantRFoundation",
+        "reproducible_baseline": "current Variant R complete bucket and protected sections pass strict equivalence",
+        "readiness": "verified for Variant R; family extraction is deferred until cross-variant semantic identity can be proved",
+        "comparison": "no Variant I geometry exists; no shared shell is asserted",
+        "synthesis_blocker": "cross-variant identity cannot be proved before Variant I exists"
+      },
+      "family.inner_wall_sand_void": {
+        "owner": "Variant R foundation; future sharing unproved",
+        "reproducible_baseline": "current Variant R validator proves zero fill blockage, closed non-fill sand cap and exact protected geometry",
+        "readiness": "verified as current Variant R foundation behavior; not promoted as shared Variant I geometry",
+        "comparison": "Variant R current behavior is reproduced; Variant I termination semantics remain future work",
+        "synthesis_blocker": "no independent Variant I builder or termination contract"
+      },
+      "family.rear_face": {
+        "owner": "Variant R foundation with Variant R print-contract consumer",
+        "reproducible_baseline": "current Variant R bounds and rear-body retention diagnostics pass",
+        "readiness": "verified for Variant R; print semantics remain variant-specific",
+        "synthesis_blocker": "physical rear-face-down bucket print is unverified"
+      },
+      "R.front_service_opening": {
+        "owning_source": "VariantRFoundation implemented by the active compatibility adapter and consumed by src/enclosure_family/variant_r/assembly.py",
+        "reproducible_baseline": "current bucket/baffle parts, service opening retention diagnostics and protected sections pass",
+        "readiness": "verified Variant R foundation boundary",
+        "conflicts": "accepted lower boundary is preserved exactly; correction is a later geometry task",
+        "synthesis_blocker": "none for the equivalence refactor"
+      },
+      "R.front_bulkhead_gasket_support": {
+        "owning_source": "VariantRFoundation implemented by the active compatibility adapter; verification policy in src/enclosure_family/variant_r/verification.py",
+        "reproducible_baseline": "current gasket support ratios are 1.0 against a 0.985 minimum; corner and fill checks pass",
+        "readiness": "verified Variant R foundation boundary",
+        "conflicts": "physical gasket compression and printed support behavior remain untested",
+        "synthesis_blocker": "none for geometry equivalence; physical validation remains"
+      },
+      "R.baffle_body": {
+        "owning_source": "src/enclosure_family/variant_r/assembly.py over VariantRFoundation, seam.py and bottom_ownership.py",
+        "reproducible_baseline": "one valid solid; strict topology/bounds/volume/area/center-of-mass and zero-material-delta proof pass",
+        "readiness": "current Variant R geometry verified",
+        "conflicts": "accepted flat-bottom/missing-material relationship remains intentionally unfixed",
+        "synthesis_blocker": "later geometry correction only"
+      },
+      "R.flat_baffle_print_edge": {
+        "owning_source": "src/enclosure_family/variant_r/bottom_ownership.py with print contract in variant_r/print_contracts.py",
+        "reproducible_baseline": "current bottom section is strict-equivalent; planar contact area is 2277.9500229303967 mm2 with brim assumed",
+        "readiness": "geometry and analytic contact verified; physical adhesion unverified",
+        "conflicts": "known missing-material relationship is preserved",
+        "synthesis_blocker": "physical print validation and later geometry correction"
+      },
+      "family.driver_interface": {
+        "owner": "current Variant R foundation; future family sharing unproved",
+        "reproducible_baseline": "current baffle bore/fairing geometry is included in the strict full-part equivalence proof",
+        "readiness": "verified for current Variant R only",
+        "comparison": "Variant I and future horn/bracket geometry are absent and no shared owner is asserted",
+        "synthesis_blocker": "future independent component/interface work"
+      },
+      "R.gasket_land_compression": {
+        "owning_source": "VariantRFoundation plus src/enclosure_family/variant_r/parameters.py and verification.py",
+        "reproducible_baseline": "1.0 mm compression knob and 1.0/1.0 bucket/baffle support ratios reproduce current diagnostics exactly",
+        "readiness": "geometry verified; physical gasket behavior unverified",
+        "conflicts": "material compression specification and leak test remain absent",
+        "synthesis_blocker": "physical validation only"
+      },
+      "R.corner_sealing": {
+        "owning_source": "VariantRFoundation with deterministic checks in the current validator",
+        "reproducible_baseline": "zero unclosed outside-gasket and baffle-corner volumes; four baffle corner closures",
+        "readiness": "current Variant R geometry verified",
+        "conflicts": "physical sealing remains untested",
+        "synthesis_blocker": "physical leak validation only"
+      },
+      "family.fill_blisters_passages": {
+        "owner": "current Variant R foundation; future variant-specific termination remains separate",
+        "reproducible_baseline": "current fill passage blockage is 0.0 mm3 and both passages reach the live sand void",
+        "readiness": "verified for current Variant R; not promoted as shared Variant I geometry",
+        "comparison": "Variant I termination does not exist and must not route through Variant R",
+        "synthesis_blocker": "independent future Variant I termination"
+      },
+      "family.braces_supports": {
+        "owner": "current Variant R immutable foundation; future shared ownership unproved",
+        "reproducible_baseline": "the accepted coherent-brace foundation is reproduced exactly by the portable producer and retained by the current bucket",
+        "readiness": "verified for current Variant R foundation; no shared Variant I brace owner is asserted",
+        "comparison": "the earlier rail failure is historical and was repaired before exact base c25cddb; Variant I brace/support geometry does not exist",
+        "synthesis_blocker": "future support-aware redesign and Variant I ownership are separately scoped",
+        "conflicts": "physical support/print behavior remains unverified"
+      },
+      "R.baffle_print_contract": {
+        "reproducible_baseline": "explicit +Z/brim metadata plus measured Z=-91.5 mm contact plane, 2277.9500229303967 mm2 planar area and 187.02097935912883 mm X span",
+        "readiness": "implemented and analytically verified; physical print unverified",
+        "conflicts": "physical adhesion and slicer behavior remain unverified"
+      }
+    },
     "authoritative_base_input_sha256": "441cc122c0383da257b16e80c4b424096f33b267cc95cab9d1278fb05a43a784",
     "authoritative_base_input_data_sha256": "70e59fc0af103d742578567164a15c9ecb89532b550f15231be898c699b91c03",
     "authoritative_base_producer": {
       "entrypoint": "scripts/generate_variant_r.py",
-      "job_id": "20260724T055629-atomic-refactor-atom-04-byte-identical-producer-aba03913c5",
-      "elapsed_seconds": 89.458,
-      "peak_rss_bytes": 1297514496,
-      "attestation_sha256": "108ed05d114329748ac9dedc9c36e7c9f0a5f62ce2770448c3149a0fae9818f5",
+      "job_id": "20260724T071800-atomic-refactor-final-producer-fa1def52ae",
+      "elapsed_seconds": 88.419,
+      "peak_rss_bytes": 1235189760,
+      "attestation_sha256": "0d2ae5c45e9d866f8ed56fdded044b7682996fbb9a3523dc56771e70823c1136",
       "source_closure_record": "variant-r-producer-source-closure.json",
       "complete_loaded_repo_source_count": 57,
       "geometry_or_parameter_source_count": 35,
@@ -86,19 +221,19 @@
       "clean_checkout_reproduction": "git archive the exact geometry commit, apply the committed capture-only overlay, export immediately at the accepted base boundary, verify the DATA payload, and canonicalize only the accepted STEP FILE_NAME timestamp"
     },
     "generation": {
-      "job_id": "20260724T055819-atomic-refactor-atom-04-byte-identical-geometry-8764c19346",
-      "elapsed_seconds": 1498.687,
-      "peak_rss_bytes": 1401372672,
+      "job_id": "20260724T071935-atomic-refactor-final-release-5a33762429",
+      "elapsed_seconds": 1471.811,
+      "peak_rss_bytes": 1382973440,
       "outputs": 10,
-      "bucket_sha256": "8983d8b7c6f959fc257817afb6d57b2d2bf279918899d45ff9d266d1b66db222",
-      "baffle_sha256": "c7b7015c84fb9f7435bdcf3218d1abac515130ef44e7ab1e0c9adc80dc5f50a9",
-      "diagnostics_sha256": "e229542653226e5d1392f582a7281309a460dec031a64b4e99137a136cf0dd78"
+      "bucket_sha256": "d3cb808b5dcec90241ec00ba7b195cea27b94fa81cdd99729a5b6440461673da",
+      "baffle_sha256": "051653a63bf5114d987d646c1de7e5cc239e07aa6d19eed80c94bfb5e8b35853",
+      "diagnostics_sha256": "591b3c65e7b962d8b35a73e0721d9dd9036e8b907f76a85468697b17b0dbbd76"
     },
     "equivalence": {
-      "job_id": "20260724T062345-atomic-refactor-atom-04-byte-identical-strict-97ee20c79b",
-      "elapsed_seconds": 2093.563,
-      "peak_rss_bytes": 2458206208,
-      "derived_report_sha256": "4602f94f8e8db32707557b28df0a340a3d4fb2f9e1aea15248777523eb753d10",
+      "job_id": "20260724T074434-atomic-refactor-final-strict-0e704345d5",
+      "elapsed_seconds": 2069.819,
+      "peak_rss_bytes": 2446458880,
+      "derived_report_sha256": "245276011ab4a5cbc3397f250c5d61d54c5b4420138bd138f22b86fc5d8cc4a1",
       "full_parts_and_protected_sections": 8,
       "all_equivalent": true,
       "max_removed_material_mm3": 0.0,
@@ -199,9 +334,10 @@
         "owners": [
           "src/enclosure_family/variant_r/export.py"
         ],
-        "reused_geometry_checkpoint_job": "20260724T062345-atomic-refactor-atom-04-byte-identical-strict-97ee20c79b",
-        "cache_basis": "geometry builders and all current generated artifact identities unchanged; final forced release must exercise the moved adapter",
-        "lightweight_checks": "209 tests and 19 subtests; 89 entrypoints; catalog and lint pass",
+        "final_generation_job": "20260724T071935-atomic-refactor-final-release-5a33762429",
+        "final_geometry_checkpoint_job": "20260724T074434-atomic-refactor-final-strict-0e704345d5",
+        "final_strict_report_sha256": "245276011ab4a5cbc3397f250c5d61d54c5b4420138bd138f22b86fc5d8cc4a1",
+        "lightweight_checks": "209 tests and 19 subtests; 89 entrypoints; catalog and lint pass in job 20260724T081949-atomic-refactor-final-lightweight-26832f42e1",
         "equivalent": true,
         "geometry_changed": false,
         "variant_i_coupling": false
@@ -209,7 +345,17 @@
     ],
     "current_blockers": [],
     "protected_imperfection": "The accepted current flat-bottom missing-material relationship is baseline behavior. Do not repair or reconcile it in this refactor.",
-    "next_atom": "Finish the forced release and visual evidence, then run the mandatory independent adversarial review"
+    "final_acceptance_record": "final-acceptance-evidence.json",
+    "visual_evidence": {
+      "viewer_artifact_sha256": "cfd4ad3b239be2749208408355a03d6664b637ef69564a3bd4267ca6a982ec12",
+      "sidecar_sha256": "94c143c9bed1665dbc89965896dd6521ca6632c64cc8c0ae18d83e9f4cfd54bd",
+      "snapshot_job_id": "20260724T082321-text-to-cad-artifacts-bf297483aa",
+      "snapshot_overview_sha256": "9150298aca8a3ed8752708f338d65d2e4271ef67ddde1e2a26177ea3ef33620d",
+      "snapshot_bottom_sha256": "73b5eeb409448abe554091c644fce963db483cc7725eaf2964e1478c3bb0f987",
+      "agent_inspected": true,
+      "human_attestation": null
+    },
+    "next_atom": "Commit the final evidence candidate, run the mandatory independent adversarial review, address every actionable finding, and obtain explicit no-unresolved-findings re-review"
   },
   "evidence_defaults": {
     "units": "millimeters",

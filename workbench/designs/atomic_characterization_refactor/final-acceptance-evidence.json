@@ -1,0 +1,575 @@
+{
+  "schema_version": 1,
+  "record_kind": "variant_r_geometry_preserving_atomic_refactor_acceptance",
+  "status": "candidate_pass_pending_independent_adversarial_review",
+  "identity": {
+    "exact_base_commit": "c25cddb3eeafe6f6dff3b551be4ceb53d5aee9ce",
+    "geometry_and_release_source_commit": "5a076262d109ce11d0ce43df6b5410be8764779b",
+    "working_branch": "codex/enclosure-atomic-refactor-implementation",
+    "model_id": "development-190x210-tongue-groove",
+    "catalog": ".cad-project/models.toml",
+    "geometry_source": "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle/generate_sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle.py",
+    "geometry_source_sha256": "d67d011f3a1be1bf563786befb1af09fe74e4438e061abf670f0f3aef7cc0e62",
+    "validator": "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle/validate_simple_tongue_groove_baffle.py",
+    "validator_sha256": "947c02b451f1a36ed05622c7b79a8751ea48311887bf6f555420b3363e1ceb74",
+    "excluded_pr2_commit": {
+      "commit": "5f5bbf3c2aca0f55f35ae734c8dc0c6004897f75",
+      "is_ancestor_of_candidate": false,
+      "git_merge_base_exit_code": 1
+    }
+  },
+  "focused_commits": [
+    {
+      "commit": "de5bf498afb8b3853db0c1d0ffae22ffd187f1df",
+      "subject": "docs: bind current Variant R refactor baseline"
+    },
+    {
+      "commit": "01a9cc09eee35b530658da4cd70e6c49cc6bb059",
+      "subject": "refactor: extract enclosure variant ownership contracts"
+    },
+    {
+      "commit": "cfc4aa8086f2bd37be118aabaf6002bf9e2b05bc",
+      "subject": "refactor: extract Variant R seam ownership"
+    },
+    {
+      "commit": "1496f69da3b3c58411e2fe01a8941a52d9ee2724",
+      "subject": "refactor: establish Variant R model boundaries"
+    },
+    {
+      "commit": "0e184588db8b68df0beec5e1188fc7f94d4b4772",
+      "subject": "refactor: bind Variant R producer provenance"
+    },
+    {
+      "commit": "7399242a9c23f1da59100f48b57179eb6753a1f6",
+      "subject": "fix: narrow Variant R base producer"
+    },
+    {
+      "commit": "96e049408f9988417868d4645b2d12a80974f236",
+      "subject": "fix: reproduce accepted Variant R base input"
+    },
+    {
+      "commit": "5c58cbd96eb9e68b448956d3175c5cab6a33a63a",
+      "subject": "fix: bind accepted Variant R foundation producer"
+    },
+    {
+      "commit": "0543d590a727a27861601184ba4843e5ffb0ea73",
+      "subject": "fix: make accepted Variant R input reproducible"
+    },
+    {
+      "commit": "1d1df8d03ce00bda3a1de0651834a321df818d24",
+      "subject": "fix: isolate historical producer staging"
+    },
+    {
+      "commit": "50e7fde73fe2ec05c608e705cd8f63fdf036a78d",
+      "subject": "refactor: preserve producer worker telemetry"
+    },
+    {
+      "commit": "ccef77a70e87b690e7b59e267075c7029cad3d3b",
+      "subject": "fix: compare reproducible Variant R input identity"
+    },
+    {
+      "commit": "dfa475301b2a0ec5eb60d46461749e8aefc28f94",
+      "subject": "fix: reproduce accepted Variant R serialization"
+    },
+    {
+      "commit": "713fdc7c0675cf79fbbab62cce0823b8460448ef",
+      "subject": "refactor: extract Variant R measurement ownership"
+    },
+    {
+      "commit": "ad2bb7c7f4e1fc43076362bc961d5367c2f0cefb",
+      "subject": "refactor: extract Variant R STEP export ownership"
+    },
+    {
+      "commit": "5a076262d109ce11d0ce43df6b5410be8764779b",
+      "subject": "docs: reconcile current Variant R acceptance evidence"
+    }
+  ],
+  "toolchain": {
+    "python": "3.12.13",
+    "build123d": "0.11.1",
+    "ocp": "7.9.3.1",
+    "viewer": "0.3.9",
+    "build123d_mcp": "0.3.79",
+    "environment": "/Users/jaspercurry/Code/CAD - Enclosure/.venv",
+    "doctor": "pass"
+  },
+  "authoritative_input": {
+    "producer_entrypoint": "scripts/generate_variant_r.py",
+    "producer_job_id": "20260724T071800-atomic-refactor-final-producer-fa1def52ae",
+    "elapsed_seconds": 88.419,
+    "peak_rss_bytes": 1235189760,
+    "attempts": 1,
+    "warnings": [],
+    "cleanup_complete": true,
+    "base_step_sha256": "441cc122c0383da257b16e80c4b424096f33b267cc95cab9d1278fb05a43a784",
+    "base_step_data_section_sha256": "70e59fc0af103d742578567164a15c9ecb89532b550f15231be898c699b91c03",
+    "producer_attestation_sha256": "0d2ae5c45e9d866f8ed56fdded044b7682996fbb9a3523dc56771e70823c1136",
+    "source_closure_record": "variant-r-producer-source-closure.json",
+    "source_closure_record_sha256": "e87fe35c7a43769a71a0a1f21b8671048ebf51fd11297eccbcb4b4b0d0adddfe",
+    "complete_loaded_repo_source_count": 57,
+    "geometry_or_parameter_source_count": 35,
+    "loaded_generator_stage_count": 33,
+    "clean_checkout_method": "archive immutable geometry commit 789cf7fb4f63d9567585198c47bc3b5b122e070f, apply capture-only overlay 6b24e0c7b027dacee328329f5edc34285ba2423cd1b00e8f1367630082628608 at the accepted base boundary, export and verify the full DATA section, then canonicalize only the accepted FILE_NAME timestamp while retaining the actual run time in the attestation"
+  },
+  "release": {
+    "job_id": "20260724T071935-atomic-refactor-final-release-5a33762429",
+    "elapsed_seconds": 1471.811,
+    "peak_rss_bytes": 1382973440,
+    "attempts": 1,
+    "output_count": 10,
+    "warnings": [],
+    "cleanup_complete": true,
+    "artifact_sha256": {
+      "simple_tongue_groove_bucket.step": "d3cb808b5dcec90241ec00ba7b195cea27b94fa81cdd99729a5b6440461673da",
+      "simple_tongue_groove_baffle.step": "051653a63bf5114d987d646c1de7e5cc239e07aa6d19eed80c94bfb5e8b35853",
+      "authoritative_side_seam_section.step": "58976eb76b810263604de048b62776e594d6331d3999dadc802927d7d9b6b405",
+      "authoritative_top_seam_section.step": "16e1f1c06efe9373adc24b81b64a9ac14231e84a964b099c605e53f025ffe8d3",
+      "hybrid_bottom_corner_transition_section.step": "9f2ec82746d37ad2198b212f542605f5789a0a71744ff770c069d6c8c3590eff",
+      "hybrid_flat_bottom_section.step": "b0a5e5fe9c77c9a19dc172381c9f6926478fa1695ef8f7089ebb62cc8a167433",
+      "hybrid_side_seam_section.step": "fe7c2475d183d3160206410ffb6ba4aa22a33eb86e49ab44d306f2da8590fa24",
+      "hybrid_top_seam_section.step": "3ecbbf49e6c3fecb280a7be9705ddf61577a69c3ae9955e5d172ebd90d0b9e2e",
+      "validation_diagnostics.json": "591b3c65e7b962d8b35a73e0721d9dd9036e8b907f76a85468697b17b0dbbd76"
+    }
+  },
+  "strict_equivalence": {
+    "job_id": "20260724T074434-atomic-refactor-final-strict-0e704345d5",
+    "elapsed_seconds": 2069.819,
+    "peak_rss_bytes": 2446458880,
+    "attempts": 1,
+    "warnings": [],
+    "cleanup_complete": true,
+    "report": "build/workbench/atomic_characterization_refactor/final/strict-equivalence.json",
+    "report_sha256": "245276011ab4a5cbc3397f250c5d61d54c5b4420138bd138f22b86fc5d8cc4a1",
+    "passed": true,
+    "normalized_diagnostics_equal": true,
+    "bucket_baffle_intersection_mm3": 0.0,
+    "mating_outcome": "zero_volume_contact",
+    "all_eight_artifacts_equivalent": true,
+    "maximum_removed_material_mm3": 0.0,
+    "maximum_added_material_mm3": 0.0,
+    "tolerances": {
+      "length_mm": 0.000001,
+      "volume_mm3": 0.00001,
+      "surface_area_mm2": 0.00001,
+      "center_of_mass_mm": 0.0000001,
+      "diagnostic_numeric": 0.000000001
+    },
+    "parts_and_protected_sections": [
+      {
+        "artifact": "simple_tongue_groove_bucket.step",
+        "candidate_sha256": "d3cb808b5dcec90241ec00ba7b195cea27b94fa81cdd99729a5b6440461673da",
+        "equivalent": true,
+        "valid": true,
+        "positive_solid_count": 1,
+        "topology": {
+          "solid_count": 1,
+          "shell_count": 1,
+          "face_count": 278,
+          "edge_count": 812,
+          "vertex_count": 534,
+          "boundary_edge_count": 0,
+          "manifold_edge_count": 811,
+          "non_manifold_edge_count": 1
+        },
+        "bounds_mm": {
+          "min": [-95.00105477321283, -93.3693178121547, -95.00105477321283],
+          "max": [95.00108219252647, 115.00000049782696, 95.00105477321684],
+          "size": [190.00213696573928, 208.36931830998168, 190.00210954642966]
+        },
+        "volume_mm3": 1104803.2217097448,
+        "surface_area_mm2": 565760.6547886449,
+        "center_of_mass_mm": [-14.92700023452539, 36.51459295344781, -7.473090581884291],
+        "removed_material_mm3": 0.0,
+        "added_material_mm3": 0.0
+      },
+      {
+        "artifact": "simple_tongue_groove_baffle.step",
+        "candidate_sha256": "051653a63bf5114d987d646c1de7e5cc239e07aa6d19eed80c94bfb5e8b35853",
+        "equivalent": true,
+        "valid": true,
+        "positive_solid_count": 1,
+        "topology": {
+          "solid_count": 1,
+          "shell_count": 1,
+          "face_count": 103,
+          "edge_count": 282,
+          "vertex_count": 182,
+          "boundary_edge_count": 0,
+          "manifold_edge_count": 282,
+          "non_manifold_edge_count": 0
+        },
+        "bounds_mm": {
+          "min": [-95.00105070833594, -95.00000010000001, -95.00105070833591],
+          "max": [95.0010507083392, -75.81666656665666, 95.0010507083392],
+          "size": [190.00210141667515, 19.183333533343344, 190.00210141667512]
+        },
+        "volume_mm3": 222294.67306945327,
+        "surface_area_mm2": 75603.4082404961,
+        "center_of_mass_mm": [-0.09004531461358915, -85.65403891203374, 1.7971085533089008],
+        "removed_material_mm3": 0.0,
+        "added_material_mm3": 0.0
+      },
+      {
+        "artifact": "authoritative_side_seam_section.step",
+        "candidate_sha256": "58976eb76b810263604de048b62776e594d6331d3999dadc802927d7d9b6b405",
+        "equivalent": true,
+        "valid": true,
+        "positive_solid_count": 3,
+        "topology": {
+          "solid_count": 3,
+          "shell_count": 3,
+          "face_count": 30,
+          "edge_count": 72,
+          "vertex_count": 48,
+          "boundary_edge_count": 0,
+          "manifold_edge_count": 72,
+          "non_manifold_edge_count": 0
+        },
+        "bounds_mm": {
+          "min": [-95.0000001, -78.81666676665999, 17.49999989999998],
+          "max": [-73.0, -64.81666656666, 22.50000010000001],
+          "size": [22.000000099999994, 14.000000199999988, 5.000000200000027]
+        },
+        "volume_mm3": 575.9984916157919,
+        "surface_area_mm2": 665.7220544668468,
+        "center_of_mass_mm": [-89.11195264611482, -73.01654099588863, 19.984236586084734],
+        "removed_material_mm3": 0.0,
+        "added_material_mm3": 0.0
+      },
+      {
+        "artifact": "authoritative_top_seam_section.step",
+        "candidate_sha256": "16e1f1c06efe9373adc24b81b64a9ac14231e84a964b099c605e53f025ffe8d3",
+        "equivalent": true,
+        "valid": true,
+        "positive_solid_count": 2,
+        "topology": {
+          "solid_count": 2,
+          "shell_count": 2,
+          "face_count": 25,
+          "edge_count": 65,
+          "vertex_count": 44,
+          "boundary_edge_count": 0,
+          "manifold_edge_count": 65,
+          "non_manifold_edge_count": 0
+        },
+        "bounds_mm": {
+          "min": [42.49999989999999, -78.81666676665999, 84.7499999],
+          "max": [47.50000010000001, -64.81666656666, 95.0000001],
+          "size": [5.0000002000000165, 14.000000199999988, 10.250000199999988]
+        },
+        "volume_mm3": 524.4383094730533,
+        "surface_area_mm2": 577.2447657314653,
+        "center_of_mass_mm": [45.00000017700685, -72.59377604835211, 90.51902118478336],
+        "removed_material_mm3": 0.0,
+        "added_material_mm3": 0.0
+      },
+      {
+        "artifact": "hybrid_bottom_corner_transition_section.step",
+        "candidate_sha256": "9f2ec82746d37ad2198b212f542605f5789a0a71744ff770c069d6c8c3590eff",
+        "equivalent": true,
+        "valid": true,
+        "positive_solid_count": 2,
+        "topology": {
+          "solid_count": 2,
+          "shell_count": 2,
+          "face_count": 71,
+          "edge_count": 199,
+          "vertex_count": 130,
+          "boundary_edge_count": 0,
+          "manifold_edge_count": 199,
+          "non_manifold_edge_count": 0
+        },
+        "bounds_mm": {
+          "min": [65.9999998999998, -78.8166667666666, -94.0000001000001],
+          "max": [94.0000001000001, -64.81666656666, -65.99999989999998],
+          "size": [28.000000200000287, 14.000000200006596, 28.000000200000116]
+        },
+        "volume_mm3": 4790.6108654756,
+        "surface_area_mm2": 3602.6334679533393,
+        "center_of_mass_mm": [83.77077954679613, -72.50648041772534, -84.38081870988022],
+        "removed_material_mm3": 0.0,
+        "added_material_mm3": 0.0
+      },
+      {
+        "artifact": "hybrid_flat_bottom_section.step",
+        "candidate_sha256": "b0a5e5fe9c77c9a19dc172381c9f6926478fa1695ef8f7089ebb62cc8a167433",
+        "equivalent": true,
+        "valid": true,
+        "positive_solid_count": 2,
+        "topology": {
+          "solid_count": 2,
+          "shell_count": 2,
+          "face_count": 24,
+          "edge_count": 62,
+          "vertex_count": 42,
+          "boundary_edge_count": 0,
+          "manifold_edge_count": 62,
+          "non_manifold_edge_count": 0
+        },
+        "bounds_mm": {
+          "min": [-6.000000100000012, -78.81666676665999, -95.0000001],
+          "max": [6.0000001, -64.81666656666, -77.0],
+          "size": [12.000000200000013, 14.000000199999988, 18.000000099999994]
+        },
+        "volume_mm3": 2008.7497586839504,
+        "surface_area_mm2": 1481.8826810154478,
+        "center_of_mass_mm": [-1.2228128016879123e-8, -71.97178189502237, -88.05502706440608],
+        "removed_material_mm3": 0.0,
+        "added_material_mm3": 0.0
+      },
+      {
+        "artifact": "hybrid_side_seam_section.step",
+        "candidate_sha256": "fe7c2475d183d3160206410ffb6ba4aa22a33eb86e49ab44d306f2da8590fa24",
+        "equivalent": true,
+        "valid": true,
+        "positive_solid_count": 3,
+        "topology": {
+          "solid_count": 3,
+          "shell_count": 3,
+          "face_count": 30,
+          "edge_count": 72,
+          "vertex_count": 48,
+          "boundary_edge_count": 0,
+          "manifold_edge_count": 72,
+          "non_manifold_edge_count": 0
+        },
+        "bounds_mm": {
+          "min": [-95.0000001, -78.81666676665999, 17.49999989999998],
+          "max": [-73.0, -64.81666656666, 22.50000010000001],
+          "size": [22.000000099999994, 14.000000199999988, 5.000000200000027]
+        },
+        "volume_mm3": 575.9984916157919,
+        "surface_area_mm2": 665.7220544668468,
+        "center_of_mass_mm": [-89.11195264611482, -73.01654099588863, 19.984236586084734],
+        "removed_material_mm3": 0.0,
+        "added_material_mm3": 0.0
+      },
+      {
+        "artifact": "hybrid_top_seam_section.step",
+        "candidate_sha256": "3ecbbf49e6c3fecb280a7be9705ddf61577a69c3ae9955e5d172ebd90d0b9e2e",
+        "equivalent": true,
+        "valid": true,
+        "positive_solid_count": 2,
+        "topology": {
+          "solid_count": 2,
+          "shell_count": 2,
+          "face_count": 25,
+          "edge_count": 65,
+          "vertex_count": 44,
+          "boundary_edge_count": 0,
+          "manifold_edge_count": 65,
+          "non_manifold_edge_count": 0
+        },
+        "bounds_mm": {
+          "min": [42.49999989999999, -78.81666676665999, 84.7499999],
+          "max": [47.50000010000264, -64.81666656666, 95.0000001],
+          "size": [5.000000200002646, 14.000000199999988, 10.250000199999988]
+        },
+        "volume_mm3": 524.4423259329456,
+        "surface_area_mm2": 577.2463036403512,
+        "center_of_mass_mm": [45.00000000551289, -72.59380870562865, 90.51904004437951],
+        "removed_material_mm3": 0.0,
+        "added_material_mm3": 0.0
+      }
+    ]
+  },
+  "contract_invariants": {
+    "diagnostics_sha256": "591b3c65e7b962d8b35a73e0721d9dd9036e8b907f76a85468697b17b0dbbd76",
+    "authoritative_base_step_data_section_sha256": "70e59fc0af103d742578567164a15c9ecb89532b550f15231be898c699b91c03",
+    "stage_flags": {
+      "BUILD_TOP_HINGE": false,
+      "BUILD_BOTTOM_SCREWS": false
+    },
+    "transforms": {
+      "assembly_design_coordinates": "no additional transform",
+      "front_axis": "-Y",
+      "rear_axis": "+Y",
+      "bottom_axis": "-Z",
+      "top_axis": "+Z"
+    },
+    "single_solid": {
+      "bucket": true,
+      "baffle": true
+    },
+    "enclosure_body_retention": {
+      "source_base_volume_mm3": 1307808.9213077368,
+      "reference_bucket_volume_mm3": 1090302.7313261058,
+      "hybrid_bucket_volume_mm3": 1104802.8630732507,
+      "source_base_y_span_mm": 210.00000020000007,
+      "reference_bucket_y_span_mm": 202.00000020000004,
+      "hybrid_bucket_y_span_mm": 208.36931830998844,
+      "hybrid_rear_y_difference_mm": 3.978294955686579e-7
+    },
+    "complete_part_step_round_trip": {
+      "bucket": {
+        "source_solid_count": 1,
+        "imported_solid_count": 1,
+        "all_imported_solids_valid": true
+      },
+      "baffle": {
+        "source_solid_count": 1,
+        "imported_solid_count": 1,
+        "all_imported_solids_valid": true
+      }
+    },
+    "protected_section_step_round_trip": {
+      "authoritative_top_seam_section.step": [2, 2, true],
+      "hybrid_top_seam_section.step": [2, 2, true],
+      "authoritative_side_seam_section.step": [3, 3, true],
+      "hybrid_side_seam_section.step": [3, 3, true],
+      "hybrid_bottom_corner_transition_section.step": [2, 2, true],
+      "hybrid_flat_bottom_section.step": [2, 2, true],
+      "tuple_order": ["source_solid_count", "imported_solid_count", "all_imported_solids_valid"]
+    },
+    "gasket_support": {
+      "bucket_ratio": 1.0,
+      "baffle_ratio": 1.0,
+      "minimum_ratio": 0.985
+    },
+    "mating": {
+      "compression_knob_mm": 1.0,
+      "shoulder_y_mm": -74.81666666666666,
+      "baffle_bed_y_mm": -75.81666666666666,
+      "bucket_baffle_overlap_mm3": 0.0,
+      "strict_imported_intersection_mm3": 0.0,
+      "outcome": "zero_volume_contact"
+    },
+    "seam_identity_lrt": {
+      "sampled_locations": 9,
+      "bucket_and_baffle_material_mismatch_count": 0,
+      "known_boundary_classifier_difference_has_zero_material_difference": true,
+      "grid_spacing_mm": 0.5,
+      "local_material_cube_size_mm": 1.0,
+      "local_material_tolerance_mm3": 0.001
+    },
+    "known_top_mismatch_cube": {
+      "center_mm": [-45.0, -71.75, 86.25],
+      "cube_size_mm": 4.0,
+      "reference_volume_mm3": 35.80665201146918,
+      "hybrid_volume_mm3": 35.80665201146918,
+      "reference_only_mm3": 0.0,
+      "hybrid_only_mm3": 0.0,
+      "tolerance_mm3": 0.01
+    },
+    "corner_seal": {
+      "front_bulkhead_exact_exterior_audit": true,
+      "outside_gasket_corner_closure_count": 0,
+      "unclosed_outside_gasket_corner_volume_mm3": 0.0,
+      "baffle_corner_closure_count": 4,
+      "unclosed_baffle_corner_face_volume_mm3": 0.0
+    },
+    "flat_bottom": {
+      "baffle_bottom_land_planar_area_mm2": 438.0,
+      "bucket_bottom_land_planar_area_mm2": 438.0,
+      "baffle_bottom_land_support_ratio": 1.0,
+      "bucket_bottom_land_support_ratio": 1.0,
+      "bottom_seal_connected_component_count": 1,
+      "bottom_seal_continuous": true,
+      "protected_imperfection": "the accepted flat-bottom/missing-material relationship is unchanged and intentionally not repaired"
+    },
+    "fill_and_support": {
+      "fill_passage_blockage_mm3": 0.0,
+      "unclosed_non_fill_sand_cap_mm3": 0.0,
+      "baffle_bridge_root_volumes_mm3": [708.9528384832857, 603.6189984075612, 603.6189984075552, 603.6189984076257],
+      "front_fill_left_passage_to_live_sand_void_mm3": 123.26511776897891,
+      "front_fill_right_passage_to_live_sand_void_mm3": 126.51544319397578,
+      "support_to_seal_land_clearance_mm": 0.7499999999999947
+    },
+    "exterior_identity": {
+      "fairing_area_difference_mm2": -0.00000603011176281143,
+      "authoritative_exterior_seam_ring_reused": true,
+      "permitted_change_scope": "internal bottom transition only; L/R/T section identity exact"
+    },
+    "legacy_runtime_isolation": {
+      "shared_upstream_generators_restored": true,
+      "two_build_seam_fingerprints_identical": true,
+      "second_restore_ok": true
+    },
+    "retention_geometry": "absent",
+    "variant_i_geometry": "absent",
+    "variant_i_imports_variant_r": false
+  },
+  "print_contracts": {
+    "variant_r_bucket": {
+      "orientation": "rear face down",
+      "build_direction_design_coordinates": "-Y",
+      "physical_print_validated": false
+    },
+    "variant_r_baffle": {
+      "orientation": "narrow lower edge down",
+      "build_direction_design_coordinates": "+Z",
+      "bed_z_mm": -91.50000000000006,
+      "planar_contact_face_count": 1,
+      "total_planar_contact_area_mm2": 2277.9500229303967,
+      "largest_planar_contact_x_span_mm": 187.02097935912883,
+      "largest_planar_contact_y_span_mm": 17.55265124549223,
+      "brim_assumed": true,
+      "physical_adhesion_validated": false
+    },
+    "variant_i": {
+      "future_intent": "open bottom down, +Z",
+      "geometry_exists": false,
+      "print_contract_validated": false
+    }
+  },
+  "fast_checks": {
+    "job_id": "20260724T081949-atomic-refactor-final-lightweight-26832f42e1",
+    "elapsed_seconds": 6.112,
+    "peak_rss_bytes": 21659648,
+    "tests_passed": 209,
+    "subtests_passed": 19,
+    "catalog_primary_models": 10,
+    "catalog_experiment_families": 38,
+    "cad_entrypoints_checked": 89,
+    "lint": "pass",
+    "warnings": [],
+    "cleanup_complete": true
+  },
+  "visual_evidence": {
+    "review_assembly": {
+      "producer_job_id": "20260724T082056-atomic-refactor-final-review-assembly-ac5c8ca527",
+      "step_sha256": "cfd4ad3b239be2749208408355a03d6664b637ef69564a3bd4267ca6a982ec12",
+      "sidecar_job_id": "20260724T082106-text-to-cad-artifacts-9f8b4acb3a",
+      "sidecar_sha256": "94c143c9bed1665dbc89965896dd6521ca6632c64cc8c0ae18d83e9f4cfd54bd"
+    },
+    "viewer": {
+      "recorded_at": "2026-07-24T08:22:19.929392+00:00",
+      "viewer_version": "0.3.9",
+      "backend": "local-fs",
+      "step_artifact_generation_available": false,
+      "url": "http://127.0.0.1:4178/?dir=%2FUsers%2Fjaspercurry%2F.codex%2Fworktrees%2F5caf%2FCAD+-+Enclosure%2Fbuild%2Fworkbench%2Fatomic_characterization_refactor%2Ffinal&file=variant_r_review_assembly.step"
+    },
+    "snapshot": {
+      "job_id": "20260724T082321-text-to-cad-artifacts-bf297483aa",
+      "elapsed_seconds": 3.617,
+      "peak_rss_bytes": 1521238016,
+      "provenance_sha256": "7f1162aad8b206e2f2ba3bf0631bb5b25d09be851b6c3ac945ca740b49a9ece6",
+      "overview_sha256": "9150298aca8a3ed8752708f338d65d2e4271ef67ddde1e2a26177ea3ef33620d",
+      "bottom_detail_sha256": "73b5eeb409448abe554091c644fce963db483cc7725eaf2964e1478c3bb0f987"
+    },
+    "agent_attestation": {
+      "reviewed_by": "Codex implementation owner /root",
+      "reviewed_at_utc": "2026-07-24T08:28:15Z",
+      "review_method": "direct inspection of the exact Snapshot PNG outputs rendered from the hash-bound review STEP and sidecar; no browser automation",
+      "overview_observation": "the assembled Variant R envelope, removable front, driver opening, port and visible perimeter seam are present with no visibly detached or misplaced body",
+      "bottom_observation": "the preserved imperfect lower/front contour is visible and no body is visibly detached or misplaced",
+      "measurement_disclaimer": "visual observations do not establish dimensions, clearance, overlap, validity or printability; those claims come only from deterministic geometry evidence",
+      "human_attestation": "not supplied; the Viewer link is provided for optional human inspection"
+    }
+  },
+  "independent_review": {
+    "status": "pending",
+    "candidate_commit": null,
+    "reviewer": null,
+    "findings": [],
+    "final_disposition": null
+  },
+  "remaining_risks": [
+    "the accepted current flat-bottom/missing-material relationship is intentionally preserved and remains a known geometry defect",
+    "no physical bucket or baffle print, bed-adhesion test, support test, gasket compression test, leak test or acoustic test was performed",
+    "the bucket topology has one non-manifold edge in both reference and candidate; it is preserved baseline behavior, not a newly introduced condition",
+    "Variant I has an independent future ownership interface but no geometry, producer, validator, artifact or print proof",
+    "horn, tube, resonator, bracket, electronics, fasteners, hinge mechanics and support-aware bracing remain outside this refactor"
+  ],
+  "next_geometry_task": "correct the flat-bottom/missing-material relationship in a separately authorized geometry-change iteration, using this refactored architecture and fresh before/after evidence"
+}
