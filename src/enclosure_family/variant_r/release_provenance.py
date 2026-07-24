@@ -40,16 +40,20 @@ def write_release_attestation(
     runtime_sources: Iterable[dict[str, Any]] | None = None,
     attestation_output: Path | None = None,
     evidence_entrypoint: Path | None = None,
+    release_git_identity: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Bind a completed coordinated release to its sources and artifacts."""
 
     root = repo_root.resolve()
     output = output_directory.resolve()
-    git_identity = _git_identity(root)
-    if git_identity["tracked_source_dirty"]:
+    evidence_git_identity = _git_identity(root)
+    if evidence_git_identity["tracked_source_dirty"]:
         raise RuntimeError(
             "Variant R release attestation requires a clean tracked source state"
         )
+    release_git = release_git_identity or evidence_git_identity
+    if release_git.get("tracked_source_dirty"):
+        raise RuntimeError("Variant R release was not produced from clean source")
     release_source = release_entrypoint.resolve()
     if runtime_sources is None:
         sources = collect_loaded_repo_sources(
@@ -59,7 +63,7 @@ def write_release_attestation(
     else:
         sources = tuple(runtime_sources)
     sources = tuple(
-        {**record, "revision": git_identity["head"]}
+        {**record, "revision": release_git["head"]}
         for record in sources
     )
     geometry_sources = tuple(
@@ -106,6 +110,7 @@ def write_release_attestation(
         "cad_job_id": release_job_id or os.environ.get("CAD_JOB_ID"),
         "evidence_collection": {
             "cad_job_id": os.environ.get("CAD_JOB_ID"),
+            "git": evidence_git_identity,
             "adapter": (
                 None
                 if evidence_entrypoint is None
@@ -128,7 +133,7 @@ def write_release_attestation(
             "STEP round trips; post-geometry observational evidence collection; "
             "unrelated runtime caches excluded"
         ),
-        "git": git_identity,
+        "git": release_git,
         "toolchain": {
             "python": platform.python_version(),
             "build123d": _package_version("build123d"),
@@ -138,9 +143,19 @@ def write_release_attestation(
         "release_artifacts": artifacts,
         "runtime_dependency_closure": {
             "method": (
-                "every repository Python source present in sys.modules after "
-                "the successful coordinated release, plus the explicit release "
-                "entrypoint and post-geometry evidence adapter"
+                (
+                    "every repository Python source present in sys.modules "
+                    "after the successful coordinated release, plus the "
+                    "explicit release entrypoint"
+                )
+                if runtime_sources is None
+                else (
+                    "repository source set captured in a separate coordinated "
+                    "evidence job by importing the exact release entrypoint "
+                    "without calling main; main contains no local repository "
+                    "imports; the separately identified evidence adapter is "
+                    "excluded from this geometry/runtime closure"
+                )
             ),
             "complete_loaded_repo_source_count": len(sources),
             "geometry_or_parameter_source_count": len(geometry_sources),
