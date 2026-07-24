@@ -1,0 +1,88 @@
+{
+  "schema_version": 1,
+  "atom_id": "R.parameters_print_contracts_and_I.boundary",
+  "status": "pass",
+  "before_source_sha256": "6d8072eb32a1e86b54528fe80144155d0fc2b9d0996bdc76a8168c06e4c91f0c",
+  "candidate_source_sha256": "d7470c2f044d02e13e0b7ae298347ad33c587d7469a86050607c0183cdb2a386",
+  "candidate_generation": {
+    "job_id": "20260724T002420-atomic-refactor-atom-01-parameters-abc939b859",
+    "elapsed_seconds": 1475.821,
+    "peak_rss_bytes": 1395212288,
+    "outputs": 10,
+    "cleanup_complete": true,
+    "warnings": []
+  },
+  "geometry_checkpoint": {
+    "job_id": "20260724T004959-atomic-refactor-atom-01-metrics-711d720604",
+    "elapsed_seconds": 1713.56,
+    "peak_rss_bytes": 1090289664,
+    "derived_report": "build/workbench/atomic_characterization_refactor/atom-01/metrics.json",
+    "derived_report_sha256": "de22ddf24e859b65351ef66f5d34d3c3cd5b39dce8fc5fe8467d09e65411f83d",
+    "all_full_parts_and_protected_sections_equivalent": true,
+    "normalized_validator_diagnostics_equal": true,
+    "bucket_baffle_overlap_mm3": 0.0,
+    "step_round_trip": "pass for both full parts and all six protected sections",
+    "comparison_scope": "validity, topology, bounds, volume, surface area, center of mass, protected sections, fit, transforms and normalized validator diagnostics",
+    "material_comparison": "The release-grade baseline comparison already records zero bidirectional material delta. This native-free ownership atom used proportional fresh generation and complete deterministic metrics; no geometry builder or interface changed."
+  },
+  "candidate_artifacts": {
+    "simple_tongue_groove_bucket.step": "1a5e62f7858191d0b17e52a4254b9bff9ad403c5f8cb0634a4c76e5d11a7d804",
+    "simple_tongue_groove_baffle.step": "3028e8e1280ff048ab77c6117d2bab1aef83e041bec304c62a633228fef1bded",
+    "authoritative_side_seam_section.step": "5a2a0b147d6745bcc5b638fd13c42eaca64d18a881bb313019ed1f503bf86c01",
+    "authoritative_top_seam_section.step": "62c79f2d323a50660a144a1f8912f7f686cb46674ab5c1abd51864e00ff06a88",
+    "hybrid_bottom_corner_transition_section.step": "bedc105f801abe864692c2a8872a4d2be3481053b509e468f4ef2807a581e9b0",
+    "hybrid_flat_bottom_section.step": "00e1b5025edd367d48f32ed0dc5f633a98c09081c1e3746536e177eb42224ab3",
+    "hybrid_side_seam_section.step": "6c7c87d1afd15256f187944097779c37f720e2ff5bd8585eae60060c09b11320",
+    "hybrid_top_seam_section.step": "aed80d385a0bda709dcf86ab0b142b0711de652a4944ac92944918f77225d5bf",
+    "validation_diagnostics.json": "086e73b9c9898b3c8bee79576e32e875f2e4ecf59da61f946a30e0b59ea7dd74"
+  },
+  "full_part_measurements": {
+    "bucket": {
+      "valid": true,
+      "solid_count": 1,
+      "faces": 278,
+      "edges": 812,
+      "boundary_edges": 0,
+      "non_manifold_edges": 1,
+      "bounds_size_mm": [
+        190.00213696573928,
+        208.36931830998168,
+        190.00210954642966
+      ],
+      "volume_mm3": 1104803.2217097448,
+      "surface_area_mm2": 565760.6547886449,
+      "center_of_mass_mm": [
+        -14.92700023452539,
+        36.51459295344781,
+        -7.473090581884291
+      ]
+    },
+    "baffle": {
+      "valid": true,
+      "solid_count": 1,
+      "faces": 103,
+      "edges": 282,
+      "boundary_edges": 0,
+      "non_manifold_edges": 0,
+      "bounds_size_mm": [
+        190.00210141667515,
+        19.183333533343344,
+        190.00210141667512
+      ],
+      "volume_mm3": 222294.67306945327,
+      "surface_area_mm2": 75603.4082404961,
+      "center_of_mass_mm": [
+        -0.09004531461358915,
+        -85.65403891203374,
+        1.7971085533089008
+      ]
+    }
+  },
+  "protected_sections": {
+    "count": 6,
+    "all_valid": true,
+    "all_topology_equal": true,
+    "all_bounds_equal": true,
+    "all_volume_area_center_of_mass_equal": true
+  }
+}

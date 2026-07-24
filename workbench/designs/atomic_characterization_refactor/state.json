@@ -17,15 +17,15 @@
     {
       "files": [
         {
-          "path": "workbench/designs/atomic_characterization_refactor/current-fast-checks.json",
+          "path": "workbench/designs/atomic_characterization_refactor/atom-01-fast-evidence.json",
           "role": "fast_passed_evidence",
-          "sha256": "97c174711fdc45cdb40cb349941f137c6bf2a2a541a65976b7969f23703069b1",
-          "size_bytes": 2419
+          "sha256": "97abb55ae193b336d10f57ff888cb3b22def2b4d27d29a302a0e26cac586e3fe",
+          "size_bytes": 1575
         }
       ],
-      "recorded_at": "2026-07-24T00:19:17.755817Z",
+      "recorded_at": "2026-07-24T00:24:11.210378Z",
       "stage": "fast_passed",
-      "summary": "Current combined-base doctor, catalog, canonical checksum, lightweight, entrypoint, and lint checks pass; the old rail blocker is not current."
+      "summary": "Variant R parameters and print contracts are native-free, exact-value tests pass, and the Variant I boundary is independent with geometry explicitly absent."
     },
     {
       "files": [
@@ -36,39 +36,39 @@
           "size_bytes": 6815
         }
       ],
-      "recorded_at": "2026-07-24T00:19:17.836093Z",
+      "recorded_at": "2026-07-24T00:24:11.287712Z",
       "stage": "visual_accepted",
-      "summary": "Inspected the exact source-bound accepted isometric and isolated baffle Snapshots; the imperfect flat-bottom relationship is the protected baseline."
+      "summary": "The accepted source-bound Variant R isometric and baffle Snapshots remain the before-atom visual reference; no visual geometry change is authorized."
     },
     {
       "files": [
         {
-          "path": "workbench/designs/atomic_characterization_refactor/current-baseline-evidence.json",
+          "path": "workbench/designs/atomic_characterization_refactor/atom-01-equivalence-evidence.json",
           "role": "fit_passed_evidence",
-          "sha256": "49fde0df6ac7fd7b266b4ce41f53d4e9b52f40f2e2fe935f493d4dd0ea586972",
-          "size_bytes": 4010
+          "sha256": "0a57d2fa9efe6d731cf79cf63c2c86c20a031fc1ed8350426c6e0351b48f0741",
+          "size_bytes": 3775
         }
       ],
-      "recorded_at": "2026-07-24T00:19:17.920235Z",
+      "recorded_at": "2026-07-24T01:20:29.606863Z",
       "stage": "fit_passed",
-      "summary": "Current combined-base Variant R bucket, baffle, and six protected sections reproduce the accepted geometry with zero bidirectional material delta and zero overlap."
+      "summary": "Atom 01 freshly reproduces matching validity, topology, bounds, mass properties, six protected sections, transforms, zero overlap, and STEP-round-trip diagnostics."
     }
   ],
   "iteration_id": "atomic-characterization-refactor",
   "model_id": "development-190x210-tongue-groove",
-  "next_action": "Extract the native-free Variant R parameter and print-contract boundary plus the independent future Variant I interface.",
+  "next_action": "Extract Variant R seam and bottom-material builders behind an explicit foundation adapter.",
   "objective": "Refactor the accepted current Variant R enclosure and baffle into explicit atomic owners without changing geometry, while reserving an independent future Variant I boundary.",
-  "open_question": "Can each ownership extraction preserve this exact accepted geometry and remove hidden coupling without creating Variant I geometry?",
-  "revision": 2,
+  "open_question": "Can seam and bottom-material ownership move to explicit Variant R builders without geometry drift?",
+  "revision": 3,
   "schema_version": 1,
   "sources": [
     {
       "path": "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle/generate_sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle.py",
       "role": "source",
-      "sha256": "6d8072eb32a1e86b54528fe80144155d0fc2b9d0996bdc76a8168c06e4c91f0c",
-      "size_bytes": 46015
+      "sha256": "d7470c2f044d02e13e0b7ae298347ad33c587d7469a86050607c0183cdb2a386",
+      "size_bytes": 46506
     }
   ],
   "stage": "fit_passed",
-  "updated_at": "2026-07-24T00:19:17.920235Z"
+  "updated_at": "2026-07-24T01:20:29.606863Z"
 }

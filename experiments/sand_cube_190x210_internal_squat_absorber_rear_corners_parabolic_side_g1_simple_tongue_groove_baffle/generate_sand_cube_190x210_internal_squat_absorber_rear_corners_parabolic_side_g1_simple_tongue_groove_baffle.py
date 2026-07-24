@@ -41,6 +41,9 @@ import time
 from pathlib import Path
 from typing import Any
 
+from src.enclosure_family.variant_r.parameters import (  # noqa: E402
+    VARIANT_R_PARAMETERS,
+)
 
 _PROGRESS_T0 = time.perf_counter()
 _PROGRESS_TLAST = _PROGRESS_T0
@@ -120,29 +123,39 @@ NAME = "sand_cube_190x210_parabolic_g1_simple_tongue_groove_baffle"
 # --- the ONE compression knob (see module docstring) -----------------------
 # SHOULDER_Y is derived from BAFFLE_BED_Y + this gap at ``source`` import time,
 # so generate() must patch BOTH source.GASKET_CLOSED_GAP_MM AND source.SHOULDER_Y.
-GASKET_CLOSED_GAP_MM = 1.0
+GASKET_CLOSED_GAP_MM = VARIANT_R_PARAMETERS.gasket_closed_gap_mm
 
 # --- inherited seal-path widths (parabolic perimeter representation) --------
-SEAL_LAND_WIDTH_MM = single.SEAL_LAND_WIDTH_MM      # ~6.75 mm inner lip
-GASKET_WIDTH_MM = single.GASKET_WIDTH_MM            # 5.0 mm gasket footprint
-GASKET_EDGE_MARGIN_MM = single.GASKET_EDGE_MARGIN_MM
+SEAL_LAND_WIDTH_MM = VARIANT_R_PARAMETERS.seal_land_width_mm
+GASKET_WIDTH_MM = VARIANT_R_PARAMETERS.gasket_width_mm
+GASKET_EDGE_MARGIN_MM = VARIANT_R_PARAMETERS.gasket_edge_margin_mm
 
 # --- fresh seam dimensions --------------------------------------------------
-BAFFLE_STRUCTURE_THICKNESS_MM = 3.0
-SAND_CAP_THICKNESS_MM = 3.0
-BUCKET_SHOULDER_THICKNESS_MM = 3.0
-FINAL_FILL_PASSAGE_CLEARANCE_MM = 0.05
-BOTTOM_SYNTHESIS_MAX_Z_MM = -80.0
-BOTTOM_SYNTHESIS_OVERLAP_MM = 0.20
-BAFFLE_PRINT_BED_Z_MM = -(
-    single.PATH_HALF_SIZE_MM + SEAL_LAND_WIDTH_MM / 2.0
+BAFFLE_STRUCTURE_THICKNESS_MM = (
+    VARIANT_R_PARAMETERS.baffle_structure_thickness_mm
 )
-BOTTOM_PRINT_ROOT_OVERLAP_MM = 0.20
+SAND_CAP_THICKNESS_MM = VARIANT_R_PARAMETERS.sand_cap_thickness_mm
+BUCKET_SHOULDER_THICKNESS_MM = (
+    VARIANT_R_PARAMETERS.bucket_shoulder_thickness_mm
+)
+FINAL_FILL_PASSAGE_CLEARANCE_MM = (
+    VARIANT_R_PARAMETERS.final_fill_passage_clearance_mm
+)
+BOTTOM_SYNTHESIS_MAX_Z_MM = VARIANT_R_PARAMETERS.bottom_synthesis_max_z_mm
+BOTTOM_SYNTHESIS_OVERLAP_MM = VARIANT_R_PARAMETERS.bottom_synthesis_overlap_mm
+BAFFLE_PRINT_BED_Z_MM = VARIANT_R_PARAMETERS.baffle_print_bed_z_mm
+BOTTOM_PRINT_ROOT_OVERLAP_MM = (
+    VARIANT_R_PARAMETERS.bottom_print_root_overlap_mm
+)
 
 # --- shared thresholds ------------------------------------------------------
-MAX_ALLOWED_INTERFERENCE_MM3 = previous.MAX_ALLOWED_INTERFERENCE_MM3
-MINIMUM_GASKET_SUPPORT_RATIO = previous.MINIMUM_GASKET_SUPPORT_RATIO
-FAIRING_AREA_TOLERANCE_MM2 = previous.FAIRING_AREA_TOLERANCE_MM2
+MAX_ALLOWED_INTERFERENCE_MM3 = (
+    VARIANT_R_PARAMETERS.max_allowed_interference_mm3
+)
+MINIMUM_GASKET_SUPPORT_RATIO = (
+    VARIANT_R_PARAMETERS.minimum_gasket_support_ratio
+)
+FAIRING_AREA_TOLERANCE_MM2 = VARIANT_R_PARAMETERS.fairing_area_tolerance_mm2
 
 # --- staged feature flags (final artifact: both True) -----------------------
 # Stage 1 restores and proves the hybrid seam alone.  Retention stays disabled

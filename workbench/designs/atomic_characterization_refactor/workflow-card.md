@@ -10,17 +10,18 @@
   flat-bottom closure, including its known imperfect/missing-material
   relationship. Establish only an explicit independent future Variant I
   interface; create no Variant I geometry.
-- Next atom: extract the native-free Variant R parameter and print-contract
-  ownership boundary, plus a future-only independent Variant I interface.
-- Last equivalence evidence: current combined-base generation job
-  `20260723T231130-atomic-refactor-current-baseline-correct-input-593db9d217`
-  and strict comparison job
-  `20260723T234005-atomic-refactor-baseline-equivalence-008f589a51`. Both full
-  parts and all six protected sections match the accepted reference with zero
-  removed/added material at `1e-5 mm³`, identical topology/bounds/volume/area/
-  center of mass, zero bucket/baffle overlap, and matching normalized
-  STEP-round-trip diagnostics. The detailed derived report hash is
-  `6727ff1a...`; durable facts are in `current-baseline-evidence.json`.
+- Next atom: extract the Variant R seam and bottom-material ownership builders,
+  with the deep experiment cascade isolated behind an explicit foundation
+  adapter.
+- Last equivalence evidence: Atom 01 generation job
+  `20260724T002420-atomic-refactor-atom-01-parameters-abc939b859` and
+  proportional metrics job
+  `20260724T004959-atomic-refactor-atom-01-metrics-711d720604`. Both complete
+  parts and all six protected sections match validity/topology/bounds/volume/
+  area/center of mass, overlap remains zero, and normalized round-trip
+  diagnostics match. Release baseline job
+  `20260723T234005-atomic-refactor-baseline-equivalence-008f589a51` remains
+  the strict zero bidirectional material proof.
 - Current blocker: none. The Phase-A rail blocker is historical; commit
   `e715300` repaired it before the current base. Stop only on a fresh,
   unexplained geometry/evidence mismatch.
