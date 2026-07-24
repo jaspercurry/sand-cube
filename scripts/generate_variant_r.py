@@ -19,15 +19,23 @@ from cad_runner.entrypoint import ensure_coordinated as _ensure_cad_coordinated
 
 _ensure_cad_coordinated(__name__, __file__, _CAD_SAFETY_ROOT)
 
-from experiments.sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle.generate_sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle import (  # noqa: E402
-    generate,
+from experiments.sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle import (  # noqa: E402
+    generate_sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle as _model,
+)
+from src.enclosure_family.variant_r.provenance import (  # noqa: E402
+    write_producer_attestation,
 )
 
 
 def main() -> None:
     """Generate the cataloged Variant R artifact set."""
 
-    generate()
+    _model.generate()
+    write_producer_attestation(
+        repo_root=_CAD_SAFETY_ROOT,
+        output_directory=_model.OUT,
+        producer_entrypoint=_CadSafetyPath(__file__),
+    )
 
 
 if __name__ == "__main__":

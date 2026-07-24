@@ -22,11 +22,17 @@ class VariantRModel:
     )
     parameter_owner: str = "src.enclosure_family.variant_r.parameters"
     artifact_owner: str = "src.enclosure_family.variant_r.artifacts"
+    input_owner: str = "src.enclosure_family.variant_r.inputs"
+    provenance_owner: str = "src.enclosure_family.variant_r.provenance"
     verification_owner: str = "src.enclosure_family.variant_r.verification"
     retention_geometry: Literal["absent"] = "absent"
     known_geometry_boundary: str = (
         "preserve the accepted imperfect flat-bottom and missing-material "
         "relationship exactly until a separately authorized geometry task"
+    )
+    generated_input_policy: str = (
+        "the cataloged producer must emit the base STEP and a matching complete "
+        "loaded-source attestation before validation"
     )
 
 

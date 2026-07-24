@@ -43,6 +43,10 @@ from src.enclosure_family.variant_r.artifacts import (  # noqa: E402
 from src.enclosure_family.variant_r.verification import (  # noqa: E402
     VARIANT_R_VERIFICATION,
 )
+from src.enclosure_family.variant_r.inputs import (  # noqa: E402
+    AUTHORITATIVE_BASE_FILENAME,
+    HISTORICAL_ACCEPTED_BASE_SHA256,
+)
 
 from cad_geometry_checks.native import (  # noqa: E402
     compare_protected_material,
@@ -165,18 +169,37 @@ def _intersection(left: Any, right: Any) -> dict[str, Any]:
 
 def _normalized_diagnostics(path: Path) -> dict[str, Any]:
     record = json.loads(path.read_text())
+    current_input = record.pop("authoritative_base_input", None)
     authoritative = Path(record["authoritative_base_step"])
+    if current_input is None:
+        base_sha256 = HISTORICAL_ACCEPTED_BASE_SHA256
+    else:
+        if current_input.get("filename") != AUTHORITATIVE_BASE_FILENAME:
+            raise ValueError(
+                f"unexpected Variant R base input: {current_input}"
+            )
+        base_sha256 = current_input["sha256"]
     record["authoritative_base_step"] = {
         "filename": authoritative.name,
-        "sha256": _sha256(
-            _CAD_SAFETY_ROOT
-            / "build"
-            / "sand_cube_190x210_internal_squat_absorber_rear_corners_"
-            "parabolic_side_g1_lightweight_coherent_closure"
-            / authoritative.name
-        ),
+        "sha256": base_sha256,
     }
     return record
+
+
+def _base_input_provenance(path: Path) -> dict[str, Any]:
+    record = json.loads(path.read_text())
+    current = record.get("authoritative_base_input")
+    if current is not None:
+        return {
+            "status": "current_attested_producer_input",
+            **current,
+        }
+    return {
+        "status": "historical_hash_only_input",
+        "filename": AUTHORITATIVE_BASE_FILENAME,
+        "sha256": HISTORICAL_ACCEPTED_BASE_SHA256,
+        "portable_producer_attestation": False,
+    }
 
 
 def _numbers_equal(left: Any, right: Any) -> bool:
@@ -358,6 +381,14 @@ def main() -> None:
         "parts_and_protected_sections": comparisons,
         "candidate_bucket_baffle_intersection": fit,
         "normalized_diagnostics_equal": diagnostics_equal,
+        "base_input_provenance": {
+            "reference": _base_input_provenance(
+                reference_dir / DIAGNOSTICS_FILE
+            ),
+            "candidate": _base_input_provenance(
+                candidate_dir / DIAGNOSTICS_FILE
+            ),
+        },
         "normalized_reference_diagnostics": reference_diagnostics,
         "normalized_candidate_diagnostics": candidate_diagnostics,
     }

@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import ast
+import hashlib
+import json
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -12,11 +14,21 @@ from src.enclosure_family.legacy_runtime import (
 )
 from src.enclosure_family.variant_i import VARIANT_I_BOUNDARY
 from src.enclosure_family.variant_r import (
+    AUTHORITATIVE_BASE_FILENAME,
+    PRODUCER_ATTESTATION_FILENAME,
+    PRODUCER_ENTRYPOINT,
     VARIANT_R_ARTIFACTS,
     VARIANT_R_MODEL,
     VARIANT_R_PARAMETERS,
     VARIANT_R_PRINT_CONTRACTS,
     VARIANT_R_VERIFICATION,
+)
+from src.enclosure_family.variant_r.inputs import (
+    authoritative_base_step,
+    producer_attestation_path,
+)
+from src.enclosure_family.variant_r.provenance import (
+    verify_producer_attestation,
 )
 
 
@@ -60,9 +72,11 @@ def test_variant_r_model_has_one_explicit_owner_per_boundary() -> None:
             model.bottom_material_owner,
             model.parameter_owner,
             model.artifact_owner,
+            model.input_owner,
+            model.provenance_owner,
             model.verification_owner,
         }
-    ) == 6
+    ) == 8
 
 
 def test_variant_r_artifact_and_verification_contracts_are_complete() -> None:
@@ -77,6 +91,7 @@ def test_variant_r_artifact_and_verification_contracts_are_complete() -> None:
         "hybrid_side_seam",
         "hybrid_top_seam",
         "validation_diagnostics",
+        "producer_attestation",
     }
     assert by_id["bucket"].filename == "simple_tongue_groove_bucket.step"
     assert by_id["baffle"].filename == "simple_tongue_groove_baffle.step"
@@ -86,7 +101,70 @@ def test_variant_r_artifact_and_verification_contracts_are_complete() -> None:
         if artifact.kind == "protected_section"
     }
     assert VARIANT_R_VERIFICATION.require_step_round_trip is True
+    assert VARIANT_R_VERIFICATION.require_attested_authoritative_input is True
+    assert (
+        VARIANT_R_VERIFICATION.require_complete_loaded_source_closure is True
+    )
     assert VARIANT_R_VERIFICATION.tolerances.volume_mm3 == 1e-5
+
+
+def test_variant_r_input_contract_points_to_cataloged_producer() -> None:
+    assert PRODUCER_ENTRYPOINT == Path("scripts/generate_variant_r.py")
+    assert (
+        authoritative_base_step(ROOT).name
+        == AUTHORITATIVE_BASE_FILENAME
+    )
+    assert (
+        producer_attestation_path(ROOT).name
+        == PRODUCER_ATTESTATION_FILENAME
+    )
+
+
+def test_variant_r_input_attestation_rejects_a_changed_base(
+    tmp_path: Path,
+) -> None:
+    base = tmp_path / AUTHORITATIVE_BASE_FILENAME
+    base.write_bytes(b"accepted")
+    sources = [
+        {
+            "path": f"experiments/stage-{index}/generate.py",
+            "sha256": "0" * 64,
+            "bytes": 1,
+            "role": "geometry_or_parameter_dependency",
+        }
+        for index in range(19)
+    ]
+    payload = {
+        "schema_version": 1,
+        "attestation_kind": "variant_r_authoritative_producer",
+        "producer_entrypoint": PRODUCER_ENTRYPOINT.as_posix(),
+        "authoritative_base_input": {
+            "filename": AUTHORITATIVE_BASE_FILENAME,
+            "sha256": hashlib.sha256(b"accepted").hexdigest(),
+            "bytes": len(b"accepted"),
+        },
+        "runtime_dependency_closure": {
+            "loaded_generator_stage_count": 19,
+            "sources": sources,
+        },
+    }
+    attestation = tmp_path / PRODUCER_ATTESTATION_FILENAME
+    attestation.write_text(json.dumps(payload))
+    assert (
+        verify_producer_attestation(
+            repo_root=ROOT,
+            base_step=base,
+            attestation_path=attestation,
+        )
+        == payload
+    )
+    base.write_bytes(b"changed")
+    with pytest.raises(ValueError, match="does not match"):
+        verify_producer_attestation(
+            repo_root=ROOT,
+            base_step=base,
+            attestation_path=attestation,
+        )
 
 
 def test_legacy_runtime_binding_is_scoped_and_exactly_restored() -> None:
@@ -115,9 +193,11 @@ def test_variant_i_boundary_is_independent_and_has_no_geometry() -> None:
         "src/enclosure_family/legacy_runtime.py",
         "src/enclosure_family/variant_r/artifacts.py",
         "src/enclosure_family/variant_r/foundation.py",
+        "src/enclosure_family/variant_r/inputs.py",
         "src/enclosure_family/variant_r/model.py",
         "src/enclosure_family/variant_r/parameters.py",
         "src/enclosure_family/variant_r/print_contracts.py",
+        "src/enclosure_family/variant_r/provenance.py",
         "src/enclosure_family/variant_r/verification.py",
         "src/enclosure_family/variant_i/interface.py",
     ],
