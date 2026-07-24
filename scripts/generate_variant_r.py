@@ -90,8 +90,12 @@ def main() -> None:
         _extract_historical_source(historical_root)
         apply_capture_overlay(historical_root)
         closure_path = temporary_root / "loaded-source-closure.json"
+        historical_stage = temporary_root / "historical-stage"
+        historical_stage.mkdir()
         environment = os.environ.copy()
         environment[CAPTURE_OUTPUT_ENV] = str(base_step)
+        environment["CAD_JOB_REPO_ROOT"] = str(historical_root)
+        environment["CAD_JOB_STAGE_ROOT"] = str(historical_stage)
         subprocess.run(
             (
                 sys.executable,
