@@ -6,7 +6,12 @@ from dataclasses import dataclass
 from typing import Final, Literal
 
 
-ArtifactKind = Literal["part", "protected_section", "diagnostics"]
+ArtifactKind = Literal[
+    "part",
+    "protected_section",
+    "diagnostics",
+    "provenance",
+]
 
 
 @dataclass(frozen=True, slots=True)
@@ -73,6 +78,12 @@ VARIANT_R_ARTIFACTS: Final = (
         "validation_diagnostics.json",
         "diagnostics",
         "deterministic validation and STEP round-trip evidence",
+    ),
+    VariantRArtifact(
+        "producer_attestation",
+        "variant_r_producer_attestation.json",
+        "provenance",
+        "complete loaded source/tool/base identity from the coordinated producer",
     ),
 )
 

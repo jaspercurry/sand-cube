@@ -40,6 +40,8 @@ class VariantRVerificationContract:
     )
     require_step_round_trip: bool = True
     require_normalized_diagnostics_identity: bool = True
+    require_attested_authoritative_input: bool = True
+    require_complete_loaded_source_closure: bool = True
     protected_section_ids: tuple[str, ...] = tuple(
         artifact.artifact_id
         for artifact in VARIANT_R_PROTECTED_SECTION_ARTIFACTS

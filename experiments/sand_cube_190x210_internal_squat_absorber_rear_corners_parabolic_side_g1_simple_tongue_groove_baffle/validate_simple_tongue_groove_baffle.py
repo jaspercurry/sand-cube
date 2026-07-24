@@ -56,15 +56,18 @@ import generate_sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic
 from src.enclosure_family.variant_r.artifacts import (  # noqa: E402
     VARIANT_R_ARTIFACTS_BY_ID,
 )
-
-
-AUTHORITATIVE_BASE_STEP = (
-    ROOT
-    / "build"
-    / "sand_cube_190x210_internal_squat_absorber_rear_corners_"
-    "parabolic_side_g1_lightweight_coherent_closure"
-    / "sand_cube_190x210_single_oval_port_base.step"
+from src.enclosure_family.variant_r.inputs import (  # noqa: E402
+    authoritative_base_step,
+    producer_attestation_path,
 )
+from src.enclosure_family.variant_r.provenance import (  # noqa: E402
+    sha256_file,
+    verify_producer_attestation,
+)
+
+
+AUTHORITATIVE_BASE_STEP = authoritative_base_step(ROOT)
+AUTHORITATIVE_BASE_ATTESTATION = producer_attestation_path(ROOT)
 OUT = model.OUT
 BUCKET_STEP = OUT / VARIANT_R_ARTIFACTS_BY_ID["bucket"].filename
 BAFFLE_STEP = OUT / VARIANT_R_ARTIFACTS_BY_ID["baffle"].filename
@@ -625,8 +628,25 @@ def _baffle_print_contact_audit(baffle) -> dict:
 
 
 def main() -> None:
-    if not AUTHORITATIVE_BASE_STEP.is_file():
-        raise FileNotFoundError(AUTHORITATIVE_BASE_STEP)
+    producer_attestation = verify_producer_attestation(
+        repo_root=ROOT,
+        base_step=AUTHORITATIVE_BASE_STEP,
+        attestation_path=AUTHORITATIVE_BASE_ATTESTATION,
+    )
+    base_identity = dict(
+        producer_attestation["authoritative_base_input"]
+    )
+    base_identity.update(
+        {
+            "producer_entrypoint": producer_attestation[
+                "producer_entrypoint"
+            ],
+            "producer_job_id": producer_attestation["cad_job_id"],
+            "producer_attestation_sha256": sha256_file(
+                AUTHORITATIVE_BASE_ATTESTATION
+            ),
+        }
+    )
 
     full_base = model._single_solid(
         import_step(AUTHORITATIVE_BASE_STEP),
@@ -738,6 +758,7 @@ def main() -> None:
     diagnostics = {
         "scope": "Variant A Stage 1 hybrid-seam standalone validation",
         "authoritative_base_step": str(AUTHORITATIVE_BASE_STEP),
+        "authoritative_base_input": base_identity,
         "stage_flags": {
             "BUILD_TOP_HINGE": False,
             "BUILD_BOTTOM_SCREWS": False,
