@@ -27,10 +27,12 @@ def trim_baffle_to_planar_sole(
 
     bounds = baffle.bounding_box()
     sole_z_mm = parameters.baffle_planar_sole_z_mm
-    if not bounds.min.Z < sole_z_mm < bounds.max.Z:
+    original_min_z_mm = min(vertex.Z for vertex in baffle.vertices())
+    if not original_min_z_mm < sole_z_mm < bounds.max.Z:
         raise ValueError(
             "Variant R sole plane does not cross the donor baffle: "
-            f"bounds=[{bounds.min.Z}, {bounds.max.Z}], sole={sole_z_mm}"
+            f"topology_min={original_min_z_mm}, bounds_max={bounds.max.Z}, "
+            f"sole={sole_z_mm}"
         )
     margin_mm = 1.0
     retained_height_mm = bounds.max.Z + margin_mm - sole_z_mm
@@ -60,9 +62,9 @@ def trim_baffle_to_planar_sole(
     return printable_baffle, {
         "operation": "exact half-space intersection; discard sub-sole band",
         "sole_z_mm": sole_z_mm,
-        "original_min_z_mm": bounds.min.Z,
+        "original_min_z_mm": original_min_z_mm,
         "trimmed_min_z_mm": trimmed_min_z_mm,
-        "removed_band_max_thickness_mm": sole_z_mm - bounds.min.Z,
+        "removed_band_max_thickness_mm": sole_z_mm - original_min_z_mm,
         "removed_volume_mm3": removed_volume_mm3,
         "same_domain_unification_applied": False,
         "splitter_removal_applied": False,

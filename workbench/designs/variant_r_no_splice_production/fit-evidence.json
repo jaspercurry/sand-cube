@@ -1,0 +1,44 @@
+{
+  "profile": "fit",
+  "result": "pass",
+  "job": {
+    "job_id": "20260724T160314-variant-r-no-splice-fit-audit-0b3301c33a",
+    "elapsed_seconds": 484.765,
+    "peak_rss_bytes": 797343744,
+    "output": "build/workbench/variant_r_no_splice_production/fit-audit.json",
+    "output_sha256": "f4e90a9c7f9a004f54ff948a5d623ee68e09225f1bfb02f4ebaa07bc8da19fa2",
+    "clean_teardown": true
+  },
+  "acceptance": {
+    "single_valid_solid_per_part": true,
+    "assembly_valid_solid_count": 3,
+    "pairwise_overlap_mm3": {
+      "bucket_baffle": 0.0,
+      "gasket_bucket": 0.0,
+      "gasket_baffle": 0.0
+    },
+    "bottom_seal_connected_components": 1,
+    "bottom_land_support_ratio": {
+      "bucket": 1.0,
+      "baffle": 1.0
+    },
+    "gasket_support_ratio": {
+      "bucket": 1.0,
+      "baffle": 1.0
+    },
+    "sole_z_mm": -91.495,
+    "sole_width_mm": 187.02645777936598,
+    "sole_area_mm2": 2280.003992178324,
+    "maximum_protected_baffle_deviation_mm": 1.484022251031871e-8,
+    "maximum_protected_baffle_normal_change_deg": 1.2074182697257333e-6,
+    "maximum_protected_bucket_deviation_mm": 1.4210854715202004e-14,
+    "maximum_protected_bucket_normal_change_deg": 0.0
+  },
+  "donor_band_diagnosis": {
+    "job_id": "20260724T161206-variant-r-donor-subsole-diagnostic-5db64d07e5",
+    "output_sha256": "1122778998ffb6b2164d93c727a3040e07a45376f54c2ced42517639d3aa34ac",
+    "actual_donor_minimum_vertex_z_mm": -91.85032330335,
+    "actual_removed_band_thickness_mm": 0.35532330335,
+    "resolved_issue": "A trimmed B-spline support-surface bounding box overestimated the donor depth; production metadata now measures topology vertices."
+  }
+}

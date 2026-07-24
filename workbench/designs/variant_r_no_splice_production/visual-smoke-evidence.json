@@ -1,0 +1,24 @@
+{
+  "profile": "visual-smoke",
+  "result": "accepted",
+  "candidate_step": {
+    "path": "build/workbench/variant_r_no_splice_production/candidate/production_candidate_assembly.step",
+    "sha256": "26d52d911ca0a835cd08bfb2bdde9c1508b92ebb2ad6a72893e3b82e9665d4b9",
+    "solid_count": 3
+  },
+  "snapshot": {
+    "job_id": "20260724T160221-text-to-cad-artifacts-7853c78e3c",
+    "path": "build/workbench/variant_r_no_splice_production/review/candidate-edge-smoke_20260724T160221Z.png",
+    "sha256": "7d7554c776d2954e0acf46669e16672de7b4379a713997b358cbc69100ca0b38",
+    "elapsed_seconds": 5.175,
+    "peak_rss_bytes": 2093301760
+  },
+  "inspection": {
+    "old_full_width_lower_apron_line_visible": false,
+    "old_line_continues_onto_right_bucket_side": false,
+    "intended_driver_recess_edges_present": true,
+    "intended_sculpted_parting_seam_present": true,
+    "detached_or_misplaced_body_visible": false
+  },
+  "note": "The first sandboxed Snapshot attempt produced no output because macOS denied Chromium's Mach-port registration; the identical pinned command succeeded with local renderer permission."
+}

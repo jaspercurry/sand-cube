@@ -26,13 +26,39 @@
       "recorded_at": "2026-07-24T15:45:40.737176Z",
       "stage": "fast_passed",
       "summary": "Localized production owner path and all native-free tests/catalog/entrypoint/lint checks pass."
+    },
+    {
+      "files": [
+        {
+          "path": "workbench/designs/variant_r_no_splice_production/visual-smoke-evidence.json",
+          "role": "visual_accepted_evidence",
+          "sha256": "3190d454eded96bd59dc9d59b8fa4fa4e193e82e55f67d62ae8b34b36f14eaff",
+          "size_bytes": 1115
+        }
+      ],
+      "recorded_at": "2026-07-24T16:03:09.297938Z",
+      "stage": "visual_accepted",
+      "summary": "Exact three-solid production candidate matches 91/257 topology and inspected edge-overlay shows the former baffle/side splice absent."
+    },
+    {
+      "files": [
+        {
+          "path": "workbench/designs/variant_r_no_splice_production/fit-evidence.json",
+          "role": "fit_passed_evidence",
+          "sha256": "48f2fb3d4bf1aa88ffa36b900cf5d0761ef027b218caa6c11aaec04681b8fb16",
+          "size_bytes": 1656
+        }
+      ],
+      "recorded_at": "2026-07-24T16:13:30.062605Z",
+      "stage": "fit_passed",
+      "summary": "Exported production candidate passes exact overlap, seal, support, sole, topology and protected surface comparisons; donor band is confirmed as 0.35532330335 mm by topology vertices."
     }
   ],
   "iteration_id": "variant-r-no-splice-production",
   "model_id": "development-190x210-tongue-groove",
-  "next_action": "Run the smallest coordinated production geometry build and topology/fit audit.",
+  "next_action": "Run the coordinated full production release validator and inspect exact final visual evidence.",
   "objective": "Promote and verify the validated Variant R no-splice construction through production owners and publish an exact read-only review artifact.",
-  "open_question": "Does the exact production build reproduce the validated candidate topology and no-splice surface result?",
+  "open_question": "Does the full production validator preserve all body, L/R/T seam, corner, fill, section and release round-trip contracts?",
   "revision": 2,
   "schema_version": 1,
   "sources": [
@@ -43,6 +69,6 @@
       "size_bytes": 2026
     }
   ],
-  "stage": "fast_passed",
-  "updated_at": "2026-07-24T15:45:40.737176Z"
+  "stage": "fit_passed",
+  "updated_at": "2026-07-24T16:13:30.062605Z"
 }
