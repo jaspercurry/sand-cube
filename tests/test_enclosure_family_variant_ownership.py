@@ -52,6 +52,7 @@ def test_variant_i_boundary_is_independent_and_has_no_geometry() -> None:
     "relative_path",
     [
         "src/enclosure_family/print_contracts.py",
+        "src/enclosure_family/variant_r/foundation.py",
         "src/enclosure_family/variant_r/parameters.py",
         "src/enclosure_family/variant_r/print_contracts.py",
         "src/enclosure_family/variant_i/interface.py",
@@ -86,3 +87,29 @@ def test_variant_i_interface_does_not_import_variant_r() -> None:
         if isinstance(node, ast.ImportFrom)
     ]
     assert not any("variant_r" in module for module in modules)
+
+
+@pytest.mark.parametrize(
+    "relative_path",
+    [
+        "src/enclosure_family/variant_r/assembly.py",
+        "src/enclosure_family/variant_r/bottom_ownership.py",
+        "src/enclosure_family/variant_r/seam.py",
+    ],
+)
+def test_variant_r_geometry_owners_do_not_import_experiments(
+    relative_path: str,
+) -> None:
+    tree = ast.parse((ROOT / relative_path).read_text())
+    modules = [
+        alias.name
+        for node in ast.walk(tree)
+        if isinstance(node, ast.Import)
+        for alias in node.names
+    ]
+    modules.extend(
+        node.module or ""
+        for node in ast.walk(tree)
+        if isinstance(node, ast.ImportFrom)
+    )
+    assert not any(module.startswith("experiments") for module in modules)

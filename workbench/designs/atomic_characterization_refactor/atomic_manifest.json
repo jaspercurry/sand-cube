@@ -46,7 +46,7 @@
     },
     "current_source": {
       "path": "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle/generate_sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle.py",
-      "sha256": "d7470c2f044d02e13e0b7ae298347ad33c587d7469a86050607c0183cdb2a386"
+      "sha256": "1198eb00c447149a6d0b1f8ab79601de575919c2506bf350c40e4ebdfacbbc2c"
     },
     "authoritative_base_input_sha256": "441cc122c0383da257b16e80c4b424096f33b267cc95cab9d1278fb05a43a784",
     "generation": {
@@ -90,11 +90,27 @@
         "equivalent": true,
         "geometry_changed": false,
         "variant_i_geometry_created": false
+      },
+      {
+        "id": "R.sculpted_lrt_seam_and_bottom_material_ownership",
+        "owners": [
+          "src/enclosure_family/variant_r/seam.py",
+          "src/enclosure_family/variant_r/bottom_ownership.py",
+          "src/enclosure_family/variant_r/assembly.py",
+          "src/enclosure_family/variant_r/foundation.py"
+        ],
+        "candidate_generation_job": "20260724T012509-atomic-refactor-atom-02-geometry-dcc2d21bcb",
+        "geometry_checkpoint_job": "20260724T015015-atomic-refactor-atom-02-strict-equivalence-68898b111a",
+        "equivalent": true,
+        "max_removed_material_mm3": 0.0,
+        "max_added_material_mm3": 0.0,
+        "geometry_changed": false,
+        "variant_i_coupling": false
       }
     ],
     "current_blockers": [],
     "protected_imperfection": "The accepted current flat-bottom missing-material relationship is baseline behavior. Do not repair or reconcile it in this refactor.",
-    "next_atom": "Variant R seam and bottom-material ownership builders with an explicit legacy-foundation adapter"
+    "next_atom": "Remove disabled retention flags/code, add the thin cataloged entrypoint and explicit model/verification/export boundaries"
   },
   "evidence_defaults": {
     "units": "millimeters",
@@ -1137,42 +1153,42 @@
     {
       "id": "R.sculpted_lrt_seam",
       "owner": "Variant R",
-      "owning_source": "simplified path parameters plus leaf _hybrid_perimeter_wire",
+      "owning_source": "src/enclosure_family/variant_r/seam.py composed by src/enclosure_family/variant_r/assembly.py",
       "owning_parameters": ["path half 88.125 mm", "top tangency 68 mm", "bottom tangency 73 mm", "seal land 6.75 mm"],
       "dependencies": ["R.front_service_opening", "R.front_bulkhead_gasket_support"],
       "consumers": ["R.baffle_body", "R.gasket_land_compression", "R.hinge_interface"],
       "mating_atoms": ["R.baffle_body", "R.gasket_land_compression"],
       "candidate_refs": ["R.clean_bucket"],
-      "reproducible_baseline": "accepted STEP-derived seam evidence only",
+      "reproducible_baseline": "current source generation plus strict zero-material-delta proof for full parts and protected seam sections",
       "protected_invariants": ["left/right/top curve retained", "no four corner hunks", "bottom is intentionally separate policy"],
       "fit_tolerances": ["leaf patches gasket gap to 1.0 mm; exact normal clearance needs source baseline"],
       "print_implications": ["curved collar grows toward front; overhang/bridge behavior not quantified"],
-      "conflicts": ["near-perfect bucket has wrong bottom ownership"],
+      "conflicts": ["the accepted current flat-bottom imperfection is protected baseline behavior"],
       "shareability": "no",
-      "readiness": "STEP-only blocked",
-      "compatibility_class": "STEP-only evidence",
+      "readiness": "extracted and strict-equivalence verified",
+      "compatibility_class": "implemented Variant R geometry",
       "comparison": "I has no front seam",
-      "synthesis_blocker": "not parameterized at accepted clean-corner state"
+      "synthesis_blocker": "none for the equivalence refactor; later geometry correction remains separate"
     },
     {
       "id": "R.bottom_material_ownership",
       "owner": "Variant R",
-      "owning_source": "not accepted; historic hybrid artifact is evidence",
+      "owning_source": "src/enclosure_family/variant_r/bottom_ownership.py composed by src/enclosure_family/variant_r/assembly.py",
       "owning_parameters": ["lower perimeter ownership split"],
       "dependencies": ["R.front_service_opening", "family.exterior_shell"],
       "consumers": ["R.baffle_body", "R.flat_baffle_print_edge", "R.fastener_interface"],
       "mating_atoms": ["R.baffle_body"],
       "candidate_refs": ["R.bottom_ownership_assembly"],
-      "reproducible_baseline": "two-solid STEP evidence; no accepted Python owner",
+      "reproducible_baseline": "current source generation plus strict zero-material-delta proof for full parts and flat-bottom/corner protected sections",
       "protected_invariants": ["bucket and baffle are complementary", "no overlap", "intentional service gap"],
-      "fit_tolerances": ["not established for final synthesis"],
+      "fit_tolerances": ["zero overlap; 1e-5 mm3 strict material comparison tolerance"],
       "print_implications": ["determines baffle lower edge and bucket front support"],
-      "conflicts": ["clean bucket and hybrid lower boundary disagree"],
+      "conflicts": ["accepted current missing-material relationship remains intentionally unfixed"],
       "shareability": "no",
-      "readiness": "later synthesis only",
-      "compatibility_class": "STEP-only evidence",
+      "readiness": "extracted and strict-equivalence verified",
+      "compatibility_class": "implemented Variant R geometry",
       "comparison": "not applicable to I",
-      "synthesis_blocker": "reference reconciliation explicitly deferred"
+      "synthesis_blocker": "flat-bottom/missing-material correction explicitly deferred"
     },
     {
       "id": "R.baffle_body",
