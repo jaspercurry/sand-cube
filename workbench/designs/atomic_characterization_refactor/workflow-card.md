@@ -43,16 +43,19 @@
   the prior continuity images and now bind the final release. No human visual
   attestation has been supplied.
 - Current blocker: none. The mandatory independent adversarial review is the
-  remaining acceptance gate.
+  final acceptance gate, and it passed with no unresolved actionable findings.
 - Known landing limitation: the historical compatibility leaf retains visible
   serialized temporary bindings. They are guarded by one `RLock`, verified to
   restore exact identities twice with identical seam fingerprints, covered by
   strict equivalence and a unit test, and production is coordinated at
   concurrency limit 1. Removing them is a separate cascade rewrite.
-- Next atom: commit the reconciled candidate evidence, run the independent
-  exact base-to-candidate review, fix only actionable findings that materially
-  affect this refactor, rerun proportional checks, and obtain explicit
-  no-unresolved-actionable-findings re-review.
+- Reviewed candidate:
+  `e1c22b75ec20a86bf576490f224c2b6bea919f92`; final reviewer disposition is
+  zero Blockers, zero Should-fix findings, zero Nits, and no unresolved
+  actionable findings within the agreed landing scope.
+- Next atom: stop this refactor and hand off the readiness report. The next
+  geometry task is the separately authorized flat-bottom/missing-material
+  correction; do not perform it in this iteration.
 - Resume: read this card, `atomic_manifest.json`,
   `final-acceptance-evidence.json`, and current git state. Consult `brief.md`
   only for a disputed requirement; do not repeat Phase A.

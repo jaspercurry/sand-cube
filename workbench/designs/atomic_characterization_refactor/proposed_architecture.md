@@ -1,8 +1,8 @@
 # Implemented module tree and ownership
 
-Status: implementation, final strict acceptance and exact visual evidence
-complete; independent adversarial review remains. The accepted current Variant
-R geometry remains the sole baseline; no Variant I or corrected flat-bottom
+Status: implementation, final strict acceptance, exact visual evidence and
+independent adversarial re-review complete. The accepted current Variant R
+geometry remains the sole baseline; no Variant I or corrected flat-bottom
 geometry exists.
 
 ```text

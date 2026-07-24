@@ -58,20 +58,33 @@
         {
           "path": "workbench/designs/atomic_characterization_refactor/final-acceptance-evidence.json",
           "role": "release_passed_evidence",
-          "sha256": "3d0400689cf488128e27f88bd7b9596af352a4ae691d64fc22aad10cebd95a21",
-          "size_bytes": 28533
+          "sha256": "39852e124d441f7aa6a9cdf7f3c5c58c0c9ee25af4deb5694883b1c8c92221a9",
+          "size_bytes": 30328
         }
       ],
-      "recorded_at": "2026-07-24T12:02:50Z",
+      "recorded_at": "2026-07-24T12:07:25Z",
       "stage": "release_passed",
       "summary": "Final restored release, strict equivalence, lightweight checks and exact inspected visual evidence pass; independent adversarial review remains."
+    },
+    {
+      "files": [
+        {
+          "path": "workbench/designs/atomic_characterization_refactor/independent-review.md",
+          "role": "independently_reviewed_evidence",
+          "sha256": "9b718c900c4d9498d402b77e81e22c1e4a6614fbb42098fe3e299bab22aa2175",
+          "size_bytes": 2641
+        }
+      ],
+      "recorded_at": "2026-07-24T12:07:39.884621Z",
+      "stage": "independently_reviewed",
+      "summary": "Independent amended re-review reports zero Blockers, Should-fix findings, and Nits, with no unresolved actionable findings in the agreed landing scope."
     }
   ],
   "iteration_id": "atomic-characterization-refactor",
   "model_id": "development-190x210-tongue-groove",
-  "next_action": "Commit the candidate evidence, run independent adversarial review, fix materially actionable findings, rerun proportional checks and obtain final no-unresolved-findings disposition.",
+  "next_action": "Stop this refactor and deliver the final readiness report; do not begin the separately scoped flat-bottom geometry correction.",
   "objective": "Refactor the accepted current Variant R enclosure and baffle into explicit atomic owners without changing geometry, while reserving an independent future Variant I boundary.",
-  "open_question": "Does the independent adversarial reviewer find any unresolved actionable issue in the exact base-to-candidate diff?",
+  "open_question": "none",
   "revision": 8,
   "schema_version": 1,
   "sources": [
@@ -82,6 +95,6 @@
       "size_bytes": 20714
     }
   ],
-  "stage": "release_passed",
-  "updated_at": "2026-07-24T12:02:50Z"
+  "stage": "independently_reviewed",
+  "updated_at": "2026-07-24T12:07:39.884621Z"
 }
