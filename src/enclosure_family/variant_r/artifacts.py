@@ -5,8 +5,6 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Final, Literal
 
-from .inputs import RELEASE_ATTESTATION_FILENAME
-
 
 ArtifactKind = Literal[
     "part",
@@ -86,12 +84,6 @@ VARIANT_R_ARTIFACTS: Final = (
         "variant_r_producer_attestation.json",
         "provenance",
         "complete loaded source/tool/base identity from the coordinated producer",
-    ),
-    VariantRArtifact(
-        "release_attestation",
-        RELEASE_ATTESTATION_FILENAME,
-        "provenance",
-        "complete loaded source/tool/input/artifact identity from the coordinated release",
     ),
 )
 

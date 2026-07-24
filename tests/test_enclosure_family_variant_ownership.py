@@ -25,7 +25,6 @@ from src.enclosure_family.variant_r import (
 )
 from src.enclosure_family.variant_r.inputs import (
     HISTORICAL_ACCEPTED_BASE_DATA_SHA256,
-    RELEASE_ATTESTATION_FILENAME,
     authoritative_base_step,
     producer_attestation_path,
 )
@@ -35,8 +34,9 @@ from src.enclosure_family.variant_r.historical_capture import (
     canonicalize_accepted_step_header,
     capture_overlay_sha256,
 )
-from src.enclosure_family.variant_r.provenance import (
-    verify_producer_attestation,
+from src.enclosure_family.variant_r.provenance import verify_producer_attestation
+from src.enclosure_family.variant_r.release_provenance import (
+    RELEASE_ATTESTATION_FILENAME,
     write_release_attestation,
 )
 
@@ -103,7 +103,6 @@ def test_variant_r_artifact_and_verification_contracts_are_complete() -> None:
         "hybrid_top_seam",
         "validation_diagnostics",
         "producer_attestation",
-        "release_attestation",
     }
     assert by_id["bucket"].filename == "simple_tongue_groove_bucket.step"
     assert by_id["baffle"].filename == "simple_tongue_groove_baffle.step"
@@ -227,7 +226,7 @@ def test_variant_r_release_attestation_binds_loaded_sources_and_artifacts(
         for index in range(19)
     )
     monkeypatch.setattr(
-        "src.enclosure_family.variant_r.provenance._git_identity",
+        "src.enclosure_family.variant_r.release_provenance._git_identity",
         lambda _root: {
             "head": "candidate",
             "branch": "codex/test",
@@ -235,12 +234,12 @@ def test_variant_r_release_attestation_binds_loaded_sources_and_artifacts(
         },
     )
     monkeypatch.setattr(
-        "src.enclosure_family.variant_r.provenance."
+        "src.enclosure_family.variant_r.release_provenance."
         "collect_loaded_repo_sources",
         lambda *_args, **_kwargs: sources,
     )
     monkeypatch.setattr(
-        "src.enclosure_family.variant_r.provenance._package_version",
+        "src.enclosure_family.variant_r.release_provenance._package_version",
         lambda distribution: distribution,
     )
     monkeypatch.setenv("CAD_JOB_ID", "release-job")
@@ -422,18 +421,17 @@ def test_variant_r_release_provenance_is_post_geometry_observation() -> None:
         "validate_simple_tongue_groove_baffle.py"
     )
     source = validator.read_text()
-    evidence_import = (
-        "    from src.enclosure_family.variant_r.artifacts import "
-        "VARIANT_R_ARTIFACTS"
-    )
-    assert source.index("diagnostics_path.write_text") < source.index(
-        evidence_import
-    )
-    assert source.index("bucket_round_trip = _round_trip") < source.index(
-        evidence_import
-    )
-    assert source.index("section_round_trip = _export_sections") < source.index(
-        evidence_import
+    assert "write_release_attestation" not in source
+    assert "release_provenance" not in source
+    evidence_adapter = (
+        ROOT
+        / "workbench/designs/atomic_characterization_refactor/"
+        "attest_variant_r_release.py"
+    ).read_text()
+    assert evidence_adapter.index("_load_release_entrypoint()") < (
+        evidence_adapter.index(
+            "from src.enclosure_family.variant_r.release_provenance"
+        )
     )
 
 

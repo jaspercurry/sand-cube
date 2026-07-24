@@ -1,7 +1,7 @@
-"""Standalone geometry validation for accepted Variant R.
+"""Standalone geometry validation for Variant A (no full-cascade viewers).
 
 Adapts the closure's own ``generate_bucket_front_transition_candidate.py``
-pattern: load the authoritative full-detail base solid, drive the Variant R
+pattern: load the authoritative full-detail base solid, drive the Variant A
 hooks directly, and assert every geometry invariant.  This deliberately avoids
 the shared cascade's inherited-assembly preview cutaway, which fails on this
 machine's OCCT for the UNCHANGED baseline too (see the run report).
@@ -76,6 +76,8 @@ BAFFLE_STEP = OUT / VARIANT_R_ARTIFACTS_BY_ID["baffle"].filename
 DIAGNOSTICS_PATH = (
     OUT / VARIANT_R_ARTIFACTS_BY_ID["validation_diagnostics"].filename
 )
+
+
 def _patch_seam():
     """Patch only the one gasket-gap knob and its import-time derivative."""
     originals = {
@@ -687,7 +689,7 @@ def main() -> None:
         and model.single._perimeter_wire is model._AUTHORITATIVE_PERIMETER_WIRE
     )
     if not isolation_restored:
-        raise ValueError("Variant R seam patches were not restored")
+        raise ValueError("Variant A seam patches were not restored")
 
     # --- 2nd in-process build (light): re-apply the patches and rebuild the
     #     seam primitives; identical volumes prove the save/restore cycle is
@@ -733,7 +735,7 @@ def main() -> None:
     }
 
     diagnostics = {
-        "scope": "accepted Variant R hybrid-seam standalone validation",
+        "scope": "Variant A Stage 1 hybrid-seam standalone validation",
         "authoritative_base_step": str(AUTHORITATIVE_BASE_STEP),
         "authoritative_base_input": base_identity,
         "stage_flags": {
@@ -804,45 +806,7 @@ def main() -> None:
     diagnostics_path = job_output_path(DIAGNOSTICS_PATH)
     diagnostics_path.parent.mkdir(parents=True, exist_ok=True)
     diagnostics_path.write_text(json.dumps(diagnostics, indent=2) + "\n")
-
-    # Keep provenance observational: importing and preparing release evidence
-    # happens only after every geometry build, validation, export, and round
-    # trip has completed.  The serialized legacy build path above therefore
-    # remains identical to the already-proven path.
-    from src.enclosure_family.variant_r.artifacts import VARIANT_R_ARTIFACTS
-    from src.enclosure_family.variant_r.provenance import (
-        write_release_attestation,
-    )
-
-    release_artifact_filenames = tuple(
-        artifact.filename
-        for artifact in VARIANT_R_ARTIFACTS
-        if artifact.kind in {"part", "protected_section", "diagnostics"}
-    )
-    release_attestation = write_release_attestation(
-        repo_root=ROOT,
-        output_directory=diagnostics_path.parent,
-        release_entrypoint=Path(__file__),
-        authoritative_base_input=base_identity,
-        artifact_filenames=release_artifact_filenames,
-    )
     print(json.dumps(diagnostics, indent=2))
-    print(
-        json.dumps(
-            {
-                "release_attestation": {
-                    "cad_job_id": release_attestation["cad_job_id"],
-                    "loaded_sources": release_attestation[
-                        "runtime_dependency_closure"
-                    ]["complete_loaded_repo_source_count"],
-                    "artifacts": len(
-                        release_attestation["release_artifacts"]
-                    ),
-                }
-            },
-            indent=2,
-        )
-    )
 
 
 if __name__ == "__main__":
