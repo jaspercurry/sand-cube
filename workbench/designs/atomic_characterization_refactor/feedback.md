@@ -453,18 +453,20 @@ authoritative structured facts are in `atomic_manifest.json`.
   `20260724T102722-atomic-refactor-landing-restored-release-52bd80460c`
   completed in 1493.266 seconds at 1,403,142,144 bytes peak RSS. Observational
   attestation job
-  `20260724T105416-atomic-refactor-landing-release-attestation-fina-e1f028f156`
-  binds release commit `d114d79`, nine model artifacts, the exact portable
-  input, 62 runtime sources, 58 geometry/parameter sources and all 33 generator
-  stages without entering the geometry process.
+  `20260724T115857-atomic-refactor-review-release-attestation-74aaf7c31f`
+  binds release commit `d114d79`, exact release-job record `ca4ba25a...`, nine
+  model artifacts, the exact portable input, 62 runtime sources, 58
+  geometry/parameter sources and all 33 generator stages without entering the
+  geometry process. Every dependency byte matches the commit. The release job
+  did not record whole-tree cleanliness, and the evidence does not claim it.
 - Strict job `20260724T105504-atomic-refactor-landing-strict-a9945e2f37`
   passed in 2113.045 seconds at 2,430,173,184 bytes peak RSS. Report
   `2cc8b236...` proves both parts and all six sections equivalent with zero
   bidirectional material delta, matching diagnostics and zero-volume contact.
 - Lightweight job
-  `20260724T114341-atomic-refactor-landing-final-lightweight-a08026447e`
+  `20260724T115821-atomic-refactor-review-fixes-lightweight-3f0e3043be`
   passed 212 tests plus 19 subtests, catalog 10/38, 91 entrypoints and lint in
-  6.117 seconds at 21,757,952 bytes peak RSS.
+  6.609 seconds at 21,807,104 bytes peak RSS.
 - Exact review assembly `a1211ad...`, attestation `30387b5...`, and sidecar
   `5914ddf...` bind the final release. Snapshot job
   `20260724T113322-atomic-refactor-landing-snapshot-292020a205` produced

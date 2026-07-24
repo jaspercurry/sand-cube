@@ -5,7 +5,7 @@
   "identity": {
     "exact_base_commit": "c25cddb3eeafe6f6dff3b551be4ceb53d5aee9ce",
     "geometry_and_release_source_commit": "d114d7907d5a3fc678d6ca7ac74b0d975c56b2a2",
-    "evidence_adapter_commit": "388593216e5af2476b36ef9bcc0b1e849c11b61e",
+    "evidence_adapter_commit": "9d5fef53073efcfb2e91baed27829c0644f5682f",
     "working_branch": "codex/enclosure-atomic-refactor-implementation",
     "model_id": "development-190x210-tongue-groove",
     "catalog": ".cad-project/models.toml",
@@ -107,6 +107,14 @@
     {
       "commit": "388593216e5af2476b36ef9bcc0b1e849c11b61e",
       "subject": "fix: distinguish release and evidence provenance"
+    },
+    {
+      "commit": "f91b85df767d8d3d7d199262b63d37f3ae54323c",
+      "subject": "docs: reconcile final Variant R landing evidence"
+    },
+    {
+      "commit": "9d5fef53073efcfb2e91baed27829c0644f5682f",
+      "subject": "fix: verify observational release provenance"
     }
   ],
   "toolchain": {
@@ -156,11 +164,14 @@
       "hybrid_top_seam_section.step": "f89e08791ab78e6b27206fc1a3a55e400ce034a900f989d3fd7c2a2da8d8fe95",
       "validation_diagnostics.json": "f8dbefc9191eef3b62eeca066fd12c515c5f46a0d2dad9b9588e93241056219e"
     },
-    "attestation_job_id": "20260724T105416-atomic-refactor-landing-release-attestation-fina-e1f028f156",
-    "attestation_evidence_commit": "388593216e5af2476b36ef9bcc0b1e849c11b61e",
-    "attestation_sha256": "05b388a7ed5369a6a31b6d1013eda02cc05e877add0942d40fff2ddb0d0fa5d6",
+    "attestation_job_id": "20260724T115857-atomic-refactor-review-release-attestation-74aaf7c31f",
+    "attestation_evidence_commit": "9d5fef53073efcfb2e91baed27829c0644f5682f",
+    "attestation_sha256": "7ea684fe77da63209ff8ab42c4e826e1f020162aa75e0ca08b5095598cbc43eb",
     "source_closure_record": "variant-r-release-source-closure.json",
-    "source_closure_record_sha256": "2990f90b737d567f77092c68e551790f99ddcf201e61f1e45c0195404f288c7e",
+    "source_closure_record_sha256": "03267fcc345f794e7bd71101a4b04a00bc3f6bdc040e2d7977143b24c506dcb6",
+    "release_job_record_sha256": "ca4ba25aad74f40ea0ddd0259c9eeac88204dfcf62d254b6d7d1d40741b48463",
+    "dependency_source_bytes_match_commit": true,
+    "whole_tree_cleanliness_recorded_by_release_job": false,
     "model_artifact_count": 9,
     "complete_loaded_repo_source_count": 62,
     "geometry_or_parameter_source_count": 58,
@@ -548,9 +559,9 @@
     }
   },
   "fast_checks": {
-    "job_id": "20260724T114341-atomic-refactor-landing-final-lightweight-a08026447e",
-    "elapsed_seconds": 6.117,
-    "peak_rss_bytes": 21757952,
+    "job_id": "20260724T115821-atomic-refactor-review-fixes-lightweight-3f0e3043be",
+    "elapsed_seconds": 6.609,
+    "peak_rss_bytes": 21807104,
     "tests_passed": 212,
     "subtests_passed": 19,
     "catalog_primary_models": 10,
@@ -604,6 +615,8 @@
     "the accepted current flat-bottom/missing-material relationship is intentionally preserved and remains a known geometry defect",
     "no physical bucket or baffle print, bed-adhesion test, support test, gasket compression test, leak test or acoustic test was performed",
     "the bucket topology has one non-manifold edge in both reference and candidate; it is preserved baseline behavior, not a newly introduced condition",
+    "the historical release job did not record whole-tree cleanliness; the amended observational attestation instead binds its exact job JSON and verifies all 62 dependency source bytes at release commit d114d7907d5a3fc678d6ca7ac74b0d975c56b2a2",
+    "the accepted compatibility leaf and standalone validator still contain visible serialized temporary bindings into the historical experiment cascade; eliminating that legacy mechanism requires a separately authorized cascade rewrite and was explicitly excluded by the landing directive",
     "Variant I has an independent future ownership interface but no geometry, producer, validator, artifact or print proof",
     "horn, tube, resonator, bracket, electronics, fasteners, hinge mechanics and support-aware bracing remain outside this refactor"
   ],

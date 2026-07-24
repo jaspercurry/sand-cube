@@ -456,23 +456,25 @@
   "evidence_collection": {
     "adapter": {
       "path": "workbench/designs/atomic_characterization_refactor/attest_variant_r_release.py",
-      "sha256": "2230f941cee32d6a90ccc2462bea7a1f64c76b89a4f299e9296bf2bf5f1848c4"
+      "sha256": "ca651cd47d33818c0650124f8c384f4bd1bb4861849c4af0915df2b268d4c06d"
     },
-    "cad_job_id": "20260724T105416-atomic-refactor-landing-release-attestation-fina-e1f028f156",
+    "cad_job_id": "20260724T115857-atomic-refactor-review-release-attestation-74aaf7c31f",
     "git": {
       "branch": "codex/enclosure-atomic-refactor-implementation",
-      "head": "388593216e5af2476b36ef9bcc0b1e849c11b61e",
+      "head": "9d5fef53073efcfb2e91baed27829c0644f5682f",
       "tracked_source_dirty": false
     },
     "writer": {
       "path": "src/enclosure_family/variant_r/release_provenance.py",
-      "sha256": "2b6c2ab42ccc628e77ab45537fb713bee3215fc0469197aa78e9760e4d9f43d8"
+      "sha256": "d678f063c2ec9d227077fcc521e60577d6a54bd0a9d82bdf66a1436356ff51b6"
     }
   },
   "git": {
     "branch": "codex/enclosure-atomic-refactor-implementation",
+    "dependency_source_bytes_match_commit": true,
     "head": "d114d7907d5a3fc678d6ca7ac74b0d975c56b2a2",
-    "tracked_source_dirty": false
+    "tracked_source_dirty": null,
+    "whole_tree_cleanliness_recorded_by_release_job": false
   },
   "record_kind": "variant_r_release_source_closure_projection",
   "release_artifacts": [
@@ -533,9 +535,66 @@
   ],
   "release_attestation": {
     "path": "build/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle/variant_r_release_attestation.json",
-    "sha256": "05b388a7ed5369a6a31b6d1013eda02cc05e877add0942d40fff2ddb0d0fa5d6"
+    "sha256": "7ea684fe77da63209ff8ab42c4e826e1f020162aa75e0ca08b5095598cbc43eb"
   },
   "release_entrypoint": "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle/validate_simple_tongue_groove_baffle.py",
+  "release_job": {
+    "job_id": "20260724T102722-atomic-refactor-landing-restored-release-52bd80460c",
+    "job_record": {
+      "path": "build/cad-jobs/20260724T102722-atomic-refactor-landing-restored-release-52bd80460c.json",
+      "sha256": "ca4ba25aad74f40ea0ddd0259c9eeac88204dfcf62d254b6d7d1d40741b48463"
+    },
+    "model_final_outputs": [
+      {
+        "bytes": 6661091,
+        "filename": "simple_tongue_groove_bucket.step",
+        "sha256": "0819df604de6e1c0de7fd43cbfb523112ccf22a209ee2d864bf9e0fd64728c49"
+      },
+      {
+        "bytes": 9015179,
+        "filename": "simple_tongue_groove_baffle.step",
+        "sha256": "622065592b3bcd246d1c229d75a9b24740db7b8abe1765a37154ed9e10319fd0"
+      },
+      {
+        "bytes": 123496,
+        "filename": "authoritative_side_seam_section.step",
+        "sha256": "e53784eb0e79b2e8274a250778dbc1eb405c55c5599444fba2f2ba21b3d5e268"
+      },
+      {
+        "bytes": 326919,
+        "filename": "authoritative_top_seam_section.step",
+        "sha256": "1ea72a92966bfc4079038b07ca93d76ad21482156aecf0db7ab24606cb0cd2e8"
+      },
+      {
+        "bytes": 1917652,
+        "filename": "hybrid_bottom_corner_transition_section.step",
+        "sha256": "40a4ee805ed8162d32059b01cd836759a6a9a3fd9fae21683b26e8d5bf8d34ee"
+      },
+      {
+        "bytes": 129479,
+        "filename": "hybrid_flat_bottom_section.step",
+        "sha256": "34360f00a4c70899d33ebfcd5280aee2eb405cd4314ced1a01eafdc8578bc5b5"
+      },
+      {
+        "bytes": 123528,
+        "filename": "hybrid_side_seam_section.step",
+        "sha256": "5c27b93b1561d13d5ea75ebac83493b25b7f9d2ef8a11edb78fe0d82b3946e1f"
+      },
+      {
+        "bytes": 275328,
+        "filename": "hybrid_top_seam_section.step",
+        "sha256": "f89e08791ab78e6b27206fc1a3a55e400ce034a900f989d3fd7c2a2da8d8fe95"
+      },
+      {
+        "bytes": 12735,
+        "filename": "validation_diagnostics.json",
+        "sha256": "f8dbefc9191eef3b62eeca066fd12c515c5f46a0d2dad9b9588e93241056219e"
+      }
+    ],
+    "release_entrypoint": "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle/validate_simple_tongue_groove_baffle.py",
+    "tracked_source_state": "not recorded by the historical release job; exact dependency bytes are verified separately at the asserted commit",
+    "worker_module": "cad_runner.worker"
+  },
   "release_mode": "current attested base input plus explicit Variant R composition; complete parts, protected sections, deterministic diagnostics and STEP round trips; post-geometry observational evidence collection; unrelated runtime caches excluded",
   "schema_version": 1,
   "toolchain": {
