@@ -24,6 +24,7 @@ class VariantRModel:
     artifact_owner: str = "src.enclosure_family.variant_r.artifacts"
     input_owner: str = "src.enclosure_family.variant_r.inputs"
     provenance_owner: str = "src.enclosure_family.variant_r.provenance"
+    measurement_owner: str = "src.enclosure_family.variant_r.measurements"
     verification_owner: str = "src.enclosure_family.variant_r.verification"
     retention_geometry: Literal["absent"] = "absent"
     known_geometry_boundary: str = (

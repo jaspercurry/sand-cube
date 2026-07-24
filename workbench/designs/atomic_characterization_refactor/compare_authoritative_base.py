@@ -30,12 +30,16 @@ from src.enclosure_family.variant_r.provenance import (  # noqa: E402
     sha256_file,
     verify_producer_attestation,
 )
+from src.enclosure_family.variant_r.equivalence import (  # noqa: E402
+    material_comparison_passes,
+    shape_records_equal,
+)
+from src.enclosure_family.variant_r.measurements import (  # noqa: E402
+    material_comparison_record,
+    shape_record,
+)
 from workbench.designs.atomic_characterization_refactor.compare_geometry_checkpoint import (  # noqa: E402
     VOLUME_TOLERANCE_MM3,
-    _comparison_passes,
-    _material_comparison,
-    _shape_stats,
-    _stats_equal,
 )
 
 
@@ -107,9 +111,9 @@ def main() -> None:
 
     reference = import_step(reference_path)
     candidate = import_step(candidate_path)
-    reference_stats = _shape_stats(reference)
-    candidate_stats = _shape_stats(candidate)
-    material = _material_comparison(reference, candidate)
+    reference_stats = shape_record(reference)
+    candidate_stats = shape_record(candidate)
+    material = material_comparison_record(reference, candidate)
     reference_data_sha256 = _step_data_section_sha256(reference_path)
     candidate_data_sha256 = _step_data_section_sha256(candidate_path)
     data_section_identical = (
@@ -138,10 +142,10 @@ def main() -> None:
         }
     )
     passed = (
-        _stats_equal(reference_stats, candidate_stats)
+        shape_records_equal(reference_stats, candidate_stats)
         and (
             data_section_identical
-            or _comparison_passes(material)
+            or material_comparison_passes(material)
         )
     )
     report = {

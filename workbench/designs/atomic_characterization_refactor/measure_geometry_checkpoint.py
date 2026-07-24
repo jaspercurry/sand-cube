@@ -32,19 +32,20 @@ _ensure_cad_coordinated(__name__, __file__, _CAD_SAFETY_ROOT)
 
 from build123d import import_step  # noqa: E402
 
-from cad_geometry_checks.native import measure_intersection  # noqa: E402
+from src.enclosure_family.variant_r.equivalence import (  # noqa: E402
+    numbers_equal,
+    shape_records_equal,
+)
+from src.enclosure_family.variant_r.measurements import (  # noqa: E402
+    intersection_record,
+    shape_record,
+)
 from workbench.designs.atomic_characterization_refactor.compare_geometry_checkpoint import (  # noqa: E402
     DIAGNOSTICS_FILE,
-    LENGTH_TOLERANCE_MM,
     PART_FILES,
     SECTION_FILES,
     VOLUME_TOLERANCE_MM3,
-    _diagnostic,
-    _enum_value,
     _normalized_diagnostics,
-    _numbers_equal,
-    _shape_stats,
-    _stats_equal,
 )
 
 
@@ -84,31 +85,26 @@ def main() -> None:
     for name in names:
         reference = import_step(reference_dir / name)
         candidate = import_step(candidate_dir / name)
-        reference_stats = _shape_stats(reference)
-        candidate_stats = _shape_stats(candidate)
+        reference_stats = shape_record(reference)
+        candidate_stats = shape_record(candidate)
         comparisons[name] = {
             "reference_sha256": _sha256(reference_dir / name),
             "candidate_sha256": _sha256(candidate_dir / name),
             "reference": reference_stats,
             "candidate": candidate_stats,
-            "equivalent": _stats_equal(reference_stats, candidate_stats),
+            "equivalent": shape_records_equal(
+                reference_stats,
+                candidate_stats,
+            ),
         }
         if name in PART_FILES.values():
             candidate_parts[name] = candidate
 
-    fit_result = measure_intersection(
+    fit = intersection_record(
         candidate_parts[PART_FILES["bucket"]],
         candidate_parts[PART_FILES["baffle"]],
-        bounding_box_tolerance_mm=LENGTH_TOLERANCE_MM,
-        boolean_tolerance_mm=LENGTH_TOLERANCE_MM,
-        volume_tolerance_mm3=VOLUME_TOLERANCE_MM3,
     )
-    fit = {
-        "volume_mm3": fit_result.volume_mm3,
-        "outcome": _enum_value(fit_result.outcome),
-        "diagnostic": _diagnostic(fit_result.diagnostic),
-    }
-    diagnostics_equal = _numbers_equal(
+    diagnostics_equal = numbers_equal(
         _normalized_diagnostics(reference_dir / DIAGNOSTICS_FILE),
         _normalized_diagnostics(candidate_dir / DIAGNOSTICS_FILE),
     )

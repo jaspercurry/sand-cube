@@ -81,9 +81,10 @@ def test_variant_r_model_has_one_explicit_owner_per_boundary() -> None:
             model.artifact_owner,
             model.input_owner,
             model.provenance_owner,
+            model.measurement_owner,
             model.verification_owner,
         }
-    ) == 8
+    ) == 9
 
 
 def test_variant_r_artifact_and_verification_contracts_are_complete() -> None:
@@ -254,6 +255,7 @@ def test_variant_i_boundary_is_independent_and_has_no_geometry() -> None:
         "src/enclosure_family/print_contracts.py",
         "src/enclosure_family/legacy_runtime.py",
         "src/enclosure_family/variant_r/artifacts.py",
+        "src/enclosure_family/variant_r/equivalence.py",
         "src/enclosure_family/variant_r/foundation.py",
         "src/enclosure_family/variant_r/historical_capture.py",
         "src/enclosure_family/variant_r/inputs.py",
@@ -301,6 +303,7 @@ def test_variant_i_interface_does_not_import_variant_r() -> None:
     [
         "src/enclosure_family/variant_r/assembly.py",
         "src/enclosure_family/variant_r/bottom_ownership.py",
+        "src/enclosure_family/variant_r/measurements.py",
         "src/enclosure_family/variant_r/seam.py",
         "src/enclosure_family/variant_r/model.py",
         "src/enclosure_family/variant_r/verification.py",
