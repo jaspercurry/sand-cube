@@ -10,20 +10,22 @@
   flat-bottom closure, including its known imperfect/missing-material
   relationship. Establish only an explicit independent future Variant I
   interface; create no Variant I geometry.
-- Next atom: commit the accepted STEP header canonicalization, rerun the
-  immutable producer from that clean source state, confirm its output is
-  byte-identical to the historical accepted input, then rerun the standalone
-  Variant R validator and strict full-part/protected-section comparison.
+- Next atom: commit the native measurement/equivalence ownership extraction,
+  then extract STEP export/round-trip ownership without changing builders.
 - Last equivalence evidence: immutable producer job
-  `20260724T043741-atomic-refactor-atom-04-immutable-producer-6606929bc5`
-  and base-equivalence job
-  `20260724T043926-atomic-refactor-atom-04-base-equivalence-47e6278cea`.
-  The independently regenerated 194-face foundation has an identical complete
-  ISO-10303 DATA section, topology, bounds, volume, surface area, and center of
-  mass to the historical accepted input. Its attestation binds 57 loaded
-  repository sources, including all 33 loaded generator stages, to exact
-  commits and hashes. The raw STEP hash differs only in export metadata.
-- Current blocker: the first strict Atom 04 comparison job
+  `20260724T055629-atomic-refactor-atom-04-byte-identical-producer-aba03913c5`,
+  full validator job
+  `20260724T055819-atomic-refactor-atom-04-byte-identical-geometry-8764c19346`,
+  and strict job
+  `20260724T062345-atomic-refactor-atom-04-byte-identical-strict-97ee20c79b`.
+  The producer recreates the accepted base byte-for-byte at hash `441cc122...`
+  while its attestation separately records the actual job time. The complete
+  parts and all six protected sections match topology, bounds, volume, area,
+  center of mass, normalized diagnostics, and have zero removed/added
+  material. Bucket/baffle mating intersection is zero-volume contact. The
+  attestation binds 57 loaded repository sources, including all 33 loaded
+  generator stages, to exact commits and hashes.
+- Current blocker: none. The first strict Atom 04 comparison job
   `20260724T051716-atomic-refactor-atom-04-strict-equivalence-652ce28c58`
   rejected three tiny downstream diagnostic differences after rebuilding from
   the DATA-identical but newly timestamped STEP: bucket volume differed by
@@ -31,7 +33,7 @@
   `0.0000003973 mm`. No tolerance was widened. The producer now canonicalizes
   only the generated STEP `FILE_NAME` timestamp to the accepted serialization
   after exact DATA verification, while the attestation retains the real job
-  creation time. Rerun from clean committed source before accepting it.
+  creation time. The corrected run above passes without widening tolerance.
   Earlier historical rejected diagnostics also remain preserved:
   the first full-cascade producer attempt
   `20260724T035352-atomic-refactor-atom-04-authoritative-producer-0a43bf5466`
