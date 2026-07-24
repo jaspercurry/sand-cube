@@ -52,7 +52,6 @@ if str(EXPERIMENT) not in sys.path:
 
 import generate_sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle as model  # noqa: E402
 from src.enclosure_family.variant_r.artifacts import (  # noqa: E402
-    VARIANT_R_ARTIFACTS,
     VARIANT_R_ARTIFACTS_BY_ID,
 )
 from src.enclosure_family.variant_r.inputs import (  # noqa: E402
@@ -62,7 +61,6 @@ from src.enclosure_family.variant_r.inputs import (  # noqa: E402
 from src.enclosure_family.variant_r.provenance import (  # noqa: E402
     sha256_file,
     verify_producer_attestation,
-    write_release_attestation,
 )
 from src.enclosure_family.variant_r.export import (  # noqa: E402
     publish_step_round_trip,
@@ -78,13 +76,6 @@ BAFFLE_STEP = OUT / VARIANT_R_ARTIFACTS_BY_ID["baffle"].filename
 DIAGNOSTICS_PATH = (
     OUT / VARIANT_R_ARTIFACTS_BY_ID["validation_diagnostics"].filename
 )
-RELEASE_ARTIFACT_FILENAMES = tuple(
-    artifact.filename
-    for artifact in VARIANT_R_ARTIFACTS
-    if artifact.kind in {"part", "protected_section", "diagnostics"}
-)
-
-
 def _patch_seam():
     """Patch only the one gasket-gap knob and its import-time derivative."""
     originals = {
@@ -813,12 +804,27 @@ def main() -> None:
     diagnostics_path = job_output_path(DIAGNOSTICS_PATH)
     diagnostics_path.parent.mkdir(parents=True, exist_ok=True)
     diagnostics_path.write_text(json.dumps(diagnostics, indent=2) + "\n")
+
+    # Keep provenance observational: importing and preparing release evidence
+    # happens only after every geometry build, validation, export, and round
+    # trip has completed.  The serialized legacy build path above therefore
+    # remains identical to the already-proven path.
+    from src.enclosure_family.variant_r.artifacts import VARIANT_R_ARTIFACTS
+    from src.enclosure_family.variant_r.provenance import (
+        write_release_attestation,
+    )
+
+    release_artifact_filenames = tuple(
+        artifact.filename
+        for artifact in VARIANT_R_ARTIFACTS
+        if artifact.kind in {"part", "protected_section", "diagnostics"}
+    )
     release_attestation = write_release_attestation(
         repo_root=ROOT,
         output_directory=diagnostics_path.parent,
         release_entrypoint=Path(__file__),
         authoritative_base_input=base_identity,
-        artifact_filenames=RELEASE_ARTIFACT_FILENAMES,
+        artifact_filenames=release_artifact_filenames,
     )
     print(json.dumps(diagnostics, indent=2))
     print(
