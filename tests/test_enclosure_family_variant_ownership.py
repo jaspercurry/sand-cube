@@ -414,6 +414,29 @@ def test_strict_adapter_canonicalizes_descriptive_scope_label() -> None:
     assert "accepted Variant R deterministic geometry" in adapter
 
 
+def test_variant_r_release_provenance_is_post_geometry_observation() -> None:
+    validator = ROOT / (
+        "experiments/"
+        "sand_cube_190x210_internal_squat_absorber_rear_corners_"
+        "parabolic_side_g1_simple_tongue_groove_baffle/"
+        "validate_simple_tongue_groove_baffle.py"
+    )
+    source = validator.read_text()
+    evidence_import = (
+        "    from src.enclosure_family.variant_r.artifacts import "
+        "VARIANT_R_ARTIFACTS"
+    )
+    assert source.index("diagnostics_path.write_text") < source.index(
+        evidence_import
+    )
+    assert source.index("bucket_round_trip = _round_trip") < source.index(
+        evidence_import
+    )
+    assert source.index("section_round_trip = _export_sections") < source.index(
+        evidence_import
+    )
+
+
 def test_variant_r_catalog_points_to_owned_source_and_thin_entrypoint() -> None:
     catalog = (ROOT / ".cad-project/models.toml").read_text()
     assert 'source = "src/enclosure_family/variant_r/model.py"' in catalog
