@@ -30,7 +30,7 @@ from src.enclosure_family.variant_r.provenance import (  # noqa: E402
 def main() -> None:
     """Generate the cataloged Variant R artifact set."""
 
-    _model.generate()
+    _model.base.generate_authoritative_base_input(_model.OUT)
     write_producer_attestation(
         repo_root=_CAD_SAFETY_ROOT,
         output_directory=_model.OUT,
