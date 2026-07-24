@@ -95,6 +95,7 @@ class _CapturingFoundation:
 
 def _publish(filename: str, shape: Any, *, solids: int) -> dict[str, Any]:
     path = OUT / filename
+    print(f"candidate: publishing {filename}", flush=True)
     record = publish_step_round_trip(
         path,
         shape,

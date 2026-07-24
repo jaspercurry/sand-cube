@@ -40,3 +40,23 @@
 - Focused native-free tests passed `39/39`. The authoritative lightweight gate
   passed 213 tests plus 19 subtests, catalog `12/38`, all 94 CAD entrypoints and
   lint in 5.06 seconds. No native CAD library was imported by this gate.
+
+## 2026-07-24 — first coordinated candidate publication diagnosis
+
+- The exact base producer completed as job
+  `20260724T155031-variant-r-no-splice-base-ef5d5a00d6` in `90.434 s` at
+  `1,287,225,344` bytes peak RSS. It reproduced accepted base SHA-256
+  `441cc122c0383da257b16e80c4b424096f33b267cc95cab9d1278fb05a43a784`
+  and published producer attestation
+  `03776b41eb9cdd890439a52e89c0419ccda1d4190a9a6989e9581f5a3b8344a6`.
+- Candidate job
+  `20260724T155206-variant-r-no-splice-candidate-c9b3f4d573` reached completed
+  geometry but failed its first STEP write after `222.201 s` at
+  `1,254,932,480` bytes peak RSS. It published zero outputs; the coordinator
+  removed its workspace and reaped all owned processes.
+- Root cause is isolated: `variant_r/export.py` called Build123d's direct
+  path-based XDE writer, which is already documented as unsafe on this macOS
+  path/toolchain and for algebra-tree shapes. The repository-safe `src.cad_io`
+  writer rebuilds a shallow object from actual solids and serializes through a
+  binary stream. Variant R's export owner now uses that existing pinned wrapper;
+  geometry and tolerances are unchanged.

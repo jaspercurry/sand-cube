@@ -10,9 +10,10 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
-from build123d import Unit, export_step, import_step
+from build123d import Unit, import_step
 
 from cad_runner.outputs import job_output_path
+from src.cad_io import export_step
 
 
 def publish_step_round_trip(
