@@ -14,8 +14,8 @@ class VariantRModel:
         "development-190x210-tongue-groove"
     )
     variant_id: Literal["variant_r"] = "variant_r"
-    status: Literal["no_splice_candidate_blocked_bucket_material"] = (
-        "no_splice_candidate_blocked_bucket_material"
+    status: Literal["no_splice_release_authorized"] = (
+        "no_splice_release_authorized"
     )
     assembly_owner: str = "src.enclosure_family.variant_r.assembly"
     seam_owner: str = "src.enclosure_family.variant_r.seam"
@@ -33,9 +33,9 @@ class VariantRModel:
     known_geometry_boundary: str = (
         "continuous exact-edge donor owns the bucket, gasket and visible "
         "baffle apron; only the baffle sub-sole band is discarded at the "
-        "parameter-owned planar sole; strict release remains blocked because "
-        "the donor omits twelve reference-only bucket seam samples and the "
-        "localized restoration is not topology-safe or reproducible"
+        "parameter-owned planar sole; twelve exact mirrored internal "
+        "reference-only bucket micro-omissions are an explicitly authorized "
+        "no-splice geometry delta and restoration is prohibited"
     )
     generated_input_policy: str = (
         "the cataloged producer must emit the base STEP and a matching complete "

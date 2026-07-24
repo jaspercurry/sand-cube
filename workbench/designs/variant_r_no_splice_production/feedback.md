@@ -177,3 +177,22 @@
   candidate is not production-accepted, the strict validator is preserved,
   and user authority is required either to alter the material-preservation
   contract or to authorize a broader geometry redesign.
+
+## 2026-07-24 — exact internal bucket delta authorized
+
+- User authority accepts exactly the twelve already measured mirrored,
+  reference-only internal bucket micro-omissions as an intentional and
+  immaterial consequence of removing the whole-part splice.
+- This is a named geometry delta, not tolerance widening or an equivalence
+  claim. Candidate-added material, every baffle mismatch, all centre-section
+  material mismatches and any additional bucket mismatch remain forbidden.
+- The release validator now requires the exact twelve coordinates and measured
+  reference-only volumes within a `1e-6 mm³` numerical attestation bound,
+  exactly zero candidate-added material, and all ten retained L/R/T perimeter
+  edges at three offsets within `1e-9 mm` with zero length difference.
+- Production remains the simple deterministic continuous donor plus the
+  validated baffle sole trim. Restoration experiments stay workbench-only and
+  no restoration or bucket redesign is promoted.
+- `origin/main` remains exactly
+  `5ec998069b790d648a011d04a2dadb6dc1d8b9e3`; no integration rebase or merge is
+  required before the authorized release run.

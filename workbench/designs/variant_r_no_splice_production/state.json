@@ -9,8 +9,8 @@
     {
       "path": "workbench/designs/variant_r_no_splice_production/contract.md",
       "role": "contract",
-      "sha256": "ea6705d8475e0556fabf3be3f0c700b7287a8f0fa451fc8656fb962472abe015",
-      "size_bytes": 3717
+      "sha256": "938c5a593dc27111cc299ded9092085ac99dca7c251f0850ae1b4952a04a650f",
+      "size_bytes": 4926
     }
   ],
   "evidence": [
@@ -19,56 +19,56 @@
         {
           "path": "workbench/designs/variant_r_no_splice_production/fast-evidence.json",
           "role": "fast_passed_evidence",
-          "sha256": "e78852a4dc69548c10d04a1b3fbbb9c9bb0446876558b09d219011570d3b452e",
-          "size_bytes": 424
+          "sha256": "1f827cf395e788455a5db2eaaeba090e4e11cce8a698739d7268df1bfbc78095",
+          "size_bytes": 495
         }
       ],
-      "recorded_at": "2026-07-24T15:45:40.737176Z",
+      "recorded_at": "2026-07-24T17:47:02.021685Z",
       "stage": "fast_passed",
-      "summary": "Localized production owner path and all native-free tests/catalog/entrypoint/lint checks pass."
+      "summary": "Authorized exact-signature validator and contract pass the full native-free gate."
     },
     {
       "files": [
         {
           "path": "workbench/designs/variant_r_no_splice_production/visual-smoke-evidence.json",
           "role": "visual_accepted_evidence",
-          "sha256": "3190d454eded96bd59dc9d59b8fa4fa4e193e82e55f67d62ae8b34b36f14eaff",
-          "size_bytes": 1115
+          "sha256": "61985c4e9e9db5534cb94ffe91b99c3dd223529c592aaef10f55d599ff7b4533",
+          "size_bytes": 1275
         }
       ],
-      "recorded_at": "2026-07-24T16:03:09.297938Z",
+      "recorded_at": "2026-07-24T17:47:02.104204Z",
       "stage": "visual_accepted",
-      "summary": "Exact three-solid production candidate matches 91/257 topology and inspected edge-overlay shows the former baffle/side splice absent."
+      "summary": "User explicitly approved the unchanged candidate visible/form result; the old baffle/side splice remains absent."
     },
     {
       "files": [
         {
           "path": "workbench/designs/variant_r_no_splice_production/fit-evidence.json",
           "role": "fit_passed_evidence",
-          "sha256": "48f2fb3d4bf1aa88ffa36b900cf5d0761ef027b218caa6c11aaec04681b8fb16",
-          "size_bytes": 1656
+          "sha256": "bc6d8bfea91cfd1e8b9ffedc75be3152abc0e19b1fc9ec871a65aae4eb27023b",
+          "size_bytes": 1793
         }
       ],
-      "recorded_at": "2026-07-24T16:13:30.062605Z",
+      "recorded_at": "2026-07-24T17:47:02.183833Z",
       "stage": "fit_passed",
-      "summary": "Exported production candidate passes exact overlap, seal, support, sole, topology and protected surface comparisons; donor band is confirmed as 0.35532330335 mm by topology vertices."
+      "summary": "User explicitly approved the unchanged fit result; geometry source and candidate artifact are unchanged."
     }
   ],
   "iteration_id": "variant-r-no-splice-production",
   "model_id": "development-190x210-tongue-groove",
-  "next_action": "Run the coordinated full production release validator and inspect exact final visual evidence.",
+  "next_action": "Run exactly one coordinated full release validator.",
   "objective": "Promote and verify the validated Variant R no-splice construction through production owners and publish an exact read-only review artifact.",
-  "open_question": "Does the full production validator preserve all body, L/R/T seam, corner, fill, section and release round-trip contracts?",
-  "revision": 2,
+  "open_question": "Does one full production release reproduce the exact authorized signature and all release/round-trip checks?",
+  "revision": 3,
   "schema_version": 1,
   "sources": [
     {
-      "path": "src/enclosure_family/variant_r/assembly.py",
+      "path": "experiments/sand_cube_190x210_internal_squat_absorber_rear_corners_parabolic_side_g1_simple_tongue_groove_baffle/validate_simple_tongue_groove_baffle.py",
       "role": "source",
-      "sha256": "8f657d0baf8de35d98ae43c14c2b88dffbce0791369afcc7a8d2734e4f630c5d",
-      "size_bytes": 2026
+      "sha256": "8f41b2481ce82ed8d6eb3fb9c4b5fda0b4533a16682b3afe213ce9eb7533f548",
+      "size_bytes": 41898
     }
   ],
   "stage": "fit_passed",
-  "updated_at": "2026-07-24T16:13:30.062605Z"
+  "updated_at": "2026-07-24T17:47:02.183833Z"
 }

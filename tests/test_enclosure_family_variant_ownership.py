@@ -74,7 +74,7 @@ def test_variant_r_model_has_one_explicit_owner_per_boundary() -> None:
     model = VARIANT_R_MODEL
     assert model.model_id == "development-190x210-tongue-groove"
     assert model.variant_id == "variant_r"
-    assert model.status == "no_splice_candidate_blocked_bucket_material"
+    assert model.status == "no_splice_release_authorized"
     assert model.retention_geometry == "absent"
     assert "sub-sole band is discarded" in model.known_geometry_boundary
     assert len(

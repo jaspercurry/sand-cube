@@ -1,14 +1,14 @@
 {
   "profile": "fast",
-  "revision": 2,
+  "revision": 3,
   "result": "pass",
   "runtime": "/Users/jaspercurry/Code/CAD - Enclosure/.venv",
   "native_cad_imported": false,
   "checks": {
-    "focused_variant_r": "39 passed",
-    "lightweight": "213 tests and 19 subtests passed in 5.06 seconds",
+    "lightweight": "213 tests and 19 subtests passed in 5.03 seconds",
     "catalog": "12 primary models and 38 experiment families",
-    "cad_entrypoint_safety": "94 CAD entrypoints checked",
+    "cad_entrypoint_safety": "101 CAD entrypoints checked",
     "lint": "pass"
-  }
+  },
+  "scope": "authorized exact-signature validator, product contract and native-CAD-free ownership metadata"
 }

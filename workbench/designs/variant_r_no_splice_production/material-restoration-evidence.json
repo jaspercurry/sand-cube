@@ -1,6 +1,14 @@
 {
   "schema_version": 1,
-  "status": "blocked_pending_user_authority",
+  "status": "authorized_exact_internal_bucket_delta",
+  "user_authority": {
+    "granted": true,
+    "scope": "accept exactly the already measured twelve mirrored reference-only internal bucket micro-omissions as the sole material-preservation exception required by removing the whole-part splice",
+    "candidate_added_material_authorized": false,
+    "restoration_authorized": false,
+    "bucket_redesign_authorized": false,
+    "validator_tolerance_widening_authorized": false
+  },
   "production_validator_changed": false,
   "full_release_retried": false,
   "strict_release_failure": {
@@ -88,9 +96,9 @@
     "feasible": false
   },
   "disposition": {
-    "production_candidate": "not release-accepted",
-    "original_strict_validator": "preserved unchanged",
-    "localized_restoration": "rejected as topology-changing and non-reproducible",
-    "next_action": "obtain user authority before changing the material-preservation contract or pursuing a broader geometry redesign"
+    "production_candidate": "release-authorized subject to one fail-closed full production run",
+    "validator": "require the exact twelve-point bucket-only signature, no candidate-added material, zero baffle and centre-section material mismatches, and exact retained L/R/T edge geometry",
+    "localized_restoration": "rejected and remains unpromoted",
+    "next_action": "run the native-free gate, one full release, and minimal final Snapshot/Viewer publication"
   }
 }

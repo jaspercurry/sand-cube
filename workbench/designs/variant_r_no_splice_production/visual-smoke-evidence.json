@@ -1,6 +1,8 @@
 {
   "profile": "visual-smoke",
+  "revision": 3,
   "result": "accepted",
+  "reuse_basis": "production geometry is byte-identical; revision 3 changes only the authorized fail-closed signature contract and validator",
   "candidate_step": {
     "path": "build/workbench/variant_r_no_splice_production/candidate/production_candidate_assembly.step",
     "sha256": "26d52d911ca0a835cd08bfb2bdde9c1508b92ebb2ad6a72893e3b82e9665d4b9",

@@ -1,6 +1,8 @@
 {
   "profile": "fit",
+  "revision": 3,
   "result": "pass",
+  "reuse_basis": "production geometry is unchanged; user explicitly approved the existing visible/form and fit result",
   "job": {
     "job_id": "20260724T160314-variant-r-no-splice-fit-audit-0b3301c33a",
     "elapsed_seconds": 484.765,

@@ -1,7 +1,8 @@
 # Variant R production no-splice correction contract
 
-Status: implementation authorized; production geometry and review evidence are
-not accepted until every gate below passes.
+Status: implementation and the exact internal bucket delta are authorized;
+production release and review evidence remain pending until every gate below
+passes.
 
 ## Baseline and authority
 
@@ -31,11 +32,23 @@ splitters, widen tolerances, or modify the legacy cascade.
 This deliberately changes B-rep topology. Preservation claims apply to form,
 protected surfaces and interfaces, not literal face/edge identity.
 
+The continuous donor also omits exactly twelve mirrored, reference-only
+internal bucket material samples recorded by the production validator: two
+each in the non-centre top-left, top-right, lower-left-side, upper-left-side,
+lower-right-side and upper-right-side sections. This is an explicitly
+authorized, immaterial geometry delta required by retiring the whole-part
+splice. It is not tolerance widening, equivalence, healing or permission for
+any additional material change. Candidate-added material remains forbidden,
+all baffle and centre-section material mismatches remain forbidden, and no
+restoration Boolean or bucket redesign is authorized.
+
 ## Preserved product geometry
 
 - Overall enclosure form, bounds and protected visible surfaces above the sole.
 - Driver opening/recess and all unrelated mounting/acoustic geometry.
-- Exact sculpted left/right/top seam and intended bottom-corner transition.
+- Exact sculpted left/right/top seam edge geometry and intended bottom-corner
+  transition; the twelve internal bucket-only omissions above are the sole
+  material-preservation exception.
 - Bucket/baffle/gasket separation, gasket path, support and continuous lower
   seal.
 - Fill passages/blisters, sand containment, wall structure and corner closure.
@@ -53,6 +66,12 @@ protected surfaces and interfaces, not literal face/edge identity.
   257 edges, or any mismatch is rejected and diagnosed.
 - Bucket and baffle each have zero B-rep edges at the old splice height and zero
   unrelated full-width lower-apron edges.
+- The strict seam grid has exactly the twelve authorized reference-only bucket
+  records at their measured coordinates and volumes, with no candidate-added
+  material. Baffle records and all centre-section material mismatch counts are
+  zero. All ten retained L/R/T perimeter edges at offsets `0`, `-2.5` and
+  `+2.5 mm` match the authoritative edge geometry within `1e-9 mm`, with zero
+  length difference.
 - Sole is planar at exactly `Z=-91.495 mm`, with contact width at least
   `187.020979 mm` and area at least `2277.950023 mm²`; no baffle topology lies
   below it.
