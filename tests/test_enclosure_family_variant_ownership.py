@@ -24,6 +24,7 @@ from src.enclosure_family.variant_r import (
     VARIANT_R_VERIFICATION,
 )
 from src.enclosure_family.variant_r.inputs import (
+    HISTORICAL_ACCEPTED_BASE_DATA_SHA256,
     authoritative_base_step,
     producer_attestation_path,
 )
@@ -122,6 +123,10 @@ def test_variant_r_input_contract_points_to_cataloged_producer() -> None:
     assert (
         producer_attestation_path(ROOT).name
         == PRODUCER_ATTESTATION_FILENAME
+    )
+    assert (
+        HISTORICAL_ACCEPTED_BASE_DATA_SHA256
+        == "70e59fc0af103d742578567164a15c9ecb89532b550f15231be898c699b91c03"
     )
 
 
