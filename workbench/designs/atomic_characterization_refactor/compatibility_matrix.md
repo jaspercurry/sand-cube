@@ -4,7 +4,7 @@
 
 Authority: the `compatibility_class` and `comparison` fields for each atom in `atomic_manifest.json`.
 
-Current execution overlay: **BASELINE_EQUIVALENT; ATOMIC EXTRACTION ACTIVE**. Historical source-readiness statements remain provenance, not the current geometry gate.
+Current execution overlay: **ATOM 06 EQUIVALENT; PORTABLE PRODUCER AND ADAPTER OWNERSHIP ACTIVE**. Historical source-readiness statements remain provenance, not the current geometry gate.
 
 | Atom | Classification | Variant comparison | Later-synthesis blocker |
 |---|---|---|---|

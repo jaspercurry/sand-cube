@@ -18,6 +18,10 @@ been created, and no deferred component has been integrated.
   description
 - `workflow-card.md` — concise resume state for the current implementation
 - `current-baseline-evidence.json` — durable current-base fit/equivalence facts
+- `variant-r-producer-source-closure.json` — committed projection of the exact
+  authoritative-input producer, toolchain and complete live source closure
+- `final-acceptance-evidence.json` — compact final jobs, measurements, hashes,
+  visual provenance and review disposition
 - `render_phase_a_reports.py` — deterministic Markdown projection
 - `coordinate_contract.json` — staged verification contract for the first atom
 
@@ -44,6 +48,21 @@ established the current flat-bottom Variant R closure. On exact combined base
 baffle, and six protected sections with zero bidirectional material difference
 at `1e-5 mm³`, matching topology and mass properties, zero overlap, and passing
 STEP round-trips.
+
+The cataloged `scripts/generate_variant_r.py` entrypoint makes the formerly
+ignored base input portable. It extracts exact geometry commit `789cf7f`,
+applies one hash-bound capture-only overlay at the accepted construction
+boundary, verifies the complete STEP DATA section, reproduces the accepted
+file serialization, and publishes both the base and a current attestation
+through `cad_runner`. The accepted producer run binds 57 loaded repository
+sources, including all 33 loaded generator stages; the committed closure
+projection allows audit without treating ignored `build/` files as current.
+
+The active architecture has explicit owners for datums, pure parameters,
+print contracts, Variant R seam/bottom composition, the independent future
+Variant I interface, generated input/provenance, deterministic measurements,
+native-free equivalence policy, STEP export/round-trip, artifacts, verification
+and thin entrypoints. Variant I has no geometry and imports no Variant R owner.
 
 The accepted geometry intentionally includes the known imperfect flat-bottom
 missing-material relationship. This refactor must preserve it; correcting that

@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "atom_id": "R.step_export_and_round_trip_ownership",
+  "status": "pass",
+  "owner": "src/enclosure_family/variant_r/export.py",
+  "lightweight_checks": {
+    "elapsed_seconds": 5.7807,
+    "tests_passed": 209,
+    "subtests_passed": 19,
+    "catalog_models": 10,
+    "experiment_families": 38,
+    "cad_entrypoints_checked": 89,
+    "scoped_lint": "pass"
+  },
+  "geometry_checkpoint": {
+    "mode": "verified cache hit pending forced final release",
+    "strict_job_id": "20260724T062345-atomic-refactor-atom-04-byte-identical-strict-97ee20c79b",
+    "strict_report_sha256": "4602f94f8e8db32707557b28df0a340a3d4fb2f9e1aea15248777523eb753d10",
+    "basis": "builders, parameters, transforms, producer, settings and current generated artifacts unchanged; export and reimport logic moved without semantic change",
+    "geometry_changed": false
+  }
+}

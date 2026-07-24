@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "atom_id": "R.deterministic_measurement_and_equivalence_ownership",
+  "status": "pass",
+  "owners": [
+    "src/enclosure_family/variant_r/measurements.py",
+    "src/enclosure_family/variant_r/equivalence.py"
+  ],
+  "lightweight_checks": {
+    "elapsed_seconds": 8.7276,
+    "tests_passed": 208,
+    "subtests_passed": 19,
+    "catalog_models": 10,
+    "experiment_families": 38,
+    "cad_entrypoints_checked": 89,
+    "scoped_lint": "pass"
+  },
+  "geometry_checkpoint": {
+    "mode": "verified cache hit",
+    "strict_job_id": "20260724T062345-atomic-refactor-atom-04-byte-identical-strict-97ee20c79b",
+    "strict_report_sha256": "4602f94f8e8db32707557b28df0a340a3d4fb2f9e1aea15248777523eb753d10",
+    "basis": "geometry source, producer, toolchain, settings, validator outputs and all eight artifact identities unchanged; only measurement/equivalence ownership moved",
+    "geometry_changed": false
+  }
+}
