@@ -10,18 +10,14 @@
   flat-bottom closure, including its known imperfect/missing-material
   relationship. Establish only an explicit independent future Variant I
   interface; create no Variant I geometry.
-- Next atom: extract the Variant R seam and bottom-material ownership builders,
-  with the deep experiment cascade isolated behind an explicit foundation
-  adapter.
-- Last equivalence evidence: Atom 01 generation job
-  `20260724T002420-atomic-refactor-atom-01-parameters-abc939b859` and
-  proportional metrics job
-  `20260724T004959-atomic-refactor-atom-01-metrics-711d720604`. Both complete
-  parts and all six protected sections match validity/topology/bounds/volume/
-  area/center of mass, overlap remains zero, and normalized round-trip
-  diagnostics match. Release baseline job
-  `20260723T234005-atomic-refactor-baseline-equivalence-008f589a51` remains
-  the strict zero bidirectional material proof.
+- Next atom: remove disabled retention flags/code and add the explicit model,
+  verification/export boundaries, and thin cataloged Variant R entrypoint.
+- Last equivalence evidence: Atom 02 generation job
+  `20260724T012509-atomic-refactor-atom-02-geometry-dcc2d21bcb` and strict
+  job `20260724T015015-atomic-refactor-atom-02-strict-equivalence-68898b111a`.
+  Both complete parts and all six protected sections have zero removed/added
+  material, matching topology/bounds/volume/area/center of mass, zero overlap,
+  and unchanged normalized STEP-round-trip diagnostics.
 - Current blocker: none. The Phase-A rail blocker is historical; commit
   `e715300` repaired it before the current base. Stop only on a fresh,
   unexplained geometry/evidence mismatch.

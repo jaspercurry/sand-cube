@@ -288,3 +288,28 @@ authoritative structured facts are in `atomic_manifest.json`.
   zero removed/added material. Atom 01 changed no native builder or interface,
   so its fresh proportional checkpoint intentionally did not repeat those
   expensive material Booleans.
+
+## 2026-07-23 — atom 02: seam and bottom-material geometry ownership
+
+- Extracted the exact authoritative-edge-reusing hybrid perimeter into
+  `variant_r/seam.py`, the lower splice and print-edge transfer into
+  `variant_r/bottom_ownership.py`, and their composition into
+  `variant_r/assembly.py`.
+- Added a minimal foundation protocol. New Variant R owners import no
+  experiment, mutate no legacy global, and have no Variant I dependency.
+- The existing deep cascade is contained behind a named leaf adapter; removing
+  the leaf's disabled retention code and publishing a thin cataloged entrypoint
+  is the next atom.
+- The lightweight suite passed 186 tests, 19 subtests, catalog, 86 entrypoint
+  checks, and lint.
+- Candidate generation job
+  `20260724T012509-atomic-refactor-atom-02-geometry-dcc2d21bcb`
+  completed in 1495.143 seconds at 1,372,913,664 bytes peak RSS and published
+  ten outputs with clean cleanup.
+- Strict comparison job
+  `20260724T015015-atomic-refactor-atom-02-strict-equivalence-68898b111a`
+  completed in 2134.139 seconds at 2,377,777,152 bytes peak RSS. Both complete
+  parts and all six protected sections matched validity, topology, bounds,
+  volume, surface area and center of mass with zero removed/added material.
+  Bucket/baffle overlap remained zero and normalized STEP-round-trip
+  diagnostics matched.

@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "atom_id": "R.sculpted_lrt_seam_and_bottom_material_ownership",
+  "status": "pass",
+  "before_source_sha256": "d7470c2f044d02e13e0b7ae298347ad33c587d7469a86050607c0183cdb2a386",
+  "candidate_source_sha256": "1198eb00c447149a6d0b1f8ab79601de575919c2506bf350c40e4ebdfacbbc2c",
+  "owners": {
+    "src/enclosure_family/variant_r/assembly.py": "f6e515cdbafd1c50504651d88ccc571a7274ed7c66efd0cb47373119ceb89c91",
+    "src/enclosure_family/variant_r/bottom_ownership.py": "49b242cf81edb606e9bf68bffbfd9c721b97a148fb81ff0697aabfbd2f5ff82d",
+    "src/enclosure_family/variant_r/foundation.py": "93051c55f48ef06ed7756062e3b23a88f1aa8b6c7e168008a105896e938927cb",
+    "src/enclosure_family/variant_r/seam.py": "306a12347a9d895c112adbfb6f5615238b630af3c1ce3d6744114e89964e7777"
+  },
+  "architecture_checks": {
+    "new_geometry_owners_import_experiments": false,
+    "new_geometry_owners_mutate_legacy_globals": false,
+    "foundation_is_dependency_injected": true,
+    "legacy_mutation_contained_in_named_leaf_adapter": true,
+    "variant_i_dependency": false,
+    "feature_flags_added": false
+  },
+  "checks": {
+    "focused_tests": "pass: 12",
+    "lightweight": "pass: 186 tests, 19 subtests",
+    "catalog": "pass: 10 primary models, 38 experiment families",
+    "entrypoints": "pass: 86",
+    "lint": "pass"
+  }
+}

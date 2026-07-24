@@ -44,6 +44,16 @@ from typing import Any
 from src.enclosure_family.variant_r.parameters import (  # noqa: E402
     VARIANT_R_PARAMETERS,
 )
+from src.enclosure_family.variant_r.assembly import (  # noqa: E402
+    build_variant_r_joint,
+)
+from src.enclosure_family.variant_r.bottom_ownership import (  # noqa: E402
+    splice_flat_bottom_band,
+    transfer_baffle_below_print_plane,
+)
+from src.enclosure_family.variant_r.seam import (  # noqa: E402
+    build_hybrid_perimeter_wire,
+)
 
 _PROGRESS_T0 = time.perf_counter()
 _PROGRESS_TLAST = _PROGRESS_T0
@@ -214,48 +224,40 @@ def _fuse_one(shape: Solid, addition: Any, *, feature: str) -> Solid:
 
 
 def _hybrid_perimeter_wire(*, offset_mm: float, y_mm: float) -> Wire:
-    """Reuse the authoritative L/R/T edges and flatten only the bottom run."""
-    authoritative = _AUTHORITATIVE_PERIMETER_WIRE(
+    return build_hybrid_perimeter_wire(
+        _AUTHORITATIVE_PERIMETER_WIRE,
         offset_mm=offset_mm,
         y_mm=y_mm,
+        parameters=VARIANT_R_PARAMETERS,
     )
-    h = single.PATH_HALF_SIZE_MM + offset_mm
-    bc = single.PATH_BOTTOM_CORNER_TANGENCY_MM
-    bypass_depth = single.SCREW_BYPASS_DEPTH_MM
-    tolerance = 1e-6
 
-    retained_edges: list[Edge] = []
-    removed_bottom_edges: list[Edge] = []
-    for edge in authoritative.edges():
-        bounds = edge.bounding_box()
-        is_bottom_center_detour = (
-            bounds.min.X >= -bc - tolerance
-            and bounds.max.X <= bc + tolerance
-            and bounds.min.Z >= -h - tolerance
-            and bounds.max.Z <= -h + bypass_depth + tolerance
-        )
-        if is_bottom_center_detour:
-            removed_bottom_edges.append(edge)
-        else:
-            retained_edges.append(edge)
 
-    if len(removed_bottom_edges) != 4 or len(retained_edges) != 10:
-        raise ValueError(
-            "Authoritative bottom-center detour selection changed: "
-            f"removed={len(removed_bottom_edges)}, "
-            f"retained={len(retained_edges)}"
+class _LegacyFoundationAdapter:
+    """Contain the old cascade behind the explicit Variant R foundation API."""
+
+    @staticmethod
+    def authoritative_perimeter_wire(*, offset_mm: float, y_mm: float) -> Wire:
+        return _AUTHORITATIVE_PERIMETER_WIRE(
+            offset_mm=offset_mm,
+            y_mm=y_mm,
         )
 
-    # The only new edge joins the exact authoritative bottom-corner tangency
-    # points. Every retained edge is the authoritative B-rep edge itself.
-    flat_bottom = Edge.make_line(
-        Vector(bc, y_mm, -h),
-        Vector(-bc, y_mm, -h),
-    )
-    wires = Wire.combine([*retained_edges, flat_bottom])
-    if len(wires) != 1 or not wires[0].is_closed:
-        raise ValueError("Hybrid L/R/T nested + flat-bottom perimeter did not close")
-    return wires[0]
+    @staticmethod
+    def build_authoritative_joint(full_base: Solid) -> dict[str, Any]:
+        return _AUTHORITATIVE_COMMON_JOINT(full_base)
+
+    @staticmethod
+    def build_flat_bottom_donor(
+        full_base: Solid,
+        *,
+        perimeter_wire: Any,
+    ) -> dict[str, Any]:
+        original_perimeter = single._perimeter_wire
+        try:
+            single._perimeter_wire = perimeter_wire
+            return _AUTHORITATIVE_COMMON_JOINT(full_base)
+        finally:
+            single._perimeter_wire = original_perimeter
 
 
 # ---------------------------------------------------------------------------
@@ -298,42 +300,13 @@ def _build_authoritative_joint(
     """Build the authoritative joint and splice only the flat lower band."""
     if not hybrid_bottom:
         return _AUTHORITATIVE_COMMON_JOINT(full_base)
-
-    reference = (
-        reference_joint
-        if reference_joint is not None
-        else _AUTHORITATIVE_COMMON_JOINT(full_base)
+    return build_variant_r_joint(
+        full_base,
+        foundation=_LegacyFoundationAdapter(),
+        single_solid=_single_solid,
+        reference_joint=reference_joint,
+        parameters=VARIANT_R_PARAMETERS,
     )
-    original_perimeter = single._perimeter_wire
-    try:
-        single._perimeter_wire = _hybrid_perimeter_wire
-        flat_bottom_donor = _AUTHORITATIVE_COMMON_JOINT(full_base)
-    finally:
-        single._perimeter_wire = original_perimeter
-
-    common = dict(flat_bottom_donor)
-    for part_name in ("bucket", "baffle", "gasket"):
-        common[part_name] = _splice_flat_bottom_band(
-            reference[part_name],
-            flat_bottom_donor[part_name],
-            feature=f"{part_name} with synthesized flat-bottom ownership",
-        )
-    (
-        common["bucket"],
-        common["baffle"],
-        print_edge_audit,
-    ) = _transfer_baffle_below_print_plane(
-        common["bucket"],
-        common["baffle"],
-    )
-    common["bottom_synthesis"] = {
-        "authoritative_joint_reused_above_z_mm": BOTTOM_SYNTHESIS_MAX_Z_MM,
-        "flat_bottom_donor_reused_below_z_mm": BOTTOM_SYNTHESIS_MAX_Z_MM,
-        "splice_overlap_mm": BOTTOM_SYNTHESIS_OVERLAP_MM,
-        "parts": ["bucket", "baffle", "gasket"],
-        "print_edge": print_edge_audit,
-    }
-    return common
 
 
 def _splice_flat_bottom_band(
@@ -342,60 +315,12 @@ def _splice_flat_bottom_band(
     *,
     feature: str,
 ) -> Solid:
-    """Join the authoritative upper solid to the donor's hidden lower band."""
-    reference_bounds = authoritative.bounding_box()
-    donor_bounds = flat_bottom_donor.bounding_box()
-    min_x = min(reference_bounds.min.X, donor_bounds.min.X) - 1.0
-    max_x = max(reference_bounds.max.X, donor_bounds.max.X) + 1.0
-    min_y = min(reference_bounds.min.Y, donor_bounds.min.Y) - 1.0
-    max_y = max(reference_bounds.max.Y, donor_bounds.max.Y) + 1.0
-    min_z = min(reference_bounds.min.Z, donor_bounds.min.Z) - 1.0
-    max_z = max(reference_bounds.max.Z, donor_bounds.max.Z) + 1.0
-    half_overlap = BOTTOM_SYNTHESIS_OVERLAP_MM / 2.0
-
-    def clip(z_min_mm: float, z_max_mm: float) -> Solid:
-        return Pos(
-            (min_x + max_x) / 2.0,
-            (min_y + max_y) / 2.0,
-            (z_min_mm + z_max_mm) / 2.0,
-        ) * Box(
-            max_x - min_x,
-            max_y - min_y,
-            z_max_mm - z_min_mm,
-            align=(Align.CENTER, Align.CENTER, Align.CENTER),
-        )
-
-    upper_parts = [
-        solid.clean().fix()
-        for solid in (
-            authoritative
-            & clip(BOTTOM_SYNTHESIS_MAX_Z_MM - half_overlap, max_z)
-        ).solids()
-        if solid.volume > 1e-6
-    ]
-    lower_parts = [
-        solid.clean().fix()
-        for solid in (
-            flat_bottom_donor
-            & clip(min_z, BOTTOM_SYNTHESIS_MAX_Z_MM + half_overlap)
-        ).solids()
-        if solid.volume > 1e-6
-    ]
-    if (
-        not upper_parts
-        or not lower_parts
-        or not all(solid.is_valid for solid in [*upper_parts, *lower_parts])
-    ):
-        raise ValueError(
-            f"{feature} did not produce valid splice pieces: "
-            f"upper={len(upper_parts)}, lower={len(lower_parts)}"
-        )
-    return _single_solid(
-        upper_parts[0]
-        .fuse(*upper_parts[1:], *lower_parts)
-        .clean()
-        .fix(),
+    return splice_flat_bottom_band(
+        authoritative,
+        flat_bottom_donor,
         feature=feature,
+        single_solid=_single_solid,
+        parameters=VARIANT_R_PARAMETERS,
     )
 
 
@@ -403,59 +328,12 @@ def _transfer_baffle_below_print_plane(
     bucket: Solid,
     baffle: Solid,
 ) -> tuple[Solid, Solid, dict[str, float]]:
-    """Trim below-plane baffle remnants and root them in the lower bucket."""
-    bucket_bounds = bucket.bounding_box()
-    baffle_bounds = baffle.bounding_box()
-    min_x = min(bucket_bounds.min.X, baffle_bounds.min.X) - 1.0
-    max_x = max(bucket_bounds.max.X, baffle_bounds.max.X) + 1.0
-    min_y = min(bucket_bounds.min.Y, baffle_bounds.min.Y) - 1.0
-    max_y = max(bucket_bounds.max.Y, baffle_bounds.max.Y) + 1.0
-    min_z = min(bucket_bounds.min.Z, baffle_bounds.min.Z) - 1.0
-    max_z = max(bucket_bounds.max.Z, baffle_bounds.max.Z) + 1.0
-
-    def clip(z_min_mm: float, z_max_mm: float) -> Solid:
-        return Pos(
-            (min_x + max_x) / 2.0,
-            (min_y + max_y) / 2.0,
-            (z_min_mm + z_max_mm) / 2.0,
-        ) * Box(
-            max_x - min_x,
-            max_y - min_y,
-            z_max_mm - z_min_mm,
-            align=(Align.CENTER, Align.CENTER, Align.CENTER),
-        )
-
-    transfer = _single_solid(
-        (baffle & clip(min_z, BAFFLE_PRINT_BED_Z_MM)).clean().fix(),
-        feature="baffle remnants below the print plane",
+    return transfer_baffle_below_print_plane(
+        bucket,
+        baffle,
+        single_solid=_single_solid,
+        parameters=VARIANT_R_PARAMETERS,
     )
-    printable_baffle = _single_solid(
-        (baffle & clip(BAFFLE_PRINT_BED_Z_MM, max_z)).clean().fix(),
-        feature="baffle terminating on the planar print contact",
-    )
-    lower_seam_root_depth = (
-        GASKET_CLOSED_GAP_MM + BOTTOM_PRINT_ROOT_OVERLAP_MM
-    )
-    rearward_transfer = (
-        Pos(0.0, lower_seam_root_depth, 0.0) * transfer
-    )
-    receiving_bucket = _single_solid(
-        bucket.fuse(rearward_transfer).clean().fix(),
-        feature="bucket with overlapping lower print-edge root",
-    )
-    receiving_bucket = _single_solid(
-        receiving_bucket.fuse(transfer).clean().fix(),
-        feature="bucket with complementary lower print-edge material",
-    )
-    return receiving_bucket, printable_baffle, {
-        "bed_z_mm": BAFFLE_PRINT_BED_Z_MM,
-        "transferred_volume_mm3": transfer.volume,
-        "lower_seam_root_depth_mm": lower_seam_root_depth,
-        "lower_seam_root_overlap_mm": BOTTOM_PRINT_ROOT_OVERLAP_MM,
-        "original_baffle_volume_mm3": baffle.volume,
-        "printable_baffle_volume_mm3": printable_baffle.volume,
-        "receiving_bucket_volume_mm3": receiving_bucket.volume,
-    }
 
 
 def _authoritative_reference_joint(full_base: Solid) -> dict[str, Any]:

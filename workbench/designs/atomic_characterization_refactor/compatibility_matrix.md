@@ -15,8 +15,8 @@ Current execution overlay: **BASELINE_EQUIVALENT; ATOMIC EXTRACTION ACTIVE**. Hi
 | family.rear_face | intended identical geometry, different print consumer | R relies on it for printing; I treats it as exterior only | rear footprint/flatness contract not frozen |
 | R.front_service_opening | intentionally variant-specific | must be absent from I | three-reference reconciliation is later synthesis |
 | R.front_bulkhead_gasket_support | intentionally variant-specific | must not remain hidden in I | needs protected-section baseline |
-| R.sculpted_lrt_seam | STEP-only evidence | I has no front seam | not parameterized at accepted clean-corner state |
-| R.bottom_material_ownership | STEP-only evidence | not applicable to I | reference reconciliation explicitly deferred |
+| R.sculpted_lrt_seam | implemented Variant R geometry | I has no front seam | none for the equivalence refactor; later geometry correction remains separate |
+| R.bottom_material_ownership | implemented Variant R geometry | not applicable to I | flat-bottom/missing-material correction explicitly deferred |
 | R.baffle_body | intentionally variant-specific | I front belongs to monolithic body | three-reference reconciliation |
 | R.flat_baffle_print_edge | STEP-only evidence | no I analogue | bed footprint acceptance missing |
 | family.driver_interface | intended identical but currently unproved | historic fronts appear related; semantic identity not established | mounting parameter owner and horn choice unsettled |
